@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = 'https://devtools-hub-green.vercel.app';
+  const baseUrl = 'https://devtools-hub-green.vercel.app';
   const tools = [
     'age-calculator',
     'anagram-checker',
@@ -105,6 +105,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'jwt-generator',
     'keyboard-shortcuts',
     'length-unit-converter',
+    'levenshtein-distance',
     'line-counter',
     'line-sorter',
     'linux-command-reference',
@@ -139,6 +140,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'pressure-converter',
     'prime-number-checker',
     'regex-tester',
+    'remove-duplicate-lines',
     'robots-txt-generator',
     'robots-txt-tester',
     'roman-numeral-converter',
@@ -147,11 +149,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'screen-resolution',
     'semver-calculator',
     'sitemap-generator',
+    'sort-lines',
     'speed-converter',
     'sql-formatter',
     'ssh-key-generator',
     'ssl-checker',
     'string-case-converter',
+    'string-escape-unescape',
     'string-escaper',
     'string-length-counter',
     'string-reverse',
@@ -163,6 +167,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'svg-to-base64',
     'svg-to-css',
     'svg-viewer',
+    'tab-space-converter',
     'temperature-converter',
     'text-case-converter',
     'text-diff',
@@ -192,8 +197,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'yaml-to-json',
     'yaml-validator',
   ];
+  const toolUrls = tools.map(tool => ({
+    url: `${baseUrl}/tools/${tool}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }));
   return [
-    { url: base, lastModified: new Date(), changeFrequency: 'weekly', priority: 1 },
-    ...tools.map(t => ({ url: `${base}/tools/${t}`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 })),
+    { url: baseUrl, lastModified: new Date(), changeFrequency: 'daily', priority: 1.0 },
+    ...toolUrls,
   ];
 }
