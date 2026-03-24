@@ -6,18 +6,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'json-formatter','base64-tool','url-encoder','hash-generator','uuid-generator',
     'regex-tester','css-minifier','color-picker','lorem-ipsum','markdown-preview',
     'jwt-decoder','timestamp-converter','diff-checker','cron-parser','password-generator',
-    'number-base-converter','word-counter','html-minifier','image-base64','ip-lookup',
-    'text-diff','json-minifier','css-formatter','http-status-codes','chmod-calculator',
-    'url-parser','color-converter','xml-formatter','string-escaper','line-sorter',
-    'json-to-typescript','meta-tag-generator','text-to-slug','html-entity-encoder','binary-converter'
+    'svg-optimizer','css-gradient-generator','html-formatter','xml-formatter','yaml-validator',
+    'code-beautifier','char-counter','line-sorter','duplicate-remover','text-case-converter',
+    'url-parser','json-to-csv','markdown-to-html','image-resizer','favicon-generator',
+    'json-to-typescript','meta-tag-generator','text-to-slug','html-entity-encoder','binary-converter',
+    'number-base-converter','image-base64','http-status-codes','word-counter','ip-lookup'
   ]
+  const toolUrls = tools.map(tool => ({
+    url: `${baseUrl}/tools/${tool}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.8,
+  }))
   return [
-    { url: baseUrl, lastModified: new Date(), changeFrequency: 'daily', priority: 1 },
-    ...tools.map(tool => ({
-      url: `${baseUrl}/tools/${tool}`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.8
-    }))
+    { url: baseUrl, lastModified: new Date(), changeFrequency: 'daily' as const, priority: 1 },
+    ...toolUrls,
   ]
 }
