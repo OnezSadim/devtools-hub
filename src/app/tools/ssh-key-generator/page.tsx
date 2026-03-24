@@ -8,8 +8,8 @@ export default function Page() {
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100 p-8">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2 text-white">JSON to CSV Converter</h1>
-        <p className="text-gray-400 mb-6">Paste your JSON array to convert it to CSV.</p>
+        <h1 className="text-3xl font-bold mb-2 text-white">SSH Key Generator Info</h1>
+        <p className="text-gray-400 mb-6">Learn how to generate SSH keys for secure authentication.</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">Input</label>
