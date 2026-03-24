@@ -1,25 +1,54 @@
 "use client";
 import { useState } from "react";
 export default function ChmodCalculator() {
-  const [perms, setPerms] = useState({ur:false,uw:false,ux:false,gr:false,gw:false,gx:false,or:false,ow:false,ox:false});
-  const toggle = (k:string) => setPerms(p=>({...p,[k]:!p[k as keyof typeof p]}));
-  const toOctet = (r:boolean,w:boolean,x:boolean) => (r?4:0)+(w?2:0)+(x?1:0);
-  const octal = `${toOctet(perms.ur,perms.uw,perms.ux)}${toOctet(perms.gr,perms.gw,perms.gx)}${toOctet(perms.or,perms.ow,perms.ox)}`;
-  const toSym = (r:boolean,w:boolean,x:boolean) => `${r?"r":"-"}${w?"w":"-"}${x?"x":"-"}`;
-  const symbolic = `${toSym(perms.ur,perms.uw,perms.ux)}${toSym(perms.gr,perms.gw,perms.gx)}${toSym(perms.or,perms.ow,perms.ox)}`;
-  const CB = ({k,label}:{k:string,label:string}) => (<label className="flex items-center gap-1 cursor-pointer text-sm"><input type="checkbox" checked={perms[k as keyof typeof perms]} onChange={()=>toggle(k)} className="w-4 h-4" />{label}</label>);
+  const [perms, setPerms] = useState({ur:true,uw:true,ux:false,gr:true,gw:false,gx:false,or:true,ow:false,ox:false});
+  const toggle = (k) => setPerms(p=>({...p,[k]:!p[k]}));
+  const toOctal = () => {
+    const u=(perms.ur?4:0)+(perms.uw?2:0)+(perms.ux?1:0);
+    const g=(perms.gr?4:0)+(perms.gw?2:0)+(perms.gx?1:0);
+    const o=(perms.or?4:0)+(perms.ow?2:0)+(perms.ox?1:0);
+    return `${u}${g}${o}`;
+  };
+  const toSymbolic = () => {
+    const f=(r,w,x)=>(r?"r":"-")+(w?"w":"-")+(x?"x":"-");
+    return `-${f(perms.ur,perms.uw,perms.ux)}${f(perms.gr,perms.gw,perms.gx)}${f(perms.or,perms.ow,perms.ox)}`;
+  };
+  const copy = (t) => navigator.clipboard.writeText(t);
+  const rows = [["Owner","u"],["Group","g"],["Others","o"]];
   return (
-    <div className="max-w-lg mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-2">Chmod Calculator</h1>
-      <p className="text-gray-400 mb-6">Calculate Unix file permissions (chmod) visually.</p>
-      <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="bg-gray-800 rounded p-4"><p className="font-semibold mb-3">Owner</p><CB k="ur" label="Read" /><CB k="uw" label="Write" /><CB k="ux" label="Execute" /></div>
-        <div className="bg-gray-800 rounded p-4"><p className="font-semibold mb-3">Group</p><CB k="gr" label="Read" /><CB k="gw" label="Write" /><CB k="gx" label="Execute" /></div>
-        <div className="bg-gray-800 rounded p-4"><p className="font-semibold mb-3">Others</p><CB k="or" label="Read" /><CB k="ow" label="Write" /><CB k="ox" label="Execute" /></div>
-      </div>
-      <div className="grid grid-cols-2 gap-4">
-        <div className="bg-gray-900 rounded p-4 text-center"><p className="text-gray-400 text-sm mb-1">Octal</p><p className="text-3xl font-mono font-bold text-blue-400">{octal}</p><p className="text-gray-500 text-sm mt-1">chmod {octal}</p></div>
-        <div className="bg-gray-900 rounded p-4 text-center"><p className="text-gray-400 text-sm mb-1">Symbolic</p><p className="text-3xl font-mono font-bold text-green-400">{symbolic}</p><p className="text-gray-500 text-sm mt-1">-{symbolic}</p></div>
+    <div className="min-h-screen bg-gray-950 text-gray-100 p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">chmod Calculator</h1>
+        <p className="text-gray-400 mb-6">Calculate Unix file permission values</p>
+        <div className="bg-gray-900 rounded-lg overflow-hidden mb-6">
+          <table className="w-full">
+            <thead><tr className="text-gray-400 text-sm border-b border-gray-800">
+              <th className="text-left p-3">Entity</th>
+              <th className="p-3">Read (4)</th><th className="p-3">Write (2)</th><th className="p-3">Execute (1)</th>
+            </tr></thead>
+            <tbody>{rows.map(([label,p])=>(
+              <tr key={p} className="border-b border-gray-800">
+                <td className="p-3 font-medium">{label}</td>
+                {["r","w","x"].map(bit=>(
+                  <td key={bit} className="p-3 text-center">
+                    <input type="checkbox" checked={perms[p+bit]} onChange={()=>toggle(p+bit)} className="w-5 h-5 cursor-pointer" />
+                  </td>
+                ))}
+              </tr>
+            ))}</tbody>
+          </table>
+        </div>
+        <div className="space-y-3">
+          {[["Octal",`chmod ${toOctal()} file`],["Symbolic",toSymbolic()]].map(([label,val])=>(
+            <div key={label} className="bg-gray-900 rounded p-4 flex justify-between items-center">
+              <div>
+                <div className="text-gray-400 text-sm">{label}</div>
+                <code className="font-mono text-green-400 text-lg">{val}</code>
+              </div>
+              <button onClick={()=>copy(val)} className="bg-gray-800 hover:bg-gray-700 px-3 py-1 rounded text-sm">Copy</button>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
