@@ -1,43 +1,48 @@
 "use client";
 import { useState } from "react";
-const codes = [
-  {code:100,name:"Continue",desc:"The server received the request headers and client should proceed"},
-  {code:200,name:"OK",desc:"Request succeeded"},
-  {code:201,name:"Created",desc:"Request succeeded and a new resource was created"},
-  {code:204,name:"No Content",desc:"Request succeeded but no content to return"},
-  {code:301,name:"Moved Permanently",desc:"Resource permanently moved to new URL"},
-  {code:302,name:"Found",desc:"Resource temporarily moved to different URL"},
-  {code:304,name:"Not Modified",desc:"Resource has not been modified since last request"},
-  {code:400,name:"Bad Request",desc:"Server cannot process request due to client error"},
-  {code:401,name:"Unauthorized",desc:"Authentication is required and has failed"},
-  {code:403,name:"Forbidden",desc:"Server understood request but refuses to authorize it"},
-  {code:404,name:"Not Found",desc:"Requested resource could not be found"},
-  {code:405,name:"Method Not Allowed",desc:"Request method is not supported for this resource"},
-  {code:408,name:"Request Timeout",desc:"Server timed out waiting for the request"},
-  {code:409,name:"Conflict",desc:"Request conflicts with current state of server"},
-  {code:410,name:"Gone",desc:"Resource is no longer available and will not be available again"},
-  {code:422,name:"Unprocessable Entity",desc:"Request well-formed but unable to be followed due to semantic errors"},
-  {code:429,name:"Too Many Requests",desc:"User has sent too many requests in a given time"},
-  {code:500,name:"Internal Server Error",desc:"Server encountered unexpected condition"},
-  {code:501,name:"Not Implemented",desc:"Server does not support the functionality required"},
-  {code:502,name:"Bad Gateway",desc:"Server received invalid response from upstream server"},
-  {code:503,name:"Service Unavailable",desc:"Server is not ready to handle the request"},
-  {code:504,name:"Gateway Timeout",desc:"Server did not receive timely response from upstream server"},
-];
-const color = (c:number) => c<200?"bg-gray-700":c<300?"bg-green-800":c<400?"bg-blue-800":c<500?"bg-yellow-800":"bg-red-800";
+const codes: Record<number, {text:string, desc:string, cat:string}> = {
+  200:{text:"OK",desc:"Request succeeded",cat:"2xx"},
+  201:{text:"Created",desc:"Resource created",cat:"2xx"},
+  204:{text:"No Content",desc:"Success with no body",cat:"2xx"},
+  206:{text:"Partial Content",desc:"Partial resource returned",cat:"2xx"},
+  301:{text:"Moved Permanently",desc:"Permanent redirect",cat:"3xx"},
+  302:{text:"Found",desc:"Temporary redirect",cat:"3xx"},
+  304:{text:"Not Modified",desc:"Cache is valid",cat:"3xx"},
+  307:{text:"Temporary Redirect",desc:"Same method redirect",cat:"3xx"},
+  308:{text:"Permanent Redirect",desc:"Same method permanent redirect",cat:"3xx"},
+  400:{text:"Bad Request",desc:"Invalid request syntax",cat:"4xx"},
+  401:{text:"Unauthorized",desc:"Authentication required",cat:"4xx"},
+  403:{text:"Forbidden",desc:"Access denied",cat:"4xx"},
+  404:{text:"Not Found",desc:"Resource not found",cat:"4xx"},
+  405:{text:"Method Not Allowed",desc:"HTTP method not allowed",cat:"4xx"},
+  409:{text:"Conflict",desc:"Resource conflict",cat:"4xx"},
+  410:{text:"Gone",desc:"Resource permanently removed",cat:"4xx"},
+  422:{text:"Unprocessable Entity",desc:"Validation error",cat:"4xx"},
+  429:{text:"Too Many Requests",desc:"Rate limit exceeded",cat:"4xx"},
+  500:{text:"Internal Server Error",desc:"Server error",cat:"5xx"},
+  501:{text:"Not Implemented",desc:"Method not supported",cat:"5xx"},
+  502:{text:"Bad Gateway",desc:"Invalid upstream response",cat:"5xx"},
+  503:{text:"Service Unavailable",desc:"Server temporarily unavailable",cat:"5xx"},
+  504:{text:"Gateway Timeout",desc:"Upstream timeout",cat:"5xx"},
+};
+const catColor: Record<string,string> = {"2xx":"text-green-400","3xx":"text-blue-400","4xx":"text-yellow-400","5xx":"text-red-400"};
 export default function HttpStatusCodes() {
   const [search, setSearch] = useState("");
-  const filtered = codes.filter(c=>c.code.toString().includes(search)||c.name.toLowerCase().includes(search.toLowerCase()));
+  const filtered = Object.entries(codes).filter(([code, info]) =>
+    code.includes(search) || info.text.toLowerCase().includes(search.toLowerCase()) || info.desc.toLowerCase().includes(search.toLowerCase())
+  );
   return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
+    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
       <h1 className="text-3xl font-bold mb-2">HTTP Status Codes</h1>
-      <p className="text-gray-400 mb-6">Complete reference for HTTP response status codes</p>
-      <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search by code or name..." className="w-full max-w-md bg-gray-800 border border-gray-700 rounded px-3 py-2 mb-6" />
-      <div className="space-y-2 max-w-2xl">
-        {filtered.map(c=>(
-          <div key={c.code} className="flex gap-4 items-start bg-gray-800 rounded p-3">
-            <span className={`${color(c.code)} px-2 py-1 rounded font-mono font-bold text-sm min-w-fit`}>{c.code}</span>
-            <div><p className="font-semibold">{c.name}</p><p className="text-gray-400 text-sm">{c.desc}</p></div>
+      <p className="text-gray-400 mb-6">Quick reference for all HTTP status codes</p>
+      <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search by code or description..." className="w-full max-w-md bg-gray-900 border border-gray-700 rounded p-3 mb-6"/>
+      <div className="grid gap-2">
+        {filtered.map(([code, info]) => (
+          <div key={code} className="bg-gray-900 rounded p-3 flex items-center gap-4">
+            <span className={"font-mono font-bold text-lg w-12 " + catColor[info.cat]}>{code}</span>
+            <span className="font-medium w-48">{info.text}</span>
+            <span className="text-gray-400 text-sm">{info.desc}</span>
+            <span className={"ml-auto text-xs px-2 py-0.5 rounded bg-gray-800 " + catColor[info.cat]}>{info.cat}</span>
           </div>
         ))}
       </div>

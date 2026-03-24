@@ -1,53 +1,37 @@
 "use client";
 import { useState } from "react";
 export default function SemverCalculator() {
-  const [v, setV] = useState("1.4.2");
-  const parse = (s: string) => {
-    const m = s.match(/^(\d+)\.(\d+)\.(\d+)(?:-([\w.]+))?(?:\+([\w.]+))?$/);
-    if (!m) return null;
-    return { major: +m[1], minor: +m[2], patch: +m[3], pre: m[4]||null, build: m[5]||null };
+  const [version, setVersion] = useState("1.2.3");
+  const bump = (type: string) => {
+    const parts = version.split(".").map(Number);
+    if (parts.length !== 3) return;
+    if (type === "major") { parts[0]++; parts[1]=0; parts[2]=0; }
+    if (type === "minor") { parts[1]++; parts[2]=0; }
+    if (type === "patch") parts[2]++;
+    setVersion(parts.join("."));
   };
-  const p = parse(v);
-  const bump = (t: string) => {
-    if (!p) return "";
-    if (t==="major") return `${p.major+1}.0.0`;
-    if (t==="minor") return `${p.major}.${p.minor+1}.0`;
-    if (t==="patch") return `${p.major}.${p.minor}.${p.patch+1}`;
-    return "";
-  };
+  const isValid = /^\d+\.\d+\.\d+(-[\w.]+)?(\+[\w.]+)?$/.test(version);
   return (
     <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
-      <h1 className="text-3xl font-bold mb-2">SemVer Calculator</h1>
-      <p className="text-gray-400 mb-6">Parse and bump semantic version numbers.</p>
-      <input value={v} onChange={e=>setV(e.target.value)} placeholder="1.0.0" className="w-full max-w-xs bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white font-mono mb-6" />
-      {p ? (
-        <div className="max-w-lg space-y-4">
-          <div className="grid grid-cols-3 gap-3">
-            {["major","minor","patch"].map(k=>(
-              <div key={k} className="p-4 bg-gray-800 rounded text-center">
-                <p className="text-gray-400 text-xs uppercase mb-1">{k}</p>
-                <p className="text-3xl font-bold text-blue-400">{p[k as keyof typeof p]}</p>
-              </div>
-            ))}
-          </div>
-          {p.pre && <div className="p-3 bg-gray-800 rounded"><span className="text-yellow-400 text-sm">Pre-release: </span><span className="font-mono">{p.pre}</span></div>}
-          {p.build && <div className="p-3 bg-gray-800 rounded"><span className="text-gray-400 text-sm">Build: </span><span className="font-mono">{p.build}</span></div>}
-          <div>
-            <h2 className="text-lg font-semibold mb-2">Next Versions</h2>
-            <div className="space-y-2">
-              {["major","minor","patch"].map(t=>(
-                <div key={t} className="flex justify-between items-center p-3 bg-gray-800 rounded">
-                  <span className="text-gray-300 capitalize">{t} bump</span>
-                  <div className="flex items-center gap-2">
-                    <code className="text-green-400 font-mono">{bump(t)}</code>
-                    <button onClick={()=>setV(bump(t))} className="text-xs text-blue-400 hover:text-blue-300">Use</button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+      <h1 className="text-3xl font-bold mb-2">Semver Calculator</h1>
+      <p className="text-gray-400 mb-6">Semantic version bump calculator</p>
+      <div className="max-w-md">
+        <input value={version} onChange={e=>setVersion(e.target.value)} className="w-full bg-gray-900 border border-gray-700 rounded p-3 font-mono text-2xl text-center mb-4" />
+        {!isValid && <p className="text-red-400 text-sm mb-3">Invalid semver format</p>}
+        <div className="grid grid-cols-3 gap-3 mb-6">
+          <button onClick={()=>bump("major")} className="bg-red-700 hover:bg-red-600 py-3 rounded font-bold">MAJOR<br/><span className="text-xs font-normal opacity-75">Breaking change</span></button>
+          <button onClick={()=>bump("minor")} className="bg-yellow-700 hover:bg-yellow-600 py-3 rounded font-bold">MINOR<br/><span className="text-xs font-normal opacity-75">New feature</span></button>
+          <button onClick={()=>bump("patch")} className="bg-green-700 hover:bg-green-600 py-3 rounded font-bold">PATCH<br/><span className="text-xs font-normal opacity-75">Bug fix</span></button>
         </div>
-      ) : <p className="text-red-400">Invalid semver. Use format: MAJOR.MINOR.PATCH</p>}
+        <div className="bg-gray-900 rounded p-4">
+          <h3 className="font-semibold mb-2">Semver Rules</h3>
+          <ul className="text-sm text-gray-400 space-y-1">
+            <li><span className="text-red-400">MAJOR</span> — incompatible API changes</li>
+            <li><span className="text-yellow-400">MINOR</span> — backwards-compatible features</li>
+            <li><span className="text-green-400">PATCH</span> — backwards-compatible bug fixes</li>
+          </ul>
+        </div>
+      </div>
     </main>
   );
 }
