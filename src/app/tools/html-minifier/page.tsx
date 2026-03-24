@@ -1,46 +1,34 @@
-'use client';
-import { useState } from 'react';
+"use client";
+import { useState } from "react";
+function minifyHtml(html: string): string {
+  return html
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .replace(/\s+/g, " ")
+    .replace(/> </g, "><")
+    .replace(/ >/g, ">")
+    .replace(/< /g, "<")
+    .trim();
+}
 export default function HtmlMinifier() {
-  const [input, setInput] = useState('');
-  const [copied, setCopied] = useState(false);
-  const minify = (html: string) => {
-    return html
-      .replace(/<!--[\s\S]*?-->/g, '')
-      .replace(/\s+/g, ' ')
-      .replace(/> </g, '><')
-      .replace(/ (class|id|src|href|alt|type|value|name|placeholder|action|method)=" /g, ' $1="')
-      .trim();
-  };
-  const output = minify(input);
-  const savings = input.length > 0 ? Math.round((1 - output.length / input.length) * 100) : 0;
-  const copy = () => { navigator.clipboard.writeText(output); setCopied(true); setTimeout(() => setCopied(false), 2000); };
+  const [input, setInput] = useState("");
+  const output = minifyHtml(input);
+  const saved = input.length > 0 ? Math.round((1 - output.length / input.length) * 100) : 0;
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100 p-6">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">HTML Minifier</h1>
-        <p className="text-gray-400 mb-8">Remove whitespace and comments from HTML to reduce file size.</p>
-        {input && (
-          <div className="bg-gray-900 rounded-xl p-4 mb-6 flex gap-6">
-            <div className="text-center"><div className="text-2xl font-bold text-blue-400">{input.length}</div><div className="text-gray-400 text-sm">Original bytes</div></div>
-            <div className="text-center"><div className="text-2xl font-bold text-green-400">{output.length}</div><div className="text-gray-400 text-sm">Minified bytes</div></div>
-            <div className="text-center"><div className="text-2xl font-bold text-yellow-400">{savings}%</div><div className="text-gray-400 text-sm">Saved</div></div>
+    <div style={{minHeight:"100vh",background:"#0f172a",color:"#e2e8f0",padding:"2rem",fontFamily:"monospace"}}>
+      <h1 style={{fontSize:"2rem",fontWeight:700,marginBottom:"0.5rem"}}>HTML Minifier</h1>
+      <p style={{color:"#94a3b8",marginBottom:"2rem"}}>Remove whitespace and comments from HTML to reduce file size.</p>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"1.5rem"}}>
+        <div>
+          <div style={{color:"#64748b",fontSize:"0.875rem",marginBottom:"0.5rem"}}>Input ({input.length} chars)</div>
+          <textarea value={input} onChange={e=>setInput(e.target.value)} placeholder="Paste HTML here..." rows={20} style={{width:"100%",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:8,padding:"0.75rem",fontSize:"0.875rem",resize:"vertical",boxSizing:"border-box"}} />
+        </div>
+        <div>
+          <div style={{display:"flex",justifyContent:"space-between",marginBottom:"0.5rem"}}>
+            <span style={{color:"#64748b",fontSize:"0.875rem"}}>Output ({output.length} chars)</span>
+            {saved > 0 && <span style={{color:"#22c55e",fontSize:"0.875rem"}}>{saved}% smaller</span>}
           </div>
-        )}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-2">Input HTML</label>
-            <textarea value={input} onChange={e => setInput(e.target.value)}
-              placeholder="Paste your HTML here..."
-              className="w-full h-80 bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 font-mono text-sm text-gray-100 focus:outline-none focus:border-blue-500 resize-none" />
-          </div>
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <label className="text-sm font-medium text-gray-400">Minified Output</label>
-              {output && <button onClick={copy} className="text-sm bg-gray-800 hover:bg-gray-700 px-3 py-1 rounded text-gray-300">{copied ? 'Copied!' : 'Copy'}</button>}
-            </div>
-            <textarea readOnly value={output}
-              className="w-full h-80 bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 font-mono text-sm text-green-400 focus:outline-none resize-none" />
-          </div>
+          <textarea readOnly value={output} rows={20} style={{width:"100%",background:"#1e293b",color:"#38bdf8",border:"1px solid #334155",borderRadius:8,padding:"0.75rem",fontSize:"0.875rem",resize:"vertical",boxSizing:"border-box"}} />
+          <button onClick={()=>navigator.clipboard.writeText(output)} style={{marginTop:"0.75rem",background:"#3b82f6",color:"white",border:"none",borderRadius:6,padding:"0.5rem 1.5rem",cursor:"pointer"}}>Copy</button>
         </div>
       </div>
     </div>

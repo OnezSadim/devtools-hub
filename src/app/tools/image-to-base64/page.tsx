@@ -1,16 +1,38 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useCallback } from "react";
 export default function ImageToBase64() {
-  const [b64,setB64]=useState("");
-  const [type,setType]=useState("");
-  const ref=useRef<HTMLInputElement>(null);
-  function handleFile(e:React.ChangeEvent<HTMLInputElement>){
-    const f=e.target.files?.[0]; if(!f) return;
-    setType(f.type);
-    const r=new FileReader();
-    r.onload=ev=>setB64((ev.target?.result as string)||"")
-    r.readAsDataURL(f);
-  }
-  function copy(){ navigator.clipboard.writeText(b64); }
-  return(<div className="min-h-screen bg-gray-950 text-white p-6"><div className="max-w-2xl mx-auto"><h1 className="text-3xl font-bold mb-2">Image to Base64</h1><p className="text-gray-400 mb-6">Convert any image to a Base64 data URL for embedding in HTML/CSS.</p><div onClick={()=>ref.current?.click()} className="border-2 border-dashed border-gray-700 rounded-lg p-10 text-center cursor-pointer hover:border-blue-500 mb-4"><input ref={ref} type="file" accept="image/*" className="hidden" onChange={handleFile}/><p className="text-gray-400">Click to select an image</p></div>{b64&&<><div className="mb-3"><img src={b64} alt="preview" className="max-h-40 rounded"/></div><div className="flex gap-2 mb-2"><input className="flex-1 bg-gray-900 border border-gray-700 rounded p-2 font-mono text-xs" value={b64.substring(0,80)+"..."} readOnly/><button onClick={copy} className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-sm">Copy</button></div><p className="text-xs text-gray-500">{b64.length} characters</p></>}</div></div>);
+  const [result, setResult] = useState("");
+  const [preview, setPreview] = useState("");
+  const [name, setName] = useState("");
+  const handleFile = useCallback((file: File) => {
+    if (!file) return;
+    setName(file.name);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const base64 = e.target?.result as string;
+      setPreview(base64);
+      setResult(base64);
+    };
+    reader.readAsDataURL(file);
+  }, []);
+  const onDrop = (e: React.DragEvent) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); };
+  return (
+    <div style={{minHeight:"100vh",background:"#0f172a",color:"#e2e8f0",padding:"2rem",fontFamily:"monospace"}}>
+      <h1 style={{fontSize:"2rem",fontWeight:700,marginBottom:"0.5rem"}}>Image to Base64 Converter</h1>
+      <p style={{color:"#94a3b8",marginBottom:"2rem"}}>Convert images to Base64 encoded strings for embedding in HTML/CSS/JS.</p>
+      <div onDrop={onDrop} onDragOver={e=>e.preventDefault()} style={{border:"2px dashed #334155",borderRadius:8,padding:"3rem",textAlign:"center",marginBottom:"1.5rem",cursor:"pointer"}} onClick={()=>document.getElementById("imgInput")?.click()}>
+        {preview ? <img src={preview} alt={name} style={{maxWidth:"100%",maxHeight:200,objectFit:"contain"}} /> : <div style={{color:"#64748b"}}>Drop image here or click to upload</div>}
+        <input id="imgInput" type="file" accept="image/*" style={{display:"none"}} onChange={e=>e.target.files&&handleFile(e.target.files[0])} />
+      </div>
+      {result && (
+        <div style={{background:"#1e293b",borderRadius:8,padding:"1.5rem"}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"1rem"}}>
+            <span style={{color:"#94a3b8",fontSize:"0.875rem"}}>{name} — {(result.length/1.37/1024).toFixed(1)} KB</span>
+            <button onClick={()=>navigator.clipboard.writeText(result)} style={{background:"#3b82f6",color:"white",border:"none",borderRadius:4,padding:"0.4rem 1rem",cursor:"pointer",fontSize:"0.875rem"}}>Copy Base64</button>
+          </div>
+          <textarea readOnly value={result} rows={6} style={{width:"100%",background:"#0f172a",color:"#38bdf8",border:"1px solid #334155",borderRadius:4,padding:"0.75rem",fontSize:"0.75rem",resize:"vertical",boxSizing:"border-box"}} />
+        </div>
+      )}
+    </div>
+  );
 }
