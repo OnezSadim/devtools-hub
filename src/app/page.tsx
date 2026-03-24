@@ -13,6 +13,12 @@ const tools = [
   { name: "Color Picker", desc: "Pick colors and convert between HEX, RGB, HSL", href: "/tools/color-picker", icon: "CL" },
   { name: "Lorem Ipsum Generator", desc: "Generate placeholder text for designs", href: "/tools/lorem-ipsum", icon: "Lp" },
   { name: "Markdown Preview", desc: "Preview and convert Markdown to HTML", href: "/tools/markdown-preview", icon: "MD" },
+
+  { name: "HTML Entities", href: "/tools/html-entities", description: "Encode and decode HTML entities instantly" },
+  { name: "Text to Slug", href: "/tools/text-to-slug", description: "Convert text to URL-friendly slugs" },
+  { name: "Unicode Lookup", href: "/tools/unicode-lookup", description: "Inspect Unicode code points of any text" },
+  { name: "Chmod Calculator", href: "/tools/chmod-calculator", description: "Calculate Unix file permission numbers visually" },
+  { name: "CSS Gradient Generator", href: "/tools/css-gradient-generator", description: "Build beautiful CSS gradients visually" },
 ];
 
 export default function Home() {

@@ -21,5 +21,36 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: baseUrl, lastModified: new Date(), changeFrequency: 'daily' as const, priority: 1 },
     ...toolUrls,
-  ]
+  
+  {
+    url: `${baseUrl}/tools/html-entities`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+  },
+  {
+    url: `${baseUrl}/tools/text-to-slug`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+  },
+  {
+    url: `${baseUrl}/tools/unicode-lookup`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+  },
+  {
+    url: `${baseUrl}/tools/chmod-calculator`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+  },
+  {
+    url: `${baseUrl}/tools/css-gradient-generator`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+  },
+]
 }

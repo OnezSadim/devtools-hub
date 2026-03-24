@@ -1,20 +1,21 @@
-'use client';
-import { useState } from 'react';
+"use client";
+import { useState } from "react";
 export default function TextToSlug() {
-  const [input, setInput] = useState('');
-  const toSlug = (s) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9\s-]/g,'').trim().replace(/[\s]+/g,'-').replace(/-+/g,'-');
+  const [input, setInput] = useState("");
+  const toSlug = (s: string) => s.toLowerCase().trim().replace(/[^\w\s-]/g,"").replace(/[\s_-]+/g,"-").replace(/^-+|-+$/g,"");
   const slug = toSlug(input);
   return (
-    <main style={{minHeight:'100vh',background:'#0f172a',color:'#e2e8f0',padding:'2rem',fontFamily:'sans-serif'}}>
-      <h1 style={{fontSize:'2rem',marginBottom:'0.5rem'}}>Text to Slug</h1>
-      <p style={{color:'#94a3b8',marginBottom:'2rem'}}>Convert text to URL-friendly slugs</p>
-      <div style={{maxWidth:'600px'}}>
-        <label style={{display:'block',marginBottom:'0.5rem',color:'#94a3b8'}}>Input Text</label>
-        <input value={input} onChange={e=>setInput(e.target.value)} placeholder="My Blog Post Title!" style={{width:'100%',background:'#1e293b',border:'1px solid #334155',borderRadius:'8px',padding:'0.75rem',color:'#e2e8f0',fontSize:'1rem',marginBottom:'1.5rem'}} />
-        <label style={{display:'block',marginBottom:'0.5rem',color:'#94a3b8'}}>Slug Output</label>
-        <div style={{background:'#1e293b',border:'1px solid #334155',borderRadius:'8px',padding:'0.75rem',color:'#10b981',fontFamily:'monospace',fontSize:'1rem',marginBottom:'1rem',minHeight:'3rem'}}>{slug || <span style={{color:'#475569'}}>slug-will-appear-here</span>}</div>
-        <button onClick={()=>navigator.clipboard.writeText(slug)} disabled={!slug} style={{padding:'0.75rem 2rem',background:slug?'#6366f1':'#334155',color:'white',border:'none',borderRadius:'8px',cursor:slug?'pointer':'default'}}>Copy Slug</button>
+    <div className="max-w-2xl mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-2">Text to Slug</h1>
+      <p className="text-gray-400 mb-4">Convert any text into a URL-friendly slug.</p>
+      <input value={input} onChange={e=>setInput(e.target.value)} placeholder="Enter text to slugify..." className="w-full bg-gray-800 text-white p-3 rounded font-mono text-sm mb-4" />
+      <div className="bg-gray-800 rounded p-4">
+        <div className="flex justify-between items-center mb-2">
+          <span className="text-gray-400 text-sm">Slug</span>
+          <button onClick={()=>navigator.clipboard.writeText(slug)} className="text-blue-400 text-sm">Copy</button>
+        </div>
+        <p className="text-green-400 font-mono text-lg break-all">{slug||"slug-will-appear-here"}</p>
       </div>
-    </main>
+    </div>
   );
 }
