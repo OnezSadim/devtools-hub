@@ -24,7 +24,11 @@ const tools = [
     { name: 'String Case Converter', desc: 'Convert text between camelCase, snake_case, kebab-case, PascalCase and more', href: '/tools/string-case-converter' },
     { name: 'PX to REM Converter', desc: 'Convert pixels to rem units with configurable base font size', href: '/tools/pixel-to-rem' },
     { name: 'HTML to Markdown', desc: 'Convert HTML markup to clean Markdown format', href: '/tools/html-to-markdown' },
-    { name: 'Word Counter', desc: 'Count words, characters, sentences, paragraphs and estimate reading time', href: '/tools/word-counter' },];
+    { name: 'Word Counter', desc: 'Count words, characters, sentences, paragraphs and estimate reading time', href: '/tools/word-counter' },  { slug: "binary-text-converter", name: "Binary/Text Converter", description: "Convert between binary and text", icon: "01" },
+  { slug: "url-parser", name: "URL Parser", description: "Parse and inspect URL components", icon: "🔗" },
+  { slug: "json-to-yaml", name: "JSON to YAML", description: "Convert JSON to YAML format", icon: "↕️" },
+  { slug: "word-frequency-counter", name: "Word Frequency Counter", description: "Count word frequency in text", icon: "📊" },
+];
 
 export default function Home() {
   return (
