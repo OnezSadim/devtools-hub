@@ -1,79 +1,60 @@
 "use client";
 import { useState } from "react";
-
 export default function CssAnimationGenerator() {
-  const [name, setName] = useState("myAnimation");
-  const [duration, setDuration] = useState(1);
+  const [name, setName] = useState("fadeIn");
+  const [duration, setDuration] = useState("1");
   const [timing, setTiming] = useState("ease");
-  const [delay, setDelay] = useState(0);
-  const [iteration, setIteration] = useState("infinite");
+  const [delay, setDelay] = useState("0");
+  const [iterations, setIterations] = useState("1");
   const [direction, setDirection] = useState("normal");
-  const [preset, setPreset] = useState("fade");
-  const presets: Record<string,string> = {
-    fade: "  0% { opacity: 0; }
-  100% { opacity: 1; }",
-    bounce: "  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-20px); }",
-    spin: "  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }",
-    pulse: "  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }",
-    shake: "  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-10px); }
-  75% { transform: translateX(10px); }",
-    slide: "  0% { transform: translateX(-100%); opacity: 0; }
-  100% { transform: translateX(0); opacity: 1; }",
+  const [anim, setAnim] = useState("fade");
+  const keyframes: Record<string,string> = {
+    fade: `@keyframes ${name} {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}`,
+    slide: `@keyframes ${name} {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}`,
+    bounce: `@keyframes ${name} {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}`,
+    rotate: `@keyframes ${name} {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}`,
+    scale: `@keyframes ${name} {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
+}`,
+    pulse: `@keyframes ${name} {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}`,
   };
-  const css = `@keyframes ${name} {
-${presets[preset]}
-}
+  const css = `${keyframes[anim]}
 
-.animated {
-  animation: ${name} ${duration}s ${timing} ${delay}s ${iteration} ${direction};
+.animated-element {
+  animation: ${name} ${duration}s ${timing} ${delay}s ${iterations} ${direction};
 }`;
   return (
     <main className="min-h-screen bg-gray-950 text-white p-8">
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">CSS Animation Generator</h1>
-        <p className="text-gray-400 mb-8">Generate CSS @keyframe animations.</p>
-        <div className="flex flex-wrap gap-2 mb-6">
-          {Object.keys(presets).map(p=>(
-            <button key={p} onClick={()=>setPreset(p)} className={`px-4 py-2 rounded-lg capitalize ${preset===p?"bg-blue-600":"bg-gray-800 hover:bg-gray-700"}`}>{p}</button>
-          ))}
+      <h1 className="text-3xl font-bold mb-2">CSS Animation Generator</h1>
+      <p className="text-gray-400 mb-6">Generate CSS keyframe animations instantly</p>
+      <div className="max-w-2xl space-y-4">
+        <div className="grid grid-cols-2 gap-3">
+          <div><label className="text-sm text-gray-400">Animation Name</label><input value={name} onChange={e=>setName(e.target.value)} className="w-full mt-1 bg-gray-800 border border-gray-700 rounded px-3 py-2" /></div>
+          <div><label className="text-sm text-gray-400">Duration (s)</label><input type="number" value={duration} onChange={e=>setDuration(e.target.value)} className="w-full mt-1 bg-gray-800 border border-gray-700 rounded px-3 py-2" /></div>
+          <div><label className="text-sm text-gray-400">Timing Function</label><select value={timing} onChange={e=>setTiming(e.target.value)} className="w-full mt-1 bg-gray-800 border border-gray-700 rounded px-3 py-2">{["ease","linear","ease-in","ease-out","ease-in-out"].map(t=><option key={t}>{t}</option>)}</select></div>
+          <div><label className="text-sm text-gray-400">Delay (s)</label><input type="number" value={delay} onChange={e=>setDelay(e.target.value)} className="w-full mt-1 bg-gray-800 border border-gray-700 rounded px-3 py-2" /></div>
+          <div><label className="text-sm text-gray-400">Iterations</label><input value={iterations} onChange={e=>setIterations(e.target.value)} className="w-full mt-1 bg-gray-800 border border-gray-700 rounded px-3 py-2" /></div>
+          <div><label className="text-sm text-gray-400">Direction</label><select value={direction} onChange={e=>setDirection(e.target.value)} className="w-full mt-1 bg-gray-800 border border-gray-700 rounded px-3 py-2">{["normal","reverse","alternate","alternate-reverse"].map(d=><option key={d}>{d}</option>)}</select></div>
         </div>
-        <div className="bg-gray-800 rounded-xl h-32 flex items-center justify-center mb-6">
-          <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg" style={{animation:`${name} ${duration}s ${timing} ${delay}s ${iteration} ${direction}`}}></div>
-          <style>{`@keyframes ${name} {${presets[preset]}}`}</style>
-        </div>
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">Animation Name</label>
-            <input value={name} onChange={e=>setName(e.target.value)} className="w-full bg-gray-900 border border-gray-700 rounded px-3 py-2 font-mono" />
-          </div>
-          <div>
-            <div className="flex justify-between text-sm mb-1"><span className="text-gray-400">Duration</span><span className="font-mono">{duration}s</span></div>
-            <input type="range" min={0.1} max={5} step={0.1} value={duration} onChange={e=>setDuration(Number(e.target.value))} className="w-full mt-2" />
-          </div>
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">timing-function</label>
-            <select value={timing} onChange={e=>setTiming(e.target.value)} className="w-full bg-gray-900 border border-gray-700 rounded px-3 py-2">
-              {["ease","linear","ease-in","ease-out","ease-in-out","cubic-bezier(0.68,-0.55,0.265,1.55)"].map(t=><option key={t}>{t}</option>)}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">iteration-count</label>
-            <select value={iteration} onChange={e=>setIteration(e.target.value)} className="w-full bg-gray-900 border border-gray-700 rounded px-3 py-2">
-              {["infinite","1","2","3"].map(t=><option key={t}>{t}</option>)}
-            </select>
-          </div>
-        </div>
-        <div className="bg-gray-900 rounded-lg p-4">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-xs text-gray-400">CSS</span>
-            <button onClick={()=>navigator.clipboard.writeText(css)} className="text-xs bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded">Copy</button>
-          </div>
-          <pre className="text-sm text-green-400 whitespace-pre-wrap">{css}</pre>
-        </div>
+        <div><label className="text-sm text-gray-400 block mb-2">Animation Type</label><div className="flex flex-wrap gap-2">{Object.keys(keyframes).map(k=><button key={k} onClick={()=>setAnim(k)} className={`px-3 py-1 rounded capitalize text-sm ${anim===k?"bg-blue-600":"bg-gray-700 hover:bg-gray-600"}`}>{k}</button>)}</div></div>
+        <pre className="bg-gray-800 rounded p-4 font-mono text-green-400 text-sm overflow-x-auto">{css}</pre>
+        <button onClick={()=>navigator.clipboard.writeText(css)} className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">Copy CSS</button>
       </div>
     </main>
   );

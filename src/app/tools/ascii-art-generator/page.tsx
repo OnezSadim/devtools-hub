@@ -1,76 +1,41 @@
 "use client";
 import { useState } from "react";
+const FONT_SMALL = {
+  A:["/\\","\\/ "],B:["|- ","|_ "],C:["/","\\_ "],D:["|- ","|/ "],E:["|= ","|__"],
+  default:["??","?? "]
+};
 export default function AsciiArtGenerator() {
-  const [text, setText] = useState("");
-  const [font, setFont] = useState("block");
-  const [output, setOutput] = useState("");
-  const fonts: Record<string, Record<string, string[]>> = {
-    block: {
-      A: [" ##### ","#     #","#######","#     #","#     #"],
-      B: ["###### ","#     #","###### ","#     #","###### "],
-      C: [" ##### ","#      ","#      ","#      "," ##### "],
-      D: ["###### ","#     #","#     #","#     #","###### "],
-      E: ["#######","#      ","##### ","#      ","#######"],
-      F: ["#######","#      ","##### ","#      ","#      "],
-      G: [" ##### ","#      ","#  ####","#     #"," ##### "],
-      H: ["#     #","#     #","#######","#     #","#     #"],
-      I: ["###"," # "," # "," # ","###"],
-      J: ["  ###","    #","    #","#   #"," ### "],
-      K: ["#    #","#   # ","####  ","#   # ","#    #"],
-      L: ["#      ","#      ","#      ","#      ","#######"],
-      M: ["#     #","##   ##","# # # #","#  #  #","#     #"],
-      N: ["#     #","##    #","# #   #","#  #  #","#   ###"],
-      O: [" ##### ","#     #","#     #","#     #"," ##### "],
-      P: ["###### ","#     #","###### ","#      ","#      "],
-      Q: [" ##### ","#     #","#   # #","#    ##"," #####."],
-      R: ["###### ","#     #","###### ","#   #  ","#    ##"],
-      S: [" ##### ","#      "," ##### ","      #"," ##### "],
-      T: ["#######","   #   ","   #   ","   #   ","   #   "],
-      U: ["#     #","#     #","#     #","#     #"," ##### "],
-      V: ["#     #","#     #"," #   # ","  # #  ","   #   "],
-      W: ["#     #","#  #  #","# # # #","##   ##","#     #"],
-      X: ["#     #"," #   # ","  ###  "," #   # ","#     #"],
-      Y: ["#     #"," #   # ","  ###  ","   #   ","   #   "],
-      Z: ["#######","     # ","  ###  "," #     ","#######"],
-      " ": ["   ","   ","   ","   ","   "],
-    },
-    simple: {
-      A: ["/\\","/__\\"],
-      B: ["|__","|__|"],
-      C: ["/--","\--"],
-      " ": [" "," "],
-    }
+  const [text, setText] = useState("HELLO");
+  const [style, setStyle] = useState("banner");
+  const generateBanner = (t: string) => {
+    const lines = ["#".repeat(t.length*4+2),"# " + t.split("").join("   ") + " #","#".repeat(t.length*4+2)];
+    return lines.join("\n");
   };
-  const generate = () => {
-    const upper = text.toUpperCase();
-    const fontData = fonts[font] || fonts.block;
-    const rows = 5;
-    const lines: string[] = Array(rows).fill("");
-    for (const ch of upper) {
-      const charData = fontData[ch] || fontData[" "] || Array(rows).fill("  ");
-      const h = charData.length;
-      for (let i = 0; i < rows; i++) {
-        lines[i] += (charData[i % h] || "") + " ";
-      }
-    }
-    setOutput(lines.join("\n"));
+  const generateBlock = (t: string) => {
+    const chars = t.toUpperCase().split("");
+    const top = chars.map(()=>"###").join(" ");
+    const mid = chars.map(c=>"# "+c+"#").join(" ");
+    const bot = chars.map(()=>"###").join(" ");
+    return [top,mid,bot].join("\n");
   };
-  const copy = () => navigator.clipboard.writeText(output);
+  const generateBox = (t: string) => {
+    const border = "+" + "-".repeat(t.length+2) + "+";
+    return [border, "| " + t + " |", border].join("\n");
+  };
+  const output = style==="banner" ? generateBanner(text) : style==="block" ? generateBlock(text) : generateBox(text);
   return (
     <main className="min-h-screen bg-gray-950 text-white p-8">
-      <div className="max-w-3xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">ASCII Art Generator</h1>
-        <p className="text-gray-400 mb-6">Convert text to ASCII art</p>
-        <input value={text} onChange={e=>setText(e.target.value)} placeholder="Enter text..." className="w-full bg-gray-800 border border-gray-700 rounded p-3 mb-4 font-mono"/>
-        <select value={font} onChange={e=>setFont(e.target.value)} className="bg-gray-800 border border-gray-700 rounded p-2 mb-4">
-          <option value="block">Block</option>
-          <option value="simple">Simple</option>
-        </select>
-        <button onClick={generate} className="ml-4 bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded font-semibold">Generate</button>
-        {output && <div className="mt-6">
-          <div className="flex justify-between mb-2"><span className="text-gray-400">Output</span><button onClick={copy} className="text-blue-400 hover:text-blue-300 text-sm">Copy</button></div>
-          <pre className="bg-gray-900 border border-gray-700 rounded p-4 overflow-x-auto text-xs leading-tight">{output}</pre>
-        </div>}
+      <h1 className="text-3xl font-bold mb-2">ASCII Art Generator</h1>
+      <p className="text-gray-400 mb-6">Create ASCII art text banners and decorations</p>
+      <div className="max-w-2xl space-y-4">
+        <input value={text} onChange={e=>setText(e.target.value)} placeholder="Enter text" className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 font-mono" />
+        <div className="flex gap-2">
+          {["banner","block","box"].map(s=>(
+            <button key={s} onClick={()=>setStyle(s)} className={`px-4 py-2 rounded capitalize ${style===s?"bg-blue-600":"bg-gray-700 hover:bg-gray-600"}`}>{s}</button>
+          ))}
+        </div>
+        <pre className="bg-gray-800 rounded p-4 font-mono text-green-400 text-sm overflow-x-auto whitespace-pre">{output}</pre>
+        <button onClick={()=>navigator.clipboard.writeText(output)} className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">Copy</button>
       </div>
     </main>
   );

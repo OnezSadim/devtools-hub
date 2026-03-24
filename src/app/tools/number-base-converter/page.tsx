@@ -1,26 +1,41 @@
 "use client";
 import { useState } from "react";
 export default function NumberBaseConverter() {
-  const [val, setVal] = useState("255");
-  const [fromBase, setFromBase] = useState(10);
-  const bases = [{label:"Binary (2)",base:2},{label:"Octal (8)",base:8},{label:"Decimal (10)",base:10},{label:"Hex (16)",base:16}];
-  let num = NaN;
-  try { num = parseInt(val, fromBase); } catch(e) {}
-  const valid = !isNaN(num);
+  const [input, setInput] = useState("");
+  const [fromBase, setFromBase] = useState("10");
+  const convert = (val: string, from: number) => {
+    try {
+      const dec = parseInt(val, from);
+      if (isNaN(dec)) return null;
+      return { bin: dec.toString(2), oct: dec.toString(8), dec: dec.toString(10), hex: dec.toString(16).toUpperCase() };
+    } catch { return null; }
+  };
+  const result = input ? convert(input, parseInt(fromBase)) : null;
   return (
-    <div className="max-w-xl mx-auto p-6">
+    <main className="min-h-screen bg-gray-950 text-white p-8">
       <h1 className="text-3xl font-bold mb-2">Number Base Converter</h1>
-      <p className="text-gray-400 mb-6">Convert numbers between binary, octal, decimal, and hex.</p>
-      <div className="grid grid-cols-2 gap-4 mb-4">
-        <div><label className="block text-sm mb-1">Input value</label><input value={val} onChange={e=>setVal(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded p-2 font-mono" /></div>
-        <div><label className="block text-sm mb-1">From base</label><select value={fromBase} onChange={e=>setFromBase(+e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded p-2">{bases.map(b=><option key={b.base} value={b.base}>{b.label}</option>)}</select></div>
-      </div>
-      {valid ? <div className="space-y-3">{bases.map(b=>(
-        <div key={b.base} className="bg-gray-800 rounded p-3 flex justify-between">
-          <span className="text-gray-400">{b.label}</span>
-          <span className="font-mono">{num.toString(b.base).toUpperCase()}</span>
+      <p className="text-gray-400 mb-6">Convert between binary, octal, decimal, and hexadecimal</p>
+      <div className="max-w-xl space-y-4">
+        <div className="flex gap-3">
+          <input value={input} onChange={e=>setInput(e.target.value)} placeholder="Enter number" className="flex-1 bg-gray-800 border border-gray-700 rounded px-3 py-2 font-mono" />
+          <select value={fromBase} onChange={e=>setFromBase(e.target.value)} className="bg-gray-800 border border-gray-700 rounded px-3 py-2">
+            <option value="2">Binary (2)</option>
+            <option value="8">Octal (8)</option>
+            <option value="10">Decimal (10)</option>
+            <option value="16">Hex (16)</option>
+          </select>
         </div>
-      ))}</div> : <p className="text-red-400">Invalid input for base {fromBase}</p>}
-    </div>
+        {result && (
+          <div className="space-y-2">
+            {[{label:"Binary",val:result.bin},{label:"Octal",val:result.oct},{label:"Decimal",val:result.dec},{label:"Hexadecimal",val:result.hex}].map(r=>(
+              <div key={r.label} className="flex justify-between bg-gray-800 rounded px-4 py-3">
+                <span className="text-gray-400">{r.label}</span>
+                <span className="font-mono text-green-400">{r.val}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </main>
   );
 }

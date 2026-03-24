@@ -2,37 +2,51 @@
 import { useState, useCallback } from "react";
 export default function ImageToBase64() {
   const [result, setResult] = useState("");
-  const [preview, setPreview] = useState("");
-  const [name, setName] = useState("");
+  const [filename, setFilename] = useState("");
+  const [mime, setMime] = useState("");
+  const [size, setSize] = useState("");
   const handleFile = useCallback((file: File) => {
-    if (!file) return;
-    setName(file.name);
+    setFilename(file.name);
+    setMime(file.type);
+    setSize((file.size/1024).toFixed(1)+" KB");
     const reader = new FileReader();
     reader.onload = (e) => {
-      const base64 = e.target?.result as string;
-      setPreview(base64);
+      const base64 = (e.target?.result as string);
       setResult(base64);
     };
     reader.readAsDataURL(file);
   }, []);
-  const onDrop = (e: React.DragEvent) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); };
   return (
-    <div style={{minHeight:"100vh",background:"#0f172a",color:"#e2e8f0",padding:"2rem",fontFamily:"monospace"}}>
-      <h1 style={{fontSize:"2rem",fontWeight:700,marginBottom:"0.5rem"}}>Image to Base64 Converter</h1>
-      <p style={{color:"#94a3b8",marginBottom:"2rem"}}>Convert images to Base64 encoded strings for embedding in HTML/CSS/JS.</p>
-      <div onDrop={onDrop} onDragOver={e=>e.preventDefault()} style={{border:"2px dashed #334155",borderRadius:8,padding:"3rem",textAlign:"center",marginBottom:"1.5rem",cursor:"pointer"}} onClick={()=>document.getElementById("imgInput")?.click()}>
-        {preview ? <img src={preview} alt={name} style={{maxWidth:"100%",maxHeight:200,objectFit:"contain"}} /> : <div style={{color:"#64748b"}}>Drop image here or click to upload</div>}
-        <input id="imgInput" type="file" accept="image/*" style={{display:"none"}} onChange={e=>e.target.files&&handleFile(e.target.files[0])} />
-      </div>
-      {result && (
-        <div style={{background:"#1e293b",borderRadius:8,padding:"1.5rem"}}>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"1rem"}}>
-            <span style={{color:"#94a3b8",fontSize:"0.875rem"}}>{name} — {(result.length/1.37/1024).toFixed(1)} KB</span>
-            <button onClick={()=>navigator.clipboard.writeText(result)} style={{background:"#3b82f6",color:"white",border:"none",borderRadius:4,padding:"0.4rem 1rem",cursor:"pointer",fontSize:"0.875rem"}}>Copy Base64</button>
-          </div>
-          <textarea readOnly value={result} rows={6} style={{width:"100%",background:"#0f172a",color:"#38bdf8",border:"1px solid #334155",borderRadius:4,padding:"0.75rem",fontSize:"0.75rem",resize:"vertical",boxSizing:"border-box"}} />
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <h1 className="text-3xl font-bold mb-2">Image to Base64</h1>
+      <p className="text-gray-400 mb-6">Convert images to Base64 encoded strings for use in HTML/CSS</p>
+      <div className="max-w-2xl space-y-4">
+        <div onDrop={e=>{e.preventDefault();const f=e.dataTransfer.files[0];if(f)handleFile(f);}} onDragOver={e=>e.preventDefault()} className="border-2 border-dashed border-gray-700 rounded-lg p-8 text-center hover:border-blue-500 transition-colors">
+          <p className="text-gray-400 mb-3">Drag & drop an image here</p>
+          <label className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded cursor-pointer">
+            Choose File
+            <input type="file" accept="image/*" className="hidden" onChange={e=>{const f=e.target.files?.[0];if(f)handleFile(f);}} />
+          </label>
         </div>
-      )}
-    </div>
+        {result && (
+          <>
+            <div className="flex gap-4 text-sm text-gray-400">
+              <span>File: {filename}</span>
+              <span>Type: {mime}</span>
+              <span>Size: {size}</span>
+            </div>
+            <div className="bg-gray-800 rounded p-4">
+              <img src={result} alt="preview" className="max-h-48 mx-auto mb-4" />
+            </div>
+            <textarea readOnly value={result} rows={4} className="w-full bg-gray-800 border border-gray-700 rounded p-3 font-mono text-xs text-green-400" />
+            <div className="flex gap-2">
+              <button onClick={()=>navigator.clipboard.writeText(result)} className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">Copy Base64</button>
+              <button onClick={()=>navigator.clipboard.writeText(`<img src="${result}" alt="image" />`)} className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded">Copy HTML</button>
+              <button onClick={()=>navigator.clipboard.writeText(`background-image: url('${result}');`)} className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded">Copy CSS</button>
+            </div>
+          </>
+        )}
+      </div>
+    </main>
   );
 }
