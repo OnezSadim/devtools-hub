@@ -1,33 +1,10 @@
-'use client';
-import { useState } from 'react';
+"use client";
+import { useState } from "react";
 export default function HtmlEntityEncoder() {
-  const [input, setInput] = useState('');
-  const [mode, setMode] = useState('encode');
-  function process() {
-    if (mode === 'encode') {
-      return input.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-    } else {
-      return input.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&#(\d+);/g,(_,n)=>String.fromCharCode(n));
-    }
-  }
-  const output = input ? process() : '';
-  return (
-    <main style={{minHeight:'100vh',background:'#0f172a',color:'#e2e8f0',padding:'2rem',fontFamily:'sans-serif'}}>
-      <h1 style={{fontSize:'2rem',marginBottom:'0.5rem'}}>HTML Entity Encoder</h1>
-      <p style={{color:'#94a3b8',marginBottom:'2rem'}}>Encode and decode HTML entities</p>
-      <div style={{display:'flex',gap:'1rem',marginBottom:'1.5rem'}}>
-        {['encode','decode'].map(m=><button key={m} onClick={()=>setMode(m)} style={{padding:'0.5rem 1.5rem',background:mode===m?'#6366f1':'#1e293b',color:'white',border:'1px solid #334155',borderRadius:'6px',cursor:'pointer'}}>{m.charAt(0).toUpperCase()+m.slice(1)}</button>)}
-      </div>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem'}}>
-        <div>
-          <label style={{display:'block',marginBottom:'0.5rem',color:'#94a3b8'}}>Input</label>
-          <textarea value={input} onChange={e=>setInput(e.target.value)} style={{width:'100%',height:'250px',background:'#1e293b',border:'1px solid #334155',borderRadius:'8px',padding:'1rem',color:'#e2e8f0',fontFamily:'monospace',fontSize:'0.875rem'}} placeholder={mode==='encode'?'<p>Hello & "World"</p>':'&lt;p&gt;Hello &amp; &quot;World&quot;&lt;/p&gt;'} />
-        </div>
-        <div>
-          <label style={{display:'block',marginBottom:'0.5rem',color:'#94a3b8'}}>Output</label>
-          <textarea readOnly value={output} style={{width:'100%',height:'250px',background:'#1e293b',border:'1px solid #334155',borderRadius:'8px',padding:'1rem',color:'#10b981',fontFamily:'monospace',fontSize:'0.875rem'}} />
-        </div>
-      </div>
-    </main>
-  );
+  const [input, setInput] = useState("");
+  const [mode, setMode] = useState("encode");
+  const encode = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+  const decode = s => s.replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;/g,'"').replace(/&#39;/g,"'");
+  const output = mode === "encode" ? encode(input) : decode(input);
+  return (<div className="min-h-screen bg-gray-950 text-white p-8"><h1 className="text-3xl font-bold mb-2">HTML Entity Encoder</h1><p className="text-gray-400 mb-6">Encode or decode HTML entities.</p><div className="flex gap-2 mb-4">{["encode","decode"].map(m => (<button key={m} onClick={() => setMode(m)} className={`px-4 py-2 rounded font-medium ${mode===m?"bg-blue-600":"bg-gray-800 hover:bg-gray-700"}`}>{m.charAt(0).toUpperCase()+m.slice(1)}</button>))}</div><textarea className="w-full h-36 bg-gray-900 border border-gray-700 rounded p-3 font-mono text-sm mb-4" placeholder="Input..." value={input} onChange={e => setInput(e.target.value)} /><div className="bg-gray-900 border border-gray-700 rounded p-4 font-mono text-sm whitespace-pre-wrap break-all min-h-24">{output || <span className="text-gray-600">Output will appear here</span>}</div><button onClick={() => navigator.clipboard.writeText(output)} className="mt-3 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded text-sm">Copy</button></div>);
 }

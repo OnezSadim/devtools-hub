@@ -1,10 +1,3 @@
-import type { Metadata } from 'next'
-
-export const metadata: Metadata = {
-  title: 'Css Gradient Generator | DevTools Hub',
-  description: 'Free online css gradient generator tool. No installation required, works directly in your browser.',
-}
-
-export default function Layout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>
-}
+import type { Metadata } from "next";
+export const metadata: Metadata = { title: "CSS Gradient Generator | DevTools Hub", description: "Generate beautiful CSS linear and radial gradients with a visual editor. Copy the CSS code instantly." };
+export default function Layout({ children }: { children: React.ReactNode }) { return children; }

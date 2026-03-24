@@ -2,30 +2,15 @@
 import { useState } from "react";
 export default function TextCaseConverter() {
   const [input, setInput] = useState("");
-  const conversions = [
-    { label: "UPPERCASE", fn: (s: string) => s.toUpperCase() },
-    { label: "lowercase", fn: (s: string) => s.toLowerCase() },
-    { label: "Title Case", fn: (s: string) => s.replace(/\w\S*/g, t => t.charAt(0).toUpperCase() + t.slice(1).toLowerCase()) },
-    { label: "camelCase", fn: (s: string) => s.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (_,c) => c.toUpperCase()) },
-    { label: "PascalCase", fn: (s: string) => s.replace(/[^a-zA-Z0-9]+(.)/g, (_,c) => c.toUpperCase()).replace(/^./, c => c.toUpperCase()) },
-    { label: "snake_case", fn: (s: string) => s.toLowerCase().replace(/[^a-zA-Z0-9]+/g, "_").replace(/^_|_$/g, "") },
-    { label: "kebab-case", fn: (s: string) => s.toLowerCase().replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "") },
-    { label: "CONSTANT_CASE", fn: (s: string) => s.toUpperCase().replace(/[^A-Z0-9]+/g, "_").replace(/^_|_$/g, "") },
+  const toCase = (fn) => fn(input);
+  const cases = [
+    { label: "lowercase", fn: s => s.toLowerCase() },
+    { label: "UPPERCASE", fn: s => s.toUpperCase() },
+    { label: "Title Case", fn: s => s.replace(/\w\S*/g, t => t.charAt(0).toUpperCase() + t.slice(1).toLowerCase()) },
+    { label: "camelCase", fn: s => s.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (_, c) => c.toUpperCase()) },
+    { label: "PascalCase", fn: s => s.replace(/[^a-zA-Z0-9]+(.)/g, (_, c) => c.toUpperCase()).replace(/^(.)/, c => c.toUpperCase()) },
+    { label: "snake_case", fn: s => s.replace(/\s+/g, "_").replace(/([A-Z])/g, "_$1").toLowerCase().replace(/^_/, "") },
+    { label: "kebab-case", fn: s => s.replace(/\s+/g, "-").replace(/([A-Z])/g, "-$1").toLowerCase().replace(/^-/, "") },
   ];
-  return (
-    <div style={{minHeight:"100vh",background:"#0f172a",color:"#e2e8f0",padding:"2rem",fontFamily:"monospace"}}>
-      <h1 style={{fontSize:"2rem",fontWeight:700,marginBottom:"0.5rem"}}>Text Case Converter</h1>
-      <p style={{color:"#94a3b8",marginBottom:"2rem"}}>Convert text between camelCase, snake_case, kebab-case, PascalCase and more.</p>
-      <textarea value={input} onChange={e=>setInput(e.target.value)} placeholder="Enter your text here..." rows={4} style={{width:"100%",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:8,padding:"0.75rem",fontSize:"1rem",marginBottom:"1.5rem",resize:"vertical",boxSizing:"border-box"}} />
-      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:"1rem"}}>
-        {conversions.map(({label,fn})=>(
-          <div key={label} style={{background:"#1e293b",borderRadius:8,padding:"1rem"}}>
-            <div style={{color:"#64748b",fontSize:"0.75rem",marginBottom:"0.5rem"}}>{label}</div>
-            <div style={{color:"#38bdf8",wordBreak:"break-all",marginBottom:"0.5rem",minHeight:"1.5rem"}}>{input ? fn(input) : ""}</div>
-            <button onClick={()=>navigator.clipboard.writeText(input?fn(input):"")} style={{background:"#334155",color:"#e2e8f0",border:"none",borderRadius:4,padding:"0.25rem 0.75rem",cursor:"pointer",fontSize:"0.75rem"}}>Copy</button>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  return (<div className="min-h-screen bg-gray-950 text-white p-8"><h1 className="text-3xl font-bold mb-2">Text Case Converter</h1><p className="text-gray-400 mb-6">Convert text between different cases instantly.</p><textarea className="w-full h-32 bg-gray-900 border border-gray-700 rounded p-3 font-mono text-sm mb-6" placeholder="Enter text..." value={input} onChange={e => setInput(e.target.value)} /><div className="grid gap-3">{cases.map(({label, fn}) => (<div key={label} className="bg-gray-900 border border-gray-700 rounded p-3"><div className="text-xs text-gray-500 mb-1">{label}</div><div className="font-mono text-sm break-all">{input ? fn(input) : <span className="text-gray-600">Output will appear here</span>}</div></div>))}</div></div>);
 }
