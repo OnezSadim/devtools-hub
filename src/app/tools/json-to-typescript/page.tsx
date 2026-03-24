@@ -1,60 +1,52 @@
-'use client';
-import { useState } from 'react';
-export default function JsonToTypescript() {
+"use client";
+import { useState } from "react";
+export default function JSONToTypeScript() {
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
   const [error, setError] = useState('');
-  function jsonToTs(obj, name = 'Root') {
-    if (obj === null) return 'null';
-    const t = typeof obj;
-    if (t !== 'object') return t;
-    if (Array.isArray(obj)) {
-      const item = obj[0];
-      return item && typeof item === 'object' ? jsonToTs(item, name + 'Item') + '[]' : (typeof item) + '[]';
+  function getType(val, name) {
+    if(val === null) return 'null';
+    if(Array.isArray(val)) {
+      if(val.length===0) return 'unknown[]';
+      return getType(val[0],name)+'[]'; 
     }
-    const lines = ['interface ' + name + ' {'];
-    const nested = [];
-    for (const [k, v] of Object.entries(obj)) {
-      if (v === null) { lines.push('  ' + k + ': null;'); }
-      else if (Array.isArray(v)) {
-        const item = v[0];
-        if (item && typeof item === 'object') { lines.push('  ' + k + ': ' + k.charAt(0).toUpperCase() + k.slice(1) + 'Item[];'); nested.push(jsonToTs(item, k.charAt(0).toUpperCase() + k.slice(1) + 'Item')); }
-        else { lines.push('  ' + k + ': ' + (typeof item) + '[];'); }
-      } else if (typeof v === 'object') {
-        const cn = k.charAt(0).toUpperCase() + k.slice(1);
-        lines.push('  ' + k + ': ' + cn + ';');
-        nested.push(jsonToTs(v, cn));
-      } else { lines.push('  ' + k + ': ' + typeof v + ';'); }
-    }
-    lines.push('}');
-    return [...nested, lines.join('
-')].join('
-
+    if(typeof val === 'object') return generate(val, name);
+    return typeof val;
+  }
+  function generate(obj, name='Root') {
+    const fields = Object.entries(obj).map(([k,v])=>{
+      const safe = /^[a-zA-Z_$]/.test(k)?k:`'${k}'`;
+      return `  ${safe}: ${getType(v,k.charAt(0).toUpperCase()+k.slice(1))};`;
+    }).join('
 ');
+    return `interface ${name} {
+${fields}
+}`;
   }
   function convert() {
+    setError('');
     try {
-      const parsed = JSON.parse(input);
-      setOutput(jsonToTs(parsed));
-      setError('');
-    } catch(e) { setError('Invalid JSON: ' + e.message); setOutput(''); }
+      const obj = JSON.parse(input);
+      setOutput(generate(obj));
+    } catch(e){setError(e.message);}
   }
   return (
-    <main style={{minHeight:'100vh',background:'#0f172a',color:'#e2e8f0',padding:'2rem',fontFamily:'monospace'}}>
-      <h1 style={{fontSize:'2rem',marginBottom:'0.5rem'}}>JSON to TypeScript</h1>
-      <p style={{color:'#94a3b8',marginBottom:'2rem'}}>Convert JSON objects to TypeScript interfaces</p>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem'}}>
+    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
+      <h1 className="text-3xl font-bold mb-2">JSON to TypeScript</h1>
+      <p className="text-gray-400 mb-6">Convert JSON objects to TypeScript interface definitions</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label style={{display:'block',marginBottom:'0.5rem',color:'#94a3b8'}}>JSON Input</label>
-          <textarea value={input} onChange={e=>setInput(e.target.value)} style={{width:'100%',height:'300px',background:'#1e293b',border:'1px solid #334155',borderRadius:'8px',padding:'1rem',color:'#e2e8f0',fontFamily:'monospace',fontSize:'0.875rem'}} placeholder='{"name":"Alice","age":30}' />
+          <label className="block text-sm text-gray-400 mb-1">JSON Input</label>
+          <textarea value={input} onChange={e=>setInput(e.target.value)} className="w-full h-80 bg-gray-900 border border-gray-700 rounded p-3 font-mono text-sm" placeholder='{"name":"John","age":30,"active":true}' />
+          <button onClick={convert} className="mt-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded font-medium">Convert</button>
+          {error && <p className="mt-2 text-red-400 text-sm">{error}</p>}
         </div>
         <div>
-          <label style={{display:'block',marginBottom:'0.5rem',color:'#94a3b8'}}>TypeScript Output</label>
-          <textarea readOnly value={output} style={{width:'100%',height:'300px',background:'#1e293b',border:'1px solid #334155',borderRadius:'8px',padding:'1rem',color:'#10b981',fontFamily:'monospace',fontSize:'0.875rem'}} />
+          <label className="block text-sm text-gray-400 mb-1">TypeScript Interface</label>
+          <textarea value={output} readOnly className="w-full h-80 bg-gray-900 border border-gray-700 rounded p-3 font-mono text-sm" />
+          {output && <button onClick={()=>navigator.clipboard.writeText(output)} className="mt-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded">Copy</button>}
         </div>
       </div>
-      {error && <p style={{color:'#f87171',marginTop:'1rem'}}>{error}</p>}
-      <button onClick={convert} style={{marginTop:'1rem',padding:'0.75rem 2rem',background:'#6366f1',color:'white',border:'none',borderRadius:'8px',cursor:'pointer',fontSize:'1rem'}}>Convert</button>
     </main>
   );
 }

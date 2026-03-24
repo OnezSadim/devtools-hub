@@ -1,29 +1,27 @@
 "use client";
 import { useState } from "react";
-
 export default function NginxConfigGenerator() {
-  const [domain, setDomain] = useState("example.com");
-  const [port, setPort] = useState("3000");
+  const [domain, setDomain] = useState('example.com');
+  const [port, setPort] = useState('3000');
   const [ssl, setSsl] = useState(true);
-  const [www, setWww] = useState(true);
-  const [config, setConfig] = useState("");
-
-  const generate = () => {
-    const base = ssl ? `server {
-    listen 80;
-    server_name ${www ? `www.${domain} ` : ""}${domain};
-    return 301 https://${domain}$request_uri;
-}
-
-server {
-    listen 443 ssl http2;
-    server_name ${domain};
-
+  const [type, setType] = useState('proxy');
+  const [output, setOutput] = useState('');
+  function generate() {
+    const sslBlock = ssl ? `
+    listen 443 ssl;
     ssl_certificate /etc/letsencrypt/live/${domain}/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/${domain}/privkey.pem;
     ssl_protocols TLSv1.2 TLSv1.3;
-    ssl_ciphers HIGH:!aNULL:!MD5;
-
+    ssl_ciphers HIGH:!aNULL:!MD5;` : '';
+    const redirect = ssl ? `
+server {
+    listen 80;
+    server_name ${domain} www.${domain};
+    return 301 https://$host$request_uri;
+}
+` : '';
+    let location = '';
+    if(type==='proxy') location = `
     location / {
         proxy_pass http://localhost:${port};
         proxy_http_version 1.1;
@@ -31,54 +29,48 @@ server {
         proxy_set_header Connection 'upgrade';
         proxy_set_header Host $host;
         proxy_cache_bypass $http_upgrade;
-    }
-}` : `server {
-    listen 80;
-    server_name ${www ? `www.${domain} ` : ""}${domain};
+    }`;
+    else if(type==='static') location = `
+    root /var/www/${domain};
+    index index.html;
 
     location / {
+        try_files $uri $uri/ =404;
+    }`;
+    else location = `
+    location / {
         proxy_pass http://localhost:${port};
-        proxy_http_version 1.1;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-    }
-}`;
-    setConfig(base);
-  };
+        proxy_buffering off;
+        proxy_set_header X-Accel-Buffering no;
+    }`;
+    setOutput(`${redirect}server {
+    listen ${ssl?'443 ssl':'80'};
+    server_name ${domain} www.${domain};${sslBlock}${location}
 
+    access_log /var/log/nginx/${domain}.access.log;
+    error_log /var/log/nginx/${domain}.error.log;
+}`);
+  }
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100 p-8">
-      <div className="max-w-3xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2 text-blue-400">Nginx Config Generator</h1>
-        <p className="text-gray-400 mb-6">Generate Nginx reverse proxy configurations.</p>
-        <div className="grid grid-cols-2 gap-4 mb-4">
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">Domain</label>
-            <input type="text" className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500" value={domain} onChange={e => setDomain(e.target.value)} />
-          </div>
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">App Port</label>
-            <input type="text" className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500" value={port} onChange={e => setPort(e.target.value)} />
-          </div>
+    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
+      <h1 className="text-3xl font-bold mb-2">Nginx Config Generator</h1>
+      <p className="text-gray-400 mb-6">Generate Nginx server block configurations</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-4">
+          <div><label className="block text-sm text-gray-400 mb-1">Domain</label><input value={domain} onChange={e=>setDomain(e.target.value)} className="w-full bg-gray-900 border border-gray-700 rounded px-3 py-2" /></div>
+          <div><label className="block text-sm text-gray-400 mb-1">Upstream Port</label><input value={port} onChange={e=>setPort(e.target.value)} className="w-full bg-gray-900 border border-gray-700 rounded px-3 py-2" /></div>
+          <div><label className="block text-sm text-gray-400 mb-1">Type</label><select value={type} onChange={e=>setType(e.target.value)} className="w-full bg-gray-900 border border-gray-700 rounded px-3 py-2"><option value="proxy">Reverse Proxy</option><option value="static">Static Files</option><option value="stream">Streaming</option></select></div>
+          <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked={ssl} onChange={e=>setSsl(e.target.checked)} /><span>Enable SSL (Let{"’"}s Encrypt)</span></label>
+          <button onClick={generate} className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded font-medium">Generate Config</button>
         </div>
-        <div className="flex gap-6 mb-4">
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input type="checkbox" checked={ssl} onChange={e => setSsl(e.target.checked)} className="w-4 h-4" />
-            <span className="text-sm">Enable SSL (Let&apos;s Encrypt)</span>
-          </label>
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input type="checkbox" checked={www} onChange={e => setWww(e.target.checked)} className="w-4 h-4" />
-            <span className="text-sm">Include www redirect</span>
-          </label>
-        </div>
-        <button onClick={generate} className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg mb-4">Generate Config</button>
-        {config && (
-          <div>
-            <pre className="bg-gray-900 border border-gray-700 rounded-lg p-4 font-mono text-sm text-green-400 whitespace-pre-wrap overflow-x-auto">{config}</pre>
-            <button onClick={() => navigator.clipboard.writeText(config)} className="mt-2 text-sm text-blue-400 hover:text-blue-300">Copy to clipboard</button>
+        <div>
+          <div className="flex justify-between items-center mb-1">
+            <label className="text-sm text-gray-400">nginx.conf</label>
+            {output&&<button onClick={()=>navigator.clipboard.writeText(output)} className="text-xs px-2 py-1 bg-gray-700 hover:bg-gray-600 rounded">Copy</button>}
           </div>
-        )}
+          <pre className="bg-gray-900 border border-gray-700 rounded p-4 font-mono text-sm h-96 overflow-auto">{output||'Configure options and click Generate'}</pre>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }
