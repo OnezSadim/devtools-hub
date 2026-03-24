@@ -14,9 +14,7 @@ export default function LoremIpsum() {
     const para = () => Array.from({length:4+Math.floor(Math.random()*4)},sentence).join(" ");
     if(unit==="words") setOutput(Array.from({length:count},word).join(" ")+".");
     else if(unit==="sentences") setOutput(Array.from({length:count},sentence).join(" "));
-    else setOutput(Array.from({length:count},para).join("
-
-"));
+    else setOutput(Array.from({length:count},para).join("\n\n"));
   };
 
   return (
