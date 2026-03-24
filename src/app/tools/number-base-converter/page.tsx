@@ -2,40 +2,46 @@
 import { useState } from "react";
 export default function NumberBaseConverter() {
   const [value, setValue] = useState("");
-  const [base, setBase] = useState(10);
-  function convert(v: string, from: number) {
-    const n = parseInt(v, from);
-    if (isNaN(n)) return null;
-    return { dec: n.toString(10), bin: n.toString(2), oct: n.toString(8), hex: n.toString(16).toUpperCase() };
-  }
-  const result = value ? convert(value, base) : null;
+  const [fromBase, setFromBase] = useState("10");
+  const convert = (n: string, from: number) => {
+    try {
+      const dec = parseInt(n, from);
+      if (isNaN(dec)) return null;
+      return { bin: dec.toString(2), oct: dec.toString(8), dec: dec.toString(10), hex: dec.toString(16).toUpperCase() };
+    } catch { return null; }
+  };
+  const result = value ? convert(value, parseInt(fromBase)) : null;
+  const bases = [{label:"Binary (2)",val:"2"},{label:"Octal (8)",val:"8"},{label:"Decimal (10)",val:"10"},{label:"Hexadecimal (16)",val:"16"}];
   return (
-    <main className="min-h-screen bg-gray-950 text-gray-100 p-6">
+    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
       <div className="max-w-2xl mx-auto">
         <h1 className="text-3xl font-bold mb-2">Number Base Converter</h1>
-        <p className="text-gray-400 mb-6">Convert between decimal, binary, octal, and hexadecimal.</p>
-        <div className="mb-4">
-          <label className="block text-sm text-gray-400 mb-1">Input Base</label>
-          <div className="flex gap-2 mb-3">
-            {[{b:10,l:"Decimal"},{b:2,l:"Binary"},{b:8,l:"Octal"},{b:16,l:"Hex"}].map(({b,l})=>(
-              <button key={b} onClick={()=>{setBase(b);setValue("");}} className={`px-3 py-1 rounded text-sm font-medium ${base===b?"bg-blue-600":"bg-gray-800 hover:bg-gray-700"}`}>{l}</button>
-            ))}
+        <p className="text-gray-400 mb-6">Convert numbers between binary, octal, decimal, and hexadecimal.</p>
+        <div className="bg-gray-900 rounded-lg p-6 mb-4">
+          <div className="flex gap-3 mb-4">
+            <div className="flex-1">
+              <label className="block text-sm font-medium mb-2">Input Number</label>
+              <input className="w-full bg-gray-800 border border-gray-700 rounded p-3 font-mono" value={value} onChange={e => setValue(e.target.value)} placeholder="Enter number..." />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">From Base</label>
+              <select className="bg-gray-800 border border-gray-700 rounded p-3" value={fromBase} onChange={e => setFromBase(e.target.value)}>
+                {bases.map(b => <option key={b.val} value={b.val}>{b.label}</option>)}
+              </select>
+            </div>
           </div>
-          <input value={value} onChange={e=>setValue(e.target.value)} className="w-full bg-gray-900 border border-gray-700 rounded p-3 font-mono text-lg" placeholder={base===2?"1010":base===8?"17":base===16?"FF":"255"} />
         </div>
-        {result ? (
-          <div className="space-y-3">
-            {[{l:"Decimal (base 10)",v:result.dec},{l:"Binary (base 2)",v:result.bin},{l:"Octal (base 8)",v:result.oct},{l:"Hexadecimal (base 16)",v:result.hex}].map(({l,v})=>(
-              <div key={l} className="bg-gray-900 rounded p-3 flex justify-between items-center">
-                <span className="text-gray-400 text-sm">{l}</span>
-                <div className="flex items-center gap-2">
-                  <code className="text-green-400 font-mono text-lg">{v}</code>
-                  <button onClick={()=>navigator.clipboard.writeText(v)} className="text-xs px-2 py-1 bg-gray-700 rounded hover:bg-gray-600">Copy</button>
-                </div>
+        {result && (
+          <div className="grid grid-cols-2 gap-4">
+            {[{l:"Binary",v:result.bin},{l:"Octal",v:result.oct},{l:"Decimal",v:result.dec},{l:"Hexadecimal",v:result.hex}].map(({l,v}) => (
+              <div key={l} className="bg-gray-900 rounded-lg p-4">
+                <div className="text-gray-400 text-sm mb-1">{l}</div>
+                <div className="font-mono text-xl text-green-400">{v}</div>
+                <button onClick={() => navigator.clipboard.writeText(v)} className="text-xs text-gray-500 hover:text-gray-300 mt-1">Copy</button>
               </div>
             ))}
           </div>
-        ) : value ? <p className="text-red-400">Invalid input for base {base}</p> : null}
+        )}
       </div>
     </main>
   );
