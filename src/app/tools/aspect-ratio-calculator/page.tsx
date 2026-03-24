@@ -1,45 +1,29 @@
 "use client";
 import { useState } from "react";
 export default function AspectRatioCalculator() {
-  const [w, setW] = useState("");
-  const [h, setH] = useState("");
-  const [mode, setMode] = useState("find");
-  const [newW, setNewW] = useState("");
-  const [newH, setNewH] = useState("");
-  const gcd = (a: number, b: number): number => b===0?a:gcd(b,a%b);
-  const width = parseFloat(w), height = parseFloat(h);
-  const ratio = (!isNaN(width)&&!isNaN(height)&&width>0&&height>0) ? width/height : null;
-  const g = (ratio&&width&&height) ? gcd(Math.round(width),Math.round(height)) : 1;
-  const ratioStr = ratio ? `${Math.round(width)/g}:${Math.round(height)/g}` : "";
-  const calcNew = () => {
-    if(!ratio) return "";
-    if(newW) return `Height: ${(parseFloat(newW)/ratio).toFixed(0)}px`;
-    if(newH) return `Width: ${(parseFloat(newH)*ratio).toFixed(0)}px`;
-    return "";
-  };
-  const presets = ["16:9","4:3","1:1","21:9","3:2","4:5","9:16"];
+  const [w, setW] = useState(1920);
+  const [h, setH] = useState(1080);
+  const [newW, setNewW] = useState(1280);
+  const gcd = (a:number,b:number):number => b===0?a:gcd(b,a%b);
+  const g = gcd(w, h);
+  const ratioW = w/g, ratioH = h/g;
+  const newH = Math.round((newW / w) * h);
+  const presets = [{w:1920,h:1080},{w:1280,h:720},{w:1920,h:1200},{w:2560,h:1440},{w:3840,h:2160},{w:1080,h:1920},{w:1080,h:1080}];
   return (
-    <div style={{maxWidth:550,margin:"0 auto",padding:"2rem",fontFamily:"monospace"}}>
-      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Aspect Ratio Calculator</h1>
-      <p style={{color:"#aaa",marginBottom:"1rem"}}>Calculate aspect ratios and scale dimensions.</p>
-      <div style={{display:"flex",gap:"0.5rem",marginBottom:"1.5rem",flexWrap:"wrap"}}>
-        {presets.map(p=>(
-          <button key={p} onClick={()=>{const[pw,ph]=p.split(":");setW(pw);setH(ph);}} style={{padding:"0.3rem 0.6rem",background:"#1e1e1e",border:"1px solid #333",borderRadius:4,color:"#fff",cursor:"pointer",fontSize:"0.85rem"}}>{p}</button>
-        ))}
+    <div className="max-w-xl mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-2">Aspect Ratio Calculator</h1>
+      <p className="text-gray-400 mb-6">Calculate and maintain aspect ratios for images and videos.</p>
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        <div><label className="block text-sm mb-1">Width (px)</label><input type="number" value={w} onChange={e=>setW(+e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded p-2" /></div>
+        <div><label className="block text-sm mb-1">Height (px)</label><input type="number" value={h} onChange={e=>setH(+e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded p-2" /></div>
       </div>
-      <div style={{display:"flex",gap:"1rem",marginBottom:"1rem"}}>
-        <div style={{flex:1}}><label style={{color:"#aaa",display:"block",marginBottom:4}}>Width</label><input value={w} onChange={e=>setW(e.target.value)} style={{width:"100%",padding:"0.75rem",background:"#1e1e1e",border:"1px solid #333",borderRadius:4,color:"#fff",boxSizing:"border-box"}} /></div>
-        <div style={{flex:1}}><label style={{color:"#aaa",display:"block",marginBottom:4}}>Height</label><input value={h} onChange={e=>setH(e.target.value)} style={{width:"100%",padding:"0.75rem",background:"#1e1e1e",border:"1px solid #333",borderRadius:4,color:"#fff",boxSizing:"border-box"}} /></div>
+      <div className="bg-gray-800 rounded p-4 mb-6 text-center">
+        <p className="text-4xl font-bold">{ratioW}:{ratioH}</p>
+        <p className="text-gray-400 text-sm mt-1">{w} × {h}</p>
       </div>
-      {ratio && <div style={{padding:"1rem",background:"#1e1e1e",borderRadius:4,border:"1px solid #7c3aed",marginBottom:"1.5rem",textAlign:"center"}}><span style={{color:"#aaa"}}>Ratio: </span><span style={{fontSize:"1.5rem"}}>{ratioStr}</span><span style={{color:"#aaa",marginLeft:"1rem"}}>({ratio.toFixed(4)})</span></div>}
-      <div style={{marginBottom:"1rem"}}>
-        <p style={{color:"#aaa",marginBottom:"0.5rem"}}>Scale to new dimensions:</p>
-        <div style={{display:"flex",gap:"1rem"}}>
-          <div style={{flex:1}}><label style={{color:"#aaa",display:"block",marginBottom:4}}>New Width</label><input value={newW} onChange={e=>{setNewW(e.target.value);setNewH("");}} style={{width:"100%",padding:"0.75rem",background:"#1e1e1e",border:"1px solid #333",borderRadius:4,color:"#fff",boxSizing:"border-box"}} /></div>
-          <div style={{flex:1}}><label style={{color:"#aaa",display:"block",marginBottom:4}}>New Height</label><input value={newH} onChange={e=>{setNewH(e.target.value);setNewW("");}} style={{width:"100%",padding:"0.75rem",background:"#1e1e1e",border:"1px solid #333",borderRadius:4,color:"#fff",boxSizing:"border-box"}} /></div>
-        </div>
-        {(newW||newH) && ratio && <div style={{marginTop:"0.5rem",padding:"0.75rem",background:"#1e1e1e",borderRadius:4,border:"1px solid #333"}}>{calcNew()}</div>}
-      </div>
+      <div className="mb-4"><label className="block text-sm mb-1">New width</label><input type="number" value={newW} onChange={e=>setNewW(+e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded p-2" /></div>
+      <div className="bg-blue-900/40 rounded p-3 text-center mb-6"><p className="text-sm text-gray-400">New height</p><p className="text-2xl font-bold">{newH}px</p></div>
+      <div className="grid grid-cols-4 gap-2">{presets.map(p=><button key={`${p.w}x${p.h}`} onClick={()=>{setW(p.w);setH(p.h);}} className="bg-gray-700 hover:bg-gray-600 rounded p-2 text-xs">{p.w}x{p.h}</button>)}</div>
     </div>
   );
 }

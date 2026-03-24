@@ -1,45 +1,38 @@
 "use client";
 import { useState } from "react";
 export default function XmlFormatter() {
-  const [xml, setXml] = useState('<root><person id="1"><name>Alice</name><email>alice@example.com</email></person></root>');
+  const [input, setInput] = useState("");
+  const [output, setOutput] = useState("");
   const [error, setError] = useState("");
   const format = () => {
     try {
       const parser = new DOMParser();
-      const doc = parser.parseFromString(xml, "text/xml");
+      const doc = parser.parseFromString(input, "application/xml");
       const err = doc.querySelector("parsererror");
-      if (err) { setError(err.textContent || "Parse error"); return ""; }
-      setError("");
-      const ser = new XMLSerializer();
-      let s = ser.serializeToString(doc);
+      if (err) { setError("Invalid XML: " + err.textContent); setOutput(""); return; }
+      const s = new XMLSerializer();
+      let xml = s.serializeToString(doc);
       let indent = 0;
-      return s.replace(/></g, ">
+      const formatted = xml.replace(/>\s*</g,">
 <").split("
-").map(line=>{
-        line = line.trim();
-        if (line.startsWith("</")) indent = Math.max(0,indent-1);
-        const r = "  ".repeat(indent)+line;
-        if (!line.startsWith("</") && !line.endsWith("/>") && line.includes("<") && !line.includes("</")) indent++;
-        return r;
+").map(line => {
+        if (line.match(/^<\//)) indent--;
+        const l = "  ".repeat(Math.max(0,indent)) + line.trim();
+        if (line.match(/^<[^/!?][^>]*[^/]>/) && !line.match(/<.*>.*<\/.*>/)) indent++;
+        return l;
       }).join("
 ");
-    } catch(e) { setError(String(e)); return ""; }
+      setOutput(formatted); setError("");
+    } catch(e) { setError(String(e)); }
   };
-  const formatted = format();
   return (
-    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
+    <div className="max-w-2xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-2">XML Formatter</h1>
-      <p className="text-gray-400 mb-6">Format and validate XML documents.</p>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm text-gray-400 mb-1">Input XML</label>
-          <textarea value={xml} onChange={e=>setXml(e.target.value)} rows={14} className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white font-mono text-sm resize-none" />
-        </div>
-        <div>
-          <div className="flex justify-between mb-1"><label className="text-sm text-gray-400">Formatted</label><button onClick={()=>navigator.clipboard.writeText(formatted)} className="text-xs text-blue-400 hover:text-blue-300">Copy</button></div>
-          {error ? <p className="text-red-400 text-sm p-3 bg-red-950 rounded">{error}</p> : <pre className="w-full h-64 bg-gray-800 border border-gray-700 rounded px-3 py-2 text-green-300 font-mono text-xs overflow-auto whitespace-pre">{formatted}</pre>}
-        </div>
-      </div>
-    </main>
+      <p className="text-gray-400 mb-6">Prettify and validate XML documents.</p>
+      <textarea value={input} onChange={e=>setInput(e.target.value)} placeholder="Paste XML here..." className="w-full h-40 bg-gray-800 border border-gray-700 rounded p-3 mb-4 font-mono text-sm" />
+      <button onClick={format} className="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded mb-4">Format XML</button>
+      {error && <p className="text-red-400 mb-2">{error}</p>}
+      {output && <textarea value={output} readOnly className="w-full h-40 bg-gray-900 border border-gray-700 rounded p-3 font-mono text-sm" />}
+    </div>
   );
 }

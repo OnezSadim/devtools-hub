@@ -1,53 +1,37 @@
 "use client";
 import { useState } from "react";
 export default function TextDiff() {
-  const [left, setLeft] = useState("");
-  const [right, setRight] = useState("");
-  const computeDiff = () => {
-    const leftLines = left.split("
+  const [a, setA] = useState("");
+  const [b, setB] = useState("");
+  const [diff, setDiff] = useState<{type:string,val:string}[]|null>(null);
+  const compute = () => {
+    const la = a.split("
+"), lb = b.split("
 ");
-    const rightLines = right.split("
-");
-    const result: {type:string,line:string}[] = [];
-    const maxLen = Math.max(leftLines.length, rightLines.length);
-    for(let i=0;i<maxLen;i++) {
-      const l = leftLines[i], r = rightLines[i];
-      if(l===r) result.push({type:"same",line:l||""});
-      else {
-        if(l!==undefined) result.push({type:"removed",line:l});
-        if(r!==undefined) result.push({type:"added",line:r});
-      }
+    const res: {type:string,val:string}[] = [];
+    const maxLen = Math.max(la.length, lb.length);
+    for (let i=0;i<maxLen;i++) {
+      if (i>=la.length) res.push({type:"add",val:lb[i]});
+      else if (i>=lb.length) res.push({type:"remove",val:la[i]});
+      else if (la[i]===lb[i]) res.push({type:"same",val:la[i]});
+      else { res.push({type:"remove",val:la[i]}); res.push({type:"add",val:lb[i]}); }
     }
-    return result;
+    setDiff(res);
   };
-  const diff = (left||right) ? computeDiff() : [];
-  const added = diff.filter(d=>d.type==="added").length;
-  const removed = diff.filter(d=>d.type==="removed").length;
   return (
-    <div style={{maxWidth:900,margin:"0 auto",padding:"2rem",fontFamily:"monospace"}}>
-      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Text Diff</h1>
-      <p style={{color:"#aaa",marginBottom:"1rem"}}>Compare two blocks of text line by line.</p>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"1rem",marginBottom:"1rem"}}>
-        <div><label style={{color:"#aaa",display:"block",marginBottom:4}}>Original</label><textarea value={left} onChange={e=>setLeft(e.target.value)} style={{width:"100%",height:200,padding:"0.75rem",background:"#1e1e1e",border:"1px solid #333",borderRadius:4,color:"#fff",fontFamily:"monospace",fontSize:"0.85rem",resize:"vertical",boxSizing:"border-box"}} /></div>
-        <div><label style={{color:"#aaa",display:"block",marginBottom:4}}>Modified</label><textarea value={right} onChange={e=>setRight(e.target.value)} style={{width:"100%",height:200,padding:"0.75rem",background:"#1e1e1e",border:"1px solid #333",borderRadius:4,color:"#fff",fontFamily:"monospace",fontSize:"0.85rem",resize:"vertical",boxSizing:"border-box"}} /></div>
+    <div className="max-w-3xl mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-2">Text Diff</h1>
+      <p className="text-gray-400 mb-6">Compare two blocks of text line by line.</p>
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        <div><label className="block text-sm mb-1 text-gray-400">Original</label><textarea value={a} onChange={e=>setA(e.target.value)} className="w-full h-36 bg-gray-800 border border-gray-700 rounded p-3 font-mono text-sm" /></div>
+        <div><label className="block text-sm mb-1 text-gray-400">Modified</label><textarea value={b} onChange={e=>setB(e.target.value)} className="w-full h-36 bg-gray-800 border border-gray-700 rounded p-3 font-mono text-sm" /></div>
       </div>
-      {diff.length>0 && (
-        <>
-          <div style={{display:"flex",gap:"1rem",marginBottom:"0.75rem"}}>
-            <span style={{color:"#22c55e"}}>+{added} added</span>
-            <span style={{color:"#ef4444"}}>-{removed} removed</span>
-            <span style={{color:"#aaa"}}>{diff.filter(d=>d.type==="same").length} unchanged</span>
-          </div>
-          <div style={{background:"#1e1e1e",borderRadius:4,border:"1px solid #333",overflow:"auto",maxHeight:400}}>
-            {diff.map((d,i)=>(
-              <div key={i} style={{padding:"0.2rem 1rem",background:d.type==="added"?"rgba(34,197,94,0.1)":d.type==="removed"?"rgba(239,68,68,0.1)":"transparent",borderLeft:`3px solid ${d.type==="added"?"#22c55e":d.type==="removed"?"#ef4444":"transparent"}`}}>
-                <span style={{color:d.type==="added"?"#22c55e":d.type==="removed"?"#ef4444":"#aaa",marginRight:8}}>{d.type==="added"?"+":d.type==="removed"?"-":" "}</span>
-                {d.line||" "}
-              </div>
-            ))}
-          </div>
-        </>
-      )}
+      <button onClick={compute} className="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded mb-4">Compare</button>
+      {diff && <div className="font-mono text-sm bg-gray-900 rounded p-4 space-y-0.5">{diff.map((l,i)=>(
+        <div key={i} className={l.type==="add"?"bg-green-900/40 text-green-300":l.type==="remove"?"bg-red-900/40 text-red-300":"text-gray-400"}>
+          <span className="mr-2">{l.type==="add"?"+":l.type==="remove"?"-":" "}</span>{l.val}
+        </div>
+      ))}</div>}
     </div>
   );
 }
