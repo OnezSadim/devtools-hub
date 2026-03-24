@@ -3,36 +3,47 @@ import Link from "next/link";
 const tools = [
   { name: "JSON Formatter", desc: "Format, validate and minify JSON data", href: "/tools/json-formatter", icon: "{ }" },
   { name: "Base64 Encoder/Decoder", desc: "Encode and decode Base64 strings", href: "/tools/base64-tool", icon: "B64" },
-  { name: "URL Encoder/Decoder", desc: "Encode and decode URL components", href: "/tools/url-encoder", icon: "%20" },
+  { name: "URL Encoder/Decoder", desc: "Encode and decode URL components", href: "/tools/url-encoder", icon: "%" },
   { name: "Hash Generator", desc: "Generate MD5, SHA-1, SHA-256 hashes", href: "/tools/hash-generator", icon: "#" },
-  { name: "UUID Generator", desc: "Generate random UUIDs v4", href: "/tools/uuid-generator", icon: "ID" },
-  { name: "Regex Tester", desc: "Test regular expressions with live matching", href: "/tools/regex-tester", icon: ".*" },
+  { name: "UUID Generator", desc: "Generate unique UUIDs v1 and v4", href: "/tools/uuid-generator", icon: "ID" },
+  { name: "Regex Tester", desc: "Test and debug regular expressions", href: "/tools/regex-tester", icon: ".*" },
+  { name: "CSS Minifier", desc: "Minify and compress CSS code", href: "/tools/css-minifier", icon: "CS" },
+  { name: "JWT Decoder", desc: "Decode and inspect JSON Web Tokens", href: "/tools/jwt-decoder", icon: "JW" },
+  { name: "Timestamp Converter", desc: "Convert between Unix timestamps and dates", href: "/tools/timestamp-converter", icon: "TS" },
+  { name: "Color Picker", desc: "Pick colors and convert between HEX, RGB, HSL", href: "/tools/color-picker", icon: "CL" },
+  { name: "Lorem Ipsum Generator", desc: "Generate placeholder text for designs", href: "/tools/lorem-ipsum", icon: "Lp" },
+  { name: "Markdown Preview", desc: "Preview and convert Markdown to HTML", href: "/tools/markdown-preview", icon: "MD" },
 ];
 
 export default function Home() {
   return (
-    <div className="max-w-6xl mx-auto px-4 py-16">
-      <div className="text-center mb-16">
-        <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-          Developer Tools Hub
+    <main className="min-h-screen bg-gray-950 text-white">
+      <div className="max-w-6xl mx-auto px-4 py-16">
+        <h1 className="text-5xl font-bold text-center mb-4 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+          DevTools Hub
         </h1>
-        <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-          Free, fast, client-side developer utilities. No data leaves your browser.
+        <p className="text-gray-400 text-center text-lg mb-12">
+          Free online developer utilities — no signup, no tracking, runs in your browser
         </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {tools.map((tool) => (
+            <Link
+              key={tool.href}
+              href={tool.href}
+              className="block p-6 rounded-xl bg-gray-900 border border-gray-800 hover:border-blue-500 transition-colors group"
+            >
+              <div className="text-2xl font-mono text-blue-400 mb-3">{tool.icon}</div>
+              <h2 className="text-xl font-semibold mb-2 group-hover:text-blue-400 transition-colors">
+                {tool.name}
+              </h2>
+              <p className="text-gray-400 text-sm">{tool.desc}</p>
+            </Link>
+          ))}
+        </div>
+        <footer className="mt-16 text-center text-gray-600 text-sm">
+          Built with Next.js &mdash; 100% client-side, your data never leaves your browser
+        </footer>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {tools.map((tool) => (
-          <Link key={tool.href} href={tool.href}
-            className="group block p-6 rounded-xl border border-gray-800 bg-gray-900/50 hover:border-blue-500/50 hover:bg-gray-900 transition-all">
-            <div className="text-3xl font-mono text-blue-400 mb-3">{tool.icon}</div>
-            <h2 className="text-lg font-semibold mb-1 group-hover:text-blue-400 transition">{tool.name}</h2>
-            <p className="text-sm text-gray-500">{tool.desc}</p>
-          </Link>
-        ))}
-      </div>
-      <footer className="mt-20 text-center text-gray-600 text-sm">
-        All tools run 100% client-side. Your data never leaves your browser.
-      </footer>
-    </div>
+    </main>
   );
 }
