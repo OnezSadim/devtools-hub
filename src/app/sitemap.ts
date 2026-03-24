@@ -1,12 +1,12 @@
-import { MetadataRoute } from "next";
+import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = "https://devtools-hub-green.vercel.app";
-
+  const base = 'https://devtools-hub-green.vercel.app';
   const tools = [
     'age-calculator',
     'apache-config-generator',
     'api-response-formatter',
+    'api-tester',
     'area-converter',
     'ascii-art-generator',
     'ascii-table',
@@ -16,6 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'binary-calculator',
     'binary-converter',
     'binary-text-converter',
+    'binary-to-text',
     'bmi-calculator',
     'box-shadow-generator',
     'character-counter',
@@ -36,14 +37,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'css-reset-generator',
     'css-unit-converter',
     'css-variables-generator',
+    'csv-to-html',
     'csv-to-json',
     'curl-builder',
+    'curl-to-code',
     'curl-to-fetch',
     'data-size-converter',
     'date-calculator',
     'diff-checker',
     'dns-lookup',
     'docker-compose-generator',
+    'dockerfile-generator',
+    'duplicate-line-remover',
     'email-validator',
     'env-file-generator',
     'env-file-parser',
@@ -54,6 +59,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'font-size-converter',
     'git-cheatsheet',
     'git-ignore-generator',
+    'gitignore-generator',
     'gradient-generator',
     'grid-generator',
     'hash-generator',
@@ -82,7 +88,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'ip-subnet-calculator',
     'js-formatter',
     'json-formatter',
+    'json-minifier',
     'json-path-tester',
+    'json-schema-validator',
     'json-to-csv',
     'json-to-typescript',
     'json-to-yaml',
@@ -94,6 +102,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'linux-command-reference',
     'linux-commands',
     'list-deduplicator',
+    'list-randomizer',
     'lorem-ipsum',
     'luhn-checker',
     'markdown-preview',
@@ -119,16 +128,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'port-scanner-info',
     'pressure-converter',
     'regex-tester',
+    'robots-txt-generator',
     'robots-txt-tester',
     'roman-numeral-converter',
+    'rsa-key-generator',
     'screen-resolution',
     'semver-calculator',
     'sitemap-generator',
     'speed-converter',
     'sql-formatter',
+    'ssh-key-generator',
     'ssl-checker',
     'string-case-converter',
     'string-escaper',
+    'string-length-counter',
     'string-reverse',
     'string-utilities',
     'subnet-calculator',
@@ -141,6 +154,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'temperature-converter',
     'text-case-converter',
     'text-diff',
+    'text-sorter',
     'text-statistics',
     'text-to-binary',
     'text-to-morse',
@@ -150,6 +164,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'tip-calculator',
     'toml-parser',
     'toml-validator',
+    'tsconfig-generator',
     'unicode-lookup',
     'unix-permissions',
     'url-encoder',
@@ -164,21 +179,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'yaml-to-json',
     'yaml-validator',
   ];
-
-  const toolUrls = tools.map((slug) => ({
-    url: base + "/tools/" + slug,
-    lastModified: new Date(),
-    changeFrequency: "weekly" as const,
-    priority: 0.8,
-  }));
-
   return [
-    {
-      url: base,
-      lastModified: new Date(),
-      changeFrequency: "daily" as const,
-      priority: 1,
-    },
-    ...toolUrls,
+    { url: base, lastModified: new Date(), changeFrequency: 'weekly', priority: 1.0 },
+    ...tools.map(t => ({ url: `${base}/tools/${t}`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.8 }))
   ];
 }
