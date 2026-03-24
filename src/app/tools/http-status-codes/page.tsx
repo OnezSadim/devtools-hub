@@ -1,9 +1,72 @@
 "use client";
 import { useState } from "react";
-const CODES = [{code:100,name:"Continue",desc:"Request received, continuing."},{code:200,name:"OK",desc:"Request succeeded."},{code:201,name:"Created",desc:"Resource created."},{code:204,name:"No Content",desc:"Success with no body."},{code:301,name:"Moved Permanently",desc:"URL has moved permanently."},{code:302,name:"Found",desc:"Temporary redirect."},{code:304,name:"Not Modified",desc:"Cache is still valid."},{code:400,name:"Bad Request",desc:"Malformed request syntax."},{code:401,name:"Unauthorized",desc:"Authentication required."},{code:403,name:"Forbidden",desc:"Access denied."},{code:404,name:"Not Found",desc:"Resource not found."},{code:405,name:"Method Not Allowed",desc:"HTTP method not supported."},{code:409,name:"Conflict",desc:"Request conflicts with current state."},{code:422,name:"Unprocessable Entity",desc:"Validation error."},{code:429,name:"Too Many Requests",desc:"Rate limit exceeded."},{code:500,name:"Internal Server Error",desc:"Server encountered an error."},{code:502,name:"Bad Gateway",desc:"Invalid response from upstream."},{code:503,name:"Service Unavailable",desc:"Server temporarily unavailable."},{code:504,name:"Gateway Timeout",desc:"Upstream server timed out."}];
+
+const CODES = [
+  {code:100,text:"Continue",desc:"Request received, continue process."},
+  {code:101,text:"Switching Protocols",desc:"Server switching protocols as requested."},
+  {code:200,text:"OK",desc:"Request succeeded."},
+  {code:201,text:"Created",desc:"Request succeeded and resource was created."},
+  {code:204,text:"No Content",desc:"Request succeeded but no content to return."},
+  {code:301,text:"Moved Permanently",desc:"Resource permanently moved to new URL."},
+  {code:302,text:"Found",desc:"Resource temporarily at different URL."},
+  {code:304,text:"Not Modified",desc:"Cached version is still valid."},
+  {code:307,text:"Temporary Redirect",desc:"Request should be repeated with another URI."},
+  {code:308,text:"Permanent Redirect",desc:"Request and all future requests should use new URI."},
+  {code:400,text:"Bad Request",desc:"Server cannot process the request due to client error."},
+  {code:401,text:"Unauthorized",desc:"Authentication required and has failed or not been provided."},
+  {code:403,text:"Forbidden",desc:"Server refuses the request despite valid authentication."},
+  {code:404,text:"Not Found",desc:"Requested resource could not be found."},
+  {code:405,text:"Method Not Allowed",desc:"Request method is not supported for the resource."},
+  {code:408,text:"Request Timeout",desc:"Server timed out waiting for the request."},
+  {code:409,text:"Conflict",desc:"Request conflicts with current state of the server."},
+  {code:410,text:"Gone",desc:"Resource is permanently unavailable."},
+  {code:413,text:"Payload Too Large",desc:"Request entity is larger than server limits."},
+  {code:422,text:"Unprocessable Entity",desc:"Request is well-formed but contains semantic errors."},
+  {code:429,text:"Too Many Requests",desc:"Client has sent too many requests (rate limiting)."},
+  {code:500,text:"Internal Server Error",desc:"Server encountered an unexpected condition."},
+  {code:501,text:"Not Implemented",desc:"Server does not support the functionality required."},
+  {code:502,text:"Bad Gateway",desc:"Server received invalid response from upstream."},
+  {code:503,text:"Service Unavailable",desc:"Server is temporarily unavailable (overloaded or down)."},
+  {code:504,text:"Gateway Timeout",desc:"Upstream server failed to send a response in time."},
+];
+
+const color = (code: number) => {
+  if (code < 200) return "bg-gray-700 text-gray-200";
+  if (code < 300) return "bg-green-900 text-green-200";
+  if (code < 400) return "bg-blue-900 text-blue-200";
+  if (code < 500) return "bg-yellow-900 text-yellow-200";
+  return "bg-red-900 text-red-200";
+};
+
 export default function HttpStatusCodes() {
-  const [q,setQ]=useState("");
-  const filtered=CODES.filter(c=>c.code.toString().includes(q)||c.name.toLowerCase().includes(q.toLowerCase()));
-  const color=(c:number)=>c<300?"text-green-400":c<400?"text-yellow-400":c<500?"text-orange-400":"text-red-400";
-  return(<div className="min-h-screen bg-gray-950 text-white p-6"><div className="max-w-2xl mx-auto"><h1 className="text-3xl font-bold mb-2">HTTP Status Codes</h1><p className="text-gray-400 mb-6">Quick reference for all HTTP response status codes.</p><input className="w-full bg-gray-900 border border-gray-700 rounded p-3 mb-4" placeholder="Search by code or name..." value={q} onChange={e=>setQ(e.target.value)}/><div className="space-y-2">{filtered.map(c=><div key={c.code} className="bg-gray-900 rounded p-3 flex gap-4 items-start"><span className={`font-mono font-bold text-lg w-12 ${color(c.code)}`}>{c.code}</span><div><div className="font-medium">{c.name}</div><div className="text-sm text-gray-400">{c.desc}</div></div></div>)}</div></div></div>);
+  const [search, setSearch] = useState("");
+  const filtered = CODES.filter(c => 
+    c.code.toString().includes(search) || 
+    c.text.toLowerCase().includes(search.toLowerCase()) ||
+    c.desc.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <div className="min-h-screen bg-gray-900 text-gray-100 p-8">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">HTTP Status Codes</h1>
+        <p className="text-gray-400 mb-6">Complete reference of HTTP status codes with descriptions.</p>
+        <input type="text" value={search} onChange={e=>setSearch(e.target.value)}
+          placeholder="Search by code, name, or description..."
+          className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 mb-6" />
+        <div className="space-y-2">
+          {filtered.map(c => (
+            <div key={c.code} className="bg-gray-800 rounded-lg p-4 flex gap-4 items-start">
+              <span className={`text-lg font-bold font-mono px-3 py-1 rounded ${color(c.code)}`}>{c.code}</span>
+              <div>
+                <p className="font-semibold">{c.text}</p>
+                <p className="text-gray-400 text-sm">{c.desc}</p>
+              </div>
+            </div>
+          ))}
+          {filtered.length === 0 && <p className="text-gray-500 text-center py-8">No results found.</p>}
+        </div>
+      </div>
+    </div>
+  );
 }
