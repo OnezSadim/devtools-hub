@@ -19,7 +19,12 @@ const tools = [
   { name: "Unicode Lookup", href: "/tools/unicode-lookup", description: "Inspect Unicode code points of any text" },
   { name: "Chmod Calculator", href: "/tools/chmod-calculator", description: "Calculate Unix file permission numbers visually" },
   { name: "CSS Gradient Generator", href: "/tools/css-gradient-generator", description: "Build beautiful CSS gradients visually" },
-];
+
+    { name: 'IP Address Info', desc: 'View your IP address, location, ISP, and network details', href: '/tools/ip-info' },
+    { name: 'String Case Converter', desc: 'Convert text between camelCase, snake_case, kebab-case, PascalCase and more', href: '/tools/string-case-converter' },
+    { name: 'PX to REM Converter', desc: 'Convert pixels to rem units with configurable base font size', href: '/tools/pixel-to-rem' },
+    { name: 'HTML to Markdown', desc: 'Convert HTML markup to clean Markdown format', href: '/tools/html-to-markdown' },
+    { name: 'Word Counter', desc: 'Count words, characters, sentences, paragraphs and estimate reading time', href: '/tools/word-counter' },];
 
 export default function Home() {
   return (
