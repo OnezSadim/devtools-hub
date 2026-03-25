@@ -1,34 +1,12 @@
 "use client";
 import { useState } from "react";
-const hexToRgb = (hex: string) => { const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16); return [r,g,b]; };
-const luminance = ([r,g,b]: number[]) => { const srgb = [r,g,b].map(c => { const s = c/255; return s <= 0.03928 ? s/12.92 : Math.pow((s+0.055)/1.055, 2.4); }); return 0.2126*srgb[0] + 0.7152*srgb[1] + 0.0722*srgb[2]; };
-export default function ColorContrast() {
-  const [fg, setFg] = useState('#ffffff');
-  const [bg, setBg] = useState('#000000');
-  const ratio = (() => { try { const l1 = luminance(hexToRgb(fg)), l2 = luminance(hexToRgb(bg)); const lighter = Math.max(l1,l2), darker = Math.min(l1,l2); return ((lighter+0.05)/(darker+0.05)); } catch { return 1; } })();
-  const aaLarge = ratio >= 3, aaSmall = ratio >= 4.5, aaaLarge = ratio >= 4.5, aaaSmall = ratio >= 7;
-  return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
-      <div className="max-w-lg mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Color Contrast Checker</h1>
-        <p className="text-gray-400 mb-8">Check WCAG accessibility contrast ratios.</p>
-        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div><label className="block text-sm text-gray-400 mb-1">Foreground</label><div className="flex gap-2"><input type="color" value={fg} onChange={e => setFg(e.target.value)} className="h-12 w-16 rounded cursor-pointer" /><input value={fg} onChange={e => setFg(e.target.value)} className="flex-1 bg-gray-800 rounded-lg px-3 py-2 text-white font-mono" /></div></div>
-            <div><label className="block text-sm text-gray-400 mb-1">Background</label><div className="flex gap-2"><input type="color" value={bg} onChange={e => setBg(e.target.value)} className="h-12 w-16 rounded cursor-pointer" /><input value={bg} onChange={e => setBg(e.target.value)} className="flex-1 bg-gray-800 rounded-lg px-3 py-2 text-white font-mono" /></div></div>
-          </div>
-          <div className="rounded-lg p-6 text-center" style={{backgroundColor: bg, color: fg}}><span className="text-2xl font-bold">Sample Text Preview</span></div>
-          <div className="bg-gray-800 rounded-lg p-4 text-center"><span className="text-4xl font-bold text-blue-400">{ratio.toFixed(2)}:1</span><p className="text-gray-400 text-sm mt-1">Contrast Ratio</p></div>
-          <div className="grid grid-cols-2 gap-2">
-            {[['AA Large', aaLarge],['AA Small', aaSmall],['AAA Large', aaaLarge],['AAA Small', aaaSmall]].map(([label, pass]) => (
-              <div key={label as string} className={"rounded-lg p-3 text-center " + (pass ? 'bg-green-900 text-green-300' : 'bg-red-900 text-red-300')}>
-                <div className="font-semibold">{label as string}</div>
-                <div className="text-sm">{pass ? 'PASS' : 'FAIL'}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </main>
-  );
+export default function Page() {
+  const [fg, setFg] = useState("#ffffff");
+  const [bg, setBg] = useState("#1e293b");
+  const hexToRgb = h => { const r=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h); return r?{r:parseInt(r[1],16),g:parseInt(r[2],16),b:parseInt(r[3],16)}:null; };
+  const luminance = c => { if(!c) return 0; const s=v=>{v/=255;return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4);}; return 0.2126*s(c.r)+0.7152*s(c.g)+0.0722*s(c.b); };
+  const ratio = () => { const l1=luminance(hexToRgb(fg)),l2=luminance(hexToRgb(bg)); return ((Math.max(l1,l2)+0.05)/(Math.min(l1,l2)+0.05)).toFixed(2); };
+  const r = parseFloat(ratio());
+  const aa = r>=4.5, aaa = r>=7, aaLarge = r>=3;
+  return (<div style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}><h1 style={{color:"#38bdf8",marginBottom:"1rem"}}>Color Contrast Checker</h1><p style={{color:"#94a3b8",marginBottom:"1.5rem"}}>Check WCAG color contrast ratios for accessibility.</p><div style={{display:"flex",gap:"2rem",marginBottom:"1.5rem"}}><div><label style={{color:"#94a3b8",display:"block",marginBottom:"0.5rem"}}>Foreground</label><input type="color" value={fg} onChange={e=>setFg(e.target.value)} style={{width:"60px",height:"40px",cursor:"pointer"}}/><input value={fg} onChange={e=>setFg(e.target.value)} style={{marginLeft:"0.5rem",padding:"0.25rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px",width:"90px"}}/></div><div><label style={{color:"#94a3b8",display:"block",marginBottom:"0.5rem"}}>Background</label><input type="color" value={bg} onChange={e=>setBg(e.target.value)} style={{width:"60px",height:"40px",cursor:"pointer"}}/><input value={bg} onChange={e=>setBg(e.target.value)} style={{marginLeft:"0.5rem",padding:"0.25rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px",width:"90px"}}/></div></div><div style={{padding:"1.5rem",background:bg,borderRadius:"8px",marginBottom:"1.5rem",textAlign:"center"}}><p style={{color:fg,fontSize:"1.25rem",margin:0}}>Sample Text Preview</p><p style={{color:fg,fontSize:"0.875rem",margin:"0.5rem 0 0"}}>Small text sample for readability check</p></div><div style={{background:"#1e293b",padding:"1rem",borderRadius:"8px"}}><p style={{fontSize:"1.5rem",fontWeight:"bold",color:"#f1f5f9"}}>Ratio: {r}:1</p><div style={{display:"flex",gap:"1rem",flexWrap:"wrap"}}>{[{l:"AA Normal",p:aa},{l:"AA Large",p:aaLarge},{l:"AAA Normal",p:aaa}].map(({l,p})=><span key={l} style={{padding:"0.25rem 0.75rem",background:p?"#166534":"#7f1d1d",color:p?"#86efac":"#fca5a5",borderRadius:"4px"}}>{l}: {p?"Pass":"Fail"}</span>)}</div></div></div>);
 }

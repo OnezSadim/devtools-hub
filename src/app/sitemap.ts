@@ -325,6 +325,7 @@ const tools = [
   'sql-formatter',
   'sql-query-builder',
   'ssh-key-generator',
+  'ssl-certificate-checker',
   'ssl-checker',
   'statistics-calculator',
   'stopwatch',
@@ -419,11 +420,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const toolUrls = tools.map((slug) => ({
     url: `${base}/tools/${slug}`,
     lastModified: new Date(),
-    changeFrequency: "weekly" as const,
-    priority: 0.8,
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
   }));
   return [
-    { url: base, lastModified: new Date(), changeFrequency: "daily" as const, priority: 1 },
+    { url: base, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 1.0 },
     ...toolUrls,
   ];
 }

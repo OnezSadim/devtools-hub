@@ -1,41 +1,19 @@
 "use client";
 import { useState } from "react";
-export default function JsonToCsv() {
-  const [input, setInput] = useState("");
-  const [output, setOutput] = useState("");
-  const [error, setError] = useState("");
+export default function Page() {
+  const [json, setJson] = useState('[{"name":"Alice","age":30},{"name":"Bob","age":25}]');
+  const [csv, setCsv] = useState("");
+  const [err, setErr] = useState("");
   const convert = () => {
     try {
-      setError("");
-      const data = JSON.parse(input);
-      const arr = Array.isArray(data) ? data : [data];
-      if (arr.length === 0) { setOutput(""); return; }
-      const keys = Object.keys(arr[0]);
-      const header = keys.join(",");
-      const rows = arr.map(row => keys.map(k => { const v = String(row[k] ?? ""); return v.includes(",") || v.includes("''") ? `'''' ${v}'''' ` : v; }).join(","));
-      setOutput([header, ...rows].join("
-"));
-    } catch (e: any) { setError(e.message); }
+      const data = JSON.parse(json);
+      if (!Array.isArray(data) || !data.length) { setErr("Input must be a non-empty JSON array"); return; }
+      const keys = Object.keys(data[0]);
+      const rows = [keys.join(","), ...data.map(row => keys.map(k => JSON.stringify(row[k]??"")||'""').join(","))];
+      setCsv(rows.join("
+")); setErr("");
+    } catch(e) { setErr("Invalid JSON: " + e.message); }
   };
-  return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
-      <h1 className="text-3xl font-bold mb-2">JSON to CSV</h1>
-      <p className="text-gray-400 mb-6">Convert a JSON array of objects to CSV format.</p>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm text-gray-400 mb-1">JSON Input</label>
-          <textarea className="w-full h-64 bg-gray-900 border border-gray-700 rounded p-3 font-mono text-sm" value={input} onChange={e => setInput(e.target.value)} placeholder={'[{"name":"Alice","age":30}]' } />
-        </div>
-        <div>
-          <label className="block text-sm text-gray-400 mb-1">CSV Output</label>
-          <textarea className="w-full h-64 bg-gray-900 border border-gray-700 rounded p-3 font-mono text-sm" value={output} readOnly />
-        </div>
-      </div>
-      {error && <p className="text-red-400 mt-2 text-sm">{error}</p>}
-      <div className="flex gap-2 mt-3">
-        <button onClick={convert} className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded font-semibold">Convert</button>
-        {output && <button onClick={() => { const b = new Blob([output],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='data.csv'; a.click(); }} className="bg-green-600 hover:bg-green-700 px-6 py-2 rounded font-semibold">Download CSV</button>}
-      </div>
-    </main>
-  );
+  const download = () => { const b = new Blob([csv],{type:"text/csv"}); const a = document.createElement("a"); a.href=URL.createObjectURL(b); a.download="data.csv"; a.click(); };
+  return (<div style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}><h1 style={{color:"#38bdf8",marginBottom:"1rem"}}>JSON to CSV Converter</h1><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"1rem"}}><div><h3 style={{color:"#94a3b8"}}>JSON Array</h3><textarea value={json} onChange={e=>setJson(e.target.value)} style={{width:"100%",height:"250px",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",padding:"0.75rem",fontFamily:"monospace",borderRadius:"4px"}}/><button onClick={convert} style={{marginTop:"0.5rem",padding:"0.5rem 1rem",background:"#0ea5e9",color:"#fff",border:"none",borderRadius:"4px",cursor:"pointer"}}>Convert</button></div><div><div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}><h3 style={{color:"#94a3b8"}}>CSV Output</h3>{csv&&<button onClick={download} style={{padding:"0.25rem 0.75rem",background:"#10b981",color:"#fff",border:"none",borderRadius:"4px",cursor:"pointer",fontSize:"0.75rem"}}>Download</button>}</div><pre style={{background:"#1e293b",padding:"0.75rem",borderRadius:"4px",height:"250px",overflow:"auto",whiteSpace:"pre-wrap",color:"#a3e635"}}>{csv||"CSV output will appear here"}</pre></div></div>{err&&<p style={{color:"#f87171",marginTop:"1rem"}}>{err}</p>}</div>);
 }

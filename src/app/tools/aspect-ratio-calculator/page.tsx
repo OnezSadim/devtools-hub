@@ -1,73 +1,14 @@
 "use client";
 import { useState } from "react";
-
-export default function AspectRatioCalculator() {
-  const [w, setW] = useState("");
-  const [h, setH] = useState("");
-  const [ratioW, setRatioW] = useState("");
-  const [ratioH, setRatioH] = useState("");
+export default function Page() {
+  const [w, setW] = useState("1920");
+  const [h, setH] = useState("1080");
   const [newW, setNewW] = useState("");
   const [newH, setNewH] = useState("");
-
-  const gcd = (a: number, b: number): number => b === 0 ? a : gcd(b, a % b);
-
-  const calcRatio = () => {
-    const width = parseFloat(w), height = parseFloat(h);
-    if (!width || !height) return;
-    const d = gcd(Math.round(width), Math.round(height));
-    setRatioW(String(Math.round(width/d)));
-    setRatioH(String(Math.round(height/d)));
-  };
-
-  const scaleFromWidth = () => {
-    if (!newW || !w || !h) return;
-    setNewH(String((parseFloat(newW) * parseFloat(h) / parseFloat(w)).toFixed(2)));
-  };
-
-  const scaleFromHeight = () => {
-    if (!newH || !w || !h) return;
-    setNewW(String((parseFloat(newH) * parseFloat(w) / parseFloat(h)).toFixed(2)));
-  };
-
-  const commonRatios = ["16:9","4:3","1:1","21:9","3:2","9:16"];
-
-  return (
-    <div className="min-h-screen bg-gray-950 text-white p-8">
-      <div className="max-w-xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Aspect Ratio Calculator</h1>
-        <p className="text-gray-400 mb-6">Calculate and scale aspect ratios for images and video</p>
-        <div className="bg-gray-900 rounded-xl p-6 space-y-6">
-          <div>
-            <h3 className="font-semibold mb-3">Find Ratio</h3>
-            <div className="flex gap-3 mb-3">
-              <input value={w} onChange={e => setW(e.target.value)} placeholder="Width" className="flex-1 bg-gray-800 rounded-lg px-3 py-2" />
-              <input value={h} onChange={e => setH(e.target.value)} placeholder="Height" className="flex-1 bg-gray-800 rounded-lg px-3 py-2" />
-              <button onClick={calcRatio} className="bg-blue-600 hover:bg-blue-700 px-4 rounded-lg">Calc</button>
-            </div>
-            {ratioW && <div className="bg-gray-800 rounded-lg p-3 text-center text-xl font-bold">{ratioW}:{ratioH}</div>}
-          </div>
-          <div>
-            <h3 className="font-semibold mb-3">Scale Dimensions</h3>
-            <div className="flex gap-3">
-              <input value={newW} onChange={e => setNewW(e.target.value)} onBlur={scaleFromWidth} placeholder="New Width" className="flex-1 bg-gray-800 rounded-lg px-3 py-2" />
-              <span className="flex items-center text-gray-500">×</span>
-              <input value={newH} onChange={e => setNewH(e.target.value)} onBlur={scaleFromHeight} placeholder="New Height" className="flex-1 bg-gray-800 rounded-lg px-3 py-2" />
-            </div>
-          </div>
-          <div>
-            <h3 className="font-semibold mb-3">Common Ratios</h3>
-            <div className="grid grid-cols-3 gap-2">
-              {commonRatios.map(r => {
-                const [rw,rh] = r.split(":").map(Number);
-                return (
-                  <button key={r} onClick={() => { setW(String(rw*100)); setH(String(rh*100)); setRatioW(String(rw)); setRatioH(String(rh)); }}
-                    className="bg-gray-800 hover:bg-gray-700 rounded-lg py-2 text-sm font-mono">{r}</button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  const gcd = (a,b) => b===0?a:gcd(b,a%b);
+  const ratio = () => { const g=gcd(parseInt(w)||1,parseInt(h)||1); return `${(parseInt(w)||0)/g}:${(parseInt(h)||0)/g}`; };
+  const calcH = () => { if(w&&h&&newW) setNewH(Math.round((parseInt(newW)*parseInt(h))/parseInt(w)).toString()); };
+  const calcW = () => { if(w&&h&&newH) setNewW(Math.round((parseInt(newH)*parseInt(w))/parseInt(h)).toString()); };
+  const presets = [{l:"16:9",w:1920,h:1080},{l:"4:3",w:1024,h:768},{l:"1:1",w:1000,h:1000},{l:"21:9",w:2560,h:1080},{l:"9:16",w:1080,h:1920}];
+  return (<div style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}><h1 style={{color:"#38bdf8",marginBottom:"1rem"}}>Aspect Ratio Calculator</h1><p style={{color:"#94a3b8",marginBottom:"1rem"}}>Calculate aspect ratios and scale dimensions proportionally.</p><div style={{display:"flex",gap:"0.5rem",marginBottom:"1rem",flexWrap:"wrap"}}>{presets.map(p=><button key={p.l} onClick={()=>{setW(p.w.toString());setH(p.h.toString());}} style={{padding:"0.25rem 0.75rem",background:"#334155",color:"#e2e8f0",border:"none",borderRadius:"4px",cursor:"pointer"}}>{p.l}</button>)}</div><div style={{display:"flex",gap:"1rem",alignItems:"center",marginBottom:"1.5rem"}}><div><label style={{color:"#94a3b8",display:"block",fontSize:"0.875rem"}}>Width</label><input value={w} onChange={e=>setW(e.target.value)} style={{width:"100px",padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}/></div><span style={{color:"#94a3b8",marginTop:"1rem"}}>×</span><div><label style={{color:"#94a3b8",display:"block",fontSize:"0.875rem"}}>Height</label><input value={h} onChange={e=>setH(e.target.value)} style={{width:"100px",padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}/></div><div style={{background:"#1e293b",padding:"0.5rem 1rem",borderRadius:"4px",marginTop:"1rem"}}><span style={{color:"#a3e635",fontSize:"1.25rem",fontWeight:"bold"}}>{ratio()}</span></div></div><div style={{background:"#1e293b",padding:"1rem",borderRadius:"8px"}}><h3 style={{color:"#94a3b8",marginTop:0}}>Scale to New Size</h3><div style={{display:"flex",gap:"1rem",alignItems:"flex-end"}}><div><label style={{color:"#94a3b8",display:"block",fontSize:"0.875rem"}}>New Width</label><input value={newW} onChange={e=>setNewW(e.target.value)} placeholder="e.g. 800" style={{width:"100px",padding:"0.5rem",background:"#0f172a",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}/></div><button onClick={calcH} style={{padding:"0.5rem 1rem",background:"#0ea5e9",color:"#fff",border:"none",borderRadius:"4px",cursor:"pointer"}}>→ Calc H</button><div><label style={{color:"#94a3b8",display:"block",fontSize:"0.875rem"}}>New Height</label><input value={newH} onChange={e=>setNewH(e.target.value)} placeholder="e.g. 600" style={{width:"100px",padding:"0.5rem",background:"#0f172a",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}/></div><button onClick={calcW} style={{padding:"0.5rem 1rem",background:"#0ea5e9",color:"#fff",border:"none",borderRadius:"4px",cursor:"pointer"}}>← Calc W</button></div></div></div>);
 }
