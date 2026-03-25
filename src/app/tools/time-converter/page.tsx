@@ -1,1 +1,59 @@
-'use client';import{useState}from 'react';export default function Page(){const[v,setV]=useState('');const[f,setF]=useState('second');const[t,setT]=useState('minute');const toS={'nanosecond':1e-9,'microsecond':1e-6,'millisecond':0.001,'second':1,'minute':60,'hour':3600,'day':86400,'week':604800,'month':2629800,'year':31557600,'decade':315576000,'century':3155760000};const convert=()=>{const base=parseFloat(v)*toS[f];return(base/toS[t]).toFixed(6);};return(<div style={{padding:'2rem',fontFamily:'monospace',background:'#0f172a',minHeight:'100vh',color:'#e2e8f0'}}><h1 style={{color:'#38bdf8'}}>Time Converter</h1><input value={v} onChange={e=>setV(e.target.value)} placeholder='Value' style={{padding:'0.5rem',marginRight:'0.5rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155'}}/><select value={f} onChange={e=>setF(e.target.value)} style={{padding:'0.5rem',marginRight:'0.5rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155'}}>{Object.keys(toS).map(u=><option key={u} value={u}>{u}</option>)}</select><span style={{margin:'0 0.5rem'}}>→</span><select value={t} onChange={e=>setT(e.target.value)} style={{padding:'0.5rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155'}}>{Object.keys(toS).map(u=><option key={u} value={u}>{u}</option>)}</select><p style={{marginTop:'1rem',fontSize:'1.2rem'}}>{v?<span>{v} {f} = <strong style={{color:'#38bdf8'}}>{convert()} {t}</strong></span>:'Enter a value'}</p></div>);}
+"use client";
+import { useState } from "react";
+
+const units = [
+  { label: "Millisecond (ms)", factor: 0.001 },
+  { label: "Second (s)", factor: 1 },
+  { label: "Minute (min)", factor: 60 },
+  { label: "Hour (hr)", factor: 3600 },
+  { label: "Day", factor: 86400 },
+  { label: "Week", factor: 604800 },
+  { label: "Month (avg)", factor: 2628000 },
+  { label: "Year", factor: 31536000 },
+  { label: "Decade", factor: 315360000 },
+];
+
+export default function TimeConverter() {
+  const [value, setValue] = useState("");
+  const [from, setFrom] = useState(3);
+  const [to, setTo] = useState(4);
+
+  const convert = () => {
+    const n = parseFloat(value);
+    if (isNaN(n)) return "";
+    return ((n * units[from].factor) / units[to].factor).toPrecision(6);
+  };
+
+  return (
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Time Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between seconds, minutes, hours, days, weeks, and more.</p>
+        <div className="space-y-4">
+          <input type="number" value={value} onChange={e => setValue(e.target.value)}
+            placeholder="Enter value" className="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white" />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm text-gray-400 mb-1 block">From</label>
+              <select value={from} onChange={e => setFrom(Number(e.target.value))}
+                className="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white">
+                {units.map((u, i) => <option key={i} value={i}>{u.label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-sm text-gray-400 mb-1 block">To</label>
+              <select value={to} onChange={e => setTo(Number(e.target.value))}
+                className="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white">
+                {units.map((u, i) => <option key={i} value={i}>{u.label}</option>)}
+              </select>
+            </div>
+          </div>
+          {value && <div className="bg-blue-900/30 border border-blue-700 rounded p-4 text-center">
+            <p className="text-2xl font-bold text-blue-300">{convert()}</p>
+            <p className="text-gray-400 text-sm mt-1">{units[to].label}</p>
+          </div>}
+        </div>
+      </div>
+    </main>
+  );
+}

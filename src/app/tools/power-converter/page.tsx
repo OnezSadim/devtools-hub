@@ -1,1 +1,57 @@
-"use client"; import{useState}from"react"; export default function Page(){const[v,setV]=useState("");const[f,setF]=useState("W");const[t,setT]=useState("kW");function conv(val,fr,to){let a=1,b=1;switch(fr){case "W": factor=1; break; case "kW": factor=1000; break; case "MW": factor=1000000; break; case "hp": factor=745.7; break; case "BTU/hr": factor=0.29307; break; case "cal/s": factor=4.1868; break; }switch(to){case "W": factor=1; break; case "kW": factor=1000; break; case "MW": factor=1000000; break; case "hp": factor=745.7; break; case "BTU/hr": factor=0.29307; break; case "cal/s": factor=4.1868; break; }return String(parseFloat(val)*a/b);}return(<div style={{padding:"2rem",fontFamily:"sans-serif",maxWidth:"600px",margin:"0 auto"}}><h1>Power Converter</h1><p>Convert between watts, kilowatts, horsepower, BTU/hr</p><input type="number" value={v} onChange={e=>setV(e.target.value)} placeholder="Value" style={{width:"100%",padding:"8px",marginBottom:"1rem"}}/><div style={{display:"flex",gap:"1rem",marginBottom:"1rem"}}><select value={f} onChange={e=>setF(e.target.value)}><option value="W">W</option><option value="kW">kW</option><option value="MW">MW</option><option value="hp">hp</option><option value="BTU/hr">BTU/hr</option><option value="cal/s">cal/s</option></select><select value={t} onChange={e=>setT(e.target.value)}><option value="W">W</option><option value="kW">kW</option><option value="MW">MW</option><option value="hp">hp</option><option value="BTU/hr">BTU/hr</option><option value="cal/s">cal/s</option></select></div>{v&&<p style={{fontSize:"1.5rem"}}>{conv(v,f,t)} {t}</p>}</div>);}
+"use client";
+import { useState } from "react";
+
+const units = [
+  { label: "Watt (W)", factor: 1 },
+  { label: "Kilowatt (kW)", factor: 1000 },
+  { label: "Megawatt (MW)", factor: 1000000 },
+  { label: "Horsepower (hp)", factor: 745.7 },
+  { label: "BTU/hour", factor: 0.29307 },
+  { label: "Calorie/second", factor: 4.184 },
+  { label: "Foot-pound/second", factor: 1.35582 },
+];
+
+export default function PowerConverter() {
+  const [value, setValue] = useState("");
+  const [from, setFrom] = useState(1);
+  const [to, setTo] = useState(3);
+
+  const convert = () => {
+    const n = parseFloat(value);
+    if (isNaN(n)) return "";
+    return ((n * units[from].factor) / units[to].factor).toPrecision(6);
+  };
+
+  return (
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Power Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between watts, kilowatts, horsepower, and more.</p>
+        <div className="space-y-4">
+          <input type="number" value={value} onChange={e => setValue(e.target.value)}
+            placeholder="Enter value" className="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white" />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm text-gray-400 mb-1 block">From</label>
+              <select value={from} onChange={e => setFrom(Number(e.target.value))}
+                className="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white">
+                {units.map((u, i) => <option key={i} value={i}>{u.label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-sm text-gray-400 mb-1 block">To</label>
+              <select value={to} onChange={e => setTo(Number(e.target.value))}
+                className="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white">
+                {units.map((u, i) => <option key={i} value={i}>{u.label}</option>)}
+              </select>
+            </div>
+          </div>
+          {value && <div className="bg-blue-900/30 border border-blue-700 rounded p-4 text-center">
+            <p className="text-2xl font-bold text-blue-300">{convert()}</p>
+            <p className="text-gray-400 text-sm mt-1">{units[to].label}</p>
+          </div>}
+        </div>
+      </div>
+    </main>
+  );
+}

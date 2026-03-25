@@ -1,1 +1,62 @@
-'use client';import{useState}from 'react';export default function VolumeConverter(){const[v,setV]=useState('');const[f,setF]=useState('L');const[t,setT]=useState('gal');const toL={'L':1,'mL':0.001,'m3':1000,'cm3':0.001,'ft3':28.3168,'in3':0.016387,'gal':3.78541,'qt':0.946353,'pt':0.473176,'fl_oz':0.0295735};const units=Object.keys(toL);const convert=()=>{const n=parseFloat(v);if(isNaN(n))return'';return((n*toL[f])/toL[t]).toFixed(6);};return(<div style={{fontFamily:'monospace',padding:'2rem',background:'#0f0f0f',minHeight:'100vh',color:'#e2e8f0'}}><h1 style={{fontSize:'1.5rem',marginBottom:'1rem'}}>Volume Converter</h1><input type='number' value={v} onChange={e=>setV(e.target.value)} placeholder='Value' style={{width:'100%',padding:'0.5rem',marginBottom:'0.5rem',background:'#1e1e1e',color:'#e2e8f0',border:'1px solid #333',borderRadius:'4px'}} /><select value={f} onChange={e=>setF(e.target.value)} style={{width:'100%',padding:'0.5rem',marginBottom:'0.5rem',background:'#1e1e1e',color:'#e2e8f0',border:'1px solid #333',borderRadius:'4px'}}>{units.map(u=>(<option key={u} value={u}>{u}</option>))}</select><div style={{textAlign:'center',color:'#888',margin:'0.25rem 0'}}>to</div><select value={t} onChange={e=>setT(e.target.value)} style={{width:'100%',padding:'0.5rem',marginBottom:'1rem',background:'#1e1e1e',color:'#e2e8f0',border:'1px solid #333',borderRadius:'4px'}}>{units.map(u=>(<option key={u} value={u}>{u}</option>))}</select><div style={{padding:'1rem',background:'#1e1e1e',borderRadius:'4px',fontSize:'1.25rem'}}>{convert()||'Enter a value'}</div></div>);}
+"use client";
+import { useState } from "react";
+
+const units = [
+  { label: "Milliliter (mL)", factor: 0.001 },
+  { label: "Liter (L)", factor: 1 },
+  { label: "Cubic meter (m³)", factor: 1000 },
+  { label: "Teaspoon (tsp)", factor: 0.00492892 },
+  { label: "Tablespoon (tbsp)", factor: 0.0147868 },
+  { label: "Fluid ounce (fl oz)", factor: 0.0295735 },
+  { label: "Cup", factor: 0.236588 },
+  { label: "Pint (pt)", factor: 0.473176 },
+  { label: "Quart (qt)", factor: 0.946353 },
+  { label: "Gallon (gal)", factor: 3.78541 },
+  { label: "Cubic inch (in³)", factor: 0.0163871 },
+  { label: "Cubic foot (ft³)", factor: 28.3168 },
+];
+
+export default function VolumeConverter() {
+  const [value, setValue] = useState("");
+  const [from, setFrom] = useState(0);
+  const [to, setTo] = useState(1);
+
+  const convert = () => {
+    const n = parseFloat(value);
+    if (isNaN(n)) return "";
+    return ((n * units[from].factor) / units[to].factor).toPrecision(6);
+  };
+
+  return (
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Volume Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between mL, L, gallons, cups, and more.</p>
+        <div className="space-y-4">
+          <input type="number" value={value} onChange={e => setValue(e.target.value)}
+            placeholder="Enter value" className="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white" />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm text-gray-400 mb-1 block">From</label>
+              <select value={from} onChange={e => setFrom(Number(e.target.value))}
+                className="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white">
+                {units.map((u, i) => <option key={i} value={i}>{u.label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-sm text-gray-400 mb-1 block">To</label>
+              <select value={to} onChange={e => setTo(Number(e.target.value))}
+                className="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white">
+                {units.map((u, i) => <option key={i} value={i}>{u.label}</option>)}
+              </select>
+            </div>
+          </div>
+          {value && <div className="bg-blue-900/30 border border-blue-700 rounded p-4 text-center">
+            <p className="text-2xl font-bold text-blue-300">{convert()}</p>
+            <p className="text-gray-400 text-sm mt-1">{units[to].label}</p>
+          </div>}
+        </div>
+      </div>
+    </main>
+  );
+}

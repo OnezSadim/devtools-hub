@@ -1,1 +1,59 @@
-'use client';import{useState}from 'react';export default function Page(){const[val,setVal]=useState('');const[unit,setUnit]=useState('j');const[result,setResult]=useState('');function convert(){const v=parseFloat(val);if(isNaN(v)){setResult('Enter a number');return;}let j=v;if(unit==='kj')j=v*1000;else if(unit==='cal')j=v*4.184;else if(unit==='kcal')j=v*4184;else if(unit==='kwh')j=v*3600000;const kj=j/1000;const cal=j/4.184;const kcal=j/4184;const kwh=j/3600000;setResult('J: '+j.toFixed(4)+' | kJ: '+kj.toFixed(4)+' | cal: '+cal.toFixed(4)+' | kcal: '+kcal.toFixed(4)+' | kWh: '+kwh.toFixed(8));}return(<div style={{padding:'2rem',fontFamily:'monospace',background:'#0f0f0f',minHeight:'100vh',color:'#e5e5e5'}}><h1 style={{fontSize:'1.8rem',marginBottom:'1rem'}}>Energy Converter</h1><p style={{color:'#999',marginBottom:'2rem'}}>Convert between Joules, calories, and kilowatt-hours.</p><input value={val} onChange={e=>setVal(e.target.value)} placeholder='Enter energy value' style={{width:'100%',padding:'0.75rem',background:'#1a1a1a',border:'1px solid #333',borderRadius:'6px',color:'#e5e5e5',marginBottom:'1rem',boxSizing:'border-box'}}/><select value={unit} onChange={e=>setUnit(e.target.value)} style={{width:'100%',padding:'0.75rem',background:'#1a1a1a',border:'1px solid #333',borderRadius:'6px',color:'#e5e5e5',marginBottom:'1rem',boxSizing:'border-box'}}><option value='j'>Joules (J)</option><option value='kj'>Kilojoules (kJ)</option><option value='cal'>Calories (cal)</option><option value='kcal'>Kilocalories (kcal)</option><option value='kwh'>Kilowatt-hours (kWh)</option></select><button onClick={convert} style={{padding:'0.75rem 1.5rem',background:'#3b82f6',border:'none',borderRadius:'6px',color:'#fff',cursor:'pointer',marginBottom:'1rem'}}>Convert</button>{result&&<div style={{background:'#1a1a1a',padding:'1rem',borderRadius:'6px',border:'1px solid #333'}}>{result}</div>}</div>);}
+"use client";
+import { useState } from "react";
+
+const units = [
+  { label: "Joule (J)", factor: 1 },
+  { label: "Kilojoule (kJ)", factor: 1000 },
+  { label: "Calorie (cal)", factor: 4.184 },
+  { label: "Kilocalorie (kcal)", factor: 4184 },
+  { label: "Watt-hour (Wh)", factor: 3600 },
+  { label: "Kilowatt-hour (kWh)", factor: 3600000 },
+  { label: "Electronvolt (eV)", factor: 1.60218e-19 },
+  { label: "BTU", factor: 1055.06 },
+  { label: "Foot-pound (ft·lb)", factor: 1.35582 },
+];
+
+export default function EnergyConverter() {
+  const [value, setValue] = useState("");
+  const [from, setFrom] = useState(1);
+  const [to, setTo] = useState(3);
+
+  const convert = () => {
+    const n = parseFloat(value);
+    if (isNaN(n)) return "";
+    return ((n * units[from].factor) / units[to].factor).toPrecision(6);
+  };
+
+  return (
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Energy Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between joules, calories, kWh, BTU, and more.</p>
+        <div className="space-y-4">
+          <input type="number" value={value} onChange={e => setValue(e.target.value)}
+            placeholder="Enter value" className="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white" />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm text-gray-400 mb-1 block">From</label>
+              <select value={from} onChange={e => setFrom(Number(e.target.value))}
+                className="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white">
+                {units.map((u, i) => <option key={i} value={i}>{u.label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-sm text-gray-400 mb-1 block">To</label>
+              <select value={to} onChange={e => setTo(Number(e.target.value))}
+                className="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white">
+                {units.map((u, i) => <option key={i} value={i}>{u.label}</option>)}
+              </select>
+            </div>
+          </div>
+          {value && <div className="bg-blue-900/30 border border-blue-700 rounded p-4 text-center">
+            <p className="text-2xl font-bold text-blue-300">{convert()}</p>
+            <p className="text-gray-400 text-sm mt-1">{units[to].label}</p>
+          </div>}
+        </div>
+      </div>
+    </main>
+  );
+}
