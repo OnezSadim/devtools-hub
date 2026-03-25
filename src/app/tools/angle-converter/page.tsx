@@ -1,10 +1,21 @@
 "use client";
-import { useState } from "react";
-const units: Record<string, number> = { degree: 1, radian: 57.2958, gradian: 0.9, arcminute: 0.016667, arcsecond: 0.000278, turn: 360 };
-export default function Page() {
-  const [val, setVal] = useState("");
-  const [from, setFrom] = useState("degree");
-  const keys = Object.keys(units);
-  const base = parseFloat(val) * units[from];
-  return (<div style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}><h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Angle Converter</h1><div style={{display:"flex",gap:"1rem",marginBottom:"1.5rem",flexWrap:"wrap"}}><input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px",flex:1}} /><select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>{keys.map(k=><option key={k} value={k}>{k}</option>)}</select></div><div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))",gap:"0.75rem"}}>{keys.map(k=><div key={k} style={{background:"#1e293b",padding:"0.75rem",borderRadius:"6px",border:"1px solid #334155"}}><div style={{color:"#94a3b8",fontSize:"0.75rem",textTransform:"uppercase"}}>{k}</div><div style={{fontSize:"1.1rem",fontWeight:"bold",marginTop:"0.25rem"}}>{val&&!isNaN(base)?(base/units[k]).toFixed(6):"—"}</div></div>)}</div></div>);
+import{useState}from"react";
+export default function AngleConverter(){
+const units=["Degrees","Radians","Gradians","Arcminutes","Arcseconds","Turns"];
+const toDeg=[1,180/Math.PI,0.9,1/60,1/3600,360];
+const[val,setVal]=useState("90");
+const[from,setFrom]=useState("Degrees");
+const fi=units.indexOf(from),inDeg=(parseFloat(val)||0)*toDeg[fi];
+return(<div style={{padding:"2rem",background:"#0f172a",color:"#e2e8f0",minHeight:"100vh",fontFamily:"monospace"}}>
+<h1>Angle Converter</h1>
+<div style={{margin:"1rem 0"}}>
+<input value={val} onChange={e=>setVal(e.target.value)} style={{padding:"8px",marginRight:"8px",background:"#1e293b",color:"#e2e8f0",border:"1px solid #475569",borderRadius:"4px",width:"150px"}}/>
+<select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"8px",background:"#1e293b",color:"#e2e8f0",border:"1px solid #475569",borderRadius:"4px"}}>
+{units.map(u=><option key={u}>{u}</option>)}
+</select>
+</div>
+<table style={{width:"100%",borderCollapse:"collapse"}}>
+<tbody>{units.map((u,i)=><tr key={u}><td style={{padding:"8px",border:"1px solid #334155"}}>{u}</td><td style={{padding:"8px",border:"1px solid #334155"}}>{(inDeg/toDeg[i]).toPrecision(6)}</td></tr>)}</tbody>
+</table>
+</div>);
 }

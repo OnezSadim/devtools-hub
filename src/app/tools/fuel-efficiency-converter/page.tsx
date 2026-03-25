@@ -1,34 +1,27 @@
 "use client";
-import { useState } from "react";
-
-const units = [
-  { label: "L/100km", toMpg: (v) => 235.214 / v, fromMpg: (v) => 235.214 / v },
-  { label: "MPG (US)", toMpg: (v) => v, fromMpg: (v) => v },
-  { label: "MPG (UK)", toMpg: (v) => v * 0.832674, fromMpg: (v) => v / 0.832674 },
-  { label: "km/L", toMpg: (v) => v * 2.35214, fromMpg: (v) => v / 2.35214 },
-];
-
-export default function FuelEfficiencyConverter() {
-  const [value, setValue] = useState("");
-  const [from, setFrom] = useState(0);
-  const num = parseFloat(value);
-  const mpg = isNaN(num) ? NaN : units[from].toMpg(num);
-  return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
-      <div className="max-w-xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Fuel Efficiency Converter</h1>
-        <p className="text-gray-400 mb-6">Convert MPG, L/100km, km/L instantly.</p>
-        <input className="w-full bg-gray-800 rounded p-3 mb-4 text-white" type="number" placeholder="Enter value" value={value} onChange={e=>setValue(e.target.value)} />
-        <select className="w-full bg-gray-800 rounded p-3 mb-6 text-white" value={from} onChange={e=>setFrom(Number(e.target.value))}>
-          {units.map((u,i)=><option key={i} value={i}>{u.label}</option>)}
-        </select>
-        <div className="space-y-2">
-          {units.map((u,i)=>{
-            const result = isNaN(mpg) ? "" : u.fromMpg(mpg).toFixed(4);
-            return <div key={i} className="bg-gray-800 rounded p-3 flex justify-between"><span className="text-gray-400">{u.label}</span><span className="font-mono">{result}</span></div>;
-          })}
-        </div>
-      </div>
-    </main>
-  );
+import{useState}from"react";
+export default function FuelEfficiencyConverter(){
+const[val,setVal]=useState("30");
+const[from,setFrom]=useState("mpg_us");
+const v=parseFloat(val)||0;
+let mpgUS=v;
+if(from==="mpg_uk")mpgUS=v*0.832674;
+else if(from==="kml")mpgUS=v*2.35215;
+else if(from==="l100km")mpgUS=v===0?0:235.215/v;
+const rows=[["MPG (US)",mpgUS],["MPG (UK)",mpgUS/0.832674],["km/L",mpgUS/2.35215],["L/100km",mpgUS===0?Infinity:235.215/mpgUS]];
+return(<div style={{padding:"2rem",background:"#0f172a",color:"#e2e8f0",minHeight:"100vh",fontFamily:"monospace"}}>
+<h1>Fuel Efficiency Converter</h1>
+<div style={{margin:"1rem 0"}}>
+<input value={val} onChange={e=>setVal(e.target.value)} style={{padding:"8px",marginRight:"8px",background:"#1e293b",color:"#e2e8f0",border:"1px solid #475569",borderRadius:"4px",width:"150px"}}/>
+<select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"8px",background:"#1e293b",color:"#e2e8f0",border:"1px solid #475569",borderRadius:"4px"}}>
+<option value="mpg_us">MPG (US)</option>
+<option value="mpg_uk">MPG (UK)</option>
+<option value="kml">km/L</option>
+<option value="l100km">L/100km</option>
+</select>
+</div>
+<table style={{width:"100%",borderCollapse:"collapse"}}>
+<tbody>{rows.map(([k,v])=><tr key={k}><td style={{padding:"8px",border:"1px solid #334155"}}>{k}</td><td style={{padding:"8px",border:"1px solid #334155"}}>{isFinite(Number(v))?Number(v).toPrecision(5):"∞"}</td></tr>)}</tbody>
+</table>
+</div>);
 }
