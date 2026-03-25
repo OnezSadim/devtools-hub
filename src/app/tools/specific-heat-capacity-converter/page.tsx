@@ -1,1 +1,49 @@
-"use client";import { useState } from "react";const UNITS = [{name: "J/(kg·K)", factor: 1}, {name: "kJ/(kg·K)", factor: 1000}, {name: "BTU/(lb·°F)", factor: 4186.8}, {name: "cal/(g·°C)", factor: 4186.8}, {name: "kcal/(kg·°C)", factor: 4186.8}, {name: "J/(g·K)", factor: 1000}, ];export default function Page() {  const [val, setVal] = useState("");  const [from, setFrom] = useState(0);  const [to, setTo] = useState(1);  const convert = () => {    const n = parseFloat(val);    if (isNaN(n)) return "";    return ((n * UNITS[from].factor) / UNITS[to].factor).toPrecision(6);  };  return (<div style={{minHeight:"100vh",background:"#0f172a",color:"#e2e8f0",padding:"2rem",fontFamily:"sans-serif"}}>    <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Specific Heat Capacity Converter</h1>    <p style={{color:"#94a3b8",marginBottom:"2rem"}}>Convert between specific heat capacity units: J/(kg·K), kJ/(kg·K), BTU/(lb·°F), cal/(g·°C), and more.</p>    <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",alignItems:"flex-end"}}>      <div><label style={{display:"block",marginBottom:"0.25rem",color:"#94a3b8"}}>Value</label>      <input type="number" value={val} onChange={e=>setVal(e.target.value)} style={{background:"#1e293b",border:"1px solid #334155",borderRadius:"0.375rem",padding:"0.5rem 1rem",color:"#e2e8f0",fontSize:"1rem",width:"180px"}} /></div>      <div><label style={{display:"block",marginBottom:"0.25rem",color:"#94a3b8"}}>From</label>      <select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{background:"#1e293b",border:"1px solid #334155",borderRadius:"0.375rem",padding:"0.5rem 1rem",color:"#e2e8f0",fontSize:"1rem"}}>        {UNITS.map((u,i)=>(<option key={i} value={i}>{u.name}</option>))}      </select></div>      <div><label style={{display:"block",marginBottom:"0.25rem",color:"#94a3b8"}}>To</label>      <select value={to} onChange={e=>setTo(Number(e.target.value))} style={{background:"#1e293b",border:"1px solid #334155",borderRadius:"0.375rem",padding:"0.5rem 1rem",color:"#e2e8f0",fontSize:"1rem"}}>        {UNITS.map((u,i)=>(<option key={i} value={i}>{u.name}</option>))}      </select></div>    </div>    <div style={{marginTop:"2rem",padding:"1.5rem",background:"#1e293b",borderRadius:"0.5rem",fontSize:"1.5rem"}}>      {val ? <span>{val} {UNITS[from].name} = <strong style={{color:"#38bdf8"}}>{convert()} {UNITS[to].name}</strong></span> : <span style={{color:"#475569"}}>Enter a value to convert</span>}    </div>  </div>);}
+"use client";
+import { useState } from "react";
+
+const units = [
+  { label: "J/(kg·K)", value: "jkg" },
+  { label: "kJ/(kg·K)", value: "kjkg" },
+  { label: "BTU/(lb·°F)", value: "btu" },
+  { label: "cal/(g·°C)", value: "cal" },
+  { label: "kcal/(kg·°C)", value: "kcal" },
+];
+
+const toBase: Record<string, number> = {
+  "jkg": 1.0,
+  "kjkg": 1000.0,
+  "btu": 4186.8,
+  "cal": 4184.0,
+  "kcal": 4186.8,
+};
+
+export default function SpecificHeatCapacityConverterPage() {
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState(units[0].value);
+  const [to, setTo] = useState(units[1].value);
+  function convert() {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    return ((n * toBase[from]) / toBase[to]).toPrecision(6);
+  }
+  const sel = "bg-gray-800 text-white rounded px-3 py-2 border border-gray-600";
+  return (
+    <main className="min-h-screen bg-gray-900 text-white p-8">
+      <h1 className="text-3xl font-bold mb-2">Specific Heat Capacity Converter</h1>
+      <p className="text-gray-400 mb-6">Convert between specific heat capacity units instantly.</p>
+      <div className="bg-gray-800 rounded-xl p-6 max-w-lg space-y-4">
+        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" className="w-full bg-gray-700 text-white rounded px-3 py-2 border border-gray-600" />
+        <div className="flex gap-4">
+          <select value={from} onChange={e=>setFrom(e.target.value)} className={sel}>
+            {units.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
+          </select>
+          <span className="text-gray-400 self-center">to</span>
+          <select value={to} onChange={e=>setTo(e.target.value)} className={sel}>
+            {units.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
+          </select>
+        </div>
+        {val && <div className="text-2xl font-bold text-blue-400">{convert()} {units.find(u=>u.value===to)?.label}</div>}
+      </div>
+    </main>
+  );
+}

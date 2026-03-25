@@ -1,72 +1,48 @@
 "use client";
 import { useState } from "react";
 
-const factors: Record<string, number> = {
-        "mol_L": 1,
-        "mmol_L": 0.001,
-        "umol_L": 1e-06,
-        "nmol_L": 1e-09,
-        "mol_m3": 0.001,
-        "mol_cm3": 1000,
-        "pmol_L": 1e-12
+const units = [
+  { label: "mol/L", value: "moll" },
+  { label: "mmol/L", value: "mmoll" },
+  { label: "mol/m³", value: "molm3" },
+  { label: "mmol/m³", value: "mmolm3" },
+  { label: "µmol/L", value: "umoll" },
+];
+
+const toBase: Record<string, number> = {
+  "moll": 1.0,
+  "mmoll": 0.001,
+  "molm3": 0.001,
+  "mmolm3": 1e-06,
+  "umoll": 1e-06,
 };
 
 export default function MolarConcentrationConverterPage() {
-  const [value, setValue] = useState("");
-  const [from, setFrom] = useState("mol_L");
-  const [to, setTo] = useState("mmol_L");
-
-  const convert = () => {
-    const num = parseFloat(value);
-    if (isNaN(num)) return "—";
-    return ((num * factors[from]) / factors[to]).toPrecision(6);
-  };
-
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState(units[0].value);
+  const [to, setTo] = useState(units[1].value);
+  function convert() {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    return ((n * toBase[from]) / toBase[to]).toPrecision(6);
+  }
+  const sel = "bg-gray-800 text-white rounded px-3 py-2 border border-gray-600";
   return (
-    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
-      <div className="max-w-xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Molar Concentration Converter</h1>
-        <p className="text-gray-400 mb-8">Convert between molar concentration units: mol/L, mmol/L, µmol/L, mol/m³.</p>
-        <div className="space-y-4">
-          <input
-            type="number"
-            value={value}
-            onChange={e => setValue(e.target.value)}
-            placeholder="Enter value"
-            className="w-full bg-gray-800 rounded-lg px-4 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">From</label>
-              <select value={from} onChange={e => setFrom(e.target.value)}
-                className="w-full bg-gray-800 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          <option value="mol_L">Mole per Liter (mol/L)</option>
-          <option value="mmol_L">Millimole per Liter (mmol/L)</option>
-          <option value="umol_L">Micromole per Liter (µmol/L)</option>
-          <option value="nmol_L">Nanomole per Liter (nmol/L)</option>
-          <option value="mol_m3">Mole per Cubic Meter (mol/m³)</option>
-          <option value="mol_cm3">Mole per Cubic Centimeter (mol/cm³)</option>
-          <option value="pmol_L">Picomole per Liter (pmol/L)</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">To</label>
-              <select value={to} onChange={e => setTo(e.target.value)}
-                className="w-full bg-gray-800 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          <option value="mol_L">Mole per Liter (mol/L)</option>
-          <option value="mmol_L">Millimole per Liter (mmol/L)</option>
-          <option value="umol_L">Micromole per Liter (µmol/L)</option>
-          <option value="nmol_L">Nanomole per Liter (nmol/L)</option>
-          <option value="mol_m3">Mole per Cubic Meter (mol/m³)</option>
-          <option value="mol_cm3">Mole per Cubic Centimeter (mol/cm³)</option>
-          <option value="pmol_L">Picomole per Liter (pmol/L)</option>
-              </select>
-            </div>
-          </div>
-          <div className="bg-gray-800 rounded-lg px-4 py-3 text-2xl font-mono">
-            {value ? convert() : <span className="text-gray-500">Result</span>}
-          </div>
+    <main className="min-h-screen bg-gray-900 text-white p-8">
+      <h1 className="text-3xl font-bold mb-2">Molar Concentration Converter</h1>
+      <p className="text-gray-400 mb-6">Convert between molar concentration units instantly.</p>
+      <div className="bg-gray-800 rounded-xl p-6 max-w-lg space-y-4">
+        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" className="w-full bg-gray-700 text-white rounded px-3 py-2 border border-gray-600" />
+        <div className="flex gap-4">
+          <select value={from} onChange={e=>setFrom(e.target.value)} className={sel}>
+            {units.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
+          </select>
+          <span className="text-gray-400 self-center">to</span>
+          <select value={to} onChange={e=>setTo(e.target.value)} className={sel}>
+            {units.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
+          </select>
         </div>
+        {val && <div className="text-2xl font-bold text-blue-400">{convert()} {units.find(u=>u.value===to)?.label}</div>}
       </div>
     </main>
   );

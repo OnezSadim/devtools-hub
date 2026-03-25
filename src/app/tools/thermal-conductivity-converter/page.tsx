@@ -1,27 +1,47 @@
 "use client";
 import { useState } from "react";
 
-const units = [{ value: '1', label: 'Watt per meter-kelvin (W/m·K)' }, { value: '0.01', label: 'Watt per centimeter-kelvin (W/cm·K)' }, { value: '1.73073', label: 'BTU per hour-foot-Fahrenheit' }, { value: '418.68', label: 'Calorie per second-cm-Celsius' }, { value: '0.1', label: 'Watt per meter-Celsius' }, { value: '0.577789', label: 'BTU·in/hr·ft²·°F' }];
+const units = [
+  { label: "W/(m·K)", value: "wmk" },
+  { label: "BTU/(hr·ft·°F)", value: "btu" },
+  { label: "cal/(s·cm·°C)", value: "cal" },
+  { label: "kcal/(hr·m·°C)", value: "kcal" },
+];
 
-export default function Page() {
+const toBase: Record<string, number> = {
+  "wmk": 1.0,
+  "btu": 1.73073,
+  "cal": 418.68,
+  "kcal": 1.163,
+};
+
+export default function ThermalConductivityConverterPage() {
   const [val, setVal] = useState("");
   const [from, setFrom] = useState(units[0].value);
   const [to, setTo] = useState(units[1].value);
-  const convert = () => {
-    const n = parseFloat(val); if (isNaN(n)) return "";
-    return (n * (parseFloat(from) / parseFloat(to))).toPrecision(6);
-  };
+  function convert() {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    return ((n * toBase[from]) / toBase[to]).toPrecision(6);
+  }
+  const sel = "bg-gray-800 text-white rounded px-3 py-2 border border-gray-600";
   return (
-    <main style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}>>
-      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Thermal Conductivity Converter</h1>
-      <p style={{color:"#94a3b8",marginBottom:"1.5rem"}}>Convert between thermal conductivity units for heat transfer calculations.</p>
-      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1rem"}}>>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px",flex:1}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>{units.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}</select>
-        <span style={{alignSelf:"center"}}>to</span>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>{units.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}</select>
+    <main className="min-h-screen bg-gray-900 text-white p-8">
+      <h1 className="text-3xl font-bold mb-2">Thermal Conductivity Converter</h1>
+      <p className="text-gray-400 mb-6">Convert between thermal conductivity units instantly.</p>
+      <div className="bg-gray-800 rounded-xl p-6 max-w-lg space-y-4">
+        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" className="w-full bg-gray-700 text-white rounded px-3 py-2 border border-gray-600" />
+        <div className="flex gap-4">
+          <select value={from} onChange={e=>setFrom(e.target.value)} className={sel}>
+            {units.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
+          </select>
+          <span className="text-gray-400 self-center">to</span>
+          <select value={to} onChange={e=>setTo(e.target.value)} className={sel}>
+            {units.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
+          </select>
+        </div>
+        {val && <div className="text-2xl font-bold text-blue-400">{convert()} {units.find(u=>u.value===to)?.label}</div>}
       </div>
-      {val && <div style={{padding:"1rem",background:"#1e293b",borderRadius:"8px",fontSize:"1.25rem"}}>Result: <strong>{convert()}</strong> {units.find(u=>u.value===to)?.label}</div>}
     </main>
   );
 }
