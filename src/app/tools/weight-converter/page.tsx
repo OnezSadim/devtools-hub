@@ -1,21 +1,17 @@
 "use client";
 import { useState } from "react";
-const factors: Record<string,number> = {mg:0.000001,g:0.001,kg:1,tonne:1000,oz:0.0283495,lb:0.453592,stone:6.35029};
 export default function WeightConverter() {
-  const [val,setVal]=useState("");
-  const [from,setFrom]=useState("kg");
-  const n=parseFloat(val);
-  const units=Object.keys(factors);
-  const inKg=isNaN(n)?null:n*factors[from];
-  return (
-    <main className="min-h-screen bg-gray-950 text-white p-8 max-w-xl mx-auto">
-      <h1 className="text-3xl font-bold mb-2">Weight Converter</h1>
-      <p className="text-gray-400 mb-6">Convert between mg, g, kg, tonne, oz, lb, stone</p>
-      <div className="flex gap-2 mb-4">
-        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" className="flex-1 bg-gray-800 rounded p-3 text-white" />
-        <select value={from} onChange={e=>setFrom(e.target.value)} className="bg-gray-800 rounded p-3 text-white">{units.map(u=><option key={u}>{u}</option>)}</select>
-      </div>
-      {inKg!==null && <div className="space-y-2">{units.filter(u=>u!==from).map(u=><div key={u} className="bg-gray-800 rounded p-3"><span className="text-gray-400">{u}: </span><span className="text-green-400 font-mono">{(inKg/factors[u]).toFixed(6)}</span></div>)}</div>}
-    </main>
-  );
+  const [val, setVal] = useState("1");
+  const [from, setFrom] = useState("kg");
+  const units:{[k:string]:{label:string;toKg:number}} = {
+    kg:{label:"Kilograms (kg)",toKg:1},
+    g:{label:"Grams (g)",toKg:0.001},
+    mg:{label:"Milligrams (mg)",toKg:0.000001},
+    lb:{label:"Pounds (lb)",toKg:0.453592},
+    oz:{label:"Ounces (oz)",toKg:0.0283495},
+    t:{label:"Metric Ton (t)",toKg:1000},
+    st:{label:"Stone (st)",toKg:6.35029},
+  };
+  const kg = (parseFloat(val)||0)*units[from].toKg;
+  return (<div style={{minHeight:"100vh",background:"#0f172a",color:"#e2e8f0",padding:"2rem",fontFamily:"monospace"}}><h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Weight Converter</h1><p style={{color:"#94a3b8",marginBottom:"1.5rem"}}>Convert between weight and mass units</p><div style={{display:"flex",gap:"1rem",marginBottom:"1.5rem",flexWrap:"wrap"}}><input type="number" value={val} onChange={e=>setVal(e.target.value)} style={{padding:"0.6rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"6px",fontSize:"1rem",width:"150px"}} /><select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.6rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"6px",fontSize:"1rem"}}>{Object.entries(units).map(([k,u])=><option key={k} value={k}>{u.label}</option>)}</select></div><div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))",gap:"1rem"}}>{Object.entries(units).map(([k,u])=>(<div key={k} style={{background:"#1e293b",border:"1px solid "+(k===from?"#3b82f6":"#334155"),borderRadius:"10px",padding:"1.25rem"}}><div style={{color:"#94a3b8",fontSize:"0.85rem",marginBottom:"0.5rem"}}>{u.label}</div><div style={{fontSize:"1.4rem",fontWeight:"bold"}}>{(kg/u.toKg).toFixed(6).replace(/\.?0+$/,"")}</div></div>))}</div></div>);
 }
