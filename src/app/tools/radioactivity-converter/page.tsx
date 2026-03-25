@@ -1,1 +1,30 @@
-"use client";import { useState } from "react";const UNITS = [{name: "Becquerel", symbol: "Bq", factor: 1},{name: "Kilobecquerel", symbol: "kBq", factor: 1000.0},{name: "Megabecquerel", symbol: "MBq", factor: 1000000.0},{name: "Gigabecquerel", symbol: "GBq", factor: 1000000000.0},{name: "Terabecquerel", symbol: "TBq", factor: 1000000000000.0},{name: "Curie", symbol: "Ci", factor: 37000000000.0},{name: "Millicurie", symbol: "mCi", factor: 37000000.0},{name: "Microcurie", symbol: "uCi", factor: 37000.0},{name: "Nanocurie", symbol: "nCi", factor: 37},{name: "Picocurie", symbol: "pCi", factor: 0.037},{name: "Rutherford", symbol: "Rd", factor: 1000000.0},];export default function Page() {  const [val, setVal] = useState("");  const [from, setFrom] = useState(0);  const [to, setTo] = useState(1);  const convert = () => {    const n = parseFloat(val);    if (isNaN(n)) return "";    return ((n * UNITS[from].factor) / UNITS[to].factor).toPrecision(6);  };  return (    <div style={{minHeight:"100vh",background:"#0f172a",color:"#e2e8f0",padding:"2rem",fontFamily:"sans-serif"}}>      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Radioactivity Converter</h1>      <p style={{color:"#94a3b8",marginBottom:"2rem"}}>Convert between radioactivity units: becquerel, curie, rutherford and more.</p>      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1rem"}}>        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",width:"160px"}} />        <select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0"}}>          {UNITS.map((u,i)=><option key={i} value={i}>{u.name} ({u.symbol})</option>)}        </select>        <span style={{alignSelf:"center",fontSize:"1.2rem"}}>→</span>        <select value={to} onChange={e=>setTo(Number(e.target.value))} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0"}}>          {UNITS.map((u,i)=><option key={i} value={i}>{u.name} ({u.symbol})</option>)}        </select>      </div>      {val && <div style={{fontSize:"1.4rem",padding:"1rem",background:"#1e293b",borderRadius:"8px",display:"inline-block"}}>{val} {UNITS[from].symbol} = <strong>{convert()}</strong> {UNITS[to].symbol}</div>}    </div>  );}
+"use client";
+import { useState } from "react";
+
+const units = ['becquerel', 'kilobecquerel', 'megabecquerel', 'gigabecquerel', 'curie', 'millicurie', 'microcurie', 'rutherford'];
+const factors = {'becquerel': 1, 'kilobecquerel': 1000.0, 'megabecquerel': 1000000.0, 'gigabecquerel': 1000000000.0, 'curie': 37000000000.0, 'millicurie': 37000000.0, 'microcurie': 37000.0, 'rutherford': 1000000.0};
+
+export default function Page() {
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState(units[0]);
+  const [to, setTo] = useState(units[1]);
+  const convert = () => {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    return ((n * factors[from]) / factors[to]).toPrecision(6);
+  };
+  return (
+    <main style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}>
+      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Radioactivity Converter</h1>
+      <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",marginRight:"0.5rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px"}} />
+      <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",marginRight:"0.5rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px"}}>
+        {units.map(u=><option key={u} value={u}>{u}</option>)}
+      </select>
+      <span style={{marginRight:"0.5rem"}}>to</span>
+      <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px"}}>
+        {units.map(u=><option key={u} value={u}>{u}</option>)}
+      </select>
+      <div style={{marginTop:"1rem",fontSize:"1.25rem"}}>Result: <strong>{convert()}</strong> {to}</div>
+    </main>
+  );
+}
