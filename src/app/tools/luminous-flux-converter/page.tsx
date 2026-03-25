@@ -1,39 +1,34 @@
 "use client";
 import { useState } from "react";
 
-const units = ['lumen', 'candela-steradian', 'millilumen', 'kilolumen'];
-const factors = {'lumen': 1.0, 'candela-steradian': 1.0, 'millilumen': 0.001, 'kilolumen': 1000.0};
+const units = ['lumen', 'kilolumen', 'millilumen', 'candela-steradian', 'foot-lambert-sqft'];
+const factors = {'lumen': 1.0, 'kilolumen': 1000.0, 'millilumen': 0.001, 'candela-steradian': 1.0, 'foot-lambert-sqft': 1.0};
 
 export default function Page() {
   const [val, setVal] = useState("");
   const [from, setFrom] = useState(units[0]);
   const [to, setTo] = useState(units[1]);
-  function convert(v, f, t) {
-    const n = parseFloat(v);
+  const convert = () => {
+    const n = parseFloat(val);
     if (isNaN(n)) return "";
-    return ((n * factors[f]) / factors[t]).toPrecision(6);
-  }
+    return ((n * factors[from]) / factors[to]).toPrecision(6);
+  };
   return (
-    <div style={{minHeight:"100vh",background:"#0f172a",color:"#e2e8f0",fontFamily:"monospace",padding:"2rem"}}>
-      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Luminous Flux Converter</h1>
-      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginTop:"1.5rem"}}>
-        <div>
-          <label style={{display:"block",marginBottom:"0.25rem"}}>From</label>
-          <select value={from} onChange={e=>setFrom(e.target.value)} style={{background:"#1e293b",color:"#e2e8f0",padding:"0.5rem",borderRadius:"4px",border:"1px solid #334155"}}>
-            {units.map(u=><option key={u} value={u}>{u}</option>)}
-          </select>
-        </div>
-        <div>
-          <label style={{display:"block",marginBottom:"0.25rem"}}>To</label>
-          <select value={to} onChange={e=>setTo(e.target.value)} style={{background:"#1e293b",color:"#e2e8f0",padding:"0.5rem",borderRadius:"4px",border:"1px solid #334155"}}>
-            {units.map(u=><option key={u} value={u}>{u}</option>)}
-          </select>
-        </div>
+    <main style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}>
+      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Luminous Flux Converter</h1>
+      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1rem"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px"}} />
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px"}}>
+          {units.map(u=><option key={u}>{u}</option>)}
+        </select>
+        <span style={{alignSelf:"center"}}>to</span>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px"}}>
+          {units.map(u=><option key={u}>{u}</option>)}
+        </select>
       </div>
-      <div style={{marginTop:"1rem"}}>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{background:"#1e293b",color:"#e2e8f0",padding:"0.5rem",borderRadius:"4px",border:"1px solid #334155",width:"200px"}} />
+      <div style={{fontSize:"1.25rem",padding:"1rem",background:"#1e293b",borderRadius:"8px"}}>
+        {val ? <span>{val} {from} = <b>{convert()}</b> {to}</span> : <span style={{color:"#64748b"}}>Enter a value above</span>}
       </div>
-      {val && <div style={{marginTop:"1rem",fontSize:"1.4rem",color:"#38bdf8"}}>{convert(val,from,to)} {to}</div>}
-    </div>
+    </main>
   );
 }
