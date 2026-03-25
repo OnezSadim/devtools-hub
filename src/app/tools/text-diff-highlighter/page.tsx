@@ -1,49 +1,34 @@
-"use client"
-import { useState } from "react"
-
-function diffWords(a: string, b: string) {
-  const wa = a.split(/\s+/)
-  const wb = b.split(/\s+/)
-  const result: {text:string,type:"same"|"add"|"del"}[] = []
-  let i=0,j=0
-  while(i<wa.length||j<wb.length) {
-    if(i>=wa.length){result.push({text:wb[j],type:"add"});j++}
-    else if(j>=wb.length){result.push({text:wa[i],type:"del"});i++}
-    else if(wa[i]===wb[j]){result.push({text:wa[i],type:"same"});i++;j++}
-    else{result.push({text:wa[i],type:"del"});result.push({text:wb[j],type:"add"});i++;j++}
-  }
-  return result
-}
-
+"use client";
+import { useState } from "react";
 export default function TextDiffHighlighter() {
-  const [a, setA] = useState("The quick brown fox jumps over the lazy dog")
-  const [b, setB] = useState("The fast brown fox leaps over the sleepy cat")
-  const diff = diffWords(a, b)
+  const [text1, setText1] = useState("");
+  const [text2, setText2] = useState("");
+  const lines1 = text1.split("\n");
+  const lines2 = text2.split("\n");
+  const maxLen = Math.max(lines1.length, lines2.length);
+  const diffs = Array.from({length: maxLen}, (_, i) => ({
+    line: i + 1,
+    a: lines1[i] ?? "",
+    b: lines2[i] ?? "",
+    same: lines1[i] === lines2[i]
+  }));
+  const changed = diffs.filter(d => !d.same).length;
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100 p-6">
-      <h1 className="text-2xl font-bold mb-6">Text Diff Highlighter</h1>
-      <div className="grid grid-cols-2 gap-4 mb-6">
-        <div>
-          <label className="block text-sm mb-2">Original Text</label>
-          <textarea value={a} onChange={e=>setA(e.target.value)} rows={6} className="w-full bg-gray-800 rounded px-3 py-2" />
-        </div>
-        <div>
-          <label className="block text-sm mb-2">Modified Text</label>
-          <textarea value={b} onChange={e=>setB(e.target.value)} rows={6} className="w-full bg-gray-800 rounded px-3 py-2" />
-        </div>
+    <div className="min-h-screen bg-gray-950 text-white p-8">
+      <h1 className="text-3xl font-bold mb-2">Text Diff Highlighter</h1>
+      <p className="text-gray-400 mb-4">Compare two texts and highlight differences line by line. {changed > 0 && <span className="text-yellow-400">{changed} line(s) differ</span>}</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <textarea className="w-full h-40 bg-gray-900 border border-gray-700 rounded p-3 text-white resize-none" placeholder="Text A..." value={text1} onChange={e => setText1(e.target.value)} />
+        <textarea className="w-full h-40 bg-gray-900 border border-gray-700 rounded p-3 text-white resize-none" placeholder="Text B..." value={text2} onChange={e => setText2(e.target.value)} />
       </div>
-      <div className="bg-gray-800 rounded-lg p-4">
-        <h2 className="text-sm font-semibold mb-3">Differences</h2>
-        <p className="leading-8">
-          {diff.map((d,i)=>(
-            <span key={i} className={`mr-1 px-1 rounded ${d.type==="add"?"bg-green-900 text-green-300":d.type==="del"?"bg-red-900 text-red-300 line-through":""}` }>{d.text}</span>
-          ))}
-        </p>
-        <div className="flex gap-4 mt-4 text-xs">
-          <span className="bg-green-900 text-green-300 px-2 py-1 rounded">Added</span>
-          <span className="bg-red-900 text-red-300 line-through px-2 py-1 rounded">Removed</span>
-        </div>
+      <div className="space-y-1 font-mono text-sm">
+        {diffs.map(({line, a, b, same}) => (
+          <div key={line} className={`grid grid-cols-2 gap-2 px-2 py-1 rounded ${same ? "" : "bg-yellow-900/30 border border-yellow-700/40"}`}>
+            <div className={same ? "text-gray-300" : "text-red-300"}><span className="text-gray-600 mr-2">{line}</span>{a || <span className="text-gray-600">(empty)</span>}</div>
+            <div className={same ? "text-gray-300" : "text-green-300"}>{b || <span className="text-gray-600">(empty)</span>}</div>
+          </div>
+        ))}
       </div>
     </div>
-  )
+  );
 }
