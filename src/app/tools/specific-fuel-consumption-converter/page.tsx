@@ -1,10 +1,10 @@
 "use client";
 import { useState } from "react";
 
-const units: string[] = ["K/W", "degC/W", "degF-hr/BTU", "degF-s/BTU"];
-const toBase: Record<string, number> = {"K/W": 1, "degC/W": 1, "degF-hr/BTU": 0.52657, "degF-s/BTU": 0.000146};
+const units: string[] = ["g/kWh", "kg/kWh", "lb/hp-hr", "g/hp-hr", "lb/kWh"];
+const toBase: Record<string, number> = {"g/kWh": 1, "kg/kWh": 1000, "lb/hp-hr": 608.277, "g/hp-hr": 1.341022, "lb/kWh": 453.592};
 
-export default function ThermalResistanceConverter() {
+export default function SpecificFuelConsumptionConverter() {
   const [val, setVal] = useState("");
   const [from, setFrom] = useState(units[0]);
   const [to, setTo] = useState(units[1]);
@@ -12,8 +12,8 @@ export default function ThermalResistanceConverter() {
 
   return (
     <main style={{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"sans-serif",background:"#0f172a",minHeight:"100vh",color:"#f1f5f9"}}>
-      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Thermal Resistance Converter</h1>
-      <p style={{color:"#94a3b8",marginBottom:"1.5rem"}}>Convert between thermal resistance units instantly.</p>
+      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Specific Fuel Consumption Converter</h1>
+      <p style={{color:"#94a3b8",marginBottom:"1.5rem"}}>Convert between specific fuel consumption units instantly.</p>
       <div style={{display:"flex",flexDirection:"column",gap:"1rem"}}>
         <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.75rem",borderRadius:"8px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",fontSize:"1rem"}} />
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"1rem"}}>

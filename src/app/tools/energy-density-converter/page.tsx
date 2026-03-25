@@ -1,10 +1,10 @@
 "use client";
 import { useState } from "react";
 
-const units: string[] = ["K/W", "degC/W", "degF-hr/BTU", "degF-s/BTU"];
-const toBase: Record<string, number> = {"K/W": 1, "degC/W": 1, "degF-hr/BTU": 0.52657, "degF-s/BTU": 0.000146};
+const units: string[] = ["J/m3", "kJ/m3", "MJ/m3", "BTU/ft3", "Wh/L", "kWh/L", "kcal/L"];
+const toBase: Record<string, number> = {"J/m3": 1, "kJ/m3": 1000, "MJ/m3": 1000000.0, "BTU/ft3": 37258.9, "Wh/L": 3600000, "kWh/L": 3600000000.0, "kcal/L": 4184000};
 
-export default function ThermalResistanceConverter() {
+export default function EnergyDensityConverter() {
   const [val, setVal] = useState("");
   const [from, setFrom] = useState(units[0]);
   const [to, setTo] = useState(units[1]);
@@ -12,8 +12,8 @@ export default function ThermalResistanceConverter() {
 
   return (
     <main style={{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"sans-serif",background:"#0f172a",minHeight:"100vh",color:"#f1f5f9"}}>
-      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Thermal Resistance Converter</h1>
-      <p style={{color:"#94a3b8",marginBottom:"1.5rem"}}>Convert between thermal resistance units instantly.</p>
+      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Energy Density Converter</h1>
+      <p style={{color:"#94a3b8",marginBottom:"1.5rem"}}>Convert between energy density units instantly.</p>
       <div style={{display:"flex",flexDirection:"column",gap:"1rem"}}>
         <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.75rem",borderRadius:"8px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",fontSize:"1rem"}} />
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"1rem"}}>
