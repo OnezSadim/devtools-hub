@@ -1,35 +1,40 @@
 "use client";
 import { useState } from "react";
 
-const UNITS: string[] = ["Ohm", "Kilohm", "Megohm", "Milliohm", "Microohm", "Nanoohm", "Abohm", "Statohm"];
-const TO_BASE: Record<string, number> = {"Ohm": 1, "Kilohm": 1000.0, "Megohm": 1000000.0, "Milliohm": 0.001, "Microohm": 1e-06, "Nanoohm": 1e-09, "Abohm": 1e-09, "Statohm": 898755000000.0};
+const UNITS = ["Ohm", "Milliohm", "Kiloohm", "Megaohm", "Gigaohm"];
+const FACTORS = [1, 0.001, 1000, 1000000, 1000000000];
 
 export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(UNITS[0]);
-  const [to, setTo] = useState(UNITS[1]);
-  const result = val !== "" && !isNaN(Number(val))
-    ? (Number(val) * TO_BASE[from] / TO_BASE[to]).toPrecision(6)
-    : "";
+  const [from, setFrom] = useState(0);
+  const convert = (v: string, fi: number) => {
+    const n = parseFloat(v);
+    if (isNaN(n)) return "-";
+    const base = n * FACTORS[fi];
+    return UNITS.map((u, i) => ({ u, v: (base / FACTORS[i]).toPrecision(6) }));
+  };
+  const results = convert(val, from);
   return (
-    <main style={{maxWidth:520,margin:"40px auto",padding:"0 16px",fontFamily:"sans-serif",color:"#f1f5f9"}}>
-      <h1 style={{fontSize:"1.6rem",marginBottom:8}}>Electric Resistance Converter</h1>
-      <div style={{display:"flex",gap:8,marginBottom:12}}>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value"
-          style={{flex:1,padding:"8px",borderRadius:6,border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9"}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)}
-          style={{padding:"8px",borderRadius:6,border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9"}}>
-          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
+    <main style={{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"monospace"}}>
+      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Electric Resistance Converter</h1>
+      <div style={{display:"flex",gap:"1rem",marginBottom:"1rem"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value"
+          style={{flex:1,padding:"0.5rem",background:"#1a1a1a",color:"#fff",border:"1px solid #333",borderRadius:"4px"}} />
+        <select value={from} onChange={e=>setFrom(Number(e.target.value))}
+          style={{padding:"0.5rem",background:"#1a1a1a",color:"#fff",border:"1px solid #333",borderRadius:"4px"}}>
+          {UNITS.map((u,i)=>(<option key={i} value={i}>{u}</option>))}
         </select>
       </div>
-      <div style={{display:"flex",gap:8,marginBottom:16}}>
-        <input value={result} readOnly placeholder="Result"
-          style={{flex:1,padding:"8px",borderRadius:6,border:"1px solid #334155",background:"#0f172a",color:"#38bdf8"}} />
-        <select value={to} onChange={e=>setTo(e.target.value)}
-          style={{padding:"8px",borderRadius:6,border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9"}}>
-          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
-        </select>
-      </div>
+      {Array.isArray(results) && (
+        <table style={{width:"100%",borderCollapse:"collapse"}}>
+          <tbody>
+            {results.map((r,i)=>(<tr key={i} style={{borderBottom:"1px solid #222"}}>
+              <td style={{padding:"0.4rem",color:"#aaa"}}>{r.u}</td>
+              <td style={{padding:"0.4rem",textAlign:"right"}}>{r.v}</td>
+            </tr>))}
+          </tbody>
+        </table>
+      )}
     </main>
   );
 }
