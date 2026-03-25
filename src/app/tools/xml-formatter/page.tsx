@@ -1,48 +1,27 @@
 "use client";
 import { useState } from "react";
-
-function formatXML(xml: string): string {
-  let out = "";
-  let indent = 0;
-  const tokens = xml.replace(/></g, ">
-<").split("
-");
-  for (const token of tokens) {
-    const t = token.trim();
-    if (!t) continue;
-    if (t.startsWith("</")) indent = Math.max(0, indent - 1);
-    out += "  ".repeat(indent) + t + "
-";
-    if (!t.startsWith("</") && !t.endsWith("/>") && t.startsWith("<") && !t.includes("</")) indent++;
-  }
-  return out.trim();
-}
-
-export default function XMLFormatter() {
+export default function Page() {
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
-
-  const sample = "<root><user><id>1</id><name>Alice</name><email>alice@example.com</email></user></root>";
-
-  return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
-      <h1 className="text-3xl font-bold mb-2">XML Formatter</h1>
-      <p className="text-gray-400 mb-6">Format and prettify XML documents with proper indentation.</p>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="text-sm text-gray-400 block mb-1">Input XML</label>
-          <textarea value={input} onChange={e=>setInput(e.target.value)} className="w-full h-72 bg-gray-900 rounded p-3 font-mono text-sm resize-none" placeholder="Paste XML here..." />
-        </div>
-        <div>
-          <label className="text-sm text-gray-400 block mb-1">Formatted XML</label>
-          <textarea readOnly value={output} className="w-full h-72 bg-gray-900 rounded p-3 font-mono text-sm resize-none text-green-400" />
-        </div>
-      </div>
-      <div className="flex gap-3 mt-4">
-        <button onClick={()=>setOutput(formatXML(input))} className="bg-blue-600 hover:bg-blue-700 rounded px-6 py-2 font-semibold">Format</button>
-        <button onClick={()=>{setInput(sample);setOutput("");}} className="bg-gray-700 hover:bg-gray-600 rounded px-4 py-2">Sample</button>
-        <button onClick={()=>navigator.clipboard.writeText(output)} className="bg-gray-700 hover:bg-gray-600 rounded px-4 py-2">Copy</button>
-      </div>
-    </main>
-  );
+  const [err, setErr] = useState("");
+  const format = () => {
+    try {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(input, "text/xml");
+      const pe = doc.querySelector("parsererror");
+      if (pe) { setErr("Parse error: " + pe.textContent); setOutput(""); return; }
+      let indent = 0;
+      const lines = input.replace(/></g, ">\n<").split("\n");
+      const result = lines.map(line => {
+        const t = line.trim();
+        if (!t) return "";
+        if (t.match(/^<\//)) indent = Math.max(0, indent - 1);
+        const out = "  ".repeat(indent) + t;
+        if (t.match(/^<[^/?!][^>]*>/) && !t.match(/<\//) && !t.match(/\/>$/)) indent++;
+        return out;
+      }).filter(Boolean).join("\n");
+      setOutput(result); setErr("");
+    } catch(e) { setErr(String(e)); }
+  };
+  return (<div style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}><h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>XML Formatter</h1><textarea value={input} onChange={e=>setInput(e.target.value)} placeholder="Paste XML here..." style={{width:"100%",height:"200px",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",padding:"0.5rem",borderRadius:"4px",display:"block",marginBottom:"0.5rem",boxSizing:"border-box"}} /><button onClick={format} style={{background:"#3b82f6",color:"#fff",border:"none",padding:"0.5rem 1rem",borderRadius:"4px",cursor:"pointer",marginBottom:"0.5rem"}}>Format XML</button>{err&&<p style={{color:"#f87171"}}>{err}</p>}{output&&<textarea value={output} readOnly style={{width:"100%",height:"300px",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",padding:"0.5rem",borderRadius:"4px",display:"block",boxSizing:"border-box"}} />}</div>);
 }

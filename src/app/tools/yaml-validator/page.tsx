@@ -1,50 +1,18 @@
 "use client";
 import { useState } from "react";
-
-function parseYAML(text: string): {ok:boolean, msg:string, lines:number} {
-  const lines = text.split("
-");
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    if (/^	/.test(line)) return {ok:false, msg:`Line ${i+1}: YAML does not allow tabs for indentation`, lines: i+1};
-    if (/^(\s*)([^:]+):(\s*)$/.test(line) && line.trim().endsWith(":")) continue;
-    if (line.trim() === "---" || line.trim() === "...") continue;
-  }
-  return {ok:true, msg:"Valid YAML structure (basic check)", lines: lines.length};
-}
-
-export default function YAMLValidator() {
+export default function Page() {
   const [input, setInput] = useState("");
-  const [res, setRes] = useState<{ok:boolean,msg:string,lines:number}|null>(null);
-
-  const sample = `name: my-app
-version: 1.0.0
-config:
-  debug: true
-  port: 3000
-tags:
-  - web
-  - api`;
-
-  return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
-      <h1 className="text-3xl font-bold mb-2">YAML Validator</h1>
-      <p className="text-gray-400 mb-6">Validate YAML syntax and check for common errors.</p>
-      <div className="max-w-2xl">
-        <textarea value={input} onChange={e=>setInput(e.target.value)} className="w-full h-64 bg-gray-900 rounded p-3 font-mono text-sm resize-none mb-3" placeholder="Paste your YAML here..." />
-        <div className="flex gap-3 mb-4">
-          <button onClick={()=>setRes(parseYAML(input))} className="bg-blue-600 hover:bg-blue-700 rounded px-6 py-2 font-semibold">Validate</button>
-          <button onClick={()=>{setInput(sample);setRes(null);}} className="bg-gray-700 hover:bg-gray-600 rounded px-4 py-2">Load Sample</button>
-          <button onClick={()=>{setInput("");setRes(null);}} className="bg-gray-700 hover:bg-gray-600 rounded px-4 py-2">Clear</button>
-        </div>
-        {res && (
-          <div className={`rounded-xl p-4 ${res.ok?"bg-green-900 border border-green-600":"bg-red-900 border border-red-600"}`}>
-            <div className="font-semibold mb-1">{res.ok ? "Valid" : "Invalid"}</div>
-            <div className="text-sm">{res.msg}</div>
-            <div className="text-sm text-gray-400 mt-1">{res.lines} lines</div>
-          </div>
-        )}
-      </div>
-    </main>
-  );
+  const [result, setResult] = useState("");
+  const [ok, setOk] = useState(false);
+  const validate = () => {
+    const lines = input.split("\n");
+    let valid = true; let msg = "";
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      if (line.match(/^\t/)) { valid = false; msg = "Line " + (i+1) + ": Tabs not allowed (use spaces)"; break; }
+    }
+    if (valid) { setOk(true); setResult("Valid YAML. " + lines.filter(l=>l.trim()&&!l.trim().startsWith("#")).length + " non-comment lines."); }
+    else { setOk(false); setResult(msg); }
+  };
+  return (<div style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}><h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>YAML Validator</h1><textarea value={input} onChange={e=>setInput(e.target.value)} placeholder="Paste YAML here..." style={{width:"100%",height:"300px",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",padding:"0.5rem",borderRadius:"4px",display:"block",marginBottom:"0.5rem",boxSizing:"border-box"}} /><button onClick={validate} style={{background:"#3b82f6",color:"#fff",border:"none",padding:"0.5rem 1rem",borderRadius:"4px",cursor:"pointer",marginBottom:"0.5rem"}}>Validate</button>{result&&<p style={{color:ok?"#4ade80":"#f87171",padding:"0.75rem",background:"#1e293b",borderRadius:"4px"}}>{ok?"✓ ":"✗ "}{result}</p>}</div>);
 }
