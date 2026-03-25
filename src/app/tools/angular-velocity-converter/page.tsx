@@ -1,0 +1,10 @@
+'use client';
+import { useState } from 'react';
+export default function AngularVelocityConverter() {
+  const [v, setV] = useState('');
+  const [f, setF] = useState('radian_per_second');
+  const [t, setT] = useState('revolution_per_minute');
+  const units = {radian_per_second:1,radian_per_minute:1/60,degree_per_second:Math.PI/180,revolution_per_second:2*Math.PI,revolution_per_minute:2*Math.PI/60};
+  const convert = () => { const n = parseFloat(v); if (isNaN(n)) return 'Invalid input'; return (n * units[f] / units[t]).toFixed(6); };
+  return (<div style={{padding:'2rem',maxWidth:'600px',margin:'0 auto'}}><h1>Angular Velocity Converter</h1><p>Convert between angular velocity units instantly.</p><input value={v} onChange={e=>setV(e.target.value)} placeholder='Enter value' style={{width:'100%',padding:'0.5rem',marginBottom:'1rem',display:'block',fontSize:'1rem'}}/><select value={f} onChange={e=>setF(e.target.value)} style={{width:'100%',padding:'0.5rem',marginBottom:'1rem',display:'block'}}><option value='radian_per_second'>Radian/second</option><option value='radian_per_minute'>Radian/minute</option><option value='degree_per_second'>Degree/second</option><option value='revolution_per_second'>Revolution/second (RPS)</option><option value='revolution_per_minute'>Revolution/minute (RPM)</option></select><div style={{textAlign:'center',marginBottom:'1rem',fontWeight:'bold'}}>to</div><select value={t} onChange={e=>setT(e.target.value)} style={{width:'100%',padding:'0.5rem',marginBottom:'1rem',display:'block'}}><option value='radian_per_second'>Radian/second</option><option value='radian_per_minute'>Radian/minute</option><option value='degree_per_second'>Degree/second</option><option value='revolution_per_second'>Revolution/second (RPS)</option><option value='revolution_per_minute'>Revolution/minute (RPM)</option></select><div style={{padding:'1rem',background:'#1e293b',color:'#f8fafc',borderRadius:'0.5rem',fontSize:'1.2rem'}}>Result: {convert()}</div></div>);
+}
