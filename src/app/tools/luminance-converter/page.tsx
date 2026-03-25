@@ -1,49 +1,39 @@
 "use client";
 import { useState } from "react";
 
-const units = [
-  { label: "cd/m²", value: "cdm2" },
-  { label: "nit", value: "nit" },
-  { label: "foot-lambert", value: "ftl" },
-  { label: "lambert", value: "lam" },
-  { label: "stilb", value: "sb" },
-];
+const units = ['candela/m2', 'nit', 'stilb', 'apostilb', 'lambert', 'foot-lambert'];
+const factors = {'candela/m2': 1.0, 'nit': 1.0, 'stilb': 10000.0, 'apostilb': 0.3183098861837907, 'lambert': 3183.098861837907, 'foot-lambert': 3.4262590996355744};
 
-const toBase: Record<string, number> = {
-  "cdm2": 1.0,
-  "nit": 1.0,
-  "ftl": 3.42626,
-  "lam": 3183.1,
-  "sb": 10000.0,
-};
-
-export default function LuminanceConverterPage() {
+export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(units[0].value);
-  const [to, setTo] = useState(units[1].value);
-  function convert() {
-    const n = parseFloat(val);
+  const [from, setFrom] = useState(units[0]);
+  const [to, setTo] = useState(units[1]);
+  function convert(v, f, t) {
+    const n = parseFloat(v);
     if (isNaN(n)) return "";
-    return ((n * toBase[from]) / toBase[to]).toPrecision(6);
+    return ((n * factors[f]) / factors[t]).toPrecision(6);
   }
-  const sel = "bg-gray-800 text-white rounded px-3 py-2 border border-gray-600";
   return (
-    <main className="min-h-screen bg-gray-900 text-white p-8">
-      <h1 className="text-3xl font-bold mb-2">Luminance Converter</h1>
-      <p className="text-gray-400 mb-6">Convert between luminance units instantly.</p>
-      <div className="bg-gray-800 rounded-xl p-6 max-w-lg space-y-4">
-        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" className="w-full bg-gray-700 text-white rounded px-3 py-2 border border-gray-600" />
-        <div className="flex gap-4">
-          <select value={from} onChange={e=>setFrom(e.target.value)} className={sel}>
-            {units.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
-          </select>
-          <span className="text-gray-400 self-center">to</span>
-          <select value={to} onChange={e=>setTo(e.target.value)} className={sel}>
-            {units.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
+    <div style={{minHeight:"100vh",background:"#0f172a",color:"#e2e8f0",fontFamily:"monospace",padding:"2rem"}}>
+      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Luminance Converter</h1>
+      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginTop:"1.5rem"}}>
+        <div>
+          <label style={{display:"block",marginBottom:"0.25rem"}}>From</label>
+          <select value={from} onChange={e=>setFrom(e.target.value)} style={{background:"#1e293b",color:"#e2e8f0",padding:"0.5rem",borderRadius:"4px",border:"1px solid #334155"}}>
+            {units.map(u=><option key={u} value={u}>{u}</option>)}
           </select>
         </div>
-        {val && <div className="text-2xl font-bold text-blue-400">{convert()} {units.find(u=>u.value===to)?.label}</div>}
+        <div>
+          <label style={{display:"block",marginBottom:"0.25rem"}}>To</label>
+          <select value={to} onChange={e=>setTo(e.target.value)} style={{background:"#1e293b",color:"#e2e8f0",padding:"0.5rem",borderRadius:"4px",border:"1px solid #334155"}}>
+            {units.map(u=><option key={u} value={u}>{u}</option>)}
+          </select>
+        </div>
       </div>
-    </main>
+      <div style={{marginTop:"1rem"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{background:"#1e293b",color:"#e2e8f0",padding:"0.5rem",borderRadius:"4px",border:"1px solid #334155",width:"200px"}} />
+      </div>
+      {val && <div style={{marginTop:"1rem",fontSize:"1.4rem",color:"#38bdf8"}}>{convert(val,from,to)} {to}</div>}
+    </div>
   );
 }

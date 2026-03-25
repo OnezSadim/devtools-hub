@@ -1,29 +1,39 @@
 "use client";
 import { useState } from "react";
+
+const units = ['lumen', 'candela-steradian', 'millilumen', 'kilolumen'];
+const factors = {'lumen': 1.0, 'candela-steradian': 1.0, 'millilumen': 0.001, 'kilolumen': 1000.0};
+
 export default function Page() {
-  const units = ['lumen', 'candela steradian', 'millilumen', 'kilolumen'];
-  const factors = {'lumen': 1.0, 'candela steradian': 1.0, 'millilumen': 0.001, 'kilolumen': 1000.0};
   const [val, setVal] = useState("");
   const [from, setFrom] = useState(units[0]);
   const [to, setTo] = useState(units[1]);
-  function convert() {
-    const n = parseFloat(val);
+  function convert(v, f, t) {
+    const n = parseFloat(v);
     if (isNaN(n)) return "";
-    return ((n * factors[from]) / factors[to]).toPrecision(6);
+    return ((n * factors[f]) / factors[t]).toPrecision(6);
   }
   return (
-    <main style={{padding:"2rem",maxWidth:"480px",margin:"0 auto",fontFamily:"sans-serif"}}>
-      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Luminous Flux Converter</h1>
-      <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{width:"100%",padding:"0.5rem",marginBottom:"0.5rem",boxSizing:"border-box"}} />
-      <select value={from} onChange={e=>setFrom(e.target.value)} style={{width:"100%",padding:"0.5rem",marginBottom:"0.5rem"}}>
-        {units.map(u=><option key={u}>{u}</option>)}
-      </select>
-      <select value={to} onChange={e=>setTo(e.target.value)} style={{width:"100%",padding:"0.5rem",marginBottom:"0.5rem"}}>
-        {units.map(u=><option key={u}>{u}</option>)}
-      </select>
-      <div style={{padding:"1rem",background:"#f5f5f5",borderRadius:"4px"}}>
-        <strong>Result: {convert()}</strong>
+    <div style={{minHeight:"100vh",background:"#0f172a",color:"#e2e8f0",fontFamily:"monospace",padding:"2rem"}}>
+      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Luminous Flux Converter</h1>
+      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginTop:"1.5rem"}}>
+        <div>
+          <label style={{display:"block",marginBottom:"0.25rem"}}>From</label>
+          <select value={from} onChange={e=>setFrom(e.target.value)} style={{background:"#1e293b",color:"#e2e8f0",padding:"0.5rem",borderRadius:"4px",border:"1px solid #334155"}}>
+            {units.map(u=><option key={u} value={u}>{u}</option>)}
+          </select>
+        </div>
+        <div>
+          <label style={{display:"block",marginBottom:"0.25rem"}}>To</label>
+          <select value={to} onChange={e=>setTo(e.target.value)} style={{background:"#1e293b",color:"#e2e8f0",padding:"0.5rem",borderRadius:"4px",border:"1px solid #334155"}}>
+            {units.map(u=><option key={u} value={u}>{u}</option>)}
+          </select>
+        </div>
       </div>
-    </main>
+      <div style={{marginTop:"1rem"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{background:"#1e293b",color:"#e2e8f0",padding:"0.5rem",borderRadius:"4px",border:"1px solid #334155",width:"200px"}} />
+      </div>
+      {val && <div style={{marginTop:"1rem",fontSize:"1.4rem",color:"#38bdf8"}}>{convert(val,from,to)} {to}</div>}
+    </div>
   );
 }
