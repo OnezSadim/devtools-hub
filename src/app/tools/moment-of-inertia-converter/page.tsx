@@ -1,1 +1,63 @@
-"use client";import{useState}from"react";const units=["kg·m²", "g·cm²", "lbm·ft²", "lbm·in²", "slug·ft²"];export default function Page(){const[val,setVal]=useState("");const[from,setFrom]=useState(units[0]);const[to,setTo]=useState(units[1]);const[res,setRes]=useState("");function convert(){setRes("Use a dedicated library for accurate Moment of Inertia Converter conversions.");}return(<div style={{padding:"2rem",fontFamily:"monospace",background:"#0f0f0f",minHeight:"100vh",color:"#e0e0e0"}}><h1 style={{color:"#00ff88"}}>Moment of Inertia Converter</h1><p>Convert between moment of inertia units.</p><input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{background:"#1a1a1a",color:"#e0e0e0",border:"1px solid #333",padding:"0.5rem",marginRight:"0.5rem"}}/><select value={from} onChange={e=>setFrom(e.target.value)} style={{background:"#1a1a1a",color:"#e0e0e0",border:"1px solid #333",padding:"0.5rem",marginRight:"0.5rem"}}>{units.map(u=>(<option key={u}>{u}</option>))}</select><span style={{marginRight:"0.5rem"}}>to</span><select value={to} onChange={e=>setTo(e.target.value)} style={{background:"#1a1a1a",color:"#e0e0e0",border:"1px solid #333",padding:"0.5rem",marginRight:"0.5rem"}}>{units.map(u=>(<option key={u}>{u}</option>))}</select><button onClick={convert} style={{background:"#00ff88",color:"#000",border:"none",padding:"0.5rem 1rem",cursor:"pointer"}}>Convert</button>{res&&<p style={{marginTop:"1rem",color:"#00ff88"}}>{res}</p>}</div>);}
+"use client";
+import { useState } from "react";
+
+const units: { name: string; factor: number }[] = [
+  { name: "kg·m²", factor: 1.0 },
+  { name: "kg·cm²", factor: 0.0001 },
+  { name: "kg·mm²", factor: 1e-06 },
+  { name: "g·cm²", factor: 1e-07 },
+  { name: "g·mm²", factor: 1e-09 },
+  { name: "lb·ft²", factor: 0.04214011 },
+  { name: "lb·in²", factor: 0.00029264 },
+  { name: "oz·in²", factor: 1.829e-05 },
+  { name: "slug·ft²", factor: 1.35581795 }
+];
+
+function toBase(val: number, unit: string): number {
+  const u = units.find(x => x.name === unit);
+  return u ? val * u.factor : val;
+}
+
+function fromBase(val: number, unit: string): number {
+  const u = units.find(x => x.name === unit);
+  return u ? val / u.factor : val;
+}
+
+export default function Page() {
+  const [value, setValue] = useState("");
+  const [from, setFrom] = useState(units[0].name);
+  const [to, setTo] = useState(units[1].name);
+
+  const result = value !== "" ? fromBase(toBase(parseFloat(value), from), to) : null;
+
+  return (
+    <main className="min-h-screen bg-gray-950 text-gray-100 flex flex-col items-center justify-center p-8">
+      <h1 className="text-3xl font-bold mb-2">Moment of Inertia Converter</h1>
+      <p className="text-gray-400 mb-8">Convert between moment of inertia units</p>
+      <div className="bg-gray-900 rounded-xl p-6 w-full max-w-md space-y-4">
+        <input
+          type="number"
+          className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white"
+          placeholder="Enter value"
+          value={value}
+          onChange={e => setValue(e.target.value)}
+        />
+        <div className="flex gap-4">
+          <select className="flex-1 bg-gray-800 rounded-lg px-3 py-2" value={from} onChange={e => setFrom(e.target.value)}>
+            {units.map(u => <option key={u.name} value={u.name}>{u.name}</option>)}
+          </select>
+          <span className="self-center text-gray-400">→</span>
+          <select className="flex-1 bg-gray-800 rounded-lg px-3 py-2" value={to} onChange={e => setTo(e.target.value)}>
+            {units.map(u => <option key={u.name} value={u.name}>{u.name}</option>)}
+          </select>
+        </div>
+        {result !== null && (
+          <div className="bg-gray-800 rounded-lg px-4 py-3 text-center">
+            <span className="text-2xl font-bold text-blue-400">{isFinite(result) ? result.toPrecision(6) : "∞"}</span>
+            <span className="text-gray-400 ml-2">{to}</span>
+          </div>
+        )}
+      </div>
+    </main>
+  );
+}
