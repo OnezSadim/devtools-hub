@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
 
-const UNITS = ["Becquerel (Bq)", "Kilobecquerel (kBq)", "Megabecquerel (MBq)", "Gigabecquerel (GBq)", "Curie (Ci)", "Millicurie (mCi)", "Microcurie (uCi)", "Rutherford (Rd)"];
-const TO_BASE: Record<string, number> = {"Becquerel (Bq)": 1, "Kilobecquerel (kBq)": 1000.0, "Megabecquerel (MBq)": 1000000.0, "Gigabecquerel (GBq)": 1000000000.0, "Curie (Ci)": 37000000000.0, "Millicurie (mCi)": 37000000.0, "Microcurie (uCi)": 37000.0, "Rutherford (Rd)": 1000000.0};
+const UNITS = ["Gray/second (Gy/s)", "Gray/minute (Gy/min)", "Gray/hour (Gy/h)", "Rad/second (rad/s)", "Millisievert/hour (mSv/h)", "Microsievert/hour (uSv/h)"];
+const TO_BASE: Record<string, number> = {"Gray/second (Gy/s)": 1, "Gray/minute (Gy/min)": 0.016666666666666666, "Gray/hour (Gy/h)": 0.0002777777777777778, "Rad/second (rad/s)": 0.01, "Millisievert/hour (mSv/h)": 2.7777777777777776e-07, "Microsievert/hour (uSv/h)": 2.7777777777777777e-10};
 
 export default function Page() {
   const [val, setVal] = useState("");
@@ -15,7 +15,7 @@ export default function Page() {
   };
   return (
     <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"2rem"}}>
-      <h1 style={{fontSize:"2rem",fontWeight:700,marginBottom:"0.5rem"}}>Radioactivity Converter</h1>
+      <h1 style={{fontSize:"2rem",fontWeight:700,marginBottom:"0.5rem"}}>Radiation Dose Rate Converter</h1>
       <div style={{background:"#1e293b",borderRadius:"1rem",padding:"2rem",width:"100%",maxWidth:"480px",display:"flex",flexDirection:"column",gap:"1rem"}}>
         <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",fontSize:"1rem"}} />
         <div style={{display:"flex",gap:"1rem"}}>
