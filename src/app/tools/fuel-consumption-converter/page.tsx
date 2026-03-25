@@ -1,69 +1,32 @@
 "use client";
 import { useState } from "react";
 
+const units = ['L/100km', 'mpg (US)', 'mpg (UK)', 'km/L', 'L/mile'];
+const factors = {'L/100km': 1.0, 'mpg (US)': 235.215, 'mpg (UK)': 282.481, 'km/L': 100.0, 'L/mile': 1.60934};
+
 export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState("km/L");
-  const [to, setTo] = useState("mpg (US)");
-
-  const factors: Record<string, number> = {
-    "km/L": 1.0,
-    "mpg (US)": 2.35215,
-    "mpg (UK)": 2.82481,
-    "miles/L": 0.621371,
-    "km/gallon (US)": 3.78541,
-  };
-
-  const result = val !== "" && !isNaN(Number(val))
-    ? (Number(val) * factors[from]) / factors[to]
-    : null;
-
+  const [from, setFrom] = useState(units[0]);
+  const [to, setTo] = useState(units[1]);
+  function convert(v, f, t) {
+    const n = parseFloat(v);
+    if (isNaN(n)) return "";
+    return ((n * factors[f]) / factors[t]).toPrecision(6);
+  }
   return (
-    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
-      <div className="max-w-xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Fuel Consumption Converter</h1>
-        <p className="text-gray-400 mb-6">Convert fuel consumption rates between L/100km, km/L, and mpg variants.</p>
-        <div className="space-y-4">
-          <input
-            type="number"
-            value={val}
-            onChange={e => setVal(e.target.value)}
-            placeholder="Enter value"
-            className="w-full p-3 bg-gray-800 rounded border border-gray-700 text-white"
-          />
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">From</label>
-              <select value={from} onChange={e => setFrom(e.target.value)}
-                className="w-full p-3 bg-gray-800 rounded border border-gray-700 text-white">
-          <option value="km/L">km/L</option>
-          <option value="mpg (US)">mpg (US)</option>
-          <option value="mpg (UK)">mpg (UK)</option>
-          <option value="miles/L">miles/L</option>
-          <option value="km/gallon (US)">km/gallon (US)</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">To</label>
-              <select value={to} onChange={e => setTo(e.target.value)}
-                className="w-full p-3 bg-gray-800 rounded border border-gray-700 text-white">
-          <option value="km/L">km/L</option>
-          <option value="mpg (US)">mpg (US)</option>
-          <option value="mpg (UK)">mpg (UK)</option>
-          <option value="miles/L">miles/L</option>
-          <option value="km/gallon (US)">km/gallon (US)</option>
-              </select>
-            </div>
-          </div>
-          {result !== null && (
-            <div className="p-4 bg-gray-800 rounded border border-gray-700">
-              <span className="text-2xl font-mono text-green-400">
-                {val} {from} = {result.toPrecision(6)} {to}
-              </span>
-            </div>
-          )}
-        </div>
+    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",flexDirection:"column",alignItems:"center",padding:"2rem"}}>
+      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Fuel Consumption Converter</h1>
+      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginTop:"1rem",alignItems:"center"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",width:"140px"}} />
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9"}}>
+          {units.map(u=><option key={u}>{u}</option>)}
+        </select>
+        <span style={{fontSize:"1.2rem"}}>→</span>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9"}}>
+          {units.map(u=><option key={u}>{u}</option>)}
+        </select>
       </div>
+      {val && <p style={{marginTop:"1.5rem",fontSize:"1.4rem",color:"#38bdf8"}}>{val} {from} = {convert(val,from,to)} {to}</p>}
     </main>
   );
 }

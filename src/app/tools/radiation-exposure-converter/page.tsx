@@ -1,34 +1,32 @@
 "use client";
 import { useState } from "react";
 
-const UNITS: Record<string, number> = {
-  "C/kg": 1.0,
-  "R (roentgen)": 0.000258,
-  "mR": 2.58e-07,
-};
+const units = ['Coulomb/kg (C/kg)', 'Roentgen (R)', 'Milliroentgen (mR)', 'Microroentgen (uR)'];
+const factors = {'Coulomb/kg (C/kg)': 1.0, 'Roentgen (R)': 0.000258, 'Milliroentgen (mR)': 2.58e-07, 'Microroentgen (uR)': 2.58e-10};
 
 export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState("C/kg");
-  const [to, setTo] = useState("R (roentgen)");
-  const result = val && !isNaN(Number(val)) ? (Number(val) * UNITS[from] / UNITS[to]).toFixed(6) : "";
+  const [from, setFrom] = useState(units[0]);
+  const [to, setTo] = useState(units[1]);
+  function convert(v, f, t) {
+    const n = parseFloat(v);
+    if (isNaN(n)) return "";
+    return ((n * factors[f]) / factors[t]).toPrecision(6);
+  }
   return (
-    <main className="min-h-screen bg-gray-900 text-white p-8">
-      <h1 className="text-3xl font-bold mb-6">Radiation Exposure Converter</h1>
-      <div className="max-w-md space-y-4">
-        <input className="w-full bg-gray-800 rounded p-2" type="number" placeholder="Value" value={val} onChange={e => setVal(e.target.value)} />
-        <select className="w-full bg-gray-800 rounded p-2" value={from} onChange={e => setFrom(e.target.value)}>
-          <option value="C/kg">C/kg</option>
-          <option value="R (roentgen)">R (roentgen)</option>
-          <option value="mR">mR</option>
+    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",flexDirection:"column",alignItems:"center",padding:"2rem"}}>
+      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Radiation Exposure Converter</h1>
+      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginTop:"1rem",alignItems:"center"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",width:"140px"}} />
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9"}}>
+          {units.map(u=><option key={u}>{u}</option>)}
         </select>
-        <select className="w-full bg-gray-800 rounded p-2" value={to} onChange={e => setTo(e.target.value)}>
-          <option value="C/kg">C/kg</option>
-          <option value="R (roentgen)">R (roentgen)</option>
-          <option value="mR">mR</option>
+        <span style={{fontSize:"1.2rem"}}>→</span>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9"}}>
+          {units.map(u=><option key={u}>{u}</option>)}
         </select>
-        {result && <div className="bg-gray-800 rounded p-4 text-xl font-mono">{result} {to}</div>}
       </div>
+      {val && <p style={{marginTop:"1.5rem",fontSize:"1.4rem",color:"#38bdf8"}}>{val} {from} = {convert(val,from,to)} {to}</p>}
     </main>
   );
 }

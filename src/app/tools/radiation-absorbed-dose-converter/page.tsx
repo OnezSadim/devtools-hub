@@ -1,34 +1,32 @@
 "use client";
 import { useState } from "react";
 
-const units = ["gray","centigray","rad","milligray","microgray"];
-
-const conversions = {"gray":1,"centigray":0.01,"rad":0.01,"milligray":0.001,"microgray":0.000001};
+const units = ['Gray (Gy)', 'Milligray (mGy)', 'Rad', 'Centigray (cGy)', 'Microgray (uGy)'];
+const factors = {'Gray (Gy)': 1.0, 'Milligray (mGy)': 0.001, 'Rad': 0.01, 'Centigray (cGy)': 0.01, 'Microgray (uGy)': 1e-06};
 
 export default function Page() {
   const [val, setVal] = useState("");
   const [from, setFrom] = useState(units[0]);
   const [to, setTo] = useState(units[1]);
-  function convert() {
-    const n = parseFloat(val);
+  function convert(v, f, t) {
+    const n = parseFloat(v);
     if (isNaN(n)) return "";
-    const base = n / conversions[from];
-    return (base * conversions[to]).toPrecision(6);
+    return ((n * factors[f]) / factors[t]).toPrecision(6);
   }
   return (
-    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",padding:"2rem",fontFamily:"monospace"}}>
-      <h1 style={{fontSize:"1.8rem",marginBottom:"1rem"}}>Radiation Absorbed Dose Converter</h1>
-      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1rem"}}>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",width:"150px"}} />
+    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",flexDirection:"column",alignItems:"center",padding:"2rem"}}>
+      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Radiation Absorbed Dose Converter</h1>
+      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginTop:"1rem",alignItems:"center"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",width:"140px"}} />
         <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9"}}>
-          {units.map(u=><option key={u} value={u}>{u}</option>)}
+          {units.map(u=><option key={u}>{u}</option>)}
         </select>
-        <span style={{lineHeight:"2.2rem"}}>to</span>
+        <span style={{fontSize:"1.2rem"}}>→</span>
         <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9"}}>
-          {units.map(u=><option key={u} value={u}>{u}</option>)}
+          {units.map(u=><option key={u}>{u}</option>)}
         </select>
       </div>
-      {val && <div style={{background:"#1e293b",padding:"1rem",borderRadius:"8px",fontSize:"1.2rem"}}>{val} {from} = <strong>{convert()}</strong> {to}</div>}
+      {val && <p style={{marginTop:"1.5rem",fontSize:"1.4rem",color:"#38bdf8"}}>{val} {from} = {convert(val,from,to)} {to}</p>}
     </main>
   );
 }

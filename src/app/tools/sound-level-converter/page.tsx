@@ -1,60 +1,32 @@
 "use client";
 import { useState } from "react";
 
-const units = ["Decibel (dB)", "Neper (Np)", "Bel (B)", "Pascal (Pa)", "Micropascal (uPa)", "Bar", "Microbar", "Poundforce/sq ft"];
-
-const conversions: Record<string, number> = {
-  "Decibel (dB)": 1,
-  "Neper (Np)": 1,
-  "Bel (B)": 1,
-  "Pascal (Pa)": 1,
-  "Micropascal (uPa)": 1,
-  "Bar": 1,
-  "Microbar": 1,
-  "Poundforce/sq ft": 1,
-};
+const units = ['Decibel (dB)', 'Neper (Np)', 'Bel (B)'];
+const factors = {'Decibel (dB)': 1.0, 'Neper (Np)': 8.686, 'Bel (B)': 10.0};
 
 export default function Page() {
   const [val, setVal] = useState("");
   const [from, setFrom] = useState(units[0]);
   const [to, setTo] = useState(units[1]);
-  const convert = () => {
-    const n = parseFloat(val);
+  function convert(v, f, t) {
+    const n = parseFloat(v);
     if (isNaN(n)) return "";
-    return ((n * conversions[from]) / conversions[to]).toPrecision(6);
-  };
+    return ((n * factors[f]) / factors[t]).toPrecision(6);
+  }
   return (
-    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
-      <div className="max-w-xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Sound Level Converter</h1>
-        <p className="text-gray-400 mb-6">Convert between sound level and pressure units for acoustics.</p>
-        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
-          <input type="number" value={val} onChange={e => setVal(e.target.value)} placeholder="Enter value" className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white" />
-          <div className="grid grid-cols-2 gap-4">
-            <div><label className="text-sm text-gray-400">From</label><select value={from} onChange={e => setFrom(e.target.value)} className="w-full bg-gray-800 rounded-lg px-3 py-2 mt-1">
-              <option value="Decibel (dB)">Decibel (dB)</option>
-              <option value="Neper (Np)">Neper (Np)</option>
-              <option value="Bel (B)">Bel (B)</option>
-              <option value="Pascal (Pa)">Pascal (Pa)</option>
-              <option value="Micropascal (uPa)">Micropascal (uPa)</option>
-              <option value="Bar">Bar</option>
-              <option value="Microbar">Microbar</option>
-              <option value="Poundforce/sq ft">Poundforce/sq ft</option>
-            </select></div>
-            <div><label className="text-sm text-gray-400">To</label><select value={to} onChange={e => setTo(e.target.value)} className="w-full bg-gray-800 rounded-lg px-3 py-2 mt-1">
-              <option value="Decibel (dB)">Decibel (dB)</option>
-              <option value="Neper (Np)">Neper (Np)</option>
-              <option value="Bel (B)">Bel (B)</option>
-              <option value="Pascal (Pa)">Pascal (Pa)</option>
-              <option value="Micropascal (uPa)">Micropascal (uPa)</option>
-              <option value="Bar">Bar</option>
-              <option value="Microbar">Microbar</option>
-              <option value="Poundforce/sq ft">Poundforce/sq ft</option>
-            </select></div>
-          </div>
-          {val && <div className="bg-gray-800 rounded-lg p-4 text-center"><span className="text-2xl font-bold text-blue-400">{convert()}</span><span className="ml-2 text-gray-400">{to}</span></div>}
-        </div>
+    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",flexDirection:"column",alignItems:"center",padding:"2rem"}}>
+      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Sound Level Converter</h1>
+      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginTop:"1rem",alignItems:"center"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",width:"140px"}} />
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9"}}>
+          {units.map(u=><option key={u}>{u}</option>)}
+        </select>
+        <span style={{fontSize:"1.2rem"}}>→</span>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9"}}>
+          {units.map(u=><option key={u}>{u}</option>)}
+        </select>
       </div>
+      {val && <p style={{marginTop:"1.5rem",fontSize:"1.4rem",color:"#38bdf8"}}>{val} {from} = {convert(val,from,to)} {to}</p>}
     </main>
   );
 }
