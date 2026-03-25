@@ -2,15 +2,14 @@
 import { useState } from "react";
 
 const units = [
-    { name: "Volt/meter (V/m)", toBase: 1 },
-    { name: "Kilovolt/meter (kV/m)", toBase: 1000 },
-    { name: "Millivolt/meter (mV/m)", toBase: 0.001 },
-    { name: "Volt/centimeter (V/cm)", toBase: 100 },
-    { name: "Volt/inch (V/in)", toBase: 39.3701 },
-    { name: "Statvolt/cm", toBase: 29979.2458 },
+    { name: "Ampere-turn (At)", toBase: 1 },
+    { name: "Kiloampere-turn (kAt)", toBase: 1000 },
+    { name: "Milliampere-turn (mAt)", toBase: 0.001 },
+    { name: "Gilbert (Gb)", toBase: 0.795775 },
+    { name: "Abampere-turn (aAt)", toBase: 10 },
   ];
 
-export default function ElectricFieldStrengthConverter() {
+export default function MagnetomotiveForceConverter() {
   const [value, setValue] = useState("1");
   const [from, setFrom] = useState(units[0].name);
   const [to, setTo] = useState(units[1].name);
@@ -27,8 +26,8 @@ export default function ElectricFieldStrengthConverter() {
   return (
     <main className="min-h-screen bg-gray-950 text-white p-8">
       <div className="max-w-xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Electric Field Strength Converter</h1>
-        <p className="text-gray-400 mb-8">Convert between electric field strength units: volt per meter, kilovolt per meter, and more.</p>
+        <h1 className="text-3xl font-bold mb-2">Magnetomotive Force Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between magnetomotive force units: ampere-turn, gilbert, and more.</p>
         <div className="space-y-4">
           <input type="number" value={value} onChange={e => setValue(e.target.value)}
             className="w-full bg-gray-800 rounded p-3 text-white" placeholder="Value" />

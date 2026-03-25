@@ -1,1 +1,59 @@
-"use client";import{useState}from"react";const units={'coulomb/m': '1', 'coulomb/cm': '100', 'coulomb/mm': '1000', 'millicoulomb/m': '0.001', 'microcoulomb/m': '0.000001'};export default function Page(){const[val,setVal]=useState("");const[from,setFrom]=useState("coulomb/m");const[to,setTo]=useState("coulomb/cm");const convert=()=>{const n=parseFloat(val);if(isNaN(n))return"";return((n*parseFloat(units[from]))/parseFloat(units[to])).toPrecision(6);};return(<div style={{padding:"2rem",fontFamily:"monospace",background:"#0f0f0f",minHeight:"100vh",color:"#e2e8f0"}}><h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Linear Charge Density Converter</h1><p style={{color:"#94a3b8",marginBottom:"1.5rem"}}>Convert between coulomb/meter, coulomb/cm, and more</p><div style={{display:"flex",gap:"1rem",flexWrap:"wrap"}}><input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px",width:"150px"}}/><select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>{Object.keys(units).map(u=>(<option key={u} value={u}>{u}</option>))}</select><span style={{alignSelf:"center"}}>to</span><select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>{Object.keys(units).map(u=>(<option key={u} value={u}>{u}</option>))}</select></div>{val&&<div style={{marginTop:"1.5rem",padding:"1rem",background:"#1e293b",borderRadius:"8px",fontSize:"1.25rem"}}>{val} {from} = <strong style={{color:"#38bdf8"}}>{convert()} {to}</strong></div>}</div>);}
+"use client";
+import { useState } from "react";
+
+const units = [
+    { name: "Coulomb/meter (C/m)", toBase: 1 },
+    { name: "Millicoulomb/meter (mC/m)", toBase: 0.001 },
+    { name: "Microcoulomb/meter (uC/m)", toBase: 1e-06 },
+    { name: "Nanocoulomb/meter (nC/m)", toBase: 1e-09 },
+    { name: "Coulomb/centimeter (C/cm)", toBase: 100 },
+    { name: "Coulomb/inch (C/in)", toBase: 39.3701 },
+  ];
+
+export default function LinearChargeDensityConverter() {
+  const [value, setValue] = useState("1");
+  const [from, setFrom] = useState(units[0].name);
+  const [to, setTo] = useState(units[1].name);
+
+  function convert() {
+    const v = parseFloat(value);
+    if (isNaN(v)) return "Invalid";
+    const fromUnit = units.find(u => u.name === from);
+    const toUnit = units.find(u => u.name === to);
+    if (!fromUnit || !toUnit) return "Error";
+    return (v * fromUnit.toBase / toUnit.toBase).toPrecision(6);
+  }
+
+  return (
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Linear Charge Density Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between linear charge density units: coulomb per meter, microcoulomb per meter, and more.</p>
+        <div className="space-y-4">
+          <input type="number" value={value} onChange={e => setValue(e.target.value)}
+            className="w-full bg-gray-800 rounded p-3 text-white" placeholder="Value" />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">From</label>
+              <select value={from} onChange={e => setFrom(e.target.value)}
+                className="w-full bg-gray-800 rounded p-3 text-white">
+                {units.map(u => <option key={u.name} value={u.name}>{u.name}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">To</label>
+              <select value={to} onChange={e => setTo(e.target.value)}
+                className="w-full bg-gray-800 rounded p-3 text-white">
+                {units.map(u => <option key={u.name} value={u.name}>{u.name}</option>)}
+              </select>
+            </div>
+          </div>
+          <div className="bg-gray-800 rounded p-4 text-center">
+            <span className="text-2xl font-mono text-green-400">{convert()}</span>
+            <span className="text-gray-400 ml-2">{to}</span>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}
