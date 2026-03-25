@@ -1,1 +1,73 @@
-"use client";import{useState}from"react";const UNITS=[["Volt per Meter","V/m","1"],["Kilovolt per Meter","kV/m","1000"],["Millivolt per Meter","mV/m","0.001"],["Volt per Centimeter","V/cm","100"],["Volt per Inch","V/in","39.3701"],["Newton per Coulomb","N/C","1"]];export default function Page(){const[v,setV]=useState("");const[f,setF]=useState(0);const[t,setT]=useState(1);const convert=(val,from,to)=>{if(!val||isNaN(Number(val)))return"";return((Number(val)*Number(UNITS[from][2]))/Number(UNITS[to][2])).toPrecision(6);};return(<main style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}><h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Electric Field Strength Converter</h1><p style={{color:"#94a3b8",marginBottom:"1.5rem"}}>Convert between electric field strength units.</p><div style={{display:"flex",gap:"1rem",flexWrap:"wrap",alignItems:"center"}}><input type="number" value={v} onChange={e=>setV(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px",width:"160px"}}/><select value={f} onChange={e=>setF(Number(e.target.value))} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>{UNITS.map((u,i)=><option key={i} value={i}>{u[0]}</option>)}</select><span style={{color:"#64748b"}}>to</span><select value={t} onChange={e=>setT(Number(e.target.value))} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>{UNITS.map((u,i)=><option key={i} value={i}>{u[0]}</option>)}</select></div>{v&&!isNaN(Number(v))&&<div style={{marginTop:"1.5rem",padding:"1rem",background:"#1e293b",borderRadius:"8px",fontSize:"1.25rem"}}>{v} {UNITS[f][1]} = <strong style={{color:"#38bdf8"}}>{convert(v,f,t)} {UNITS[t][1]}</strong></div>}</main>);}
+"use client";
+import { useState } from "react";
+
+const factors: Record<string, number> = {
+        "V_m": 1,
+        "kV_m": 1000,
+        "MV_m": 1000000.0,
+        "V_cm": 100,
+        "V_mm": 1000,
+        "V_in": 39.3701,
+        "V_ft": 3.28084
+};
+
+export default function ElectricFieldStrengthConverterPage() {
+  const [value, setValue] = useState("");
+  const [from, setFrom] = useState("V_m");
+  const [to, setTo] = useState("kV_m");
+
+  const convert = () => {
+    const num = parseFloat(value);
+    if (isNaN(num)) return "—";
+    return ((num * factors[from]) / factors[to]).toPrecision(6);
+  };
+
+  return (
+    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Electric Field Strength Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between electric field strength units: V/m, kV/m, MV/m, V/cm, V/mm.</p>
+        <div className="space-y-4">
+          <input
+            type="number"
+            value={value}
+            onChange={e => setValue(e.target.value)}
+            placeholder="Enter value"
+            className="w-full bg-gray-800 rounded-lg px-4 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">From</label>
+              <select value={from} onChange={e => setFrom(e.target.value)}
+                className="w-full bg-gray-800 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <option value="V_m">Volt per Meter (V/m)</option>
+          <option value="kV_m">Kilovolt per Meter (kV/m)</option>
+          <option value="MV_m">Megavolt per Meter (MV/m)</option>
+          <option value="V_cm">Volt per Centimeter (V/cm)</option>
+          <option value="V_mm">Volt per Millimeter (V/mm)</option>
+          <option value="V_in">Volt per Inch (V/in)</option>
+          <option value="V_ft">Volt per Foot (V/ft)</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">To</label>
+              <select value={to} onChange={e => setTo(e.target.value)}
+                className="w-full bg-gray-800 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <option value="V_m">Volt per Meter (V/m)</option>
+          <option value="kV_m">Kilovolt per Meter (kV/m)</option>
+          <option value="MV_m">Megavolt per Meter (MV/m)</option>
+          <option value="V_cm">Volt per Centimeter (V/cm)</option>
+          <option value="V_mm">Volt per Millimeter (V/mm)</option>
+          <option value="V_in">Volt per Inch (V/in)</option>
+          <option value="V_ft">Volt per Foot (V/ft)</option>
+              </select>
+            </div>
+          </div>
+          <div className="bg-gray-800 rounded-lg px-4 py-3 text-2xl font-mono">
+            {value ? convert() : <span className="text-gray-500">Result</span>}
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}

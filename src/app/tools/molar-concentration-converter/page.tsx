@@ -2,18 +2,19 @@
 import { useState } from "react";
 
 const factors: Record<string, number> = {
-        "N_m": 1,
-        "mN_m": 0.001,
-        "dyn_cm": 0.001,
-        "lbf_ft": 14.5939,
-        "lbf_in": 175.127,
-        "erg_cm2": 0.001
+        "mol_L": 1,
+        "mmol_L": 0.001,
+        "umol_L": 1e-06,
+        "nmol_L": 1e-09,
+        "mol_m3": 0.001,
+        "mol_cm3": 1000,
+        "pmol_L": 1e-12
 };
 
-export default function SurfaceTensionConverterPage() {
+export default function MolarConcentrationConverterPage() {
   const [value, setValue] = useState("");
-  const [from, setFrom] = useState("N_m");
-  const [to, setTo] = useState("mN_m");
+  const [from, setFrom] = useState("mol_L");
+  const [to, setTo] = useState("mmol_L");
 
   const convert = () => {
     const num = parseFloat(value);
@@ -24,8 +25,8 @@ export default function SurfaceTensionConverterPage() {
   return (
     <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
       <div className="max-w-xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Surface Tension Converter</h1>
-        <p className="text-gray-400 mb-8">Convert between surface tension units: N/m, mN/m, dyn/cm, lbf/ft.</p>
+        <h1 className="text-3xl font-bold mb-2">Molar Concentration Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between molar concentration units: mol/L, mmol/L, µmol/L, mol/m³.</p>
         <div className="space-y-4">
           <input
             type="number"
@@ -39,24 +40,26 @@ export default function SurfaceTensionConverterPage() {
               <label className="block text-sm text-gray-400 mb-1">From</label>
               <select value={from} onChange={e => setFrom(e.target.value)}
                 className="w-full bg-gray-800 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          <option value="N_m">Newton per Meter (N/m)</option>
-          <option value="mN_m">Millinewton per Meter (mN/m)</option>
-          <option value="dyn_cm">Dyne per Centimeter (dyn/cm)</option>
-          <option value="lbf_ft">Pound-force per Foot (lbf/ft)</option>
-          <option value="lbf_in">Pound-force per Inch (lbf/in)</option>
-          <option value="erg_cm2">Erg per cm² (erg/cm²)</option>
+          <option value="mol_L">Mole per Liter (mol/L)</option>
+          <option value="mmol_L">Millimole per Liter (mmol/L)</option>
+          <option value="umol_L">Micromole per Liter (µmol/L)</option>
+          <option value="nmol_L">Nanomole per Liter (nmol/L)</option>
+          <option value="mol_m3">Mole per Cubic Meter (mol/m³)</option>
+          <option value="mol_cm3">Mole per Cubic Centimeter (mol/cm³)</option>
+          <option value="pmol_L">Picomole per Liter (pmol/L)</option>
               </select>
             </div>
             <div>
               <label className="block text-sm text-gray-400 mb-1">To</label>
               <select value={to} onChange={e => setTo(e.target.value)}
                 className="w-full bg-gray-800 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          <option value="N_m">Newton per Meter (N/m)</option>
-          <option value="mN_m">Millinewton per Meter (mN/m)</option>
-          <option value="dyn_cm">Dyne per Centimeter (dyn/cm)</option>
-          <option value="lbf_ft">Pound-force per Foot (lbf/ft)</option>
-          <option value="lbf_in">Pound-force per Inch (lbf/in)</option>
-          <option value="erg_cm2">Erg per cm² (erg/cm²)</option>
+          <option value="mol_L">Mole per Liter (mol/L)</option>
+          <option value="mmol_L">Millimole per Liter (mmol/L)</option>
+          <option value="umol_L">Micromole per Liter (µmol/L)</option>
+          <option value="nmol_L">Nanomole per Liter (nmol/L)</option>
+          <option value="mol_m3">Mole per Cubic Meter (mol/m³)</option>
+          <option value="mol_cm3">Mole per Cubic Centimeter (mol/cm³)</option>
+          <option value="pmol_L">Picomole per Liter (pmol/L)</option>
               </select>
             </div>
           </div>
