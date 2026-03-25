@@ -1,15 +1,10 @@
 "use client";
-import {{ useState }} from "react";
-export default function Page() {{
-  const units = ['Newton/meter (N/m)', 'Millinewton/meter (mN/m)', 'Dyne/centimeter (dyn/cm)', 'Erg/cm²', 'Pound-force/foot (lbf/ft)', 'Pound-force/inch (lbf/in)'];
-  const rates = [1, 1000, 1000, 1000, 0.0685218, 0.00571015];
+import { useState } from "react";
+export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(0);
-  const convert = (v: string, f: number) => {{
-    const n = parseFloat(v);
-    if (isNaN(n)) return "";
-    const base = n / rates[f];
-    return units.map((u, i) => `${{u}}: ${{(base * rates[i]).toPrecision(6)}}`).join("\n");
-  }};
-  return (<div style={{{{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}}}><h1 style={{{{fontSize:"1.5rem",marginBottom:"1rem"}}}}>Surface Tension Converter</h1><p style={{{{marginBottom:"1.5rem",color:"#94a3b8"}}}}>Convert between newton per meter, dyne per centimeter, millinewton per meter and more surface tension units.</p><div style={{{{display:"flex",gap:"1rem",marginBottom:"1rem",flexWrap:"wrap"}}}}><input type="number" value={{val}} onChange={{e=>setVal(e.target.value)}} placeholder="Enter value" style={{{{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px",width:"200px"}}}}/><select value={{from}} onChange={{e=>setFrom(Number(e.target.value))}} style={{{{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}}}>{{units.map((u,i)=><option key={{i}} value={{i}}>{{u}}</option>)}}</select></div><pre style={{{{background:"#1e293b",padding:"1rem",borderRadius:"8px",whiteSpace:"pre-wrap",color:"#a3e635"}}}}>{{convert(val,from)||"Enter a value to convert"}}</pre></div>);
-}}
+  const [from, setFrom] = useState("1");
+  const [to, setTo] = useState("0.001");
+  const units: Record<string, number> = {"1":1,"0.001":0.001,"0.000001":0.000001,"0.001":0.001,"0.001":0.001,"14.5939":14.5939,"47.8803":47.8803};
+  const result = val ? ((parseFloat(val) * units[from]) / units[to]).toPrecision(6) : "";
+  return (<div style={{padding:"2rem",fontFamily:"monospace",background:"#0f0f0f",minHeight:"100vh",color:"#e0e0e0"}}><h1 style={{color:"#60a5fa"}}>Surface Tension Converter</h1><p style={{color:"#9ca3af"}}>Convert between surface tension units like N/m, dyn/cm, mN/m and more.</p><div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginTop:"1rem"}}><input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",background:"#1f2937",color:"#e0e0e0",border:"1px solid #374151",borderRadius:"4px",flex:1}} /><select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1f2937",color:"#e0e0e0",border:"1px solid #374151",borderRadius:"4px"}}><option value="1">N/m</option><option value="0.001">mN/m</option><option value="0.000001">µN/m</option><option value="0.001">dyn/cm</option><option value="0.001">erg/cm²</option><option value="14.5939">lbf/ft</option><option value="47.8803">psi·ft</option></select><span style={{alignSelf:"center"}}>=</span><input readOnly value={result} style={{padding:"0.5rem",background:"#111827",color:"#34d399",border:"1px solid #374151",borderRadius:"4px",flex:1}} /><select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1f2937",color:"#e0e0e0",border:"1px solid #374151",borderRadius:"4px"}}><option value="1">N/m</option><option value="0.001">mN/m</option><option value="0.000001">µN/m</option><option value="0.001">dyn/cm</option><option value="0.001">erg/cm²</option><option value="14.5939">lbf/ft</option><option value="47.8803">psi·ft</option></select></div></div>);
+}
