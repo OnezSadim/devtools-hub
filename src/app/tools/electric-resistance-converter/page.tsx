@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
 
-const UNITS: string[] = ["Ohm", "Milliohm", "Kiloohm", "Megaohm", "Microohm"];
-const TO_BASE: Record<string, number> = {"Ohm": 1, "Milliohm": 0.001, "Kiloohm": 1000, "Megaohm": 1000000, "Microohm": 1e-06};
+const UNITS = ["ohm", "kilohm", "megaohm", "milliohm", "microohm", "gigaohm", "statohm", "abohm"];
+const TO_BASE: Record<string, number> = {"ohm": 1, "kilohm": 1000.0, "megaohm": 1000000.0, "milliohm": 0.001, "microohm": 1e-06, "gigaohm": 1000000000.0, "statohm": 898755000000.0, "abohm": 1e-09};
 
 export default function Page() {
   const [val, setVal] = useState("");
@@ -11,22 +11,21 @@ export default function Page() {
   const convert = () => {
     const n = parseFloat(val);
     if (isNaN(n)) return "";
-    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(8);
+    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
   };
   return (
-    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",fontFamily:"monospace",padding:"2rem"}}>
-      <h1 style={{fontSize:"1.8rem",marginBottom:"1.5rem"}}>Electric Resistance Converter</h1>
-      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",justifyContent:"center",marginBottom:"1rem"}}>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",fontSize:"1rem",width:"150px"}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9"}}>
+    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"2rem"}}>
+      <h1 style={{fontSize:"2rem",fontWeight:700,marginBottom:"1.5rem"}}>Electric Resistance Converter</h1>
+      <div style={{display:"flex",flexDirection:"column",gap:"1rem",width:"100%",maxWidth:"400px"}}>
+        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.75rem",borderRadius:"8px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",fontSize:"1rem"}} />
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.75rem",borderRadius:"8px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9"}}>
           {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
         </select>
-        <span style={{lineHeight:"2.2rem"}}>→</span>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9"}}>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.75rem",borderRadius:"8px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9"}}>
           {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
         </select>
+        <div style={{padding:"1rem",borderRadius:"8px",background:"#1e293b",textAlign:"center",fontSize:"1.25rem",fontWeight:600}}>{convert() || "—"} {to}</div>
       </div>
-      <div style={{fontSize:"1.4rem",color:"#38bdf8",marginTop:"0.5rem"}}>{convert() || "—"} {to}</div>
     </main>
   );
 }
