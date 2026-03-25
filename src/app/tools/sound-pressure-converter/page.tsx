@@ -1,30 +1,53 @@
-"use client";
-import { useState } from "react";
-export default function Page() {
-  const units = ["Pa", "mPa", "uPa", "bar", "psi"];
-  const toBase = {"Pa": 1, "mPa": 0.001, "uPa": 1e-06, "bar": 100000, "psi": 6894.76};
-  const [val, setVal] = useState("");
-  const [from, setFrom] = useState(units[0]);
-  const [to, setTo] = useState(units[1]);
-  const convert = () => {
-    const n = parseFloat(val);
-    if (isNaN(n)) return "";
-    return ((n * toBase[from]) / toBase[to]).toPrecision(6);
-  };
+'use client';
+import { useState } from 'react';
+
+const units = [
+    { name: 'Pascal (Pa)', factor: 1 },
+    { name: 'Micropascal (µPa)', factor: 1e-06 },
+    { name: 'Bar', factor: 100000 },
+    { name: 'Atmosphere (atm)', factor: 101325 },
+    { name: 'psi', factor: 6894.757 },
+  ];
+
+export default function ConverterPage() {
+  const [value, setValue] = useState('');
+  const [from, setFrom] = useState(units[0].name);
+
+  const fromUnit = units.find(u => u.name === from)!;
+  const baseValue = parseFloat(value) * fromUnit.factor;
+
   return (
-    <main style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}>
-      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Sound Pressure Converter</h1>
-      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1rem"}}>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",borderRadius:"4px",border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",width:"160px"}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",borderRadius:"4px",border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0"}}>
-          {units.map(u=><option key={u}>{u}</option>)}
-        </select>
-        <span style={{lineHeight:"2.2rem"}}>to</span>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",borderRadius:"4px",border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0"}}>
-          {units.map(u=><option key={u}>{u}</option>)}
-        </select>
+    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Sound Pressure Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between sound pressure units including pascal, micropascal, and decibels.</p>
+        <div className="flex gap-4 mb-8">
+          <input
+            type="number"
+            value={value}
+            onChange={e => setValue(e.target.value)}
+            placeholder="Enter value"
+            className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+          />
+          <select
+            value={from}
+            onChange={e => setFrom(e.target.value)}
+            className="bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+          >
+            {units.map(u => <option key={u.name}>{u.name}</option>)}
+          </select>
+        </div>
+        <div className="space-y-3">
+          {units.map(u => (
+            <div key={u.name} className="bg-gray-800 rounded-lg p-4 flex justify-between items-center">
+              <span className="text-gray-400">{u.name}</span>
+              <span className="text-white font-mono text-lg">
+                {value ? (baseValue / u.factor).toLocaleString(undefined, { maximumSignificantDigits: 8 }) : '—'}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
-      <div style={{fontSize:"1.25rem",color:"#38bdf8"}}>{convert()}</div>
     </main>
   );
 }

@@ -2,9 +2,12 @@
 import { useState } from 'react';
 
 const units = [
-    { name: 'Lumen (lm)', factor: 1 },
-    { name: 'Candela Steradian (cd·sr)', factor: 1 },
-    { name: 'Milliwatt (at 555nm)', factor: 0.001464128843 },
+    { name: 'Watt (W)', factor: 1 },
+    { name: 'Milliwatt (mW)', factor: 0.001 },
+    { name: 'Microwatt (µW)', factor: 1e-06 },
+    { name: 'Nanowatt (nW)', factor: 1e-09 },
+    { name: 'Picowatt (pW)', factor: 1e-12 },
+    { name: 'Kilowatt (kW)', factor: 1000 },
   ];
 
 export default function ConverterPage() {
@@ -17,8 +20,8 @@ export default function ConverterPage() {
   return (
     <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Luminous Flux Converter</h1>
-        <p className="text-gray-400 mb-8">Convert between luminous flux units including lumen, candela steradian, and more.</p>
+        <h1 className="text-3xl font-bold mb-2">Sound Power Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between sound power units including watt, milliwatt, and microwatt.</p>
         <div className="flex gap-4 mb-8">
           <input
             type="number"

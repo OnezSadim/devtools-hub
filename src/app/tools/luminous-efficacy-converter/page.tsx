@@ -2,9 +2,9 @@
 import { useState } from 'react';
 
 const units = [
-    { name: 'Lumen (lm)', factor: 1 },
-    { name: 'Candela Steradian (cd·sr)', factor: 1 },
-    { name: 'Milliwatt (at 555nm)', factor: 0.001464128843 },
+    { name: 'Lumen per Watt (lm/W)', factor: 1 },
+    { name: 'Lumen per Milliwatt (lm/mW)', factor: 1000 },
+    { name: 'Candela Steradian per Watt (cd·sr/W)', factor: 1 },
   ];
 
 export default function ConverterPage() {
@@ -17,8 +17,8 @@ export default function ConverterPage() {
   return (
     <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Luminous Flux Converter</h1>
-        <p className="text-gray-400 mb-8">Convert between luminous flux units including lumen, candela steradian, and more.</p>
+        <h1 className="text-3xl font-bold mb-2">Luminous Efficacy Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between luminous efficacy units including lumen per watt and more.</p>
         <div className="flex gap-4 mb-8">
           <input
             type="number"

@@ -2,9 +2,10 @@
 import { useState } from 'react';
 
 const units = [
-    { name: 'Lumen (lm)', factor: 1 },
-    { name: 'Candela Steradian (cd·sr)', factor: 1 },
-    { name: 'Milliwatt (at 555nm)', factor: 0.001464128843 },
+    { name: 'Watt per Square Meter (W/m²)', factor: 1 },
+    { name: 'Milliwatt per Square Meter (mW/m²)', factor: 0.001 },
+    { name: 'Microwatt per Square Meter (µW/m²)', factor: 1e-06 },
+    { name: 'Watt per Square Centimeter (W/cm²)', factor: 10000 },
   ];
 
 export default function ConverterPage() {
@@ -17,8 +18,8 @@ export default function ConverterPage() {
   return (
     <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Luminous Flux Converter</h1>
-        <p className="text-gray-400 mb-8">Convert between luminous flux units including lumen, candela steradian, and more.</p>
+        <h1 className="text-3xl font-bold mb-2">Sound Intensity Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between sound intensity units including watt per square meter.</p>
         <div className="flex gap-4 mb-8">
           <input
             type="number"
