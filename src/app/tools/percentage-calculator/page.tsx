@@ -1,24 +1,19 @@
 "use client";
 import { useState } from "react";
-export default function PercentageCalculator() {
-  const [val, setVal] = useState("");
-  const [pct, setPct] = useState("");
-  const result = val && pct ? (parseFloat(val) * parseFloat(pct) / 100).toFixed(4) : null;
-  const reverse = val && pct ? (parseFloat(val) / parseFloat(pct) * 100).toFixed(4) : null;
-  return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Percentage Calculator</h1>
-        <p className="text-gray-400 mb-6">Calculate percentages quickly.</p>
-        <div className="grid grid-cols-2 gap-3 mb-4">
-          <input className="bg-gray-800 rounded p-3" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" type="number" />
-          <input className="bg-gray-800 rounded p-3" value={pct} onChange={e=>setPct(e.target.value)} placeholder="Percent %" type="number" />
-        </div>
-        {result && <div className="space-y-3">
-          <div className="bg-gray-800 p-4 rounded"><span className="text-gray-400">{pct}% of {val} = </span><span className="text-green-400 font-bold text-xl">{result}</span></div>
-          <div className="bg-gray-800 p-4 rounded"><span className="text-gray-400">{val} is what % of {pct}: </span><span className="text-blue-400 font-bold">{reverse}%</span></div>
-        </div>}
-      </div>
-    </main>
-  );
+export default function Page() {
+  const [a, setA] = useState("");
+  const [b, setB] = useState("");
+  const pct = a && b ? ((parseFloat(a)/parseFloat(b))*100).toFixed(2) + "%" : "";
+  const ofB = a && b ? (parseFloat(b)*parseFloat(a)/100).toFixed(2) : "";
+  return (<div style={{padding:"2rem",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0",fontFamily:"monospace"}}>
+    <h1 style={{fontSize:"1.8rem",marginBottom:"1rem"}}>Percentage Calculator</h1>
+    <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1rem"}}>
+      <input value={a} onChange={e=>setA(e.target.value)} placeholder="Value A" style={{padding:"0.5rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"6px",flex:1}} />
+      <input value={b} onChange={e=>setB(e.target.value)} placeholder="Value B" style={{padding:"0.5rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"6px",flex:1}} />
+    </div>
+    <div style={{background:"#1e293b",padding:"1rem",borderRadius:"8px"}}>
+      <p>A is {pct || "?"} of B</p>
+      <p>{a||"?"}% of B = {ofB || "?"}</p>
+    </div>
+  </div>);
 }

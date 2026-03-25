@@ -1,10 +1,18 @@
 "use client";
 import { useState } from "react";
-export default function CssUnitConverter() {
-  const [val, setVal] = useState("16");
-  const [base, setBase] = useState("16");
-  const px = parseFloat(val)||0;
-  const b = parseFloat(base)||16;
-  const units = [{label:"px",v:px},{label:"rem",v:px/b},{label:"em",v:px/b},{label:"pt",v:px*0.75},{label:"%",v:(px/b)*100},{label:"vh",v:px/7.68},{label:"vw",v:px/14.4}];
-  return (<div className="min-h-screen bg-gray-950 text-gray-100 p-6"><div className="max-w-xl mx-auto"><h1 className="text-3xl font-bold mb-2">CSS Unit Converter</h1><p className="text-gray-400 mb-6">Convert between CSS units: px, rem, em, pt, %, vh, vw</p><div className="flex gap-3 mb-6"><div className="flex-1"><label className="text-sm text-gray-400 mb-1 block">Value (px)</label><input type="number" value={val} onChange={e=>setVal(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded p-3 text-xl" /></div><div className="w-32"><label className="text-sm text-gray-400 mb-1 block">Base font (px)</label><input type="number" value={base} onChange={e=>setBase(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded p-3 text-xl" /></div></div><div className="grid grid-cols-2 gap-3">{units.map(u=>(<div key={u.label} className="bg-gray-800 border border-gray-700 rounded p-3 flex justify-between items-center"><span className="text-gray-400 font-mono">{u.label}</span><span className="font-mono text-lg">{u.v.toFixed(4).replace(/\.?0+$/,"")}</span></div>))}</div></div></div>);
+export default function Page() {
+  const [px, setPx] = useState("16");
+  const base = 16;
+  const n = parseFloat(px)||0;
+  return (<div style={{padding:"2rem",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0",fontFamily:"monospace"}}>
+    <h1 style={{fontSize:"1.8rem",marginBottom:"1rem"}}>CSS Unit Converter</h1>
+    <p style={{color:"#94a3b8",marginBottom:"1rem"}}>Base font size: {base}px</p>
+    <input value={px} onChange={e=>setPx(e.target.value)} placeholder="px value" style={{padding:"0.5rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"6px",width:"200px"}} />
+    <div style={{marginTop:"1rem",background:"#1e293b",padding:"1rem",borderRadius:"8px"}}>
+      <p>{n}px = {(n/base).toFixed(4)}rem</p>
+      <p>{n}px = {(n/base).toFixed(4)}em</p>
+      <p>{n}px = {(n*0.75).toFixed(4)}pt</p>
+      <p>{n}px = {(n/96).toFixed(4)}in</p>
+    </div>
+  </div>);
 }

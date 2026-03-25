@@ -1,48 +1,18 @@
 "use client";
 import { useState } from "react";
-
-export default function SQLFormatter() {
-  const [input, setInput] = useState("");
-  const [output, setOutput] = useState("");
-
+export default function Page() {
+  const [sql, setSql] = useState("");
+  const [fmt, setFmt] = useState("");
   const format = () => {
-    let sql = input.trim();
-    const keywords = ["SELECT","FROM","WHERE","JOIN","LEFT JOIN","RIGHT JOIN","INNER JOIN","ON","AND","OR","ORDER BY","GROUP BY","HAVING","LIMIT","INSERT INTO","VALUES","UPDATE","SET","DELETE FROM","CREATE TABLE","DROP TABLE","ALTER TABLE","UNION","WITH","AS"];
-    keywords.forEach(kw => {
-      const re = new RegExp(`\b${kw}\b`, "gi");
-      sql = sql.replace(re, `
-${kw}`);
-    });
-    sql = sql.replace(/,/g, ",
-  ");
-    sql = sql.replace(/
-
-+/g, "
-").trim();
-    setOutput(sql);
+    const keywords = ["SELECT","FROM","WHERE","JOIN","LEFT","RIGHT","INNER","OUTER","ON","AND","OR","ORDER BY","GROUP BY","HAVING","LIMIT","INSERT","UPDATE","DELETE","CREATE","DROP","ALTER","SET"];
+    let out = sql.replace(/\s+/g," ").trim();
+    keywords.forEach(k => { out = out.replace(new RegExp("\\b" + k + "\\b","gi"), "\n" + k); });
+    setFmt(out.trim());
   };
-
-  return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">SQL Formatter</h1>
-        <p className="text-gray-400 mb-6">Beautify and format SQL queries for readability.</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">Input SQL</label>
-            <textarea value={input} onChange={e=>setInput(e.target.value)} placeholder="Paste SQL here..." className="w-full h-64 bg-gray-900 border border-gray-700 rounded p-3 font-mono text-sm focus:outline-none focus:border-blue-500" />
-          </div>
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">Formatted SQL</label>
-            <textarea value={output} readOnly className="w-full h-64 bg-gray-900 border border-gray-700 rounded p-3 font-mono text-sm" />
-          </div>
-        </div>
-        <div className="flex gap-3 mt-4">
-          <button onClick={format} className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded font-medium">Format</button>
-          <button onClick={()=>{navigator.clipboard.writeText(output)}} className="bg-gray-700 hover:bg-gray-600 px-6 py-2 rounded">Copy</button>
-          <button onClick={()=>{setInput("");setOutput("")}} className="bg-gray-700 hover:bg-gray-600 px-6 py-2 rounded">Clear</button>
-        </div>
-      </div>
-    </main>
-  );
+  return (<div style={{padding:"2rem",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0",fontFamily:"monospace"}}>
+    <h1 style={{fontSize:"1.8rem",marginBottom:"1rem"}}>SQL Formatter</h1>
+    <textarea value={sql} onChange={e=>setSql(e.target.value)} placeholder="SELECT * FROM users WHERE id = 1" style={{width:"100%",height:"120px",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"8px",padding:"0.75rem"}} />
+    <button onClick={format} style={{margin:"0.75rem 0",padding:"0.5rem 1.5rem",background:"#3b82f6",color:"white",border:"none",borderRadius:"6px",cursor:"pointer"}}>Format</button>
+    {fmt && <pre style={{padding:"1rem",background:"#1e293b",borderRadius:"8px",overflow:"auto",maxHeight:"300px"}}>{fmt}</pre>}
+  </div>);
 }
