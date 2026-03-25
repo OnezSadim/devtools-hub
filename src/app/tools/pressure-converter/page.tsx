@@ -1,80 +1,89 @@
-'use client';
+"use client";
 import { useState } from 'react';
 
-export default function PressureconverterConverter() {
-  const [val, setVal] = useState('1');
-  const [from, setFrom] = useState('Pascal');
-  const [to, setTo] = useState('Kilopascal');
+const units = [
+        { value: 'pa', label: 'Pascal (Pa)' },
+        { value: 'kpa', label: 'Kilopascal (kPa)' },
+        { value: 'mpa', label: 'Megapascal (MPa)' },
+        { value: 'bar', label: 'Bar' },
+        { value: 'psi', label: 'PSI (lb/in²)' },
+        { value: 'atm', label: 'Atmosphere (atm)' },
+        { value: 'mmhg', label: 'mmHg (Torr)' },
+        { value: 'inhg', label: 'inHg' },
+];
 
-  const toBase: Record<string,number> = {
-    'Pascal': 1.0,
-    'Kilopascal': 1000.0,
-    'Megapascal': 1000000.0,
-    'Bar': 100000.0,
-    'Millibar': 100.0,
-    'PSI': 6894.757,
-    'Atmosphere': 101325.0,
-    'Torr': 133.322,
-    'mmHg': 133.322,
-  };
+function toBaseFn(v: number, from: string): number {
+  let toBase = 0;
+  switch(from) {
+      case 'pa': toBase = v * 1; break;
+      case 'kpa': toBase = v * 1000.0; break;
+      case 'mpa': toBase = v * 1000000.0; break;
+      case 'bar': toBase = v * 100000.0; break;
+      case 'psi': toBase = v * 6894.757; break;
+      case 'atm': toBase = v * 101325; break;
+      case 'mmhg': toBase = v * 133.322; break;
+      case 'inhg': toBase = v * 3386.389; break;
+    default: toBase = v;
+  }
+  return toBase;
+}
 
-  const convert = () => {
-    const n = parseFloat(val);
-    if (isNaN(n)) return 'Invalid';
-    const base = n * (toBase[from] || 1);
-    const result = base / (toBase[to] || 1);
-    return result.toPrecision(6);
-  };
+function fromBaseFn(base: number, to: string): number {
+  switch(to) {
+      case 'pa': return toBase / 1;
+      case 'kpa': return toBase / 1000.0;
+      case 'mpa': return toBase / 1000000.0;
+      case 'bar': return toBase / 100000.0;
+      case 'psi': return toBase / 6894.757;
+      case 'atm': return toBase / 101325;
+      case 'mmhg': return toBase / 133.322;
+      case 'inhg': return toBase / 3386.389;
+    default: return base;
+  }
+}
+
+export default function Page() {
+  const [val, setVal] = useState('');
+  const [from, setFrom] = useState(units[0].value);
+  const [to, setTo] = useState(units[1].value);
+
+  const result = val !== '' && !isNaN(Number(val))
+    ? fromBaseFn(toBaseFn(Number(val), from), to)
+    : null;
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white p-8">
-      <div className="max-w-xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Pressure Converter</h1>
-        <p className="text-gray-400 mb-8">Convert between pressure units: Pascal, bar, PSI, atmosphere, torr, and more.</p>
-        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
+    <main style={{minHeight:'100vh',background:'#0f172a',color:'#f1f5f9',fontFamily:'monospace',display:'flex',alignItems:'center',justifyContent:'center',padding:'2rem'}}>
+      <div style={{background:'#1e293b',borderRadius:'1rem',padding:'2rem',width:'100%',maxWidth:'480px'}}>
+        <h1 style={{fontSize:'1.5rem',fontWeight:700,marginBottom:'0.5rem'}}>Pressure Converter</h1>
+        <p style={{color:'#94a3b8',marginBottom:'1.5rem',fontSize:'0.875rem'}}>Convert between pressure units.</p>
+        <input
+          type="number" value={val} onChange={e=>setVal(e.target.value)}
+          placeholder="Enter value"
+          style={{width:'100%',padding:'0.75rem',background:'#0f172a',border:'1px solid #334155',borderRadius:'0.5rem',color:'#f1f5f9',fontSize:'1rem',marginBottom:'1rem',boxSizing:'border-box'}}
+        />
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem',marginBottom:'1rem'}}>
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Value</label>
-            <input type="number" value={val} onChange={e=>setVal(e.target.value)}
-              className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white border border-gray-700 focus:outline-none focus:border-blue-500" />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">From</label>
-              <select value={from} onChange={e=>setFrom(e.target.value)}
-                className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white border border-gray-700 focus:outline-none focus:border-blue-500">
-      <option value="Pascal">Pascal</option>
-      <option value="Kilopascal">Kilopascal</option>
-      <option value="Megapascal">Megapascal</option>
-      <option value="Bar">Bar</option>
-      <option value="Millibar">Millibar</option>
-      <option value="PSI">PSI</option>
-      <option value="Atmosphere">Atmosphere</option>
-      <option value="Torr">Torr</option>
-      <option value="mmHg">mmHg</option>
+            <label style={{display:'block',color:'#94a3b8',fontSize:'0.75rem',marginBottom:'0.25rem'}}>From</label>
+            <select value={from} onChange={e=>setFrom(e.target.value)}
+              style={{width:'100%',padding:'0.75rem',background:'#0f172a',border:'1px solid #334155',borderRadius:'0.5rem',color:'#f1f5f9',fontSize:'0.875rem'}}>
+              {units.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
             </select>
-            </div>
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">To</label>
-              <select value={to} onChange={e=>setTo(e.target.value)}
-                className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white border border-gray-700 focus:outline-none focus:border-blue-500">
-      <option value="Pascal">Pascal</option>
-      <option value="Kilopascal">Kilopascal</option>
-      <option value="Megapascal">Megapascal</option>
-      <option value="Bar">Bar</option>
-      <option value="Millibar">Millibar</option>
-      <option value="PSI">PSI</option>
-      <option value="Atmosphere">Atmosphere</option>
-      <option value="Torr">Torr</option>
-      <option value="mmHg">mmHg</option>
-            </select>
-            </div>
           </div>
-          <div className="bg-gray-800 rounded-lg p-4 text-center">
-            <span className="text-3xl font-mono text-blue-400">{convert()}</span>
-            <span className="ml-2 text-gray-400">{to}</span>
+          <div>
+            <label style={{display:'block',color:'#94a3b8',fontSize:'0.75rem',marginBottom:'0.25rem'}}>To</label>
+            <select value={to} onChange={e=>setTo(e.target.value)}
+              style={{width:'100%',padding:'0.75rem',background:'#0f172a',border:'1px solid #334155',borderRadius:'0.5rem',color:'#f1f5f9',fontSize:'0.875rem'}}>
+              {units.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
+            </select>
           </div>
         </div>
+        {result !== null && (
+          <div style={{background:'#0f172a',borderRadius:'0.5rem',padding:'1rem',textAlign:'center'}}>
+            <div style={{color:'#94a3b8',fontSize:'0.75rem',marginBottom:'0.25rem'}}>Result</div>
+            <div style={{fontSize:'1.5rem',fontWeight:700,color:'#38bdf8'}}>{result.toPrecision(8).replace(/\.?0+$/, '')}</div>
+          </div>
+        )}
       </div>
-    </div>
+    </main>
   );
 }

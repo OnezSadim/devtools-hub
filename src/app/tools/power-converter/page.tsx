@@ -1,77 +1,89 @@
-'use client';
+"use client";
 import { useState } from 'react';
 
-export default function PowerconverterConverter() {
-  const [val, setVal] = useState('1');
-  const [from, setFrom] = useState('Watt');
-  const [to, setTo] = useState('Kilowatt');
+const units = [
+        { value: 'w', label: 'Watt (W)' },
+        { value: 'kw', label: 'Kilowatt (kW)' },
+        { value: 'mw', label: 'Megawatt (MW)' },
+        { value: 'hp', label: 'Horsepower (hp)' },
+        { value: 'btu_hr', label: 'BTU/hour' },
+        { value: 'cal_s', label: 'Calorie/second' },
+        { value: 'ft_lb_s', label: 'ft·lbf/s' },
+        { value: 'erg_s', label: 'Erg/second' },
+];
 
-  const toBase: Record<string,number> = {
-    'Watt': 1.0,
-    'Kilowatt': 1000.0,
-    'Megawatt': 1000000.0,
-    'Horsepower': 745.7,
-    'BTU/hr': 0.29307,
-    'Calorie/sec': 4.1868,
-    'Foot-pound/sec': 1.35582,
-    'Erg/sec': 1e-07,
-  };
+function toBaseFn(v: number, from: string): number {
+  let toBase = 0;
+  switch(from) {
+      case 'w': toBase = v * 1; break;
+      case 'kw': toBase = v * 1000.0; break;
+      case 'mw': toBase = v * 1000000.0; break;
+      case 'hp': toBase = v * 745.69987; break;
+      case 'btu_hr': toBase = v * 0.29307107; break;
+      case 'cal_s': toBase = v * 4.1868; break;
+      case 'ft_lb_s': toBase = v * 1.35582; break;
+      case 'erg_s': toBase = v * 1e-07; break;
+    default: toBase = v;
+  }
+  return toBase;
+}
 
-  const convert = () => {
-    const n = parseFloat(val);
-    if (isNaN(n)) return 'Invalid';
-    const base = n * (toBase[from] || 1);
-    const result = base / (toBase[to] || 1);
-    return result.toPrecision(6);
-  };
+function fromBaseFn(base: number, to: string): number {
+  switch(to) {
+      case 'w': return toBase / 1;
+      case 'kw': return toBase / 1000.0;
+      case 'mw': return toBase / 1000000.0;
+      case 'hp': return toBase / 745.69987;
+      case 'btu_hr': return toBase / 0.29307107;
+      case 'cal_s': return toBase / 4.1868;
+      case 'ft_lb_s': return toBase / 1.35582;
+      case 'erg_s': return toBase / 1e-07;
+    default: return base;
+  }
+}
+
+export default function Page() {
+  const [val, setVal] = useState('');
+  const [from, setFrom] = useState(units[0].value);
+  const [to, setTo] = useState(units[1].value);
+
+  const result = val !== '' && !isNaN(Number(val))
+    ? fromBaseFn(toBaseFn(Number(val), from), to)
+    : null;
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white p-8">
-      <div className="max-w-xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Power Converter</h1>
-        <p className="text-gray-400 mb-8">Convert between power units: Watt, kilowatt, horsepower, BTU/hr, and more.</p>
-        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
+    <main style={{minHeight:'100vh',background:'#0f172a',color:'#f1f5f9',fontFamily:'monospace',display:'flex',alignItems:'center',justifyContent:'center',padding:'2rem'}}>
+      <div style={{background:'#1e293b',borderRadius:'1rem',padding:'2rem',width:'100%',maxWidth:'480px'}}>
+        <h1 style={{fontSize:'1.5rem',fontWeight:700,marginBottom:'0.5rem'}}>Power Converter</h1>
+        <p style={{color:'#94a3b8',marginBottom:'1.5rem',fontSize:'0.875rem'}}>Convert between power units.</p>
+        <input
+          type="number" value={val} onChange={e=>setVal(e.target.value)}
+          placeholder="Enter value"
+          style={{width:'100%',padding:'0.75rem',background:'#0f172a',border:'1px solid #334155',borderRadius:'0.5rem',color:'#f1f5f9',fontSize:'1rem',marginBottom:'1rem',boxSizing:'border-box'}}
+        />
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem',marginBottom:'1rem'}}>
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Value</label>
-            <input type="number" value={val} onChange={e=>setVal(e.target.value)}
-              className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white border border-gray-700 focus:outline-none focus:border-blue-500" />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">From</label>
-              <select value={from} onChange={e=>setFrom(e.target.value)}
-                className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white border border-gray-700 focus:outline-none focus:border-blue-500">
-      <option value="Watt">Watt</option>
-      <option value="Kilowatt">Kilowatt</option>
-      <option value="Megawatt">Megawatt</option>
-      <option value="Horsepower">Horsepower</option>
-      <option value="BTU/hr">BTU/hr</option>
-      <option value="Calorie/sec">Calorie/sec</option>
-      <option value="Foot-pound/sec">Foot-pound/sec</option>
-      <option value="Erg/sec">Erg/sec</option>
+            <label style={{display:'block',color:'#94a3b8',fontSize:'0.75rem',marginBottom:'0.25rem'}}>From</label>
+            <select value={from} onChange={e=>setFrom(e.target.value)}
+              style={{width:'100%',padding:'0.75rem',background:'#0f172a',border:'1px solid #334155',borderRadius:'0.5rem',color:'#f1f5f9',fontSize:'0.875rem'}}>
+              {units.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
             </select>
-            </div>
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">To</label>
-              <select value={to} onChange={e=>setTo(e.target.value)}
-                className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white border border-gray-700 focus:outline-none focus:border-blue-500">
-      <option value="Watt">Watt</option>
-      <option value="Kilowatt">Kilowatt</option>
-      <option value="Megawatt">Megawatt</option>
-      <option value="Horsepower">Horsepower</option>
-      <option value="BTU/hr">BTU/hr</option>
-      <option value="Calorie/sec">Calorie/sec</option>
-      <option value="Foot-pound/sec">Foot-pound/sec</option>
-      <option value="Erg/sec">Erg/sec</option>
-            </select>
-            </div>
           </div>
-          <div className="bg-gray-800 rounded-lg p-4 text-center">
-            <span className="text-3xl font-mono text-blue-400">{convert()}</span>
-            <span className="ml-2 text-gray-400">{to}</span>
+          <div>
+            <label style={{display:'block',color:'#94a3b8',fontSize:'0.75rem',marginBottom:'0.25rem'}}>To</label>
+            <select value={to} onChange={e=>setTo(e.target.value)}
+              style={{width:'100%',padding:'0.75rem',background:'#0f172a',border:'1px solid #334155',borderRadius:'0.5rem',color:'#f1f5f9',fontSize:'0.875rem'}}>
+              {units.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
+            </select>
           </div>
         </div>
+        {result !== null && (
+          <div style={{background:'#0f172a',borderRadius:'0.5rem',padding:'1rem',textAlign:'center'}}>
+            <div style={{color:'#94a3b8',fontSize:'0.75rem',marginBottom:'0.25rem'}}>Result</div>
+            <div style={{fontSize:'1.5rem',fontWeight:700,color:'#38bdf8'}}>{result.toPrecision(8).replace(/\.?0+$/, '')}</div>
+          </div>
+        )}
       </div>
-    </div>
+    </main>
   );
 }
