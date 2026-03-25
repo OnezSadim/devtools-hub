@@ -1,27 +1,29 @@
 "use client";
 import { useState } from "react";
-
-const units = ["cubic-meter-per-second", "liter-per-second", "liter-per-minute", "liter-per-hour", "gallon-per-minute", "gallon-per-hour", "cubic-foot-per-minute", "cubic-foot-per-hour"];
-const toBase: Record<string, number> = {"cubic-meter-per-second": 1, "liter-per-second": 0.001, "liter-per-minute": 1.6666666666666667e-05, "liter-per-hour": 2.7777777777777776e-07, "gallon-per-minute": 6.30902e-05, "gallon-per-hour": 1.04987e-06, "cubic-foot-per-minute": 0.000471947, "cubic-foot-per-hour": 7.86578e-06};
-
+const UNITS = ["m3/s", "L/s", "L/min", "L/h", "mL/s", "ft3/s", "ft3/min", "gal/min", "gal/h"];
+const TO_BASE: Record<string, number> = {"m3/s": 1.0, "L/s": 0.001, "L/min": 1.66667e-05, "L/h": 2.77778e-07, "mL/s": 1e-06, "ft3/s": 0.0283168, "ft3/min": 0.000471947, "gal/min": 6.30902e-05, "gal/h": 1.0515e-06};
 export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(units[0]);
-  const [to, setTo] = useState(units[1]);
-  const convert = () => {
+  const [from, setFrom] = useState(UNITS[0]);
+  const [to, setTo] = useState(UNITS[1]);
+  function convert() {
     const n = parseFloat(val);
     if (isNaN(n)) return "";
-    return ((n * toBase[from]) / toBase[to]).toPrecision(6);
-  };
+    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
+  }
   return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
-      <h1 className="text-3xl font-bold mb-6">Flow Rate Converter</h1>
-      <div className="bg-gray-900 rounded-xl p-6 max-w-lg space-y-4">
-        <input className="w-full bg-gray-800 rounded p-2" value={val} onChange={e => setVal(e.target.value)} placeholder="Enter value" />
-        <select className="w-full bg-gray-800 rounded p-2" value={from} onChange={e => setFrom(e.target.value)}>{units.map(u => <option key={u}>{u}</option>)}</select>
-        <select className="w-full bg-gray-800 rounded p-2" value={to} onChange={e => setTo(e.target.value)}>{units.map(u => <option key={u}>{u}</option>)}</select>
-        <div className="text-2xl font-mono text-green-400">{convert() || "—"} {to}</div>
+    <main style={{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"sans-serif"}}>
+      <h1 style={{fontSize:"1.8rem",marginBottom:"1rem"}}>Flow Rate Converter</h1>
+      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1rem"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",fontSize:"1rem",flex:1}} />
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",fontSize:"1rem"}}>
+          {UNITS.map(u=><option key={u}>{u}</option>)}
+        </select>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",fontSize:"1rem"}}>
+          {UNITS.map(u=><option key={u}>{u}</option>)}
+        </select>
       </div>
+      <div style={{fontSize:"1.4rem",fontWeight:"bold"}}>Result: {convert()}</div>
     </main>
   );
 }
