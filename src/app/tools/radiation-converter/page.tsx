@@ -1,3 +1,43 @@
-'use client';
-import { useState } from 'react';
-export default function RadiationConverter() { const [v,setV]=useState(''); const [f,setF]=useState('gray'); const units={gray:1,rad:0.01,milligray:0.001,microgray:0.000001,centigray:0.01,sievert:1,rem:0.01,millisievert:0.001,microsievert:0.000001,'J/kg':1}; const res=Object.entries(units).map(([u,r])=>({u,val:v?(parseFloat(v)*units[f]/r).toPrecision(6):''})); return (<main style={{minHeight:'100vh',background:'#0f172a',color:'#f1f5f9',padding:'2rem'}}><h1 style={{fontSize:'1.8rem',fontWeight:700,marginBottom:'1rem'}}>Radiation (Absorbed Dose) Converter</h1><div style={{display:'flex',gap:'1rem',marginBottom:'1.5rem',flexWrap:'wrap'}}><input type='number' value={v} onChange={e=>setV(e.target.value)} placeholder='Enter value' style={{padding:'0.5rem',borderRadius:'6px',border:'1px solid #334155',background:'#1e293b',color:'#f1f5f9',flex:1,minWidth:'150px'}}/><select value={f} onChange={e=>setF(e.target.value)} style={{padding:'0.5rem',borderRadius:'6px',border:'1px solid #334155',background:'#1e293b',color:'#f1f5f9'}}>{Object.keys(units).map(u=>(<option key={u} value={u}>{u}</option>))}</select></div><div style={{display:'grid',gap:'0.75rem'}}>{res.map(({u,val})=>(<div key={u} style={{background:'#1e293b',padding:'1rem',borderRadius:'8px',display:'flex',justifyContent:'space-between'}}><span style={{color:'#94a3b8'}}>{u}</span><span style={{fontWeight:600}}>{val||'—'}</span></div>))}</div></main>); }
+"use client";
+import { useState } from "react";
+export default function Page() {
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState("Gy");
+  const [to, setTo] = useState("rad");
+  const [res, setRes] = useState("");
+  function convert() {
+    const v = parseFloat(val);
+    if (isNaN(v)) { setRes("Invalid"); return; }
+    let base = 0;
+    switch(from) {
+        case "Gy": base = v * 1; break;
+        case "rad": base = v * 0.01; break;
+        case "mGy": base = v * 0.001; break;
+        case "cGy": base = v * 0.01; break;
+        default: base = v;
+    }
+    let result = 0;
+    switch(to) {
+        case "Gy": result = base / 1; break;
+        case "rad": result = base / 0.01; break;
+        case "mGy": result = base / 0.001; break;
+        case "cGy": result = base / 0.01; break;
+        default: result = base;
+    }
+    setRes(result.toPrecision(6));
+  }
+  return (
+    <main style={{padding:"2rem",fontFamily:"sans-serif",maxWidth:"500px",margin:"0 auto"}}>
+      <h1>Radiation Converter</h1>
+      <p>Convert between gray, rad, milligray, centigray</p>
+      <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{width:"100%",padding:"0.5rem",marginBottom:"1rem"}} />
+      <div style={{display:"flex",gap:"1rem",marginBottom:"1rem"}}>
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:"0.5rem"}}><option value="Gy">Gy</option><option value="rad">rad</option><option value="mGy">mGy</option><option value="cGy">cGy</option></select>
+        <span style={{alignSelf:"center"}}>to</span>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:"0.5rem"}}><option value="Gy">Gy</option><option value="rad">rad</option><option value="mGy">mGy</option><option value="cGy">cGy</option></select>
+      </div>
+      <button onClick={convert} style={{padding:"0.5rem 1.5rem",background:"#2563eb",color:"#fff",border:"none",borderRadius:"4px",cursor:"pointer"}}>Convert</button>
+      {res && <p style={{marginTop:"1rem",fontSize:"1.2rem"}}>Result: <strong>{res} {to}</strong></p>}
+    </main>
+  );
+}
