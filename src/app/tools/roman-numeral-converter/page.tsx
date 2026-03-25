@@ -1,46 +1,27 @@
 "use client";
 import { useState } from "react";
-
-const vals = [[1000,"M"],[900,"CM"],[500,"D"],[400,"CD"],[100,"C"],[90,"XC"],[50,"L"],[40,"XL"],[10,"X"],[9,"IX"],[5,"V"],[4,"IV"],[1,"I"]] as [number,string][];
-
-const toRoman = (n: number): string => {
-  if (n < 1 || n > 3999) return "Out of range (1-3999)";
-  let result = "";
-  for (const [val, sym] of vals) { while (n >= val) { result += sym; n -= val; } }
-  return result;
-};
-
-const fromRoman = (s: string): number => {
-  const map: Record<string, number> = {I:1,V:5,X:10,L:50,C:100,D:500,M:1000};
-  let result = 0;
-  for (let i = 0; i < s.length; i++) {
-    const cur = map[s[i]], next = map[s[i+1]];
-    if (!cur) return NaN;
-    result += next > cur ? -cur : cur;
-  }
-  return result;
-};
-
+const VALS: [number,string][] = [[1000,"M"],[900,"CM"],[500,"D"],[400,"CD"],[100,"C"],[90,"XC"],[50,"L"],[40,"XL"],[10,"X"],[9,"IX"],[5,"V"],[4,"IV"],[1,"I"]];
+const RVALS: [string,number][] = [["M",1000],["CM",900],["D",500],["CD",400],["C",100],["XC",90],["L",50],["XL",40],["X",10],["IX",9],["V",5],["IV",4],["I",1]];
+function toRoman(n:number):string { let r=""; for(const [v,s] of VALS){while(n>=v){r+=s;n-=v;}} return r; }
+function fromRoman(s:string):number { let r=0,i=0; for(const [sym,val] of RVALS){while(s.startsWith(sym,i)){r+=val;i+=sym.length;}} return r; }
 export default function RomanNumeralConverter() {
   const [num, setNum] = useState("");
-  const [roman, setRoman] = useState("");
-
-  return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
-      <h1 className="text-3xl font-bold mb-2">Roman Numeral Converter</h1>
-      <p className="text-gray-400 mb-6">Convert between Arabic and Roman numerals</p>
-      <div className="max-w-xl space-y-6">
-        <div className="bg-gray-900 border border-gray-700 rounded p-6">
-          <label className="block text-sm text-gray-400 mb-2">Number → Roman</label>
-          <input type="number" value={num} onChange={e => setNum(e.target.value)} className="w-full bg-gray-800 border border-gray-600 rounded p-3 mb-3" placeholder="Enter number (1-3999)" />
-          {num && <div className="text-2xl font-mono text-blue-400">{toRoman(parseInt(num))}</div>}
-        </div>
-        <div className="bg-gray-900 border border-gray-700 rounded p-6">
-          <label className="block text-sm text-gray-400 mb-2">Roman → Number</label>
-          <input value={roman} onChange={e => setRoman(e.target.value.toUpperCase())} className="w-full bg-gray-800 border border-gray-600 rounded p-3 mb-3" placeholder="Enter Roman numeral (e.g. XLII)" />
-          {roman && <div className="text-2xl font-mono text-green-400">{isNaN(fromRoman(roman)) ? "Invalid" : fromRoman(roman)}</div>}
-        </div>
+  const [rom, setRom] = useState("");
+  const n = parseInt(num)||0;
+  return (<div style={{padding:24,fontFamily:"monospace",background:"#0a0a0a",minHeight:"100vh",color:"#e5e5e5"}}>
+    <h1 style={{fontSize:28,marginBottom:8}}>Roman Numeral Converter</h1>
+    <p style={{color:"#888",marginBottom:20}}>Convert between Arabic and Roman numerals.</p>
+    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
+      <div>
+        <label style={{display:"block",marginBottom:8,color:"#888"}}>Arabic Number (1-3999)</label>
+        <input type="number" value={num} onChange={e=>setNum(e.target.value)} placeholder="e.g. 2024" style={{width:"100%",padding:12,background:"#111",color:"#e5e5e5",border:"1px solid #333",borderRadius:8,fontSize:16,boxSizing:"border-box"}} />
+        {n>0&&n<=3999&&<div style={{marginTop:12,padding:16,background:"#111",border:"1px solid #333",borderRadius:8,color:"#7c3aed",fontSize:24,textAlign:"center"}}>{toRoman(n)}</div>}
       </div>
-    </main>
-  );
+      <div>
+        <label style={{display:"block",marginBottom:8,color:"#888"}}>Roman Numeral</label>
+        <input value={rom} onChange={e=>setRom(e.target.value.toUpperCase())} placeholder="e.g. MMXXIV" style={{width:"100%",padding:12,background:"#111",color:"#e5e5e5",border:"1px solid #333",borderRadius:8,fontSize:16,boxSizing:"border-box"}} />
+        {rom&&<div style={{marginTop:12,padding:16,background:"#111",border:"1px solid #333",borderRadius:8,color:"#7c3aed",fontSize:24,textAlign:"center"}}>{fromRoman(rom)||"Invalid"}</div>}
+      </div>
+    </div>
+  </div>);
 }
