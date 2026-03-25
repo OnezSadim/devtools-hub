@@ -1,1 +1,85 @@
-"use client";import{useState}from"react";const units=[{"label":"Ohm (Ω)","value":"ohm","factor":1},{"label":"Milliohm (mΩ)","value":"mohm","factor":0.001},{"label":"Microohm (μΩ)","value":"uohm","factor":1e-06},{"label":"Kilohm (kΩ)","value":"kohm","factor":1000.0},{"label":"Megaohm (MΩ)","value":"Mohm","factor":1000000.0},{"label":"Gigaohm (GΩ)","value":"Gohm","factor":1000000000.0},{"label":"Abohm (abΩ)","value":"abohm","factor":1e-09},{"label":"Statohm (statΩ)","value":"statohm","factor":898755000000.0}];export default function Page(){const[val,setVal]=useState("");const[from,setFrom]=useState(units[0].value);const[to,setTo]=useState(units[1].value);const convert=()=>{const f=units.find(u=>u.value===from);const t=units.find(u=>u.value===to);if(!f||!t||val==="")return"";return((parseFloat(val)*f.factor)/t.factor).toPrecision(6);};return(<main style={{padding:"2rem",fontFamily:"monospace",background:"#0f0f0f",minHeight:"100vh",color:"#e0e0e0"}}><h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Electric Resistance Converter</h1><p style={{color:"#aaa",marginBottom:"1.5rem"}}>Convert between electrical resistance units: ohms, milliohms, kilohms, megaohms, gigaohms.</p><div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1rem"}}><input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",background:"#1a1a1a",color:"#e0e0e0",border:"1px solid #333",borderRadius:"4px",flex:1}} /><select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1a1a1a",color:"#e0e0e0",border:"1px solid #333",borderRadius:"4px"}}>{units.map(u=>(<option key={u.value} value={u.value}>{u.label}</option>))}</select><select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1a1a1a",color:"#e0e0e0",border:"1px solid #333",borderRadius:"4px"}}>{units.map(u=>(<option key={u.value} value={u.value}>{u.label}</option>))}</select></div><div style={{padding:"1rem",background:"#1a1a1a",borderRadius:"4px",fontSize:"1.2rem"}}>{val&&<span>{val} {units.find(u=>u.value===from)?.label} = <strong style={{color:"#4ade80"}}>{convert()}</strong> {units.find(u=>u.value===to)?.label}</span>}</div></main>);}
+"use client";
+import { useState } from "react";
+
+export default function ElectricResistanceConverterPage() {
+  const [value, setValue] = useState("");
+  const [from, setFrom] = useState("Ohm (Ω)");
+  const [to, setTo] = useState("Milliohm (mΩ)");
+
+  function toBase(val: number, unit: string): number {
+    switch (unit) {
+      case 'Ohm (Ω)': return val * 1.0;
+      case 'Milliohm (mΩ)': return val * 0.001;
+      case 'Microohm (μΩ)': return val * 1e-06;
+      case 'Kilohm (kΩ)': return val * 1000.0;
+      case 'Megaohm (MΩ)': return val * 1000000.0;
+      case 'Gigaohm (GΩ)': return val * 1000000000.0;
+      default: return val;
+    }
+  }
+
+  function fromBase(base: number, unit: string): number {
+    switch (unit) {
+      case 'Ohm (Ω)': return base / 1.0;
+      case 'Milliohm (mΩ)': return base / 0.001;
+      case 'Microohm (μΩ)': return base / 1e-06;
+      case 'Kilohm (kΩ)': return base / 1000.0;
+      case 'Megaohm (MΩ)': return base / 1000000.0;
+      case 'Gigaohm (GΩ)': return base / 1000000000.0;
+      default: return base;
+    }
+  }
+
+  const result = value !== "" ? fromBase(toBase(parseFloat(value), from), to) : null;
+
+  return (
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Electric Resistance Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between electrical resistance units: Ohm, kilohm, megaohm, milliohm, and more.</p>
+        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Value</label>
+            <input
+              type="number"
+              value={value}
+              onChange={e => setValue(e.target.value)}
+              className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white"
+              placeholder="Enter value"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">From</label>
+              <select value={from} onChange={e => setFrom(e.target.value)} className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white">
+              <option value="Ohm (Ω)">Ohm (Ω)</option>
+              <option value="Milliohm (mΩ)">Milliohm (mΩ)</option>
+              <option value="Microohm (μΩ)">Microohm (μΩ)</option>
+              <option value="Kilohm (kΩ)">Kilohm (kΩ)</option>
+              <option value="Megaohm (MΩ)">Megaohm (MΩ)</option>
+              <option value="Gigaohm (GΩ)">Gigaohm (GΩ)</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">To</label>
+              <select value={to} onChange={e => setTo(e.target.value)} className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white">
+              <option value="Ohm (Ω)">Ohm (Ω)</option>
+              <option value="Milliohm (mΩ)">Milliohm (mΩ)</option>
+              <option value="Microohm (μΩ)">Microohm (μΩ)</option>
+              <option value="Kilohm (kΩ)">Kilohm (kΩ)</option>
+              <option value="Megaohm (MΩ)">Megaohm (MΩ)</option>
+              <option value="Gigaohm (GΩ)">Gigaohm (GΩ)</option>
+              </select>
+            </div>
+          </div>
+          {result !== null && (
+            <div className="bg-gray-800 rounded-lg p-4">
+              <p className="text-sm text-gray-400">Result</p>
+              <p className="text-2xl font-bold text-green-400">{Number(result.toPrecision(10))} {to}</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </main>
+  );
+}
