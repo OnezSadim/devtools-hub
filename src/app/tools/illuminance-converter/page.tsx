@@ -1,74 +1,55 @@
 "use client";
 import { useState } from "react";
-export default function Page() {
+
+const units: {value:string,label:string,factor:number}[] = [
+        { value: 'lx', label: 'Lux (lx)', factor: 1.0 },
+        { value: 'fc', label: 'Foot-candle (fc)', factor: 10.7639 },
+        { value: 'ph', label: 'Phot (ph)', factor: 10000.0 },
+        { value: 'nx', label: 'Nox (nx)', factor: 0.001 },
+        { value: 'klx', label: 'Kilolux (klx)', factor: 1000.0 },
+        { value: 'mlx', label: 'Millilux (mlx)', factor: 0.001 },
+];
+
+export default function IlluminanceConverterPage() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState("Lux (lx)");
-  const [to, setTo] = useState("Footcandle (fc)");
+  const [from, setFrom] = useState(units[0].value);
+  const [to, setTo] = useState(units[1].value);
+  const [result, setResult] = useState<string | null>(null);
+
   function convert() {
-    const v = parseFloat(val);
-    if (isNaN(v)) return "Invalid input";
-    let base = 0;
-    switch(from) {
-      case "Lux (lx)": base = v * 1; break;
-      case "Footcandle (fc)": base = v * 10.7639; break;
-      case "Phot (ph)": base = v * 10000; break;
-      case "Millilux (mlx)": base = v * 0.001; break;
-      case "Kilolux (klx)": base = v * 1000; break;
-      case "Nox": base = v * 0.001; break;
-      case "Lumen/sq meter": base = v * 1; break;
-      case "Lumen/sq cm": base = v * 10000; break;
-      case "Lumen/sq foot": base = v * 10.7639; break;
-      default: base = v;
-    }
-    let result = 0;
-    switch(to) {
-      case "Lux (lx)": result = base / 1; break;
-      case "Footcandle (fc)": result = base / 10.7639; break;
-      case "Phot (ph)": result = base / 10000; break;
-      case "Millilux (mlx)": result = base / 0.001; break;
-      case "Kilolux (klx)": result = base / 1000; break;
-      case "Nox": result = base / 0.001; break;
-      case "Lumen/sq meter": result = base / 1; break;
-      case "Lumen/sq cm": result = base / 10000; break;
-      case "Lumen/sq foot": result = base / 10.7639; break;
-      default: result = base;
-    }
-    return result.toPrecision(8);
+    const n = parseFloat(val);
+    if (isNaN(n)) { setResult("Invalid input"); return; }
+    const fromU = units.find(u => u.value === from)!;
+    const toU = units.find(u => u.value === to)!;
+    const base = n * fromU.factor;
+    const out = base / toU.factor;
+    setResult(out.toPrecision(8).replace(/\.?0+$/, ""));
   }
+
   return (
-    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",alignItems:"center",justifyContent:"center"}}>
+    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",flexDirection:"column",alignItems:"center",padding:"40px 16px"}}>
+      <h1 style={{fontSize:"2rem",fontWeight:700,marginBottom:8}}>Illuminance Converter</h1>
+      <p style={{color:"#94a3b8",marginBottom:32}}>Convert between lux, foot-candle, phot and other illuminance units.</p>
       <div style={{background:"#1e293b",borderRadius:12,padding:32,width:"100%",maxWidth:480}}>
-        <h1 style={{fontSize:24,fontWeight:700,marginBottom:8}}>Illuminance Converter</h1>
-        <p style={{color:"#94a3b8",marginBottom:24,fontSize:14}}>Convert between units of illuminance.</p>
-        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",fontSize:16,marginBottom:12,boxSizing:"border-box"}} />
-        <div style={{display:"flex",gap:8,marginBottom:12}}>
-          <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",fontSize:14}}>
-          <option value="Lux (lx)">Lux (lx)</option>
-          <option value="Footcandle (fc)">Footcandle (fc)</option>
-          <option value="Phot (ph)">Phot (ph)</option>
-          <option value="Millilux (mlx)">Millilux (mlx)</option>
-          <option value="Kilolux (klx)">Kilolux (klx)</option>
-          <option value="Nox">Nox</option>
-          <option value="Lumen/sq meter">Lumen/sq meter</option>
-          <option value="Lumen/sq cm">Lumen/sq cm</option>
-          <option value="Lumen/sq foot">Lumen/sq foot</option>
+        <input type="number" value={val} onChange={e=>setVal(e.target.value)}
+          placeholder="Enter value" style={{width:"100%",padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",fontSize:"1rem",marginBottom:16,boxSizing:"border-box"}} />
+        <div style={{display:"flex",gap:12,marginBottom:16}}>
+          <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:"10px",borderRadius:8,border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>
+            {units.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
           </select>
           <span style={{alignSelf:"center",color:"#94a3b8"}}>→</span>
-          <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",fontSize:14}}>
-          <option value="Lux (lx)">Lux (lx)</option>
-          <option value="Footcandle (fc)">Footcandle (fc)</option>
-          <option value="Phot (ph)">Phot (ph)</option>
-          <option value="Millilux (mlx)">Millilux (mlx)</option>
-          <option value="Kilolux (klx)">Kilolux (klx)</option>
-          <option value="Nox">Nox</option>
-          <option value="Lumen/sq meter">Lumen/sq meter</option>
-          <option value="Lumen/sq cm">Lumen/sq cm</option>
-          <option value="Lumen/sq foot">Lumen/sq foot</option>
+          <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:"10px",borderRadius:8,border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>
+            {units.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
           </select>
         </div>
-        <div style={{background:"#0f172a",borderRadius:8,padding:"14px 16px",fontSize:18,fontWeight:600,color:"#38bdf8",minHeight:50}}>
-          {val ? convert() + " " + to : <span style={{color:"#475569"}}>Result appears here</span>}
-        </div>
+        <button onClick={convert} style={{width:"100%",padding:"12px",borderRadius:8,background:"#6366f1",color:"#fff",fontWeight:600,fontSize:"1rem",border:"none",cursor:"pointer"}}>
+          Convert
+        </button>
+        {result !== null && (
+          <div style={{marginTop:20,padding:16,background:"#0f172a",borderRadius:8,textAlign:"center",fontSize:"1.25rem",fontWeight:600,color:"#a5b4fc"}}>
+            {result} {units.find(u=>u.value===to)?.label}
+          </div>
+        )}
       </div>
     </main>
   );

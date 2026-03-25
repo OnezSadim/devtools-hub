@@ -1,64 +1,56 @@
 "use client";
 import { useState } from "react";
 
-const units: Record<string, number> = {
-  "H": 1,
-  "mH": 0.001,
-  "uH": 1e-06,
-  "nH": 1e-09,
-};
+const units: {value:string,label:string,factor:number}[] = [
+        { value: 'H', label: 'Henry (H)', factor: 1.0 },
+        { value: 'mH', label: 'Millihenry (mH)', factor: 0.001 },
+        { value: 'uH', label: 'Microhenry (μH)', factor: 1e-06 },
+        { value: 'nH', label: 'Nanohenry (nH)', factor: 1e-09 },
+        { value: 'kH', label: 'Kilohenry (kH)', factor: 1000.0 },
+        { value: 'abH', label: 'Abhenry (abH)', factor: 1e-09 },
+        { value: 'statH', label: 'Stathenry (statH)', factor: 898755000000.0 },
+];
 
-export default function InductanceConverter() {
+export default function InductanceConverterPage() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState("H");
-  const [to, setTo] = useState("mH");
+  const [from, setFrom] = useState(units[0].value);
+  const [to, setTo] = useState(units[1].value);
+  const [result, setResult] = useState<string | null>(null);
 
-  const convert = () => {
+  function convert() {
     const n = parseFloat(val);
-    if (isNaN(n)) return "";
-    return ((n * units[from]) / units[to]).toPrecision(6);
-  };
+    if (isNaN(n)) { setResult("Invalid input"); return; }
+    const fromU = units.find(u => u.value === from)!;
+    const toU = units.find(u => u.value === to)!;
+    const base = n * fromU.factor;
+    const out = base / toU.factor;
+    setResult(out.toPrecision(8).replace(/\.?0+$/, ""));
+  }
 
   return (
-    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
-      <div className="max-w-xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Inductance Converter</h1>
-        <p className="text-gray-400 mb-8">Convert between henry, millihenry, microhenry, nanohenry.</p>
-        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">Value</label>
-            <input type="number" value={val} onChange={e => setVal(e.target.value)}
-              className="w-full bg-gray-800 rounded px-3 py-2 text-white" placeholder="Enter value" />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">From</label>
-              <select value={from} onChange={e => setFrom(e.target.value)}
-                className="w-full bg-gray-800 rounded px-3 py-2 text-white">
-          <option value="H">Henry</option>
-          <option value="mH">Millihenry</option>
-          <option value="uH">Microhenry</option>
-          <option value="nH">Nanohenry</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">To</label>
-              <select value={to} onChange={e => setTo(e.target.value)}
-                className="w-full bg-gray-800 rounded px-3 py-2 text-white">
-          <option value="H">Henry</option>
-          <option value="mH">Millihenry</option>
-          <option value="uH">Microhenry</option>
-          <option value="nH">Nanohenry</option>
-              </select>
-            </div>
-          </div>
-          {val && (
-            <div className="bg-gray-800 rounded p-4 text-center">
-              <span className="text-2xl font-mono text-green-400">{convert()}</span>
-              <span className="text-gray-400 ml-2">{to}</span>
-            </div>
-          )}
+    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",flexDirection:"column",alignItems:"center",padding:"40px 16px"}}>
+      <h1 style={{fontSize:"2rem",fontWeight:700,marginBottom:8}}>Inductance Converter</h1>
+      <p style={{color:"#94a3b8",marginBottom:32}}>Convert between henries, millihenries, microhenries and other inductance units.</p>
+      <div style={{background:"#1e293b",borderRadius:12,padding:32,width:"100%",maxWidth:480}}>
+        <input type="number" value={val} onChange={e=>setVal(e.target.value)}
+          placeholder="Enter value" style={{width:"100%",padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",fontSize:"1rem",marginBottom:16,boxSizing:"border-box"}} />
+        <div style={{display:"flex",gap:12,marginBottom:16}}>
+          <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:"10px",borderRadius:8,border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>
+            {units.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
+          </select>
+          <span style={{alignSelf:"center",color:"#94a3b8"}}>→</span>
+          <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:"10px",borderRadius:8,border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>
+            {units.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
+          </select>
         </div>
+        <button onClick={convert} style={{width:"100%",padding:"12px",borderRadius:8,background:"#6366f1",color:"#fff",fontWeight:600,fontSize:"1rem",border:"none",cursor:"pointer"}}>
+          Convert
+        </button>
+        {result !== null && (
+          <div style={{marginTop:20,padding:16,background:"#0f172a",borderRadius:8,textAlign:"center",fontSize:"1.25rem",fontWeight:600,color:"#a5b4fc"}}>
+            {result} {units.find(u=>u.value===to)?.label}
+          </div>
+        )}
       </div>
     </main>
   );
