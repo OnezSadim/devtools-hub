@@ -1,65 +1,38 @@
 "use client";
 import { useState } from "react";
-
 export default function FlexboxPlayground() {
-  const [direction, setDirection] = useState("row");
+  const [dir, setDir] = useState("row");
   const [justify, setJustify] = useState("flex-start");
   const [align, setAlign] = useState("stretch");
   const [wrap, setWrap] = useState("nowrap");
   const [gap, setGap] = useState(8);
-  const [items, setItems] = useState(4);
-  const css = `.container {
-  display: flex;
-  flex-direction: ${direction};
-  justify-content: ${justify};
-  align-items: ${align};
-  flex-wrap: ${wrap};
-  gap: ${gap}px;
-}`;
-  const Sel = ({label,val,set,opts}:{label:string,val:string,set:(s:string)=>void,opts:string[]}) => (
-    <div className="mb-4">
-      <label className="block text-sm text-gray-400 mb-1">{label}</label>
-      <select value={val} onChange={e=>set(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2">
-        {opts.map(o=><option key={o}>{o}</option>)}
-      </select>
-    </div>
-  );
+  const items = [1,2,3,4,5];
+  const colors = ["bg-indigo-500","bg-pink-500","bg-yellow-500","bg-green-500","bg-blue-500"];
+  const css = `display: flex; flex-direction: ${dir}; justify-content: ${justify}; align-items: ${align}; flex-wrap: ${wrap}; gap: ${gap}px;`;
   return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
-      <div className="max-w-3xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Flexbox Playground</h1>
-        <p className="text-gray-400 mb-8">Visually explore CSS flexbox properties.</p>
-        <div className="grid grid-cols-3 gap-8">
-          <div>
-            <Sel label="flex-direction" val={direction} set={setDirection} opts={["row","row-reverse","column","column-reverse"]} />
-            <Sel label="justify-content" val={justify} set={setJustify} opts={["flex-start","flex-end","center","space-between","space-around","space-evenly"]} />
-            <Sel label="align-items" val={align} set={setAlign} opts={["stretch","flex-start","flex-end","center","baseline"]} />
-            <Sel label="flex-wrap" val={wrap} set={setWrap} opts={["nowrap","wrap","wrap-reverse"]} />
-            <div className="mb-4">
-              <div className="flex justify-between text-sm mb-1"><span className="text-gray-400">gap</span><span className="font-mono">{gap}px</span></div>
-              <input type="range" min={0} max={40} value={gap} onChange={e=>setGap(Number(e.target.value))} className="w-full" />
-            </div>
-            <div className="mb-4">
-              <div className="flex justify-between text-sm mb-1"><span className="text-gray-400">Items</span><span className="font-mono">{items}</span></div>
-              <input type="range" min={1} max={10} value={items} onChange={e=>setItems(Number(e.target.value))} className="w-full" />
-            </div>
-          </div>
-          <div className="col-span-2">
-            <div className="bg-gray-800 rounded-xl h-64 p-4 mb-4" style={{display:"flex",flexDirection:direction as any,justifyContent:justify,alignItems:align,flexWrap:wrap as any,gap:`${gap}px`}}>
-              {Array.from({length:items}).map((_,i)=>(
-                <div key={i} className="bg-blue-600 rounded flex items-center justify-center text-sm font-bold" style={{minWidth:"40px",minHeight:"40px",padding:"8px"}}>{i+1}</div>
-              ))}
-            </div>
-            <div className="bg-gray-900 rounded-lg p-4">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-xs text-gray-400">CSS</span>
-                <button onClick={()=>navigator.clipboard.writeText(css)} className="text-xs bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded">Copy</button>
-              </div>
-              <pre className="text-sm text-green-400 whitespace-pre-wrap">{css}</pre>
-            </div>
-          </div>
-        </div>
+    <div className="max-w-3xl mx-auto p-6 space-y-6">
+      <h1 className="text-3xl font-bold text-white">Flexbox Playground</h1>
+      <div className="bg-gray-700 rounded-xl p-4 min-h-32" style={{display:"flex",flexDirection:dir,justifyContent:justify,alignItems:align,flexWrap:wrap,gap:`${gap}px`}}>
+        {items.map((n,i)=>(
+          <div key={n} className={`${colors[i]} text-white rounded p-3 text-center font-bold`} style={{minWidth:"60px"}}>Box {n}</div>
+        ))}
       </div>
-    </main>
+      <div className="bg-gray-800 rounded-xl p-4 grid grid-cols-2 gap-4">
+        {[["flex-direction",["row","row-reverse","column","column-reverse"],dir,setDir],["justify-content",["flex-start","flex-end","center","space-between","space-around","space-evenly"],justify,setJustify],["align-items",["flex-start","flex-end","center","stretch","baseline"],align,setAlign],["flex-wrap",["nowrap","wrap","wrap-reverse"],wrap,setWrap]].map(([label,opts,val,setter])=>(
+          <label key={label} className="text-gray-300 text-sm">{label}:
+            <select value={val} onChange={e=>setter(e.target.value)} className="mt-1 block w-full bg-gray-700 text-white rounded px-2 py-1">
+              {opts.map(o=><option key={o} value={o}>{o}</option>)}
+            </select>
+          </label>
+        ))}
+        <label className="text-gray-300 text-sm">gap: {gap}px
+          <input type="range" min="0" max="40" value={gap} onChange={e=>setGap(Number(e.target.value))} className="mt-1 block w-full" />
+        </label>
+      </div>
+      <div className="bg-gray-900 rounded p-3">
+        <code className="text-green-400 text-sm break-all">{css}</code>
+      </div>
+      <button onClick={()=>navigator.clipboard.writeText(css)} className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded">Copy CSS</button>
+    </div>
   );
 }

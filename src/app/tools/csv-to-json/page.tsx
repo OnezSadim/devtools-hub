@@ -1,22 +1,39 @@
 "use client";
 import { useState } from "react";
-export default function Page() {
-  const [csv, setCsv] = useState("");
-  const [json, setJson] = useState("");
-  const convert = () => {
+function csvToJson(csv) {
+  try {
     const lines = csv.trim().split("\n");
-    if (lines.length < 2) { setJson("Need header + data rows"); return; }
+    if (lines.length < 2) return "[]";
     const headers = lines[0].split(",").map(h=>h.trim());
-    const rows = lines.slice(1).map(l => {
-      const vals = l.split(",");
-      return Object.fromEntries(headers.map((h,i) => [h, vals[i]?.trim()||""]))
+    const rows = lines.slice(1).map(line => {
+      const vals = line.split(",").map(v=>v.trim());
+      const obj = {};
+      headers.forEach((h,i)=>{ obj[h] = isNaN(vals[i]) ? vals[i] : Number(vals[i]); });
+      return obj;
     });
-    setJson(JSON.stringify(rows, null, 2));
-  };
-  return (<div style={{padding:"2rem",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0",fontFamily:"monospace"}}>
-    <h1 style={{fontSize:"1.8rem",marginBottom:"1rem"}}>CSV to JSON</h1>
-    <textarea value={csv} onChange={e=>setCsv(e.target.value)} placeholder="Paste CSV here..." style={{width:"100%",height:"150px",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"8px",padding:"0.75rem"}} />
-    <button onClick={convert} style={{margin:"0.75rem 0",padding:"0.5rem 1.5rem",background:"#3b82f6",color:"white",border:"none",borderRadius:"6px",cursor:"pointer"}}>Convert</button>
-    {json && <pre style={{padding:"1rem",background:"#1e293b",borderRadius:"8px",overflow:"auto",maxHeight:"300px"}}>{json}</pre>}
-  </div>);
+    return JSON.stringify(rows, null, 2);
+  } catch(e) { return "Error: " + e.message; }
+}
+export default function CsvToJson() {
+  const [input, setInput] = useState("name,age,city\nAlice,30,Amsterdam\nBob,25,Berlin\nClara,35,Paris");
+  const [output, setOutput] = useState("");
+  return (
+    <div className="max-w-3xl mx-auto p-6 space-y-4">
+      <h1 className="text-3xl font-bold text-white">CSV to JSON Converter</h1>
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <p className="text-gray-400 mb-2 text-sm">CSV Input</p>
+          <textarea value={input} onChange={e=>setInput(e.target.value)} className="w-full h-64 bg-gray-800 text-white rounded-xl p-4 font-mono text-sm" />
+        </div>
+        <div>
+          <div className="flex justify-between items-center mb-2">
+            <p className="text-gray-400 text-sm">JSON Output</p>
+            {output && <button onClick={()=>navigator.clipboard.writeText(output)} className="text-indigo-400 text-sm">Copy</button>}
+          </div>
+          <pre className="w-full h-64 bg-gray-900 text-green-400 rounded-xl p-4 font-mono text-sm overflow-auto">{output || "Click Convert"}</pre>
+        </div>
+      </div>
+      <button onClick={()=>setOutput(csvToJson(input))} className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold">Convert</button>
+    </div>
+  );
 }
