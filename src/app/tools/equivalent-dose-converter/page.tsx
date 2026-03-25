@@ -1,9 +1,3 @@
-"use client";
-import {{ useState }} from "react";
-export default function Page() {{
-  const units = [['Sievert (Sv)', 1], ['Millisievert (mSv)', 0.001], ['Microsievert (µSv)', 1e-06], ['Rem', 0.01], ['Millirem (mrem)', 1e-05], ['Microrem (µrem)', 1e-08]];
-  const [val, setVal] = useState("1");
-  const [from, setFrom] = useState(0);
-  const convert = (v, f, t) => {{ const n = parseFloat(v); if (isNaN(n)) return ""; const base = n * units[f][1]; return (base / units[t][1]).toPrecision(6); }};
-  return (<div style={{{{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"sans-serif"}}}}><h1 style={{{{fontSize:"1.8rem",marginBottom:"1rem"}}}}>Equivalent Dose Converter</h1><p style={{{{color:"#666",marginBottom:"2rem"}}}}>Convert between sievert, rem, and other radiation equivalent dose units.</p><div style={{{{display:"flex",gap:"1rem",marginBottom:"1rem",flexWrap:"wrap"}}}}><input type="number" value={{val}} onChange={{e=>setVal(e.target.value)}} style={{{{padding:"0.5rem",fontSize:"1rem",border:"1px solid #ccc",borderRadius:"4px",width:"150px"}}}}/><select value={{from}} onChange={{e=>setFrom(Number(e.target.value))}} style={{{{padding:"0.5rem",fontSize:"1rem",border:"1px solid #ccc",borderRadius:"4px"}}}}> {{units.map((u,i)=><option key={{i}} value={{i}}>{{u[0]}}</option>)}} </select></div><table style={{{{width:"100%",borderCollapse:"collapse"}}}}><thead><tr><th style={{{{textAlign:"left",padding:"0.5rem",borderBottom:"2px solid #eee"}}}}>Unit</th><th style={{{{textAlign:"right",padding:"0.5rem",borderBottom:"2px solid #eee"}}}}>Value</th></tr></thead><tbody>{{units.map((u,i)=><tr key={{i}} style={{{{background:i===from?"#f0f7ff":"transparent"}}}}><td style={{{{padding:"0.5rem",borderBottom:"1px solid #eee"}}}}>{{u[0]}}</td><td style={{{{padding:"0.5rem",borderBottom:"1px solid #eee",textAlign:"right",fontFamily:"monospace"}}}}>{{convert(val,from,i)}}</td></tr>)}}</tbody></table></div>);
-}}
+'use client';
+import ConverterTool from '@/components/ConverterTool';
+export default function Page(){return <ConverterTool title="Equivalent Dose Converter" description="Convert between radiation equivalent dose units including sievert and rem." units=["sievert","millisievert","microsievert","nanosievert","rem","millirem","microrem","joule-per-kilogram"] />;}
