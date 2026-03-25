@@ -1,1 +1,58 @@
-"use client";import{useState}from"react";const units=[{"name":"Degree","factor":1},{"name":"Radian","factor":57.2958},{"name":"Gradian","factor":0.9},{"name":"Arcminute","factor":0.016667},{"name":"Arcsecond","factor":0.000278}];export default function Page(){const[val,setVal]=useState("");const[from,setFrom]=useState(0);const convert=(u)=>{if(!val||isNaN(Number(val)))return"";return((Number(val)/units[from].factor)*u.factor).toPrecision(6);};return(<div style={{padding:"2rem",maxWidth:800,margin:"0 auto"}}><h1>Angle Converter</h1><p>Convert between angle units</p><input type="number" value={val} onChange={e=>setVal(e.target.value)} style={{padding:"0.5rem",marginBottom:"1rem",width:"100%"}}/><select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{padding:"0.5rem",marginBottom:"1rem"}}>{units.map((u,i)=><option key={i} value={i}>{u.name}</option>)}</select><table style={{width:"100%",borderCollapse:"collapse"}}><tbody>{units.map((u,i)=><tr key={i} style={{borderBottom:"1px solid #333"}}><td style={{padding:"0.5rem"}}>{u.name}</td><td style={{padding:"0.5rem",fontWeight:"bold"}}>{convert(u)||"-"}</td></tr>)}</tbody></table></div>);}
+'use client';
+import { useState } from 'react';
+
+const units = [
+  { label: "Degrees", factor: 1 },
+  { label: "Radians", factor: 57.29577951308232 },
+  { label: "Gradians", factor: 0.9 },
+  { label: "Arcminutes", factor: 0.016666666666667 },
+  { label: "Arcseconds", factor: 0.0002777777777778 },
+  { label: "Milliradians", factor: 0.057295779513082 },
+];
+
+export default function Page() {
+  const [value, setValue] = useState('1');
+  const [from, setFrom] = useState('Degrees');
+  const [to, setTo] = useState('Radians');
+
+  const convert = () => {
+    const v = parseFloat(value);
+    if (isNaN(v)) return '';
+    const fromUnit = units.find(u => u.label === from);
+    const toUnit = units.find(u => u.label === to);
+    if (!fromUnit || !toUnit) return '';
+    const result = v * fromUnit.factor / toUnit.factor;
+    return parseFloat(result.toPrecision(10)).toString();
+  };
+
+  return (
+    <main style={{minHeight:'100vh',background:'#0f172a',color:'#f1f5f9',padding:'2rem',fontFamily:'sans-serif',maxWidth:'600px',margin:'0 auto'}}>
+      <h1 style={{fontSize:'1.8rem',fontWeight:'bold',marginBottom:'0.5rem',color:'#38bdf8'}}>Angle Converter</h1>
+      <p style={{color:'#94a3b8',marginBottom:'2rem'}}>Convert between degrees, radians, gradians, arcminutes and arcseconds.</p>
+      <div style={{background:'#1e293b',borderRadius:'12px',padding:'1.5rem',display:'flex',flexDirection:'column',gap:'1rem'}}>
+        <div>
+          <label style={{display:'block',color:'#94a3b8',marginBottom:'0.5rem',fontSize:'0.875rem'}}>Value</label>
+          <input type="number" value={value} onChange={e => setValue(e.target.value)} style={{width:'100%',background:'#0f172a',border:'1px solid #334155',borderRadius:'8px',padding:'0.75rem',color:'#f1f5f9',fontSize:'1rem',boxSizing:'border-box'}} />
+        </div>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem'}}>
+          <div>
+            <label style={{display:'block',color:'#94a3b8',marginBottom:'0.5rem',fontSize:'0.875rem'}}>From</label>
+            <select value={from} onChange={e => setFrom(e.target.value)} style={{width:'100%',background:'#0f172a',border:'1px solid #334155',borderRadius:'8px',padding:'0.75rem',color:'#f1f5f9',fontSize:'0.9rem'}}>
+              {units.map(u => <option key={u.label} value={u.label}>{u.label}</option>)}
+            </select>
+          </div>
+          <div>
+            <label style={{display:'block',color:'#94a3b8',marginBottom:'0.5rem',fontSize:'0.875rem'}}>To</label>
+            <select value={to} onChange={e => setTo(e.target.value)} style={{width:'100%',background:'#0f172a',border:'1px solid #334155',borderRadius:'8px',padding:'0.75rem',color:'#f1f5f9',fontSize:'0.9rem'}}>
+              {units.map(u => <option key={u.label} value={u.label}>{u.label}</option>)}
+            </select>
+          </div>
+        </div>
+        <div style={{background:'#0f172a',borderRadius:'8px',padding:'1rem',border:'1px solid #334155'}}>
+          <div style={{color:'#94a3b8',fontSize:'0.875rem',marginBottom:'0.25rem'}}>Result</div>
+          <div style={{fontSize:'1.5rem',fontWeight:'bold',color:'#34d399'}}>{convert()} <span style={{fontSize:'1rem',color:'#94a3b8'}}>{to}</span></div>
+        </div>
+      </div>
+    </main>
+  );
+}
