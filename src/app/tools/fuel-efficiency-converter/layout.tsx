@@ -1,0 +1,1 @@
+export const metadata = { title: "Fuel Efficiency Converter | DevTools Hub", description: "Convert between fuel efficiency units: mpg, L/100km, km/L and more." };export default function L({children}:{children:React.ReactNode}){return <>{children}</>;}

@@ -1,0 +1,1 @@
+export const metadata = { title: "Radiation Equivalent Dose Converter | DevTools Hub", description: "Convert between radiation equivalent dose units: sievert, rem, millisievert and more." };export default function L({children}:{children:React.ReactNode}){return <>{children}</>;}

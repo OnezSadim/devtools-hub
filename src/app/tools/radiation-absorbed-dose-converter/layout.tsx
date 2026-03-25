@@ -1,0 +1,1 @@
+export const metadata = { title: "Radiation Absorbed Dose Converter | DevTools Hub", description: "Convert between radiation absorbed dose units: gray, rad, milligray and more." };export default function L({children}:{children:React.ReactNode}){return <>{children}</>;}
