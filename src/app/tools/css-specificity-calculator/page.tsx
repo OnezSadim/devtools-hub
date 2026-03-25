@@ -1,35 +1,34 @@
-"use client"
-import { useState } from "react"
-
-function calcSpecificity(selector: string) {
-  let a = 0, b = 0, c = 0
-  let s = selector.replace(/:not\([^)]*\)/g, m => m)
-  const ids = s.match(/#[a-zA-Z][\w-]*/g) || []
-  a = ids.length
-  s = s.replace(/#[a-zA-Z][\w-]*/g, "")
-  const classes = s.match(/\.[a-zA-Z][\w-]*|\[[^\]]+\]|:[a-zA-Z][\w-]*/g) || []
-  b = classes.length
-  const elements = s.match(/[a-zA-Z][\w-]*/g) || []
-  c = elements.filter(e => !["not","is","where","has"].includes(e)).length
-  return {a, b, c, score: a*100 + b*10 + c}
-}
-
+"use client";
+import { useState } from "react";
 export default function CssSpecificityCalculator() {
-  const [input, setInput] = useState(".nav > ul li.active a:hover")
-  const {a, b, c, score} = calcSpecificity(input)
+  const [selector, setSelector] = useState("div.container > p.text");
+  const calculate = (sel) => {
+    let a = 0, b = 0, c = 0;
+    const s = sel.replace(/::[a-z-]+/gi, "");
+    a += (s.match(/#[a-z][a-z0-9-_]*/gi)||[]).length;
+    const noIds = s.replace(/#[a-z][a-z0-9-_]*/gi, "");
+    b += (noIds.match(/\.[a-z][a-z0-9-_]*/gi)||[]).length;
+    b += (noIds.match(/\[[^\]]+\]/gi)||[]).length;
+    b += (noIds.match(/:[a-z][a-z0-9-]+(?!:)/gi)||[]).length;
+    const noClasses = noIds.replace(/\.[a-z][a-z0-9-_]*/gi,"").replace(/\[[^\]]+\]/gi,"").replace(/:[a-z][a-z0-9-]+/gi,"");
+    c += (noClasses.match(/[a-z][a-z0-9-]*/gi)||[]).length;
+    return {a,b,c,score:a*100+b*10+c};
+  };
+  const result = calculate(selector);
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100 p-6">
-      <h1 className="text-2xl font-bold mb-6">CSS Specificity Calculator</h1>
-      <input value={input} onChange={e=>setInput(e.target.value)} placeholder="Enter CSS selector..." className="w-full bg-gray-800 rounded px-4 py-3 font-mono mb-6" />
-      <div className="grid grid-cols-4 gap-4 mb-6">
-        {[["IDs",a,"bg-red-900 text-red-300"],["Classes",b,"bg-yellow-900 text-yellow-300"],["Elements",c,"bg-green-900 text-green-300"],["Score",score,"bg-blue-900 text-blue-300"]].map(([label,val,cls])=>(
-          <div key={label as string} className={`${cls as string} rounded-lg p-4 text-center`}><p className="text-3xl font-bold">{val as number}</p><p className="text-sm mt-1">{label as string}</p></div>
-        ))}
+    <div style={{minHeight:"100vh",background:"#0f172a",color:"#e2e8f0",padding:"2rem",fontFamily:"monospace"}}>
+      <h1 style={{fontSize:"1.8rem",fontWeight:"bold",marginBottom:"0.5rem",color:"#38bdf8"}}>CSS Specificity Calculator</h1>
+      <p style={{color:"#94a3b8",marginBottom:"2rem"}}>Calculate the specificity of CSS selectors</p>
+      <input value={selector} onChange={e=>setSelector(e.target.value)} placeholder="Enter CSS selector..." style={{width:"100%",padding:"0.75rem",background:"#1e293b",border:"1px solid #334155",borderRadius:"8px",color:"#e2e8f0",marginBottom:"1.5rem",boxSizing:"border-box",fontSize:"1rem"}} />
+      <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:"1rem",marginBottom:"1.5rem"}}>
+        {[{label:"IDs (a)",val:result.a,color:"#f87171"},{label:"Classes/Attrs (b)",val:result.b,color:"#fbbf24"},{label:"Elements (c)",val:result.c,color:"#34d399"}].map(item=>(<div key={item.label} style={{background:"#1e293b",border:"1px solid #334155",borderRadius:"8px",padding:"1.5rem",textAlign:"center"}}><div style={{fontSize:"2.5rem",fontWeight:"bold",color:item.color}}>{item.val}</div><div style={{color:"#94a3b8",marginTop:"0.5rem",fontSize:"0.85rem"}}>{item.label}</div></div>))}
       </div>
-      <div className="bg-gray-800 rounded-lg p-4">
-        <p className="text-sm text-gray-400 mb-2">Notation: ({a}, {b}, {c})</p>
-        <p className="text-xs text-gray-500">IDs beat classes, classes beat elements. Inline styles = (1,0,0,0), !important overrides all.</p>
+      <div style={{background:"#1e293b",border:"1px solid #334155",borderRadius:"8px",padding:"1.5rem",textAlign:"center"}}>
+        <div style={{color:"#94a3b8",fontSize:"0.85rem",marginBottom:"0.5rem"}}>Specificity Score</div>
+        <div style={{fontSize:"3rem",fontWeight:"bold",color:"#a78bfa"}}>{result.a},{result.b},{result.c}</div>
+        <div style={{color:"#64748b",marginTop:"0.5rem"}}>Numeric: {result.score}</div>
       </div>
+      <div style={{marginTop:"1.5rem",background:"#1e293b",border:"1px solid #334155",borderRadius:"8px",padding:"1rem"}}><div style={{color:"#94a3b8",fontSize:"0.85rem",marginBottom:"0.5rem"}}>Reference</div><div style={{fontSize:"0.85rem",color:"#64748b"}}><div>Inline styles: 1,0,0,0 | IDs: 0,1,0,0 | Classes/attributes/pseudo-classes: 0,0,1,0 | Elements/pseudo-elements: 0,0,0,1</div></div></div>
     </div>
-  )
+  );
 }

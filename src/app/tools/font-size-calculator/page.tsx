@@ -1,44 +1,26 @@
 "use client";
 import { useState } from "react";
 export default function FontSizeCalculator() {
-  const [base, setBase] = useState(16);
-  const [scale, setScale] = useState(1.25);
-  const scales = [{name:"Minor Second",v:1.067},{name:"Major Second",v:1.125},{name:"Minor Third",v:1.2},{name:"Major Third",v:1.25},{name:"Perfect Fourth",v:1.333},{name:"Augmented Fourth",v:1.414},{name:"Perfect Fifth",v:1.5},{name:"Golden Ratio",v:1.618}];
-  const steps = [-2,-1,0,1,2,3,4,5,6];
-  const size = (step: number) => (base * Math.pow(scale, step));
+  const [base, setBase] = useState("16");
+  const [scale, setScale] = useState("1.25");
+  const sizes = [];
+  const b = parseFloat(base) || 16;
+  const s = parseFloat(scale) || 1.25;
+  for(let i = -2; i <= 6; i++) { sizes.push({step:i, px: (b * Math.pow(s,i)).toFixed(2), rem: (Math.pow(s,i)).toFixed(4)}); }
   return (
-    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
-      <h1 className="text-3xl font-bold mb-2">Font Size Calculator</h1>
-      <p className="text-gray-400 mb-6">Generate a modular type scale for your design system.</p>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mb-8">
-        <div>
-          <label className="block text-sm text-gray-400 mb-1">Base size: {base}px</label>
-          <input type="range" min={10} max={24} value={base} onChange={e=>setBase(+e.target.value)} className="w-full" />
-        </div>
-        <div>
-          <label className="block text-sm text-gray-400 mb-1">Scale</label>
-          <select value={scale} onChange={e=>setScale(+e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white">
-            {scales.map(s=><option key={s.v} value={s.v}>{s.name} ({s.v})</option>)}
-          </select>
-        </div>
+    <div style={{minHeight:"100vh",background:"#0f172a",color:"#e2e8f0",padding:"2rem",fontFamily:"monospace"}}>
+      <h1 style={{fontSize:"1.8rem",fontWeight:"bold",marginBottom:"0.5rem",color:"#38bdf8"}}>Font Size Calculator</h1>
+      <p style={{color:"#94a3b8",marginBottom:"2rem"}}>Generate a type scale using modular scaling</p>
+      <div style={{display:"flex",gap:"1rem",marginBottom:"1.5rem"}}>
+        <div><label style={{display:"block",marginBottom:"0.3rem",color:"#94a3b8",fontSize:"0.85rem"}}>Base size (px)</label><input value={base} onChange={e=>setBase(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",borderRadius:"4px",color:"#e2e8f0",width:"120px"}} /></div>
+        <div><label style={{display:"block",marginBottom:"0.3rem",color:"#94a3b8",fontSize:"0.85rem"}}>Scale ratio</label><select value={scale} onChange={e=>setScale(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",borderRadius:"4px",color:"#e2e8f0"}}><option value="1.067">Minor Second (1.067)</option><option value="1.125">Major Second (1.125)</option><option value="1.2">Minor Third (1.2)</option><option value="1.25">Major Third (1.25)</option><option value="1.333">Perfect Fourth (1.333)</option><option value="1.414">Augmented Fourth (1.414)</option><option value="1.5">Perfect Fifth (1.5)</option><option value="1.618">Golden Ratio (1.618)</option></select></div>
       </div>
-      <div className="space-y-3 max-w-2xl">
-        {steps.map(step=>{
-          const px = size(step);
-          const rem = px/base;
-          const label = step===0?"base":step>0?"+"+step:String(step);
-          return (
-            <div key={step} className="flex items-center gap-4 p-3 bg-gray-800 rounded">
-              <div className="w-12 text-center"><span className={"text-xs font-mono "+(step===0?"text-blue-400":"text-gray-400")}>{label}</span></div>
-              <div style={{fontSize:Math.min(px,48)}} className="text-white flex-1 overflow-hidden whitespace-nowrap">The quick brown fox</div>
-              <div className="text-right text-xs font-mono text-gray-400 w-32">
-                <div>{px.toFixed(1)}px</div>
-                <div>{rem.toFixed(3)}rem</div>
-              </div>
-            </div>
-          );
-        })}
+      <div style={{background:"#1e293b",border:"1px solid #334155",borderRadius:"8px",overflow:"hidden"}}>
+        <table style={{width:"100%",borderCollapse:"collapse"}}>
+          <thead><tr style={{background:"#0f172a"}}><th style={{padding:"0.75rem",textAlign:"left",color:"#94a3b8",fontSize:"0.85rem"}}>Step</th><th style={{padding:"0.75rem",textAlign:"left",color:"#94a3b8",fontSize:"0.85rem"}}>px</th><th style={{padding:"0.75rem",textAlign:"left",color:"#94a3b8",fontSize:"0.85rem"}}>rem</th><th style={{padding:"0.75rem",textAlign:"left",color:"#94a3b8",fontSize:"0.85rem"}}>Preview</th></tr></thead>
+          <tbody>{sizes.map(sz=>(<tr key={sz.step} style={{borderTop:"1px solid #334155"}}><td style={{padding:"0.75rem",color:"#a78bfa"}}>{sz.step > 0 ? "+"+sz.step : sz.step}</td><td style={{padding:"0.75rem"}}>{sz.px}px</td><td style={{padding:"0.75rem"}}>{sz.rem}rem</td><td style={{padding:"0.75rem",fontSize:sz.px+"px",maxWidth:"200px",overflow:"hidden",whiteSpace:"nowrap"}}>The quick brown fox</td></tr>))}</tbody>
+        </table>
       </div>
-    </main>
+    </div>
   );
 }
