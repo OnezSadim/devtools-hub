@@ -1,10 +1,10 @@
 "use client";
-import { useState } from "react";
-export default function ElectricPotentialConverter() {
+import React, { useState } from "react";
+export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState("volt");
-  const units = {volt:1,millivolt:0.001,kilovolt:1000,megavolt:1e6,microvolt:1e-6,statvolt:299.792458,abvolt:1e-8};
-  const convert = (v,f) => { const base = parseFloat(v)*units[f]; return Object.entries(units).map(([u,r])=>({u,v:(base/r).toPrecision(6)})); };
-  const results = val ? convert(val,from) : [];
-  return (<div style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}><h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Electric Potential Converter</h1><div style={{display:"flex",gap:"1rem",marginBottom:"1rem"}}><input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px",flex:1}}/><select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>{Object.keys(units).map(u=><option key={u} value={u}>{u}</option>)}</select></div>{results.map(r=><div key={r.u} style={{padding:"0.5rem",borderBottom:"1px solid #1e293b"}}><span style={{color:"#94a3b8"}}>{r.u}: </span><strong>{r.v}</strong></div>)}</div>);
+  const [from, setFrom] = useState("V");
+  const [to, setTo] = useState("mV");
+  const units = {"V":1,"mV":1000,"kV":0.001,"MV":0.000001,"uV":1e6};
+  const convert = () => { const v = parseFloat(val); if (isNaN(v)) return "?"; return ((v / units[from]) * units[to]).toPrecision(6); };
+  return (<div style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#f1f5f9"}}><h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Electric Potential Converter</h1><p style={{color:"#94a3b8",marginBottom:"1.5rem"}}>Convert between volt, millivolt, kilovolt, megavolt</p><div style={{display:"flex",gap:"1rem",alignItems:"center",flexWrap:"wrap"}}><input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#f1f5f9",borderRadius:"0.25rem",width:"120px"}} /><select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#f1f5f9",borderRadius:"0.25rem"}}><option value="V">V</option><option value="mV">mV</option><option value="kV">kV</option><option value="MV">MV</option><option value="uV">uV</option></select><span>→</span><select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#f1f5f9",borderRadius:"0.25rem"}}><option value="V">V</option><option value="mV">mV</option><option value="kV">kV</option><option value="MV">MV</option><option value="uV">uV</option></select><span style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",borderRadius:"0.25rem",minWidth:"120px"}}>{convert()}</span></div></div>);
 }
