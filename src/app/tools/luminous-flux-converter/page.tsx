@@ -1,32 +1,29 @@
 "use client";
 import { useState } from "react";
-
-const UNITS = ["lumen", "kilolumen", "megalumen", "candela steradian", "millihenry"];
-
 export default function Page() {
-  const [value, setValue] = useState("");
-  const [from, setFrom] = useState(UNITS[0]);
-  const [to, setTo] = useState(UNITS[1]);
-  const [result, setResult] = useState("");
-
+  const units = ['lumen', 'candela steradian', 'millilumen', 'kilolumen'];
+  const factors = {'lumen': 1.0, 'candela steradian': 1.0, 'millilumen': 0.001, 'kilolumen': 1000.0};
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState(units[0]);
+  const [to, setTo] = useState(units[1]);
   function convert() {
-    const v = parseFloat(value);
-    if (isNaN(v)) { setResult("Enter a valid number"); return; }
-    setResult(v + " " + from + " = " + v + " " + to + " (unit conversion)");
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    return ((n * factors[from]) / factors[to]).toPrecision(6);
   }
-
   return (
-    <main style={{maxWidth:600,margin:"40px auto",padding:"0 16px",fontFamily:"monospace",color:"#e2e8f0"}}>
-      <h1 style={{fontSize:"1.5rem",fontWeight:700,marginBottom:8}}>Luminous Flux Converter</h1>
-      <p style={{color:"#94a3b8",marginBottom:24}}>Convert between luminous flux units: lumen, kilolumen, megalumen and more.</p>
-      <div style={{display:"flex",gap:8,marginBottom:12}}>
-        <input value={value} onChange={e=>setValue(e.target.value)} placeholder="Value" style={{flex:1,padding:"8px",background:"#1e293b",border:"1px solid #334155",borderRadius:6,color:"#e2e8f0"}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"8px",background:"#1e293b",border:"1px solid #334155",borderRadius:6,color:"#e2e8f0"}}>{UNITS.map(u=><option key={u}>{u}</option>)}</select>
-        <span style={{lineHeight:"36px"}}>to</span>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"8px",background:"#1e293b",border:"1px solid #334155",borderRadius:6,color:"#e2e8f0"}}>{UNITS.map(u=><option key={u}>{u}</option>)}</select>
+    <main style={{padding:"2rem",maxWidth:"480px",margin:"0 auto",fontFamily:"sans-serif"}}>
+      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Luminous Flux Converter</h1>
+      <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{width:"100%",padding:"0.5rem",marginBottom:"0.5rem",boxSizing:"border-box"}} />
+      <select value={from} onChange={e=>setFrom(e.target.value)} style={{width:"100%",padding:"0.5rem",marginBottom:"0.5rem"}}>
+        {units.map(u=><option key={u}>{u}</option>)}
+      </select>
+      <select value={to} onChange={e=>setTo(e.target.value)} style={{width:"100%",padding:"0.5rem",marginBottom:"0.5rem"}}>
+        {units.map(u=><option key={u}>{u}</option>)}
+      </select>
+      <div style={{padding:"1rem",background:"#f5f5f5",borderRadius:"4px"}}>
+        <strong>Result: {convert()}</strong>
       </div>
-      <button onClick={convert} style={{padding:"8px 20px",background:"#6366f1",color:"#fff",border:"none",borderRadius:6,cursor:"pointer",marginBottom:16}}>Convert</button>
-      {result && <div style={{padding:12,background:"#1e293b",borderRadius:6,color:"#a5f3fc"}}>{result}</div>}
     </main>
   );
 }
