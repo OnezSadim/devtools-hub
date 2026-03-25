@@ -1,39 +1,31 @@
 "use client";
 import { useState } from "react";
-export default function CapacitanceCalculator() {
-  const [area, setArea] = useState("");
-  const [distance, setDistance] = useState("");
-  const [er, setEr] = useState("1");
-  const [result, setResult] = useState<string | null>(null);
-  const e0 = 8.854e-12;
-  function calculate() {
-    const a = parseFloat(area);
-    const d = parseFloat(distance);
-    const epsilon = parseFloat(er) || 1;
-    if (isNaN(a) || isNaN(d) || d === 0) { setResult("Invalid input"); return; }
-    const C = epsilon * e0 * a / d;
-    setResult(C.toExponential(4) + " F (Farads)");
-  }
+export default function CapacitanceCalc() {
+  const [c, setC] = useState("");
+  const [q, setQ] = useState("");
+  const [v, setV] = useState("");
+  const [result, setResult] = useState("");
+  const calculate = () => {
+    const cn = parseFloat(c), qn = parseFloat(q), vn = parseFloat(v);
+    if (!isNaN(cn) && !isNaN(vn) && isNaN(qn)) setResult("Q = " + (cn*vn).toExponential(4) + " C");
+    else if (!isNaN(qn) && !isNaN(vn) && isNaN(cn)) setResult("C = " + (qn/vn).toExponential(4) + " F");
+    else if (!isNaN(cn) && !isNaN(qn) && isNaN(vn)) setResult("V = " + (qn/cn).toFixed(4) + " V");
+    else setResult("Enter exactly two values.");
+  };
   return (
     <main className="min-h-screen bg-gray-950 text-white p-8">
-      <div className="max-w-xl mx-auto">
+      <div className="max-w-lg mx-auto">
         <h1 className="text-3xl font-bold mb-2">Capacitance Calculator</h1>
-        <p className="text-gray-400 mb-6">Parallel plate capacitor: C = ε₀·εᵣ·A/d</p>
-        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">Plate Area A (m²)</label>
-            <input type="number" value={area} onChange={e => setArea(e.target.value)} placeholder="e.g. 0.01" className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white" />
-          </div>
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">Plate Separation d (meters)</label>
-            <input type="number" value={distance} onChange={e => setDistance(e.target.value)} placeholder="e.g. 0.001" className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white" />
-          </div>
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">Relative Permittivity εᵣ (default: 1 for air)</label>
-            <input type="number" value={er} onChange={e => setEr(e.target.value)} placeholder="1" className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white" />
-          </div>
-          <button onClick={calculate} className="w-full bg-green-600 hover:bg-green-700 rounded-lg py-2 font-semibold">Calculate</button>
-          {result && <div className="bg-gray-800 rounded-lg p-4 text-center"><span className="text-gray-400">C = </span><span className="text-2xl font-bold text-green-400">{result}</span></div>}
+        <p className="text-gray-400 mb-6">Q = C × V — solve for any variable.</p>
+        <div className="space-y-4">
+          {[["Capacitance (F)",c,setC],["Charge (C)",q,setQ],["Voltage (V)",v,setV]].map(([label,val,setter]) => (
+            <div key={label as string}>
+              <label className="block text-sm text-gray-400 mb-1">{label as string}</label>
+              <input type="number" value={val as string} onChange={e=>(setter as Function)(e.target.value)} placeholder="Leave blank to solve" className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white" />
+            </div>
+          ))}
+          <button onClick={calculate} className="w-full bg-blue-600 hover:bg-blue-700 rounded py-2 font-semibold">Calculate</button>
+          {result && <div className="bg-gray-800 rounded p-4 text-xl font-mono text-green-400">{result}</div>}
         </div>
       </div>
     </main>
