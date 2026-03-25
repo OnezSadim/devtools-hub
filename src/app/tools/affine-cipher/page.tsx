@@ -5,8 +5,8 @@ export default function Page() {
   const [output, setOutput] = useState("");
   return (
     <div className="max-w-2xl mx-auto py-10 px-4">
-      <h1 className="text-2xl font-bold mb-2">NATO Phonetic Alphabet</h1>
-      <p className="text-gray-400 mb-6">Convert text to NATO phonetic alphabet and back</p>
+      <h1 className="text-2xl font-bold mb-2">Affine Cipher</h1>
+      <p className="text-gray-400 mb-6">Encode and decode text using the affine cipher with configurable a and b keys</p>
       <textarea
         className="w-full h-32 bg-gray-800 text-white p-3 rounded mb-4 font-mono"
         placeholder="Enter text..."
