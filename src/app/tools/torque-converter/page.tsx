@@ -1,1 +1,46 @@
-"use client";import{useState}from"react";const units=["N·m", "kN·m", "lbf·ft", "lbf·in", "kgf·m", "dyn·cm"];export default function Page(){const[val,setVal]=useState("");const[from,setFrom]=useState(units[0]);const[to,setTo]=useState(units[1]);const[res,setRes]=useState("");function convert(){setRes("Use a dedicated library for accurate Torque Converter conversions.");}return(<div style={{padding:"2rem",fontFamily:"monospace",background:"#0f0f0f",minHeight:"100vh",color:"#e0e0e0"}}><h1 style={{color:"#00ff88"}}>Torque Converter</h1><p>Convert between torque units.</p><input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{background:"#1a1a1a",color:"#e0e0e0",border:"1px solid #333",padding:"0.5rem",marginRight:"0.5rem"}}/><select value={from} onChange={e=>setFrom(e.target.value)} style={{background:"#1a1a1a",color:"#e0e0e0",border:"1px solid #333",padding:"0.5rem",marginRight:"0.5rem"}}>{units.map(u=>(<option key={u}>{u}</option>))}</select><span style={{marginRight:"0.5rem"}}>to</span><select value={to} onChange={e=>setTo(e.target.value)} style={{background:"#1a1a1a",color:"#e0e0e0",border:"1px solid #333",padding:"0.5rem",marginRight:"0.5rem"}}>{units.map(u=>(<option key={u}>{u}</option>))}</select><button onClick={convert} style={{background:"#00ff88",color:"#000",border:"none",padding:"0.5rem 1rem",cursor:"pointer"}}>Convert</button>{res&&<p style={{marginTop:"1rem",color:"#00ff88"}}>{res}</p>}</div>);}
+"use client";
+import { useState } from "react";
+
+const UNITS: [string, number][] = [["N·m", 1], ["ft·lb", 0.737562], ["kg·m", 0.101972], ["in·lb", 8.85075], ["dyne·cm", 10000000]];
+
+export default function TorqueconverterConverter() {
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState(UNITS[0][0]);
+  const [to, setTo] = useState(UNITS[1 < len(UNITS) and 1 or 0][0]);
+
+  const convert = () => {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    const fromFactor = UNITS.find(u => u[0] === from)?.[1] ?? 1;
+    const toFactor = UNITS.find(u => u[0] === to)?.[1] ?? 1;
+    return ((n * fromFactor) / toFactor).toPrecision(6);
+  };
+
+  return (
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <h1 className="text-3xl font-bold mb-2">Torque Converter</h1>
+      <p className="text-gray-400 mb-8">Convert between Newton-meters, foot-pounds, kilogram-force meters and other torque units.</p>
+      <div className="bg-gray-900 rounded-xl p-6 max-w-lg space-y-4">
+        <input type="number" value={val} onChange={e => setVal(e.target.value)}
+          placeholder="Enter value" className="w-full bg-gray-800 rounded-lg px-4 py-3 text-white" />
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="text-gray-400 text-sm">From</label>
+            <select value={from} onChange={e => setFrom(e.target.value)}
+              className="w-full bg-gray-800 rounded-lg px-4 py-3 text-white mt-1">
+              {UNITS.map(u => <option key={u[0]}>{u[0]}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="text-gray-400 text-sm">To</label>
+            <select value={to} onChange={e => setTo(e.target.value)}
+              className="w-full bg-gray-800 rounded-lg px-4 py-3 text-white mt-1">
+              {UNITS.map(u => <option key={u[0]}>{u[0]}</option>)}
+            </select>
+          </div>
+        </div>
+        {val && <div className="bg-blue-900/30 rounded-lg p-4 text-xl font-mono">{val} {from} = {convert()} {to}</div>}
+      </div>
+    </main>
+  );
+}

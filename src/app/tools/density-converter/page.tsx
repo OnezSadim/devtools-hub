@@ -1,1 +1,46 @@
-"use client";import{useState}from"react";const units=[["kg/m3",1],["g/cm3",1000],["g/L",1],["lb/ft3",16.0185],["lb/in3",27679.9]];export default function Page(){const[v,setV]=useState("");const[f,setF]=useState(units[0][0]);const calc=()=>{const base=parseFloat(v);if(isNaN(base))return[];return units.map(([n,r])=>[n,(base*parseFloat(r)).toPrecision(6)]);};return(<div style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}><h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Density Converter</h1><p style={{color:"#94a3b8",marginBottom:"1.5rem"}}>Convert between kg/m3, g/cm3, g/L, lb/ft3, lb/in3</p><div style={{display:"flex",gap:"1rem",marginBottom:"1.5rem",flexWrap:"wrap"}}><input value={v} onChange={e=>setV(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",borderRadius:"4px",color:"#e2e8f0",width:"160px"}}/><select value={f} onChange={e=>setF(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",borderRadius:"4px",color:"#e2e8f0"}}>{units.map(([n])=><option key={n} value={n}>{n}</option>)}</select></div><div style={{display:"grid",gap:"0.5rem"}}>{calc().map(([n,r])=><div key={n} style={{padding:"0.75rem",background:"#1e293b",borderRadius:"4px",display:"flex",justifyContent:"space-between"}}><span style={{color:"#94a3b8"}}>{n}</span><span style={{fontWeight:"bold"}}>{r}</span></div>)}</div></div>);}
+"use client";
+import { useState } from "react";
+
+const UNITS: [string, number][] = [["kg/m³", 1], ["g/cm³", 0.001], ["lb/ft³", 0.062428], ["lb/in³", 3.61273e-05], ["oz/in³", 0.000578037]];
+
+export default function DensityconverterConverter() {
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState(UNITS[0][0]);
+  const [to, setTo] = useState(UNITS[1 < len(UNITS) and 1 or 0][0]);
+
+  const convert = () => {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    const fromFactor = UNITS.find(u => u[0] === from)?.[1] ?? 1;
+    const toFactor = UNITS.find(u => u[0] === to)?.[1] ?? 1;
+    return ((n * fromFactor) / toFactor).toPrecision(6);
+  };
+
+  return (
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <h1 className="text-3xl font-bold mb-2">Density Converter</h1>
+      <p className="text-gray-400 mb-8">Convert between kg/m³, g/cm³, lb/ft³, lb/in³ and other density units.</p>
+      <div className="bg-gray-900 rounded-xl p-6 max-w-lg space-y-4">
+        <input type="number" value={val} onChange={e => setVal(e.target.value)}
+          placeholder="Enter value" className="w-full bg-gray-800 rounded-lg px-4 py-3 text-white" />
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="text-gray-400 text-sm">From</label>
+            <select value={from} onChange={e => setFrom(e.target.value)}
+              className="w-full bg-gray-800 rounded-lg px-4 py-3 text-white mt-1">
+              {UNITS.map(u => <option key={u[0]}>{u[0]}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="text-gray-400 text-sm">To</label>
+            <select value={to} onChange={e => setTo(e.target.value)}
+              className="w-full bg-gray-800 rounded-lg px-4 py-3 text-white mt-1">
+              {UNITS.map(u => <option key={u[0]}>{u[0]}</option>)}
+            </select>
+          </div>
+        </div>
+        {val && <div className="bg-blue-900/30 rounded-lg p-4 text-xl font-mono">{val} {from} = {convert()} {to}</div>}
+      </div>
+    </main>
+  );
+}

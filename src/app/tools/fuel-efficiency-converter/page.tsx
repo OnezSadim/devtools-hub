@@ -1,1 +1,46 @@
-"use client";import{useState}from"react";const units=[["MPG (US)","mpg","1"],["MPG (UK)","mpg uk","1.20095"],["L/100km","l/100km","235.215"],["km/L","km/l","2.35215"],["km/gal","km/gal","3.78541"]];export default function Page(){const[v,setV]=useState("");const[f,setF]=useState(units[0][0]);const[t,setT]=useState(units[1][0]);const convert=(val,from,to)=>{const fu=units.find(u=>u[0]===from);const tu=units.find(u=>u[0]===to);if(!fu||!tu||isNaN(val))return"";return((parseFloat(val)*parseFloat(fu[2]))/parseFloat(tu[2])).toPrecision(6);};return(<main style={{padding:"2rem",fontFamily:"sans-serif",background:"#0f172a",minHeight:"100vh",color:"#f1f5f9"}}><h1 style={{fontSize:"1.8rem",marginBottom:".5rem"}}>Fuel Efficiency Converter</h1><p style={{color:"#94a3b8",marginBottom:"2rem"}}>Convert between fuel economy and consumption units.</p><div style={{display:"flex",gap:"1rem",flexWrap:"wrap",alignItems:"center"}}><input type="number" value={v} onChange={e=>setV(e.target.value)} placeholder="Value" style={{padding:".5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",width:"140px"}}/><select value={f} onChange={e=>setF(e.target.value)} style={{padding:".5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9"}}>{units.map(u=><option key={u[0]} value={u[0]}>{u[0]}</option>)}</select><span style={{color:"#64748b"}}>→</span><select value={t} onChange={e=>setT(e.target.value)} style={{padding:".5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9"}}>{units.map(u=><option key={u[0]} value={u[0]}>{u[0]}</option>)}</select></div>{v&&<div style={{marginTop:"1.5rem",padding:"1rem",background:"#1e293b",borderRadius:"8px",fontSize:"1.4rem"}}>{v} {f} = <strong>{convert(v,f,t)}</strong> {t}</div>}</main>);}
+"use client";
+import { useState } from "react";
+
+const UNITS: [string, number][] = [["MPG (US)", 1], ["MPG (UK)", 1.20095], ["km/L", 0.425144], ["L/100km", 235.215]];
+
+export default function FuelefficiencyconverterConverter() {
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState(UNITS[0][0]);
+  const [to, setTo] = useState(UNITS[1 < len(UNITS) and 1 or 0][0]);
+
+  const convert = () => {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    const fromFactor = UNITS.find(u => u[0] === from)?.[1] ?? 1;
+    const toFactor = UNITS.find(u => u[0] === to)?.[1] ?? 1;
+    return ((n * fromFactor) / toFactor).toPrecision(6);
+  };
+
+  return (
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <h1 className="text-3xl font-bold mb-2">Fuel Efficiency Converter</h1>
+      <p className="text-gray-400 mb-8">Convert between MPG, L/100km, km/L and other fuel efficiency units.</p>
+      <div className="bg-gray-900 rounded-xl p-6 max-w-lg space-y-4">
+        <input type="number" value={val} onChange={e => setVal(e.target.value)}
+          placeholder="Enter value" className="w-full bg-gray-800 rounded-lg px-4 py-3 text-white" />
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="text-gray-400 text-sm">From</label>
+            <select value={from} onChange={e => setFrom(e.target.value)}
+              className="w-full bg-gray-800 rounded-lg px-4 py-3 text-white mt-1">
+              {UNITS.map(u => <option key={u[0]}>{u[0]}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="text-gray-400 text-sm">To</label>
+            <select value={to} onChange={e => setTo(e.target.value)}
+              className="w-full bg-gray-800 rounded-lg px-4 py-3 text-white mt-1">
+              {UNITS.map(u => <option key={u[0]}>{u[0]}</option>)}
+            </select>
+          </div>
+        </div>
+        {val && <div className="bg-blue-900/30 rounded-lg p-4 text-xl font-mono">{val} {from} = {convert()} {to}</div>}
+      </div>
+    </main>
+  );
+}
