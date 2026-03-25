@@ -1,64 +1,60 @@
 "use client";
 import { useState } from "react";
 
-const units: Record<string, number> = {
-  "Pa.s": 1,
-  "mPa.s": 0.001,
-  "P": 0.1,
-  "cP": 0.001,
-  "lb/ft.s": 1.48816,
-};
+const units = [
+      { name: 'Pascal Second', factor: 1.0 },
+      { name: 'Poise', factor: 0.1 },
+      { name: 'Centipoise', factor: 0.001 },
+      { name: 'Millipascal Second', factor: 0.001 },
+      { name: 'Micropascal Second', factor: 1e-06 },
+      { name: 'Pound per Foot Second', factor: 1.488164 },
+      { name: 'Pound per Foot Hour', factor: 0.000413378 }
+    ];
 
-export default function ViscosityConverter() {
-  const [val, setVal] = useState("");
-  const [from, setFrom] = useState("Pa.s");
-  const [to, setTo] = useState("mPa.s");
+export default function ViscosityConverterPage() {
+  const [value, setValue] = useState("");
+  const [from, setFrom] = useState(units[0].name);
+  const [to, setTo] = useState(units[1].name);
 
   const convert = () => {
-    const n = parseFloat(val);
-    if (isNaN(n)) return "";
-    return ((n * units[from]) / units[to]).toPrecision(6);
+    const num = parseFloat(value);
+    if (isNaN(num)) return "";
+    const fromUnit = units.find(u => u.name === from);
+    const toUnit = units.find(u => u.name === to);
+    if (!fromUnit || !toUnit) return "";
+    return ((num * fromUnit.factor) / toUnit.factor).toPrecision(8);
   };
 
   return (
     <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
       <div className="max-w-xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Dynamic Viscosity Converter</h1>
-        <p className="text-gray-400 mb-8">Convert between pascal-second, poise, centipoise and other viscosity units.</p>
-        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">Value</label>
-            <input type="number" value={val} onChange={e => setVal(e.target.value)}
-              className="w-full bg-gray-800 rounded px-3 py-2 text-white" placeholder="Enter value" />
-          </div>
+        <h1 className="text-3xl font-bold mb-2">Viscosity Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between dynamic and kinematic viscosity units: pascal-seconds, poise, centipoise, stokes, and more.</p>
+        <div className="space-y-4">
+          <input
+            type="number"
+            value={value}
+            onChange={e => setValue(e.target.value)}
+            placeholder="Enter value"
+            className="w-full bg-gray-800 border border-gray-700 rounded px-4 py-2"
+          />
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm text-gray-400 mb-1">From</label>
-              <select value={from} onChange={e => setFrom(e.target.value)}
-                className="w-full bg-gray-800 rounded px-3 py-2 text-white">
-          <option value="Pa.s">Pascal-second</option>
-          <option value="mPa.s">Millipascal-second</option>
-          <option value="P">Poise</option>
-          <option value="cP">Centipoise</option>
-          <option value="lb/ft.s">Pound per foot-second</option>
+              <label className="text-sm text-gray-400 mb-1 block">From</label>
+              <select value={from} onChange={e => setFrom(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded px-4 py-2">
+                {units.map(u => <option key={u.name} value={u.name}>{u.name}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">To</label>
-              <select value={to} onChange={e => setTo(e.target.value)}
-                className="w-full bg-gray-800 rounded px-3 py-2 text-white">
-          <option value="Pa.s">Pascal-second</option>
-          <option value="mPa.s">Millipascal-second</option>
-          <option value="P">Poise</option>
-          <option value="cP">Centipoise</option>
-          <option value="lb/ft.s">Pound per foot-second</option>
+              <label className="text-sm text-gray-400 mb-1 block">To</label>
+              <select value={to} onChange={e => setTo(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded px-4 py-2">
+                {units.map(u => <option key={u.name} value={u.name}>{u.name}</option>)}
               </select>
             </div>
           </div>
-          {val && (
-            <div className="bg-gray-800 rounded p-4 text-center">
-              <span className="text-2xl font-mono text-green-400">{convert()}</span>
-              <span className="text-gray-400 ml-2">{to}</span>
+          {value && (
+            <div className="bg-gray-800 rounded p-4 text-xl font-mono">
+              {value} {from} = <span className="text-green-400">{convert()}</span> {to}
             </div>
           )}
         </div>

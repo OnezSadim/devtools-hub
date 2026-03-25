@@ -1,64 +1,65 @@
 "use client";
 import { useState } from "react";
 
-const units: { name: string; factor: number }[] = [
-  { name: "N·m", factor: 1.0 },
-  { name: "kN·m", factor: 1000.0 },
-  { name: "mN·m", factor: 0.001 },
-  { name: "N·cm", factor: 0.01 },
-  { name: "N·mm", factor: 0.001 },
-  { name: "kgf·m", factor: 9.80665 },
-  { name: "kgf·cm", factor: 0.0980665 },
-  { name: "lbf·ft", factor: 1.3558179 },
-  { name: "lbf·in", factor: 0.1129848 },
-  { name: "ozf·in", factor: 0.0070615 },
-  { name: "dyn·cm", factor: 1e-07 }
-];
+const units = [
+      { name: 'Newton Meter', factor: 1.0 },
+      { name: 'Newton Centimeter', factor: 0.01 },
+      { name: 'Kilonewton Meter', factor: 1000.0 },
+      { name: 'Dyne Meter', factor: 1e-05 },
+      { name: 'Kilogram-force Meter', factor: 9.80665 },
+      { name: 'Kilogram-force Centimeter', factor: 0.0980665 },
+      { name: 'Pound-force Foot', factor: 1.355818 },
+      { name: 'Pound-force Inch', factor: 0.112985 },
+      { name: 'Ounce-force Foot', factor: 0.084739 }
+    ];
 
-function toBase(val: number, unit: string): number {
-  const u = units.find(x => x.name === unit);
-  return u ? val * u.factor : val;
-}
-
-function fromBase(val: number, unit: string): number {
-  const u = units.find(x => x.name === unit);
-  return u ? val / u.factor : val;
-}
-
-export default function Page() {
+export default function TorqueConverterPage() {
   const [value, setValue] = useState("");
   const [from, setFrom] = useState(units[0].name);
   const [to, setTo] = useState(units[1].name);
 
-  const result = value !== "" ? fromBase(toBase(parseFloat(value), from), to) : null;
+  const convert = () => {
+    const num = parseFloat(value);
+    if (isNaN(num)) return "";
+    const fromUnit = units.find(u => u.name === from);
+    const toUnit = units.find(u => u.name === to);
+    if (!fromUnit || !toUnit) return "";
+    return ((num * fromUnit.factor) / toUnit.factor).toPrecision(8);
+  };
 
   return (
-    <main className="min-h-screen bg-gray-950 text-gray-100 flex flex-col items-center justify-center p-8">
-      <h1 className="text-3xl font-bold mb-2">Torque Converter</h1>
-      <p className="text-gray-400 mb-8">Convert between torque units</p>
-      <div className="bg-gray-900 rounded-xl p-6 w-full max-w-md space-y-4">
-        <input
-          type="number"
-          className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white"
-          placeholder="Enter value"
-          value={value}
-          onChange={e => setValue(e.target.value)}
-        />
-        <div className="flex gap-4">
-          <select className="flex-1 bg-gray-800 rounded-lg px-3 py-2" value={from} onChange={e => setFrom(e.target.value)}>
-            {units.map(u => <option key={u.name} value={u.name}>{u.name}</option>)}
-          </select>
-          <span className="self-center text-gray-400">→</span>
-          <select className="flex-1 bg-gray-800 rounded-lg px-3 py-2" value={to} onChange={e => setTo(e.target.value)}>
-            {units.map(u => <option key={u.name} value={u.name}>{u.name}</option>)}
-          </select>
-        </div>
-        {result !== null && (
-          <div className="bg-gray-800 rounded-lg px-4 py-3 text-center">
-            <span className="text-2xl font-bold text-blue-400">{isFinite(result) ? result.toPrecision(6) : "∞"}</span>
-            <span className="text-gray-400 ml-2">{to}</span>
+    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Torque Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between torque units: newton-meters, foot-pounds, inch-pounds, kilogram-meters, and more.</p>
+        <div className="space-y-4">
+          <input
+            type="number"
+            value={value}
+            onChange={e => setValue(e.target.value)}
+            placeholder="Enter value"
+            className="w-full bg-gray-800 border border-gray-700 rounded px-4 py-2"
+          />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm text-gray-400 mb-1 block">From</label>
+              <select value={from} onChange={e => setFrom(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded px-4 py-2">
+                {units.map(u => <option key={u.name} value={u.name}>{u.name}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-sm text-gray-400 mb-1 block">To</label>
+              <select value={to} onChange={e => setTo(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded px-4 py-2">
+                {units.map(u => <option key={u.name} value={u.name}>{u.name}</option>)}
+              </select>
+            </div>
           </div>
-        )}
+          {value && (
+            <div className="bg-gray-800 rounded p-4 text-xl font-mono">
+              {value} {from} = <span className="text-green-400">{convert()}</span> {to}
+            </div>
+          )}
+        </div>
       </div>
     </main>
   );

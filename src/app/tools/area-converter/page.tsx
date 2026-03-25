@@ -1,27 +1,65 @@
 "use client";
 import { useState } from "react";
 
-const units: [string, string, number][] = [["sqm", "Square Meter", 1], ["sqkm", "Square Kilometer", 1000000.0], ["sqmi", "Square Mile", 2589988.11], ["sqft", "Square Foot", 0.092903], ["sqyd", "Square Yard", 0.836127], ["acre", "Acre", 4046.856], ["ha", "Hectare", 10000], ["sqin", "Square Inch", 0.00064516]];
+const units = [
+      { name: 'Square Meter', factor: 1.0 },
+      { name: 'Square Kilometer', factor: 1000000.0 },
+      { name: 'Square Centimeter', factor: 0.0001 },
+      { name: 'Square Millimeter', factor: 1e-06 },
+      { name: 'Square Mile', factor: 2589988.11 },
+      { name: 'Square Yard', factor: 0.836127 },
+      { name: 'Square Foot', factor: 0.092903 },
+      { name: 'Square Inch', factor: 0.00064516 },
+      { name: 'Acre', factor: 4046.856422 },
+      { name: 'Hectare', factor: 10000.0 }
+    ];
 
 export default function AreaConverterPage() {
-  const [from, setFrom] = useState(units[0][0]);
-  const [to, setTo] = useState("sqkm");
-  const [val, setVal] = useState("");
-  const toBase = (v: number, u: string) => { const f = units.find(x => x[0]===u); return f ? v * f[2] : v; };
-  const fromBase = (v: number, u: string) => { const f = units.find(x => x[0]===u); return f ? v / f[2] : v; };
-  const result = val !== "" && !isNaN(Number(val)) ? fromBase(toBase(Number(val), from), to).toPrecision(6) : "";
+  const [value, setValue] = useState("");
+  const [from, setFrom] = useState(units[0].name);
+  const [to, setTo] = useState(units[1].name);
+
+  const convert = () => {
+    const num = parseFloat(value);
+    if (isNaN(num)) return "";
+    const fromUnit = units.find(u => u.name === from);
+    const toUnit = units.find(u => u.name === to);
+    if (!fromUnit || !toUnit) return "";
+    return ((num * fromUnit.factor) / toUnit.factor).toPrecision(8);
+  };
+
   return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
+    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
       <div className="max-w-xl mx-auto">
         <h1 className="text-3xl font-bold mb-2">Area Converter</h1>
-        <p className="text-gray-400 mb-8">Convert between square meters, acres, hectares, square feet, and more.</p>
+        <p className="text-gray-400 mb-8">Convert between area units: square meters, square feet, acres, hectares, square miles, and more.</p>
         <div className="space-y-4">
-          <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" className="w-full bg-gray-800 border border-gray-700 rounded px-4 py-3 text-white" />
+          <input
+            type="number"
+            value={value}
+            onChange={e => setValue(e.target.value)}
+            placeholder="Enter value"
+            className="w-full bg-gray-800 border border-gray-700 rounded px-4 py-2"
+          />
           <div className="grid grid-cols-2 gap-4">
-            <div><label className="text-gray-400 text-sm">From</label><select value={from} onChange={e=>setFrom(e.target.value)} className="w-full mt-1 bg-gray-800 border border-gray-700 rounded px-3 py-2">{units.map(u=><option key={u[0]} value={u[0]}>{u[1]}</option>)}</select></div>
-            <div><label className="text-gray-400 text-sm">To</label><select value={to} onChange={e=>setTo(e.target.value)} className="w-full mt-1 bg-gray-800 border border-gray-700 rounded px-3 py-2">{units.map(u=><option key={u[0]} value={u[0]}>{u[1]}</option>)}</select></div>
+            <div>
+              <label className="text-sm text-gray-400 mb-1 block">From</label>
+              <select value={from} onChange={e => setFrom(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded px-4 py-2">
+                {units.map(u => <option key={u.name} value={u.name}>{u.name}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-sm text-gray-400 mb-1 block">To</label>
+              <select value={to} onChange={e => setTo(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded px-4 py-2">
+                {units.map(u => <option key={u.name} value={u.name}>{u.name}</option>)}
+              </select>
+            </div>
           </div>
-          {result && <div className="bg-gray-800 rounded p-4 text-center"><span className="text-2xl font-mono text-green-400">{result}</span><span className="text-gray-400 ml-2">{to}</span></div>}
+          {value && (
+            <div className="bg-gray-800 rounded p-4 text-xl font-mono">
+              {value} {from} = <span className="text-green-400">{convert()}</span> {to}
+            </div>
+          )}
         </div>
       </div>
     </main>
