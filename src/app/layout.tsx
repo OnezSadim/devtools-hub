@@ -8,6 +8,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "DevTools Hub - Free Online Developer Utilities",
   description: "Free online developer tools: JSON formatter, Base64 encoder, URL encoder, hash generator, UUID generator, regex tester and more.",
+  verification: {
+    google: 'ZGIxm1HbgWAN_XiEGsO_DV_OrbD8HIzzT6yuJFNWxu4',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

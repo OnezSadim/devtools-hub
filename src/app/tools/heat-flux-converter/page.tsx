@@ -1,31 +1,44 @@
-"use client";
-import { useState } from "react";
+'use client'
+import { useState } from 'react'
 
-const UNITS: string[] = ["W/m2", "BTU/h*ft2", "cal/s*cm2", "kcal/h*m2"];
-const TO_BASE: Record<string, number> = {"W/m2": 1, "BTU/h*ft2": 3.15459, "cal/s*cm2": 41868, "kcal/h*m2": 1.163};
+const units = [
+    { name: 'W/m²', factor: 1.0 },
+    { name: 'kW/m²', factor: 1000.0 },
+    { name: 'BTU/h/ft²', factor: 3.15459 },
+    { name: 'cal/s/cm²', factor: 41840.0 },
+    { name: 'kcal/h/m²', factor: 1.163 },
+  ]
 
 export default function Page() {
-  const [val, setVal] = useState("");
-  const [from, setFrom] = useState(UNITS[0]);
-  const [to, setTo] = useState(UNITS[1]);
-  const result = val !== "" && !isNaN(Number(val))
-    ? (Number(val) * TO_BASE[from] / TO_BASE[to]).toPrecision(6)
-    : "";
+  const [from, setFrom] = useState('W/m²')
+  const [to, setTo] = useState('kW/m²')
+  const [val, setVal] = useState('1')
+
+  const convert = () => {
+    const f = units.find(u => u.name === from)
+    const t = units.find(u => u.name === to)
+    if (!f || !t) return ''
+    return ((parseFloat(val) * f.factor) / t.factor).toPrecision(6)
+  }
+
   return (
-    <main style={{maxWidth:520,margin:"40px auto",padding:"0 16px",fontFamily:"sans-serif",color:"#e2e8f0"}}>
-      <h1 style={{fontSize:"1.5rem",marginBottom:8}}>Heat Flux Converter</h1>
-      <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value"
-        style={{width:"100%",padding:"8px",marginBottom:8,background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:4}} />
-      <div style={{display:"flex",gap:8,marginBottom:8}}>
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:"8px",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:4}}>
-          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
-        </select>
-        <span style={{lineHeight:"36px"}}>→</span>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:"8px",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:4}}>
-          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
-        </select>
+    <div style={{maxWidth:480,margin:'40px auto',padding:'24px',fontFamily:'monospace',background:'#111',borderRadius:8,color:'#eee'}}>
+      <h1 style={{fontSize:'1.4rem',marginBottom:16}}>Heat Flux Converter</h1>
+      <p style={{color:'#aaa',marginBottom:24,fontSize:'0.9rem'}}>Convert heat flux units including W/m2, BTU/h/ft2, and cal/s/cm2.</p>
+      <input type='number' value={val} onChange={e=>setVal(e.target.value)}
+        style={{width:'100%',padding:'8px',marginBottom:12,background:'#222',border:'1px solid #444',borderRadius:4,color:'#eee',fontSize:'1rem'}} />
+      <select value={from} onChange={e=>setFrom(e.target.value)}
+        style={{width:'100%',padding:'8px',marginBottom:12,background:'#222',border:'1px solid #444',borderRadius:4,color:'#eee'}}>
+        {units.map(u=><option key={u.name}>{u.name}</option>)}
+      </select>
+      <div style={{textAlign:'center',marginBottom:12,color:'#666'}}>to</div>
+      <select value={to} onChange={e=>setTo(e.target.value)}
+        style={{width:'100%',padding:'8px',marginBottom:20,background:'#222',border:'1px solid #444',borderRadius:4,color:'#eee'}}>
+        {units.map(u=><option key={u.name}>{u.name}</option>)}
+      </select>
+      <div style={{background:'#1a1a2e',padding:'16px',borderRadius:6,textAlign:'center',fontSize:'1.2rem'}}>
+        {val} {from} = <strong>{convert()}</strong> {to}
       </div>
-      {result && <div style={{padding:"12px",background:"#0f172a",borderRadius:4,fontSize:"1.2rem"}}>{result} {to}</div>}
-    </main>
-  );
+    </div>
+  )
 }

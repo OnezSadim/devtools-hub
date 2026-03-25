@@ -1,28 +1,44 @@
-"use client";
-import { useState } from "react";
+'use client'
+import { useState } from 'react'
 
-const UNITS: string[] = ["Ohm-meter", "Ohm-centimeter", "Ohm-millimeter", "Microohm-meter", "Nanoohm-meter"];
-const TO_BASE: number[] = [1, 0.01, 0.001, 1e-06, 1e-09];
+const units = [
+    { name: 'Ω·m', factor: 1.0 },
+    { name: 'Ω·cm', factor: 0.01 },
+    { name: 'Ω·mm²/m', factor: 1e-06 },
+    { name: 'μΩ·m', factor: 1e-06 },
+    { name: 'nΩ·m', factor: 1e-09 },
+  ]
 
-export default function ElectricResistivityConverter() {
-  const [val, setVal] = useState("");
-  const [from, setFrom] = useState(0);
-  const [to, setTo] = useState(1);
-  const result = val !== "" && !isNaN(Number(val)) ? (Number(val) * TO_BASE[from] / TO_BASE[to]).toPrecision(6) : "";
+export default function Page() {
+  const [from, setFrom] = useState('Ω·m')
+  const [to, setTo] = useState('Ω·cm')
+  const [val, setVal] = useState('1')
+
+  const convert = () => {
+    const f = units.find(u => u.name === from)
+    const t = units.find(u => u.name === to)
+    if (!f || !t) return ''
+    return ((parseFloat(val) * f.factor) / t.factor).toPrecision(6)
+  }
+
   return (
-    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",fontFamily:"monospace",padding:"2rem"}}>
-      <h1 style={{fontSize:"1.5rem",marginBottom:"1.5rem"}}>Electric Resistivity Converter</h1>
-      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1rem"}}>
-        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px",width:"160px"}} />
-        <select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{padding:"0.5rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px"}}>
-          {UNITS.map((u,i)=><option key={i} value={i}>{u}</option>)}
-        </select>
-        <span style={{lineHeight:"2.2rem"}}>to</span>
-        <select value={to} onChange={e=>setTo(Number(e.target.value))} style={{padding:"0.5rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px"}}>
-          {UNITS.map((u,i)=><option key={i} value={i}>{u}</option>)}
-        </select>
+    <div style={{maxWidth:480,margin:'40px auto',padding:'24px',fontFamily:'monospace',background:'#111',borderRadius:8,color:'#eee'}}>
+      <h1 style={{fontSize:'1.4rem',marginBottom:16}}>Electric Resistivity Converter</h1>
+      <p style={{color:'#aaa',marginBottom:24,fontSize:'0.9rem'}}>Convert electrical resistivity units including ohm-meter and ohm-centimeter.</p>
+      <input type='number' value={val} onChange={e=>setVal(e.target.value)}
+        style={{width:'100%',padding:'8px',marginBottom:12,background:'#222',border:'1px solid #444',borderRadius:4,color:'#eee',fontSize:'1rem'}} />
+      <select value={from} onChange={e=>setFrom(e.target.value)}
+        style={{width:'100%',padding:'8px',marginBottom:12,background:'#222',border:'1px solid #444',borderRadius:4,color:'#eee'}}>
+        {units.map(u=><option key={u.name}>{u.name}</option>)}
+      </select>
+      <div style={{textAlign:'center',marginBottom:12,color:'#666'}}>to</div>
+      <select value={to} onChange={e=>setTo(e.target.value)}
+        style={{width:'100%',padding:'8px',marginBottom:20,background:'#222',border:'1px solid #444',borderRadius:4,color:'#eee'}}>
+        {units.map(u=><option key={u.name}>{u.name}</option>)}
+      </select>
+      <div style={{background:'#1a1a2e',padding:'16px',borderRadius:6,textAlign:'center',fontSize:'1.2rem'}}>
+        {val} {from} = <strong>{convert()}</strong> {to}
       </div>
-      {result && <div style={{fontSize:"1.25rem",color:"#38bdf8"}}>= {result} {UNITS[to]}</div>}
-    </main>
-  );
+    </div>
+  )
 }
