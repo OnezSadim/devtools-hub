@@ -3,61 +3,45 @@ import { useState } from "react";
 export default function MarkdownTableGenerator() {
   const [rows, setRows] = useState(3);
   const [cols, setCols] = useState(3);
-  const [data, setData] = useState([['Header 1','Header 2','Header 3'],['Cell 1','Cell 2','Cell 3'],['Cell 4','Cell 5','Cell 6']]);
-  const [output, setOutput] = useState('');
-  function updateData(r,c,v){
-    const d=[...data.map(row=>[...row])];
-    while(d.length<=r) d.push([]);
-    while(d[r].length<=c) d[r].push('');
-    d[r][c]=v;
-    setData(d);
+  const [data, setData] = useState<string[][]>(() => Array.from({length:4},(_,r)=>Array.from({length:3},(_,c)=>r===0?`Header ${c+1}`:`Cell ${r},${c+1}`)));
+  function updateData(r: number, c: number, val: string) {
+    setData(prev => { const n = prev.map(row=>[...row]); n[r][c]=val; return n; });
   }
-  function generate(){
-    const colWidths = Array.from({length:cols},(_,c)=>Math.max(...data.map(r=>(r[c]||'').length),3));
-    const pad=(s,n)=>(s||'').padEnd(n);
-    const header = '| '+data[0].map((h,i)=>pad(h,colWidths[i])).join(' | ')+' |';
-    const sep = '| '+colWidths.map(w=>'-'.repeat(w)).join(' | ')+' |';
-    const body = data.slice(1).map(row=>'| '+row.map((c,i)=>pad(c,colWidths[i])).join(' | ')+' |').join('
-');
-    setOutput(header+'
-'+sep+'
-'+body);
-  }
-  function initGrid(r,c){
-    setRows(r);setCols(c);
-    setData(Array.from({length:r},(_,ri)=>Array.from({length:c},(_,ci)=>ri===0?`Header ${ci+1}`:`Cell ${ri*c+ci+1-c}`)));
-  }
+  function addRow() { setRows(r=>r+1); setData(prev=>[...prev, Array(cols).fill("")]); }
+  function addCol() { setCols(c=>c+1); setData(prev=>prev.map(r=>[...r,""])); }
+  const header = data[0]?.slice(0,cols) || [];
+  const sep = header.map(()=>"---");
+  const body = data.slice(1,rows+1).map(r=>r.slice(0,cols));
+  const md = [
+    "| " + header.join(" | ") + " |",
+    "| " + sep.join(" | ") + " |",
+    ...body.map(r => "| " + r.join(" | ") + " |")
+  ].join("\n");
   return (
-    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
-      <h1 className="text-3xl font-bold mb-2">Markdown Table Generator</h1>
-      <p className="text-gray-400 mb-6">Create Markdown tables with a visual editor</p>
-      <div className="flex gap-4 mb-4">
-        <label className="text-sm">Rows: <input type="number" value={rows} min={2} max={20} onChange={e=>initGrid(parseInt(e.target.value)||2,cols)} className="w-16 bg-gray-800 border border-gray-700 rounded px-2 py-1 ml-1" /></label>
-        <label className="text-sm">Cols: <input type="number" value={cols} min={1} max={10} onChange={e=>initGrid(rows,parseInt(e.target.value)||1)} className="w-16 bg-gray-800 border border-gray-700 rounded px-2 py-1 ml-1" /></label>
+    <div className="min-h-screen bg-gray-950 text-white p-8">
+      <h1 className="text-3xl font-bold mb-6">Markdown Table Generator</h1>
+      <div className="flex gap-2 mb-4">
+        <button onClick={addRow} className="px-3 py-1 bg-gray-700 hover:bg-blue-600 rounded text-sm">+ Row</button>
+        <button onClick={addCol} className="px-3 py-1 bg-gray-700 hover:bg-blue-600 rounded text-sm">+ Column</button>
       </div>
-      <div className="overflow-auto mb-4">
+      <div className="overflow-x-auto mb-6">
         <table className="border-collapse">
-          {data.map((row,r)=>(
-            <tr key={r} className={r===0?'bg-gray-800':''}>
+          {[0,...Array.from({length:rows},(_,i)=>i+1)].map(r=>(
+            <tr key={r}>
               {Array.from({length:cols},(_,c)=>(
-                <td key={c} className="border border-gray-700 p-1">
-                  <input value={row[c]||''} onChange={e=>updateData(r,c,e.target.value)} className="bg-transparent w-32 px-2 py-1 text-sm" />
+                <td key={c} className="border border-gray-600 p-1">
+                  <input value={data[r]?.[c]||""} onChange={e=>updateData(r,c,e.target.value)} className={`bg-gray-800 px-2 py-1 text-sm w-24 ${r===0?"font-bold":""}`} />
                 </td>
               ))}
             </tr>
           ))}
         </table>
       </div>
-      <button onClick={generate} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded font-medium mb-4">Generate</button>
-      {output && (
-        <div>
-          <div className="flex justify-between items-center mb-1">
-            <label className="text-sm text-gray-400">Markdown Output</label>
-            <button onClick={()=>navigator.clipboard.writeText(output)} className="text-xs px-2 py-1 bg-gray-700 hover:bg-gray-600 rounded">Copy</button>
-          </div>
-          <pre className="bg-gray-900 border border-gray-700 rounded p-4 font-mono text-sm">{output}</pre>
-        </div>
-      )}
-    </main>
+      <div>
+        <label className="block mb-2 text-sm text-gray-400">Markdown Output</label>
+        <pre className="bg-gray-900 rounded p-4 font-mono text-sm text-green-400 overflow-x-auto">{md}</pre>
+        <button onClick={()=>navigator.clipboard.writeText(md)} className="mt-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded text-sm">Copy Markdown</button>
+      </div>
+    </div>
   );
 }
