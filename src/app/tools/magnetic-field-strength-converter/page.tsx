@@ -1,35 +1,32 @@
 "use client";
 import { useState } from "react";
-const UNITS: string[] = ["Ampere/Meter", "Ampere/Centimeter", "Oersted", "Millampere/Meter"];
-const TO_BASE: Record<string, number> = {"Ampere/Meter": 1.0, "Ampere/Centimeter": 100.0, "Oersted": 79.5775, "Millampere/Meter": 0.001};
+
+const UNITS = ["Ampere/meter (A/m)", "Oersted (Oe)", "Kiloampere/meter (kA/m)", "Milliampere/meter (mA/m)"];
+const TO_BASE = [1, 79.5775, 1000, 0.001];
+
 export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(UNITS[0]);
-  const convert = (to: string) => {
-    const n = parseFloat(val);
-    if (isNaN(n)) return "";
-    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
-  };
+  const [from, setFrom] = useState(0);
+  const num = parseFloat(val);
+  const base = isNaN(num) ? null : num * TO_BASE[from];
+
   return (
-    <main style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}>
-      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Magnetic Field Strength Converter</h1>
-      <div style={{display:"flex",gap:"1rem",marginBottom:"1rem",flexWrap:"wrap"}}>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>
-          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
+    <main style={{maxWidth:600,margin:"40px auto",padding:"0 16px",fontFamily:"sans-serif",color:"#e2e8f0",background:"#0f172a",minHeight:"100vh"}}>
+      <h1 style={{fontSize:"1.8rem",fontWeight:700,marginBottom:8}}>Magnetic Field Strength Converter</h1>
+      <div style={{display:"flex",gap:8,marginBottom:24}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{flex:1,padding:"10px",borderRadius:6,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:"1rem"}} />
+        <select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{padding:"10px",borderRadius:6,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0"}}>
+          {UNITS.map((u,i)=><option key={i} value={i}>{u}</option>)}
         </select>
       </div>
-      <table style={{borderCollapse:"collapse",width:"100%"}}>
-        <thead><tr><th style={{textAlign:"left",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Unit</th><th style={{textAlign:"left",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Result</th></tr></thead>
-        <tbody>
-          {UNITS.map(u=>(
-            <tr key={u} style={{background:u===from?"#1e293b":"transparent"}}>
-              <td style={{padding:"0.4rem 0.5rem"}}>{u}</td>
-              <td style={{padding:"0.4rem 0.5rem"}}>{convert(u)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div style={{display:"grid",gap:8}}>
+        {UNITS.map((u,i)=>(
+          <div key={i} style={{background:"#1e293b",borderRadius:8,padding:"12px 16px",display:"flex",justifyContent:"space-between"}}>
+            <span style={{color:"#94a3b8"}}>{u}</span>
+            <span style={{fontWeight:600}}>{base===null ? "—" : (base/TO_BASE[i]).toPrecision(6)}</span>
+          </div>
+        ))}
+      </div>
     </main>
   );
 }
