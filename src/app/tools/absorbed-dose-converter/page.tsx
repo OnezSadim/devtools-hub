@@ -1,32 +1,37 @@
 "use client";
 import { useState } from "react";
+
+const units = [
+  { name: "Gray (Gy)", factor: 1 },
+  { name: "Milligray (mGy)", factor: 0.001 },
+  { name: "Microgray (uGy)", factor: 1e-06 },
+  { name: "Rad", factor: 0.01 },
+  { name: "Millirad", factor: 0.0001 },
+  { name: "Centigray (cGy)", factor: 0.01 },
+];
+
 export default function Page() {
-  const units: Record<string, number> = {"Gy": 1, "mGy": 0.001, "uGy": 1e-06, "cGy": 0.01, "rad": 0.01, "mrad": 1e-05, "J/kg": 1, "erg/g": 0.0001, };
-  const [from, setFrom] = useState("Gy");
-  const [to, setTo] = useState("mGy");
   const [val, setVal] = useState("");
-  const convert = () => {
-    const n = parseFloat(val);
-    if (isNaN(n)) return "";
-    return ((n * units[from]) / units[to]).toPrecision(6);
-  };
-  const opts = Object.keys(units).map(u => <option key={u} value={u}>{u}</option>);
+  const [from, setFrom] = useState(0);
+  const [to, setTo] = useState(1);
+  const result = val !== "" && !isNaN(Number(val))
+    ? (Number(val) * units[from].factor / units[to].factor).toPrecision(6)
+    : "";
   return (
-    <main style={{maxWidth:600,margin:"40px auto",padding:"0 16px",fontFamily:"sans-serif",color:"#e2e8f0",background:"#0f172a",minHeight:"100vh"}}>
-      <h1 style={{fontSize:"1.8rem",fontWeight:700,marginBottom:8}}>Absorbed Dose Converter</h1>
-      <p style={{color:"#94a3b8",marginBottom:24}}>Convert between grays, rads, milligrays, and more.</p>
-      <div style={{display:"flex",gap:12,flexWrap:"wrap",alignItems:"center",marginBottom:16}}>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{flex:1,minWidth:120,padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:"1rem"}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0"}}>
-          {opts}
-        </select>
-        <span style={{color:"#64748b"}}>to</span>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0"}}>
-          {opts}
-        </select>
-      </div>
-      <div style={{padding:"20px 24px",borderRadius:12,background:"#1e293b",border:"1px solid #334155",fontSize:"1.4rem",fontWeight:600,color:"#38bdf8",minHeight:64}}>
-        {val ? convert() + " " + to : <span style={{color:"#475569"}}>Result appears here</span>}
+    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"monospace"}}>
+      <div style={{background:"#1e293b",borderRadius:12,padding:32,width:360}}>
+        <h1 style={{fontSize:20,fontWeight:700,marginBottom:24,color:"#38bdf8"}}>Absorbed Dose Converter</h1>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"8px 12px",borderRadius:8,border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",marginBottom:16,boxSizing:"border-box"}} />
+        <div style={{display:"flex",gap:8,marginBottom:16}}>
+          <select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{flex:1,padding:"8px",borderRadius:8,border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>
+            {units.map((u,i)=><option key={i} value={i}>{u.name}</option>)}
+          </select>
+          <span style={{padding:"8px 4px",color:"#94a3b8"}}>to</span>
+          <select value={to} onChange={e=>setTo(Number(e.target.value))} style={{flex:1,padding:"8px",borderRadius:8,border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>
+            {units.map((u,i)=><option key={i} value={i}>{u.name}</option>)}
+          </select>
+        </div>
+        {result && <div style={{background:"#0f172a",borderRadius:8,padding:"12px 16px",fontSize:18,fontWeight:700,color:"#4ade80",textAlign:"center"}}>{result} {units[to].name}</div>}
       </div>
     </main>
   );

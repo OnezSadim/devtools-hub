@@ -2,12 +2,12 @@
 import { useState } from "react";
 
 const units = [
-  { name: "Katal (kat)", factor: 1 },
-  { name: "Millikatal (mkat)", factor: 0.001 },
-  { name: "Microkatal (ukat)", factor: 1e-06 },
-  { name: "Nanokatal (nkat)", factor: 1e-09 },
-  { name: "Enzyme unit (U)", factor: 1.66667e-08 },
-  { name: "Millienzymeunit (mU)", factor: 1.66667e-11 },
+  { name: "Sievert (Sv)", factor: 1 },
+  { name: "Millisievert (mSv)", factor: 0.001 },
+  { name: "Microsievert (uSv)", factor: 1e-06 },
+  { name: "Rem", factor: 0.01 },
+  { name: "Millirem (mrem)", factor: 0.0001 },
+  { name: "Microrem (urem)", factor: 1e-07 },
 ];
 
 export default function Page() {
@@ -20,7 +20,7 @@ export default function Page() {
   return (
     <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"monospace"}}>
       <div style={{background:"#1e293b",borderRadius:12,padding:32,width:360}}>
-        <h1 style={{fontSize:20,fontWeight:700,marginBottom:24,color:"#38bdf8"}}>Catalytic Activity Converter</h1>
+        <h1 style={{fontSize:20,fontWeight:700,marginBottom:24,color:"#38bdf8"}}>Dose Equivalent Converter</h1>
         <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"8px 12px",borderRadius:8,border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",marginBottom:16,boxSizing:"border-box"}} />
         <div style={{display:"flex",gap:8,marginBottom:16}}>
           <select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{flex:1,padding:"8px",borderRadius:8,border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>
