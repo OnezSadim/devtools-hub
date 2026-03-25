@@ -1,29 +1,53 @@
-"use client";
-import { useState } from "react";
+'use client'
+import { useState } from 'react'
+
+const units = [
+    { name: 'Volt (V)', factor: 1 },
+    { name: 'Millivolt (mV)', factor: 0.001 },
+    { name: 'Microvolt (μV)', factor: 1e-06 },
+    { name: 'Kilovolt (kV)', factor: 1000 },
+    { name: 'Megavolt (MV)', factor: 1000000 }
+  ]
 
 export default function Page() {
-  const [val, setVal] = useState("");
-  const [from, setFrom] = useState("V");
-  const [to, setTo] = useState("mV");
-  const units = ["V", "mV", "kV", "MV", "μV"];
-  const factors: Record<string, number> = {"V": 1, "mV": 0.001, "kV": 1000, "MV": 1000000, "μV": 1e-06};
-  const convert = () => {
-    const n = parseFloat(val);
-    if (isNaN(n)) return "";
-    return ((n * factors[from]) / factors[to]).toPrecision(6);
-  };
+  const [value, setValue] = useState('')
+  const [from, setFrom] = useState(units[0].name)
+
+  const fromFactor = units.find(u => u.name === from)?.factor ?? 1
+  const base = parseFloat(value) * fromFactor
+
   return (
-    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",flexDirection:"column",alignItems:"center",padding:"2rem"}}>
-      <h1 style={{fontSize:"2rem",fontWeight:700,marginBottom:"0.5rem"}}>Electric Potential Converter</h1>
-      <p style={{color:"#94a3b8",marginBottom:"2rem"}}>Convert between electric potential units: Volt, millivolt, kilovolt, megavolt, and more.</p>
-      <div style={{background:"#1e293b",borderRadius:"1rem",padding:"2rem",width:"100%",maxWidth:"500px"}}>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",fontSize:"1.1rem",marginBottom:"1rem"}} />
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"1rem",marginBottom:"1rem"}}>
-          <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>{units.map(u=><option key={u} value={u}>{u}</option>)}</select>
-          <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>{units.map(u=><option key={u} value={u}>{u}</option>)}</select>
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Electric Potential Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between electric potential units including volts, millivolts, kilovolts, and megavolts.</p>
+        <div className="flex gap-4 mb-8">
+          <input
+            type="number"
+            value={value}
+            onChange={e => setValue(e.target.value)}
+            placeholder="Enter value"
+            className="flex-1 bg-gray-800 border border-gray-700 rounded px-4 py-2 text-white"
+          />
+          <select
+            value={from}
+            onChange={e => setFrom(e.target.value)}
+            className="bg-gray-800 border border-gray-700 rounded px-4 py-2 text-white"
+          >
+            {units.map(u => <option key={u.name}>{u.name}</option>)}
+          </select>
         </div>
-        {val && <div style={{background:"#0f172a",borderRadius:"0.5rem",padding:"1rem",textAlign:"center",fontSize:"1.5rem",fontWeight:700,color:"#38bdf8"}}>{convert()}</div>}
+        <div className="grid gap-3">
+          {units.map(u => (
+            <div key={u.name} className="bg-gray-800 rounded-lg p-4 flex justify-between">
+              <span className="text-gray-400">{u.name}</span>
+              <span className="font-mono text-green-400">
+                {value ? (base / u.factor).toPrecision(6) : '—'}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
     </main>
-  );
+  )
 }

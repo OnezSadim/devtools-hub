@@ -1,34 +1,53 @@
-"use client";
-import { useState } from "react";
+'use client'
+import { useState } from 'react'
 
-const units = ["A", "mA", "uA", "nA", "kA", "MA", "GA"];
-const toBase: Record<string, number> = {"A": 1, "mA": 0.001, "uA": 1e-06, "nA": 1e-09, "kA": 1000.0, "MA": 1000000.0, "GA": 1000000000.0};
+const units = [
+    { name: 'Ampere (A)', factor: 1 },
+    { name: 'Milliampere (mA)', factor: 0.001 },
+    { name: 'Microampere (μA)', factor: 1e-06 },
+    { name: 'Kiloampere (kA)', factor: 1000 },
+    { name: 'Nanoampere (nA)', factor: 1e-09 }
+  ]
 
-export default function ElectricCurrentConverterPage() {
-  const [val, setVal] = useState("");
-  const [from, setFrom] = useState(units[0]);
-  const [to, setTo] = useState(units[1]);
-  const convert = (v: string) => {
-    const n = parseFloat(v);
-    if (isNaN(n)) return "";
-    return ((n * toBase[from]) / toBase[to]).toPrecision(6);
-  };
+export default function Page() {
+  const [value, setValue] = useState('')
+  const [from, setFrom] = useState(units[0].name)
+
+  const fromFactor = units.find(u => u.name === from)?.factor ?? 1
+  const base = parseFloat(value) * fromFactor
+
   return (
-    <main style={{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"sans-serif"}}>
-      <h1 style={{fontSize:"1.8rem",marginBottom:"1rem"}}>Electric Current Converter</h1>
-      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1rem"}}>
-        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{flex:1,padding:"0.5rem",fontSize:"1rem",borderRadius:"4px",border:"1px solid #ccc"}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",fontSize:"1rem",borderRadius:"4px",border:"1px solid #ccc"}}>
-          {units.map(u=><option key={u} value={u}>{u}</option>)}
-        </select>
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Electric Current Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between electric current units including amperes, milliamperes, microamperes, and kiloamperes.</p>
+        <div className="flex gap-4 mb-8">
+          <input
+            type="number"
+            value={value}
+            onChange={e => setValue(e.target.value)}
+            placeholder="Enter value"
+            className="flex-1 bg-gray-800 border border-gray-700 rounded px-4 py-2 text-white"
+          />
+          <select
+            value={from}
+            onChange={e => setFrom(e.target.value)}
+            className="bg-gray-800 border border-gray-700 rounded px-4 py-2 text-white"
+          >
+            {units.map(u => <option key={u.name}>{u.name}</option>)}
+          </select>
+        </div>
+        <div className="grid gap-3">
+          {units.map(u => (
+            <div key={u.name} className="bg-gray-800 rounded-lg p-4 flex justify-between">
+              <span className="text-gray-400">{u.name}</span>
+              <span className="font-mono text-green-400">
+                {value ? (base / u.factor).toPrecision(6) : '—'}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
-      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1rem"}}>
-        <input type="text" readOnly value={convert(val)} placeholder="Result" style={{flex:1,padding:"0.5rem",fontSize:"1rem",borderRadius:"4px",border:"1px solid #ccc",background:"#f5f5f5"}} />
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",fontSize:"1rem",borderRadius:"4px",border:"1px solid #ccc"}}>
-          {units.map(u=><option key={u} value={u}>{u}</option>)}
-        </select>
-      </div>
-      <p style={{color:"#666",fontSize:"0.9rem"}}>Convert between electric current units instantly.</p>
     </main>
-  );
+  )
 }

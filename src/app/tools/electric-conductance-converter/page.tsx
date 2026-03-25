@@ -1,30 +1,53 @@
-"use client";
-import { useState } from "react";
+'use client'
+import { useState } from 'react'
 
-const UNITS = [{name: "Siemens", factor: 1}, {name: "Millisiemens", factor: 0.001}, {name: "Microsiemens", factor: 1e-06}, {name: "Mho", factor: 1}];
+const units = [
+    { name: 'Siemens (S)', factor: 1 },
+    { name: 'Millisiemens (mS)', factor: 0.001 },
+    { name: 'Microsiemens (μS)', factor: 1e-06 },
+    { name: 'Kilosiemens (kS)', factor: 1000 },
+    { name: 'Mho', factor: 1 }
+  ]
 
 export default function Page() {
-  const [val, setVal] = useState("");
-  const [from, setFrom] = useState(UNITS[0].name);
-  const [to, setTo] = useState(UNITS[1].name);
-  const fromF = UNITS.find(u => u.name === from)?.factor ?? 1;
-  const toF = UNITS.find(u => u.name === to)?.factor ?? 1;
-  const result = val === "" ? "" : ((parseFloat(val) * fromF) / toF).toPrecision(8);
+  const [value, setValue] = useState('')
+  const [from, setFrom] = useState(units[0].name)
+
+  const fromFactor = units.find(u => u.name === from)?.factor ?? 1
+  const base = parseFloat(value) * fromFactor
+
   return (
-    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",fontFamily:"sans-serif",padding:"2rem"}}>
-      <h1 style={{fontSize:"2rem",fontWeight:700,marginBottom:"0.5rem"}}>Electric Conductance Converter</h1>
-      <p style={{color:"#94a3b8",marginBottom:"2rem"}}>Convert between electric conductance units: Siemens, Millisiemens, Mho.</p>
-      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",justifyContent:"center",marginBottom:"1rem"}}>
-        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",fontSize:"1rem",width:"160px"}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",fontSize:"1rem"}}>
-          {UNITS.map(u=><option key={u.name} value={u.name}>{u.name}</option>)}
-        </select>
-        <span style={{alignSelf:"center",fontSize:"1.5rem"}}>→</span>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",fontSize:"1rem"}}>
-          {UNITS.map(u=><option key={u.name} value={u.name}>{u.name}</option>)}
-        </select>
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Electric Conductance Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between electric conductance units including siemens, millisiemens, and microsiemens.</p>
+        <div className="flex gap-4 mb-8">
+          <input
+            type="number"
+            value={value}
+            onChange={e => setValue(e.target.value)}
+            placeholder="Enter value"
+            className="flex-1 bg-gray-800 border border-gray-700 rounded px-4 py-2 text-white"
+          />
+          <select
+            value={from}
+            onChange={e => setFrom(e.target.value)}
+            className="bg-gray-800 border border-gray-700 rounded px-4 py-2 text-white"
+          >
+            {units.map(u => <option key={u.name}>{u.name}</option>)}
+          </select>
+        </div>
+        <div className="grid gap-3">
+          {units.map(u => (
+            <div key={u.name} className="bg-gray-800 rounded-lg p-4 flex justify-between">
+              <span className="text-gray-400">{u.name}</span>
+              <span className="font-mono text-green-400">
+                {value ? (base / u.factor).toPrecision(6) : '—'}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
-      {result !== "" && <div style={{fontSize:"1.5rem",fontWeight:700,color:"#38bdf8",marginTop:"1rem"}}>{result} {to}</div>}
     </main>
-  );
+  )
 }
