@@ -1,32 +1,25 @@
-"use client";
-import { useState } from "react";
+"use client"
+import { useState } from "react"
 export default function LineCounter() {
-  const [text, setText] = useState("");
-  const lines = text.split("
-");
-  const nonEmpty = lines.filter(l=>l.trim().length>0);
-  const words = text.trim() ? text.trim().split(/\s+/).length : 0;
-  const chars = text.length;
-  const charsNoSpace = text.replace(/\s/g,"").length;
-  const sentences = text.split(/[.!?]+/).filter(s=>s.trim()).length;
-  const paragraphs = text.split(/
-
-+/).filter(p=>p.trim()).length;
-  const avgWordLen = words>0 ? (charsNoSpace/words).toFixed(1) : 0;
-  const readTime = Math.ceil(words/200);
+  const [text, setText] = useState("")
+  const lines = text ? text.split("\n").length : 0
+  const words = text.trim() ? text.trim().split(/\s+/).length : 0
+  const chars = text.length
+  const charsNoSpace = text.replace(/\s/g,"").length
+  const bytes = new TextEncoder().encode(text).length
+  const stats = [{l:"Lines",v:lines},{l:"Words",v:words},{l:"Characters",v:chars},{l:"Chars (no spaces)",v:charsNoSpace},{l:"Bytes (UTF-8)",v:bytes}]
   return (
-    <div style={{maxWidth:700,margin:"0 auto",padding:"2rem",fontFamily:"monospace"}}>
-      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Line Counter & Text Stats</h1>
-      <p style={{color:"#aaa",marginBottom:"1rem"}}>Count lines, words, characters and more.</p>
-      <textarea value={text} onChange={e=>setText(e.target.value)} placeholder="Paste your text here..." style={{width:"100%",height:200,padding:"1rem",background:"#1e1e1e",border:"1px solid #333",borderRadius:4,color:"#fff",fontFamily:"monospace",fontSize:"0.9rem",resize:"vertical",boxSizing:"border-box"}} />
-      <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:"1rem",marginTop:"1rem"}}>
-        {[{l:"Lines",v:lines.length},{l:"Non-empty",v:nonEmpty.length},{l:"Words",v:words},{l:"Characters",v:chars},{l:"No spaces",v:charsNoSpace},{l:"Sentences",v:sentences},{l:"Paragraphs",v:paragraphs},{l:"Read time",v:readTime+"m"},{l:"Avg word",v:avgWordLen+" ch"}].map(s=>(
-          <div key={s.l} style={{padding:"1rem",background:"#1e1e1e",borderRadius:4,border:"1px solid #333",textAlign:"center"}}>
-            <div style={{fontSize:"1.5rem",fontWeight:"bold",color:"#7c3aed"}}>{s.v}</div>
-            <div style={{color:"#aaa",fontSize:"0.85rem"}}>{s.l}</div>
-          </div>
-        ))}
+    <div className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Line Counter</h1>
+        <p className="text-gray-400 mb-8">Count lines, words, characters and bytes</p>
+        <textarea className="w-full bg-gray-800 rounded p-4 h-64 font-mono text-sm mb-6" placeholder="Paste your text here..." value={text} onChange={e=>setText(e.target.value)}/>
+        <div className="grid grid-cols-3 gap-4">
+          {stats.map(({l,v})=>(
+            <div key={l} className="bg-gray-800 rounded p-4 text-center"><p className="text-xs text-gray-400 mb-1">{l}</p><p className="text-2xl font-mono font-bold text-green-400">{v.toLocaleString()}</p></div>
+          ))}
+        </div>
       </div>
     </div>
-  );
+  )
 }

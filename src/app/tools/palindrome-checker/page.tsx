@@ -1,17 +1,22 @@
 "use client";
 import { useState } from "react";
 export default function PalindromeChecker() {
-  const [text, setText] = useState("");
-  const clean = text.toLowerCase().replace(/[^a-z0-9]/g,"");
-  const isPalin = clean.length>0 && clean===clean.split("").reverse().join("");
-  return (<div style={{padding:24,fontFamily:"monospace",background:"#0a0a0a",minHeight:"100vh",color:"#e5e5e5"}}>
-    <h1 style={{fontSize:28,marginBottom:8}}>Palindrome Checker</h1>
-    <p style={{color:"#888",marginBottom:20}}>Check if a word or phrase is a palindrome.</p>
-    <input value={text} onChange={e=>setText(e.target.value)} placeholder="Enter text..." style={{width:"100%",padding:12,background:"#111",color:"#e5e5e5",border:"1px solid #333",borderRadius:8,fontSize:16,boxSizing:"border-box"}} />
-    {clean.length>0 && <div style={{marginTop:24,textAlign:"center"}}>
-      <div style={{fontSize:80}}>{isPalin?"✅":"❌"}</div>
-      <div style={{fontSize:24,marginTop:8,color:isPalin?"#22c55e":"#ef4444"}}>{isPalin?"Yes, it is a palindrome!":"No, not a palindrome."}</div>
-      <div style={{color:"#888",marginTop:8}}>Cleaned: <span style={{color:"#7c3aed"}}>{clean}</span></div>
-    </div>}
-  </div>);
+  const [text, setText] = useState('');
+  const clean = text.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const isPalindrome = clean.length > 0 ? clean === clean.split('').reverse().join('') : null;
+  return (
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-lg mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Palindrome Checker</h1>
+        <p className="text-gray-400 mb-8">Check if a word or phrase reads the same forwards and backwards.</p>
+        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
+          <input value={text} onChange={e => setText(e.target.value)} placeholder="e.g. racecar" className="w-full bg-gray-800 rounded-lg px-4 py-3 text-white text-lg" />
+          {isPalindrome !== null && <div className={"rounded-lg p-6 text-center text-2xl font-bold " + (isPalindrome ? 'bg-green-900 text-green-300' : 'bg-red-900 text-red-300')}>
+            {isPalindrome ? 'YES — Palindrome!' : 'NO — Not a palindrome'}
+          </div>}
+          {clean && <p className="text-gray-500 text-sm text-center">Cleaned: {clean}</p>}
+        </div>
+      </div>
+    </main>
+  );
 }

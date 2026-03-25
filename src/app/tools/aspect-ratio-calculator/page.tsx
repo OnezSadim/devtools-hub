@@ -1,33 +1,30 @@
-"use client";
-import { useState } from "react";
+"use client"
+import { useState } from "react"
 export default function AspectRatioCalculator() {
-  const [w, setW] = useState("");
-  const [h, setH] = useState("");
-  const [result, setResult] = useState("");
-  function gcd(a: number, b: number): number { return b === 0 ? a : gcd(b, a % b); }
-  function calc() {
-    const nw = parseFloat(w), nh = parseFloat(h);
-    if (!nw || !nh) { setResult("Enter valid dimensions"); return; }
-    const d = gcd(Math.round(nw), Math.round(nh));
-    setResult(`Ratio: ${Math.round(nw/d)}:${Math.round(nh/d)} | Decimal: ${(nw/nh).toFixed(4)}`);
+  const [w, setW] = useState("16")
+  const [h, setH] = useState("9")
+  const [tw, setTw] = useState("1920")
+  const [result, setResult] = useState("")
+  const calc = () => {
+    const ratio = parseInt(w) / parseInt(h)
+    const th = Math.round(parseInt(tw) / ratio)
+    setResult(`${tw} x ${th} px`)
   }
   return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
-      <div className="max-w-xl mx-auto">
+    <div className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-lg mx-auto">
         <h1 className="text-3xl font-bold mb-2">Aspect Ratio Calculator</h1>
-        <p className="text-gray-400 mb-6">Calculate aspect ratios for images, videos, and layouts.</p>
-        <div className="flex gap-4 mb-4">
-          <div className="flex-1"><label className="block text-sm text-gray-400 mb-1">Width</label><input value={w} onChange={e=>setW(e.target.value)} placeholder="1920" className="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white" /></div>
-          <div className="flex-1"><label className="block text-sm text-gray-400 mb-1">Height</label><input value={h} onChange={e=>setH(e.target.value)} placeholder="1080" className="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white" /></div>
-        </div>
-        <button onClick={calc} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded mb-4">Calculate</button>
-        {result && <div className="bg-gray-800 border border-gray-700 rounded p-4 text-green-400 font-mono">{result}</div>}
-        <div className="mt-6 grid grid-cols-3 gap-2">
-          {[["16:9","1920x1080"],["4:3","1024x768"],["1:1","1080x1080"],["21:9","2560x1080"],["9:16","1080x1920"],["3:2","1500x1000"]].map(([r,d])=>(
-            <button key={r} onClick={()=>{const[ww,hh]=d.split("x");setW(ww);setH(hh);}} className="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded p-2 text-sm">{r}<br/><span className="text-gray-500 text-xs">{d}</span></button>
-          ))}
+        <p className="text-gray-400 mb-8">Calculate dimensions for any aspect ratio</p>
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div><label className="block text-sm text-gray-400 mb-1">Width ratio</label><input className="w-full bg-gray-800 rounded p-3" value={w} onChange={e=>setW(e.target.value)}/></div>
+            <div><label className="block text-sm text-gray-400 mb-1">Height ratio</label><input className="w-full bg-gray-800 rounded p-3" value={h} onChange={e=>setH(e.target.value)}/></div>
+          </div>
+          <div><label className="block text-sm text-gray-400 mb-1">Target width (px)</label><input className="w-full bg-gray-800 rounded p-3" value={tw} onChange={e=>setTw(e.target.value)}/></div>
+          <button onClick={calc} className="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded font-semibold">Calculate</button>
+          {result && <div className="bg-gray-800 rounded p-4 text-center"><p className="text-gray-400 text-sm mb-1">Result</p><p className="text-2xl font-mono font-bold text-green-400">{result}</p></div>}
         </div>
       </div>
-    </main>
-  );
+    </div>
+  )
 }

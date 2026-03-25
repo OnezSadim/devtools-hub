@@ -1,23 +1,34 @@
 "use client";
 import { useState } from "react";
-export default function WordFrequencyCounter() {
-  const [text, setText] = useState("");
-  const counts = text.trim() ? Object.entries(
-    text.toLowerCase().match(/\b\w+\b/g)?.reduce((a,w)=>({...a,[w]:(a[w]||0)+1}),{}) || {}
-  ).sort((a,b)=>b[1]-a[1]) : [];
-  return (<div style={{padding:24,fontFamily:'monospace',background:'#0a0a0a',minHeight:'100vh',color:'#e5e5e5'}}>
-    <h1 style={{fontSize:28,marginBottom:8}}>Word Frequency Counter</h1>
-    <p style={{color:'#888',marginBottom:20}}>Count how often each word appears in your text.</p>
-    <textarea value={text} onChange={e=>setText(e.target.value)} placeholder="Paste your text here..." style={{width:'100%',height:160,background:'#111',color:'#e5e5e5',border:'1px solid #333',borderRadius:8,padding:12,fontSize:14,boxSizing:'border-box'}} />
-    {counts.length>0 && <div style={{marginTop:20}}>
-      <h3 style={{marginBottom:12}}>Results ({counts.length} unique words)</h3>
-      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(200px,1fr))',gap:8}}>
-        {counts.slice(0,50).map(([w,c])=>(
-          <div key={w} style={{background:'#111',border:'1px solid #333',borderRadius:6,padding:'8px 12px',display:'flex',justifyContent:'space-between'}}>
-            <span>{w}</span><span style={{color:'#7c3aed',fontWeight:'bold'}}>{c}</span>
-          </div>
-        ))}
+export default function WordFrequency() {
+  const [text, setText] = useState('');
+  const getFreq = () => {
+    if (!text.trim()) return [];
+    const words = text.toLowerCase().match(/\b[a-z]+\b/g) || [];
+    const freq: Record<string, number> = {};
+    words.forEach(w => { freq[w] = (freq[w] || 0) + 1; });
+    return Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 20);
+  };
+  const freq = getFreq();
+  return (
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Word Frequency Counter</h1>
+        <p className="text-gray-400 mb-8">Analyze word frequency in your text.</p>
+        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
+          <textarea value={text} onChange={e => setText(e.target.value)} placeholder="Paste your text here..." rows={6} className="w-full bg-gray-800 rounded-lg px-4 py-3 text-white resize-none" />
+          {freq.length > 0 && <div className="space-y-2">
+            <h2 className="text-lg font-semibold text-gray-300">Top Words</h2>
+            {freq.map(([word, count]) => (
+              <div key={word} className="flex items-center gap-3">
+                <span className="w-32 text-blue-400 font-mono">{word}</span>
+                <div className="flex-1 bg-gray-700 rounded-full h-4"><div className="bg-blue-600 h-4 rounded-full" style={{width: (count / freq[0][1] * 100) + '%'}} /></div>
+                <span className="w-8 text-right text-gray-300">{count}</span>
+              </div>
+            ))}
+          </div>}
+        </div>
       </div>
-    </div>}
-  </div>);
+    </main>
+  );
 }
