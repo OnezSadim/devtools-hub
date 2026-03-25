@@ -1,28 +1,57 @@
-"use client";
-import { useState } from "react";
-const UNITS = [{name: "Coulomb meter (C*m)", factor: 1}, {name: "Debye (D)", factor: 3.33564e-30}, {name: "Millidebye (mD)", factor: 3.33564e-33}, {name: "Atomic unit (a.u.)", factor: 8.47836e-30}, {name: "Franklin centimeter", factor: 3.33564e-32}, ];
+'use client'
+import { useState } from 'react'
+
+const units = ['Coulomb Meter (C·m)', 'Debye (D)', 'Atomic Unit (a.u.)', 'Statcoulomb Centimeter (statC·cm)', 'Millidebye (mD)']
+const toBase = [1, 3.33564e-30, 8.47836e-30, 3.33564e-12, 3.33564e-33]
+
 export default function Page() {
-  const [val, setVal] = useState("");
-  const [from, setFrom] = useState(0);
-  const base = parseFloat(val) * UNITS[from].factor;
+  const [val, setVal] = useState('1')
+  const [from, setFrom] = useState(0)
+  const [to, setTo] = useState(1)
+  const convert = () => {
+    const n = parseFloat(val)
+    if (isNaN(n)) return 'Invalid input'
+    return (n * toBase[from] / toBase[to]).toPrecision(6)
+  }
   return (
-    <main style={{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"sans-serif",background:"#0f172a",minHeight:"100vh",color:"#f1f5f9"}}>
-      <h1 style={{fontSize:"1.5rem",fontWeight:700,marginBottom:"1rem"}}>Electric Dipole Moment Converter</h1>
-      <p style={{color:"#94a3b8",marginBottom:"1.5rem"}}>Convert between electric dipole moment units.</p>
-      <div style={{marginBottom:"1rem"}}>
-        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",borderRadius:"4px",color:"#f1f5f9",marginBottom:"0.5rem"}} />
-        <select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{width:"100%",padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",borderRadius:"4px",color:"#f1f5f9"}}>
-          {UNITS.map((u,i)=><option key={i} value={i}>{u.name}</option>)}
-        </select>
-      </div>
-      <div style={{display:"flex",flexDirection:"column",gap:"0.5rem"}}>
-        {UNITS.map((u,i)=>(
-          <div key={i} style={{background:"#1e293b",padding:"0.75rem",borderRadius:"6px",display:"flex",justifyContent:"space-between"}}>
-            <span style={{color:"#94a3b8"}}>{u.name}</span>
-            <span style={{fontWeight:600}}>{val ? (base/u.factor).toPrecision(6) : "-"}</span>
+    <main className='min-h-screen bg-gray-950 text-white p-8'>
+      <div className='max-w-xl mx-auto'>
+        <h1 className='text-3xl font-bold mb-2'>Electric Dipole Moment Converter</h1>
+        <p className='text-gray-400 mb-6'>Convert electric dipole moment units used in chemistry and physics.</p>
+        <div className='bg-gray-900 rounded-xl p-6 space-y-4'>
+          <div>
+            <label className='block text-sm text-gray-400 mb-1'>Value</label>
+            <input type='number' value={val} onChange={e => setVal(e.target.value)}
+              className='w-full bg-gray-800 rounded-lg px-4 py-2 text-white border border-gray-700 focus:border-blue-500 outline-none' />
           </div>
-        ))}
+          <div>
+            <label className='block text-sm text-gray-400 mb-1'>From</label>
+            <select value={from} onChange={e => setFrom(Number(e.target.value))}
+              className='w-full bg-gray-800 rounded-lg px-4 py-2 text-white border border-gray-700 focus:border-blue-500 outline-none'>
+              <option value="0">Coulomb Meter (C·m)</option>
+              <option value="1">Debye (D)</option>
+              <option value="2">Atomic Unit (a.u.)</option>
+              <option value="3">Statcoulomb Centimeter (statC·cm)</option>
+              <option value="4">Millidebye (mD)</option>
+            </select>
+          </div>
+          <div>
+            <label className='block text-sm text-gray-400 mb-1'>To</label>
+            <select value={to} onChange={e => setTo(Number(e.target.value))}
+              className='w-full bg-gray-800 rounded-lg px-4 py-2 text-white border border-gray-700 focus:border-blue-500 outline-none'>
+              <option value="0">Coulomb Meter (C·m)</option>
+              <option value="1">Debye (D)</option>
+              <option value="2">Atomic Unit (a.u.)</option>
+              <option value="3">Statcoulomb Centimeter (statC·cm)</option>
+              <option value="4">Millidebye (mD)</option>
+            </select>
+          </div>
+          <div className='bg-gray-800 rounded-lg px-4 py-3'>
+            <span className='text-sm text-gray-400'>Result: </span>
+            <span className='text-xl font-mono text-green-400'>{convert()}</span>
+          </div>
+        </div>
       </div>
     </main>
-  );
+  )
 }

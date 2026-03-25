@@ -1,1 +1,43 @@
-"use client";import{useState}from"react";const U=[["Ampere per meter","A/m","1"],["Kiloampere per meter","kA/m","1000"],["Oersted","Oe","79.5774715"],["Milliampere per meter","mA/m","0.001"],["Ampere per centimeter","A/cm","100"]];export default function P(){const[v,setV]=useState("");const[f,setF]=useState(0);const[t,setT]=useState(1);const c=(val,fi,ti)=>{const n=parseFloat(val);if(isNaN(n)){setV(val);return;}const base=n/parseFloat(U[fi][2]);setV((base*parseFloat(U[ti][2])).toPrecision(6));};return(<main style={{padding:"2rem",fontFamily:"sans-serif",maxWidth:"600px",margin:"0 auto"}}><h1>Magnetization Converter</h1><p>Convert between magnetization units.</p><div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginTop:"1rem"}}><select value={f} onChange={e=>{setF(+e.target.value);c(v,+e.target.value,t);}}>{U.map((u,i)=><option key={i} value={i}>{u[0]} ({u[1]})</option>)}</select><input type="number" value={v} onChange={e=>{setV(e.target.value);c(e.target.value,f,t);}} style={{width:"140px",padding:"0.4rem"}}/><span style={{alignSelf:"center"}}>→</span><select value={t} onChange={e=>{setT(+e.target.value);c(v,f,+e.target.value);}}>{U.map((u,i)=><option key={i} value={i}>{u[0]} ({u[1]})</option>)}</select></div></main>);}
+'''use client'''
+import { useState } from 'react'
+
+const units: [string, number][] = [['A/m', 1], ['kA/m', 1000], ['MA/m', 1000000], ['mA/m', 0.001], ['Oe (Oersted)', 79.5774715459]]
+
+export default function Page() {
+  const [val, setVal] = useState('')
+  const [from, setFrom] = useState(units[0][0])
+  const [to, setTo] = useState(units[1][0])
+
+  function convert(v: string, f: string, t: string) {
+    const n = parseFloat(v)
+    if (isNaN(n)) return ''
+    const ff = units.find(u => u[0] === f)?.[1] ?? 1
+    const tf = units.find(u => u[0] === t)?.[1] ?? 1
+    return ((n * ff) / tf).toPrecision(8)
+  }
+
+  return (
+    <main style={{maxWidth:600,margin:'0 auto',padding:'2rem',fontFamily:'sans-serif',color:'#e2e8f0'}}>
+      <h1 style={{fontSize:'1.8rem',fontWeight:700,marginBottom:'0.5rem'}}>Magnetization Converter</h1>
+      <p style={{color:'#94a3b8',marginBottom:'2rem'}}>Convert magnetization units including A/m, kA/m, Oe, and Gb/cm.</p>
+      <div style={{display:'flex',flexDirection:'column',gap:'1rem'}}>
+        <input type="number" value={val} onChange={e=>setVal(e.target.value)}
+          placeholder="Enter value"
+          style={{padding:'0.75rem',borderRadius:8,border:'1px solid #334155',background:'#1e293b',color:'#e2e8f0',fontSize:'1rem'}}/>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem'}}>
+          <select value={from} onChange={e=>setFrom(e.target.value)}
+            style={{padding:'0.75rem',borderRadius:8,border:'1px solid #334155',background:'#1e293b',color:'#e2e8f0'}}>
+            {units.map(u=><option key={u[0]}>{u[0]}</option>)}
+          </select>
+          <select value={to} onChange={e=>setTo(e.target.value)}
+            style={{padding:'0.75rem',borderRadius:8,border:'1px solid #334155',background:'#1e293b',color:'#e2e8f0'}}>
+            {units.map(u=><option key={u[0]}>{u[0]}</option>)}
+          </select>
+        </div>
+        <div style={{padding:'1rem',borderRadius:8,background:'#1e293b',border:'1px solid #334155',fontSize:'1.25rem',fontWeight:600}}>
+          {convert(val,from,to) || <span style={{color:'#64748b'}}>Result appears here</span>}
+        </div>
+      </div>
+    </main>
+  )
+}

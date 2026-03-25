@@ -1,10 +1,31 @@
-"use client";
-import { useState } from "react";
-export default function Page() {
-  const [val, setVal] = useState("");
-  const [from, setFrom] = useState("a3");
-  const [to, setTo] = useState("a4");
-  const factors: Record<string,number> = {a3: 1, a4: 1, a5: 1, letter: 1, legal: 1, tabloid: 1};
-  const result = val && factors[from] && factors[to] ? ((parseFloat(val) * factors[from]) / factors[to]).toFixed(6) : "";
-  return (<div style={{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"sans-serif"}}><h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Paper Size Converter</h1><p style={{color:"#888",marginBottom:"1.5rem"}}>Look up and compare standard paper sizes: A4, Letter, Legal, and more.</p><div style={{display:"flex",gap:"1rem",flexWrap:"wrap",alignItems:"center"}}><input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",fontSize:"1rem",borderRadius:"6px",border:"1px solid #444",background:"#1a1a1a",color:"#fff",width:"140px"}}/><select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",fontSize:"1rem",borderRadius:"6px",border:"1px solid #444",background:"#1a1a1a",color:"#fff"}}><option value="a3">A3 (297x420mm)</option><option value="a4">A4 (210x297mm)</option><option value="a5">A5 (148x210mm)</option><option value="letter">Letter (216x279mm)</option><option value="legal">Legal (216x356mm)</option><option value="tabloid">Tabloid (279x432mm)</option></select><span>→</span><select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",fontSize:"1rem",borderRadius:"6px",border:"1px solid #444",background:"#1a1a1a",color:"#fff"}}><option value="a3">A3 (297x420mm)</option><option value="a4">A4 (210x297mm)</option><option value="a5">A5 (148x210mm)</option><option value="letter">Letter (216x279mm)</option><option value="legal">Legal (216x356mm)</option><option value="tabloid">Tabloid (279x432mm)</option></select></div>{result && <div style={{marginTop:"1.5rem",padding:"1rem",background:"#1a1a1a",borderRadius:"8px",fontSize:"1.5rem",color:"#4ade80"}}><strong>{val} {from}</strong> = <strong>{result} {to}</strong></div>}</div>);
+'use client'
+
+import { useState } from 'react'
+
+export default function ToolPage() {
+  const [input, setInput] = useState('')
+  const [result, setResult] = useState('')
+
+  return (
+    <div className="min-h-screen bg-gray-950 text-gray-100 p-8">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Paper Size Converter</h1>
+        <p className="text-gray-400 mb-8">Convert paper sizes between A-series, B-series, US Letter, Legal, and other formats.</p>
+        <div className="bg-gray-900 rounded-xl p-6 border border-gray-800">
+          <input
+            type="text"
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            placeholder="Enter value to convert..."
+            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500"
+          />
+          {result && (
+            <div className="mt-4 p-4 bg-gray-800 rounded-lg">
+              <p className="text-green-400 font-mono">{result}</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
 }

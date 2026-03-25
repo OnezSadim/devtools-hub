@@ -1,35 +1,43 @@
-"use client";
-import { useState } from "react";
+'''use client'''
+import { useState } from 'react'
 
-const UNITS: [string, string, number][] = [['SI', 'SI (dimensionless)', 1.0], ['CGS', 'CGS (dimensionless)', 1.0], ['mSI', 'milli-SI', 0.001]];
+const units: [string, number][] = [['SI (dimensionless)', 1], ['mSI', 0.001], ['μSI', 1e-06], ['pSI', 1e-12]]
 
 export default function Page() {
-  const [val, setVal] = useState("");
-  const [from, setFrom] = useState(UNITS[0][0]);
-  const [to, setTo] = useState(UNITS[1][0]);
-  const convert = () => {
-    const n = parseFloat(val);
-    if (isNaN(n)) return "";
-    const f = UNITS.find(u => u[0] === from);
-    const t = UNITS.find(u => u[0] === to);
-    if (!f || !t) return "";
-    return ((n * f[2]) / t[2]).toPrecision(6);
-  };
+  const [val, setVal] = useState('')
+  const [from, setFrom] = useState(units[0][0])
+  const [to, setTo] = useState(units[1][0])
+
+  function convert(v: string, f: string, t: string) {
+    const n = parseFloat(v)
+    if (isNaN(n)) return ''
+    const ff = units.find(u => u[0] === f)?.[1] ?? 1
+    const tf = units.find(u => u[0] === t)?.[1] ?? 1
+    return ((n * ff) / tf).toPrecision(8)
+  }
+
   return (
-    <div style={{maxWidth:600,margin:"40px auto",padding:"0 16px",fontFamily:"sans-serif",color:"#e2e8f0",background:"#0f172a",minHeight:"100vh"}}>
-      <h1 style={{fontSize:28,fontWeight:700,marginBottom:8}}>Electric Susceptibility Converter</h1>
-      <p style={{color:"#94a3b8",marginBottom:24}}>Convert electric susceptibility dimensionless values across SI and CGS systems.</p>
-      <div style={{display:"flex",gap:12,flexWrap:"wrap",marginBottom:16}}>
-        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{flex:1,minWidth:120,padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:16}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,minWidth:140,padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:15}}>
-          {UNITS.map(u=><option key={u[0]} value={u[0]}>{u[1]}</option>)}
-        </select>
-        <span style={{padding:"10px 4px",color:"#94a3b8",fontSize:18}}>to</span>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,minWidth:140,padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:15}}>
-          {UNITS.map(u=><option key={u[0]} value={u[0]}>{u[1]}</option>)}
-        </select>
+    <main style={{maxWidth:600,margin:'0 auto',padding:'2rem',fontFamily:'sans-serif',color:'#e2e8f0'}}>
+      <h1 style={{fontSize:'1.8rem',fontWeight:700,marginBottom:'0.5rem'}}>Electric Susceptibility Converter</h1>
+      <p style={{color:'#94a3b8',marginBottom:'2rem'}}>Convert electric susceptibility and dielectric-related units.</p>
+      <div style={{display:'flex',flexDirection:'column',gap:'1rem'}}>
+        <input type="number" value={val} onChange={e=>setVal(e.target.value)}
+          placeholder="Enter value"
+          style={{padding:'0.75rem',borderRadius:8,border:'1px solid #334155',background:'#1e293b',color:'#e2e8f0',fontSize:'1rem'}}/>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem'}}>
+          <select value={from} onChange={e=>setFrom(e.target.value)}
+            style={{padding:'0.75rem',borderRadius:8,border:'1px solid #334155',background:'#1e293b',color:'#e2e8f0'}}>
+            {units.map(u=><option key={u[0]}>{u[0]}</option>)}
+          </select>
+          <select value={to} onChange={e=>setTo(e.target.value)}
+            style={{padding:'0.75rem',borderRadius:8,border:'1px solid #334155',background:'#1e293b',color:'#e2e8f0'}}>
+            {units.map(u=><option key={u[0]}>{u[0]}</option>)}
+          </select>
+        </div>
+        <div style={{padding:'1rem',borderRadius:8,background:'#1e293b',border:'1px solid #334155',fontSize:'1.25rem',fontWeight:600}}>
+          {convert(val,from,to) || <span style={{color:'#64748b'}}>Result appears here</span>}
+        </div>
       </div>
-      {val && <div style={{padding:"16px 20px",background:"#1e293b",borderRadius:10,fontSize:20,fontWeight:600}}>{val} {UNITS.find(u=>u[0]===from)?.[1]} = {convert()} {UNITS.find(u=>u[0]===to)?.[1]}</div>}
-    </div>
-  );
+    </main>
+  )
 }

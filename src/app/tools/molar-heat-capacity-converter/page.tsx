@@ -1,8 +1,8 @@
 'use client'
 import { useState } from 'react'
 
-const units = ['Cubic Meter per Mol (m³/mol)', 'Liter per Mol (L/mol)', 'Cubic Centimeter per Mol (cm³/mol)', 'Cubic Foot per Mol (ft³/mol)', 'Cubic Inch per Mol (in³/mol)']
-const toBase = [1, 0.001, 1e-06, 0.0283168, 1.6387e-05]
+const units = ['Joule per Mol Kelvin (J/mol·K)', 'Kilojoule per Mol Kelvin (kJ/mol·K)', 'Calorie per Mol Kelvin (cal/mol·K)', 'Kilocalorie per Mol Kelvin (kcal/mol·K)', 'BTU per Mol Fahrenheit (BTU/mol·°F)']
+const toBase = [1, 1000, 4.184, 4184, 1899.1]
 
 export default function Page() {
   const [val, setVal] = useState('1')
@@ -16,8 +16,8 @@ export default function Page() {
   return (
     <main className='min-h-screen bg-gray-950 text-white p-8'>
       <div className='max-w-xl mx-auto'>
-        <h1 className='text-3xl font-bold mb-2'>Molar Volume Converter</h1>
-        <p className='text-gray-400 mb-6'>Convert molar volume units used in chemistry and thermodynamics.</p>
+        <h1 className='text-3xl font-bold mb-2'>Molar Heat Capacity Converter</h1>
+        <p className='text-gray-400 mb-6'>Convert molar heat capacity units used in thermodynamics.</p>
         <div className='bg-gray-900 rounded-xl p-6 space-y-4'>
           <div>
             <label className='block text-sm text-gray-400 mb-1'>Value</label>
@@ -28,22 +28,22 @@ export default function Page() {
             <label className='block text-sm text-gray-400 mb-1'>From</label>
             <select value={from} onChange={e => setFrom(Number(e.target.value))}
               className='w-full bg-gray-800 rounded-lg px-4 py-2 text-white border border-gray-700 focus:border-blue-500 outline-none'>
-              <option value="0">Cubic Meter per Mol (m³/mol)</option>
-              <option value="1">Liter per Mol (L/mol)</option>
-              <option value="2">Cubic Centimeter per Mol (cm³/mol)</option>
-              <option value="3">Cubic Foot per Mol (ft³/mol)</option>
-              <option value="4">Cubic Inch per Mol (in³/mol)</option>
+              <option value="0">Joule per Mol Kelvin (J/mol·K)</option>
+              <option value="1">Kilojoule per Mol Kelvin (kJ/mol·K)</option>
+              <option value="2">Calorie per Mol Kelvin (cal/mol·K)</option>
+              <option value="3">Kilocalorie per Mol Kelvin (kcal/mol·K)</option>
+              <option value="4">BTU per Mol Fahrenheit (BTU/mol·°F)</option>
             </select>
           </div>
           <div>
             <label className='block text-sm text-gray-400 mb-1'>To</label>
             <select value={to} onChange={e => setTo(Number(e.target.value))}
               className='w-full bg-gray-800 rounded-lg px-4 py-2 text-white border border-gray-700 focus:border-blue-500 outline-none'>
-              <option value="0">Cubic Meter per Mol (m³/mol)</option>
-              <option value="1">Liter per Mol (L/mol)</option>
-              <option value="2">Cubic Centimeter per Mol (cm³/mol)</option>
-              <option value="3">Cubic Foot per Mol (ft³/mol)</option>
-              <option value="4">Cubic Inch per Mol (in³/mol)</option>
+              <option value="0">Joule per Mol Kelvin (J/mol·K)</option>
+              <option value="1">Kilojoule per Mol Kelvin (kJ/mol·K)</option>
+              <option value="2">Calorie per Mol Kelvin (cal/mol·K)</option>
+              <option value="3">Kilocalorie per Mol Kelvin (kcal/mol·K)</option>
+              <option value="4">BTU per Mol Fahrenheit (BTU/mol·°F)</option>
             </select>
           </div>
           <div className='bg-gray-800 rounded-lg px-4 py-3'>

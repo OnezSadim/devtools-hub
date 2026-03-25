@@ -1,1 +1,31 @@
-'use client';import{useState}from 'react';export default function ClothingSizeConverter(){const[val,setVal]=useState('');const[type,setType]=useState('tops');const[result,setResult]=useState('');const charts={tops:{XS:{US:'XS',UK:'6-8',EU:'32-34',IT:'36-38'},S:{US:'S',UK:'8-10',EU:'36-38',IT:'40-42'},M:{US:'M',UK:'12-14',EU:'40-42',IT:'44-46'},L:{US:'L',UK:'16-18',EU:'44-46',IT:'48-50'},XL:{US:'XL',UK:'20-22',EU:'48-50',IT:'52-54'}},pants:{28:{US:'28',UK:'8',EU:'38',waist_cm:'71'},30:{US:'30',UK:'10',EU:'40',waist_cm:'76'},32:{US:'32',UK:'12',EU:'42',waist_cm:'81'},34:{US:'34',UK:'14',EU:'44',waist_cm:'86'},36:{US:'36',UK:'16',EU:'46',waist_cm:'91'}}};const convert=()=>{if(type==='tops'){const entry=charts.tops[val.toUpperCase()];if(!entry){setResult('Size not found. Try XS, S, M, L, XL.');return;}setResult(Object.entries(entry).map(([k,v])=>`${k}: ${v}`).join(' | '));}else{const entry=charts.pants[val];if(!entry){setResult('Waist not found. Try 28, 30, 32, 34, 36.');return;}setResult(Object.entries(entry).map(([k,v])=>`${k}: ${v}`).join(' | '));}};return(<div style={{padding:'2rem',fontFamily:'monospace',background:'#0f172a',minHeight:'100vh',color:'#e2e8f0'}}><h1 style={{fontSize:'1.5rem',marginBottom:'1rem'}}>Clothing Size Converter</h1><p style={{color:'#94a3b8',marginBottom:'1.5rem'}}>Convert clothing sizes between US, UK, EU, and IT.</p><div style={{marginBottom:'1rem'}}><label style={{display:'block',marginBottom:'0.5rem'}}>Type:</label><select value={type} onChange={e=>setType(e.target.value)} style={{padding:'0.5rem',background:'#1e293b',border:'1px solid #334155',color:'#e2e8f0',borderRadius:'4px',width:'100%',marginBottom:'0.5rem'}}><option value='tops'>Tops (XS/S/M/L/XL)</option><option value='pants'>Pants (waist inch)</option></select><label style={{display:'block',marginBottom:'0.5rem'}}>Size:</label><input value={val} onChange={e=>setVal(e.target.value)} placeholder={type==='tops'?'e.g. M':'e.g. 32'} style={{padding:'0.5rem',background:'#1e293b',border:'1px solid #334155',color:'#e2e8f0',borderRadius:'4px',width:'100%',marginBottom:'1rem'}} /><button onClick={convert} style={{padding:'0.5rem 1rem',background:'#3b82f6',color:'white',border:'none',borderRadius:'4px',cursor:'pointer'}}>Convert</button></div>{result&&<div style={{padding:'1rem',background:'#1e293b',borderRadius:'4px',color:'#4ade80'}}>{result}</div>}</div>);}
+'use client'
+
+import { useState } from 'react'
+
+export default function ToolPage() {
+  const [input, setInput] = useState('')
+  const [result, setResult] = useState('')
+
+  return (
+    <div className="min-h-screen bg-gray-950 text-gray-100 p-8">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Clothing Size Converter</h1>
+        <p className="text-gray-400 mb-8">Convert clothing sizes between US, UK, EU, and international sizing standards.</p>
+        <div className="bg-gray-900 rounded-xl p-6 border border-gray-800">
+          <input
+            type="text"
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            placeholder="Enter value to convert..."
+            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500"
+          />
+          {result && (
+            <div className="mt-4 p-4 bg-gray-800 rounded-lg">
+              <p className="text-green-400 font-mono">{result}</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}

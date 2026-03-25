@@ -1,1 +1,31 @@
-'use client';import{useState}from 'react';export default function HatSizeConverter(){const[val,setVal]=useState('');const[from,setFrom]=useState('us');const[result,setResult]=useState('');const table=[{us:'6 3/4',uk:'6 3/4',eu:'54',cm:'54'},{us:'6 7/8',uk:'6 7/8',eu:'55',cm:'55'},{us:'7',uk:'7',eu:'56',cm:'56'},{us:'7 1/8',uk:'7 1/8',eu:'57',cm:'57'},{us:'7 1/4',uk:'7 1/4',eu:'58',cm:'58'},{us:'7 3/8',uk:'7 3/8',eu:'59',cm:'59'},{us:'7 1/2',uk:'7 1/2',eu:'60',cm:'60'},{us:'7 5/8',uk:'7 5/8',eu:'61',cm:'61'},{us:'7 3/4',uk:'7 3/4',eu:'62',cm:'62'}];const convert=()=>{const entry=table.find(r=>r[from]===val||r.cm===val);if(!entry){setResult('Size not found. Try: 7, 57, or 7 1/4');return;}setResult(`US: ${entry.us} | UK: ${entry.uk} | EU: ${entry.eu} | Head circ: ${entry.cm}cm`);};return(<div style={{padding:'2rem',fontFamily:'monospace',background:'#0f172a',minHeight:'100vh',color:'#e2e8f0'}}><h1 style={{fontSize:'1.5rem',marginBottom:'1rem'}}>Hat Size Converter</h1><p style={{color:'#94a3b8',marginBottom:'1.5rem'}}>Convert hat sizes between US, UK, EU, and centimeters.</p><div style={{marginBottom:'1rem'}}><label style={{display:'block',marginBottom:'0.5rem'}}>From:</label><select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:'0.5rem',background:'#1e293b',border:'1px solid #334155',color:'#e2e8f0',borderRadius:'4px',width:'100%',marginBottom:'0.5rem'}}><option value='us'>US</option><option value='uk'>UK</option><option value='eu'>EU (numeric)</option><option value='cm'>Centimeters</option></select><label style={{display:'block',marginBottom:'0.5rem'}}>Size:</label><input value={val} onChange={e=>setVal(e.target.value)} placeholder='e.g. 57' style={{padding:'0.5rem',background:'#1e293b',border:'1px solid #334155',color:'#e2e8f0',borderRadius:'4px',width:'100%',marginBottom:'1rem'}} /><button onClick={convert} style={{padding:'0.5rem 1rem',background:'#3b82f6',color:'white',border:'none',borderRadius:'4px',cursor:'pointer'}}>Convert</button></div>{result&&<div style={{padding:'1rem',background:'#1e293b',borderRadius:'4px',color:'#4ade80'}}>{result}</div>}</div>);}
+'use client'
+
+import { useState } from 'react'
+
+export default function ToolPage() {
+  const [input, setInput] = useState('')
+  const [result, setResult] = useState('')
+
+  return (
+    <div className="min-h-screen bg-gray-950 text-gray-100 p-8">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Hat Size Converter</h1>
+        <p className="text-gray-400 mb-8">Convert hat sizes between US, UK, EU, and international sizing standards.</p>
+        <div className="bg-gray-900 rounded-xl p-6 border border-gray-800">
+          <input
+            type="text"
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            placeholder="Enter value to convert..."
+            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500"
+          />
+          {result && (
+            <div className="mt-4 p-4 bg-gray-800 rounded-lg">
+              <p className="text-green-400 font-mono">{result}</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}

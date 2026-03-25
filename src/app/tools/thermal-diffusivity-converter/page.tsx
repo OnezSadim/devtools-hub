@@ -1,52 +1,57 @@
-"use client";
-import { useState } from "react";
+'use client'
+import { useState } from 'react'
 
-export default function ThermalDiffusivityConverter() {
-  const [value, setValue] = useState("");
-  const [from, setFrom] = useState("m²/s");
-  const [to, setTo] = useState("ft²/s");
-  const [result, setResult] = useState("");
+const factors: Record<string, number> = {
+    'm²/s': 1,
+    'cm²/s': 0.0001,
+    'mm²/s': 1e-06,
+    'ft²/s': 0.0929,
+    'ft²/h': 2.58e-05,
+    'in²/s': 0.000645,
+    'm²/h': 0.000278,
+    'cm²/h': 2.78e-08,
+  }
 
-  const conversions: Record<string, number> = {
-    "m²/s": 1,
-    "ft²/s": 1,
-  };
-
-  const convert = () => {
-    const num = parseFloat(value);
-    if (isNaN(num)) { setResult("Invalid input"); return; }
-    const base = num / (conversions[from] || 1);
-    setResult((base * (conversions[to] || 1)).toFixed(6));
-  };
-
+export default function Page() {
+  const [value, setValue] = useState('1')
+  const [from, setFrom] = useState('m²/s')
+  const [to, setTo] = useState('cm²/h')
+  const result = (parseFloat(value) * factors[from]) / factors[to]
   return (
     <main className="min-h-screen bg-gray-950 text-white p-8">
       <div className="max-w-xl mx-auto">
         <h1 className="text-3xl font-bold mb-2">Thermal Diffusivity Converter</h1>
-        <p className="text-gray-400 mb-6">Convert thermal diffusivity units used in heat conduction analysis.</p>
+        <p className="text-gray-400 mb-6">Convert thermal diffusivity units between m²/s, cm²/s, mm²/s, ft²/s and more.</p>
         <div className="space-y-4">
           <input type="number" value={value} onChange={e => setValue(e.target.value)}
-            placeholder="Enter value" className="w-full bg-gray-800 rounded px-4 py-2" />
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-sm text-gray-400">From</label>
-              <select value={from} onChange={e => setFrom(e.target.value)}
-                className="w-full bg-gray-800 rounded px-4 py-2 mt-1">
-                {Object.keys(conversions).map(u => <option key={u}>{u}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="text-sm text-gray-400">To</label>
-              <select value={to} onChange={e => setTo(e.target.value)}
-                className="w-full bg-gray-800 rounded px-4 py-2 mt-1">
-                {Object.keys(conversions).map(u => <option key={u}>{u}</option>)}
-              </select>
-            </div>
+            className="w-full bg-gray-800 rounded p-3 text-white" />
+          <div className="flex gap-4">
+            <select value={from} onChange={e => setFrom(e.target.value)} className="flex-1 bg-gray-800 rounded p-3 text-white">
+            <option value="m²/s">m² per s (m²/s)</option>
+            <option value="cm²/s">cm² per s (cm²/s)</option>
+            <option value="mm²/s">mm² per s (mm²/s)</option>
+            <option value="ft²/s">ft² per s (ft²/s)</option>
+            <option value="ft²/h">ft² per h (ft²/h)</option>
+            <option value="in²/s">in² per s (in²/s)</option>
+            <option value="m²/h">m² per h (m²/h)</option>
+            <option value="cm²/h">cm² per h (cm²/h)</option>
+            </select>
+            <select value={to} onChange={e => setTo(e.target.value)} className="flex-1 bg-gray-800 rounded p-3 text-white">
+            <option value="m²/s">m² per s (m²/s)</option>
+            <option value="cm²/s">cm² per s (cm²/s)</option>
+            <option value="mm²/s">mm² per s (mm²/s)</option>
+            <option value="ft²/s">ft² per s (ft²/s)</option>
+            <option value="ft²/h">ft² per h (ft²/h)</option>
+            <option value="in²/s">in² per s (in²/s)</option>
+            <option value="m²/h">m² per h (m²/h)</option>
+            <option value="cm²/h">cm² per h (cm²/h)</option>
+            </select>
           </div>
-          <button onClick={convert} className="w-full bg-blue-600 hover:bg-blue-700 rounded px-4 py-2 font-semibold">Convert</button>
-          {result && <div className="bg-gray-800 rounded px-4 py-3 text-lg font-mono">{result} {to}</div>}
+          <div className="bg-gray-800 rounded p-4 text-2xl font-mono">
+            {isNaN(result) ? 'Enter a value' : result.toPrecision(6) + ' ' + to}
+          </div>
         </div>
       </div>
     </main>
-  );
+  )
 }
