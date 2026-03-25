@@ -1,57 +1,65 @@
-'use client';
-import { useState } from 'react';
+"use client";
+import { useState } from "react";
 
-const units = [
-  { label: "Hertz (Hz)", factor: 1 },
-  { label: "Kilohertz (kHz)", factor: 1000 },
-  { label: "Megahertz (MHz)", factor: 1000000 },
-  { label: "Gigahertz (GHz)", factor: 1000000000 },
-  { label: "Terahertz (THz)", factor: 1000000000000 },
-  { label: "Millihertz (mHz)", factor: 0.001 },
-  { label: "RPM", factor: 0.016666666666667 },
-];
+export default function FrequencyConverterPage() {
+  const [value, setValue] = useState("");
+  const [from, setFrom] = useState("Hz");
+  const [to, setTo] = useState("kHz");
 
-export default function Page() {
-  const [value, setValue] = useState('1');
-  const [from, setFrom] = useState('Hertz (Hz)');
-  const [to, setTo] = useState('Kilohertz (kHz)');
-
-  const convert = () => {
-    const v = parseFloat(value);
-    if (isNaN(v)) return '';
-    const fromUnit = units.find(u => u.label === from);
-    const toUnit = units.find(u => u.label === to);
-    if (!fromUnit || !toUnit) return '';
-    const result = v * fromUnit.factor / toUnit.factor;
-    return parseFloat(result.toPrecision(10)).toString();
+  const toBase: Record<string, number> = {
+    "Hz": 1,
+    "kHz": 1000,
+    "MHz": 1000000,
+    "GHz": 1000000000,
+    "THz": 1000000000000,
+    "rpm": 0.01667,
   };
 
+  const result = value !== "" ? (parseFloat(value) * toBase[from] / toBase[to]).toLocaleString(undefined, {maximumSignificantDigits: 8}) : "";
+
   return (
-    <main style={{minHeight:'100vh',background:'#0f172a',color:'#f1f5f9',padding:'2rem',fontFamily:'sans-serif',maxWidth:'600px',margin:'0 auto'}}>
-      <h1 style={{fontSize:'1.8rem',fontWeight:'bold',marginBottom:'0.5rem',color:'#38bdf8'}}>Frequency Converter</h1>
-      <p style={{color:'#94a3b8',marginBottom:'2rem'}}>Convert between hertz, kilohertz, megahertz, gigahertz and more.</p>
-      <div style={{background:'#1e293b',borderRadius:'12px',padding:'1.5rem',display:'flex',flexDirection:'column',gap:'1rem'}}>
-        <div>
-          <label style={{display:'block',color:'#94a3b8',marginBottom:'0.5rem',fontSize:'0.875rem'}}>Value</label>
-          <input type="number" value={value} onChange={e => setValue(e.target.value)} style={{width:'100%',background:'#0f172a',border:'1px solid #334155',borderRadius:'8px',padding:'0.75rem',color:'#f1f5f9',fontSize:'1rem',boxSizing:'border-box'}} />
-        </div>
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem'}}>
+    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Frequency Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between frequency units.</p>
+        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
           <div>
-            <label style={{display:'block',color:'#94a3b8',marginBottom:'0.5rem',fontSize:'0.875rem'}}>From</label>
-            <select value={from} onChange={e => setFrom(e.target.value)} style={{width:'100%',background:'#0f172a',border:'1px solid #334155',borderRadius:'8px',padding:'0.75rem',color:'#f1f5f9',fontSize:'0.9rem'}}>
-              {units.map(u => <option key={u.label} value={u.label}>{u.label}</option>)}
-            </select>
+            <label className="block text-sm text-gray-400 mb-1">Value</label>
+            <input type="number" value={value} onChange={e => setValue(e.target.value)}
+              className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white" placeholder="Enter value" />
           </div>
-          <div>
-            <label style={{display:'block',color:'#94a3b8',marginBottom:'0.5rem',fontSize:'0.875rem'}}>To</label>
-            <select value={to} onChange={e => setTo(e.target.value)} style={{width:'100%',background:'#0f172a',border:'1px solid #334155',borderRadius:'8px',padding:'0.75rem',color:'#f1f5f9',fontSize:'0.9rem'}}>
-              {units.map(u => <option key={u.label} value={u.label}>{u.label}</option>)}
-            </select>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">From</label>
+              <select value={from} onChange={e => setFrom(e.target.value)}
+                className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white">
+          <option value="Hz">Hz</option>
+          <option value="kHz">kHz</option>
+          <option value="MHz">MHz</option>
+          <option value="GHz">GHz</option>
+          <option value="THz">THz</option>
+          <option value="rpm">rpm</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">To</label>
+              <select value={to} onChange={e => setTo(e.target.value)}
+                className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white">
+          <option value="Hz">Hz</option>
+          <option value="kHz">kHz</option>
+          <option value="MHz">MHz</option>
+          <option value="GHz">GHz</option>
+          <option value="THz">THz</option>
+          <option value="rpm">rpm</option>
+              </select>
+            </div>
           </div>
-        </div>
-        <div style={{background:'#0f172a',borderRadius:'8px',padding:'1rem',border:'1px solid #334155'}}>
-          <div style={{color:'#94a3b8',fontSize:'0.875rem',marginBottom:'0.25rem'}}>Result</div>
-          <div style={{fontSize:'1.5rem',fontWeight:'bold',color:'#34d399'}}>{convert()} <span style={{fontSize:'1rem',color:'#94a3b8'}}>{to}</span></div>
+          {result !== "" && (
+            <div className="bg-gray-800 rounded-lg px-4 py-3">
+              <span className="text-2xl font-mono font-bold text-green-400">{result}</span>
+              <span className="text-gray-400 ml-2">{to}</span>
+            </div>
+          )}
         </div>
       </div>
     </main>

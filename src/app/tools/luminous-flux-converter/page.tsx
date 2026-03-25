@@ -1,47 +1,62 @@
-
 "use client";
 import { useState } from "react";
-export default function LuminousFluxConverter() {
-  const [lumens, setLumens] = useState("");
-  const [area, setArea] = useState("1");
-  const [result, setResult] = useState("");
-  const calculate = () => {
-    const lm = parseFloat(lumens), a = parseFloat(area);
-    if (isNaN(lm)||lm<=0) { setResult("Enter valid lumens"); return; }
-    const lux = isNaN(a)||a<=0 ? null : lm/a;
-    const watts_vis = lm / 683;
-    const candela_sphere = lm / (4*Math.PI);
-    let out = "Luminous flux: " + lm.toFixed(2) + " lm
-";
-    out += "Radiant power (vis): " + watts_vis.toFixed(4) + " W
-";
-    out += "Avg intensity (sphere): " + candela_sphere.toFixed(4) + " cd
-";
-    if (lux!==null) out += "Illuminance ("+a+" m²): " + lux.toFixed(4) + " lux";
-    setResult(out);
+
+export default function LuminousFluxConverterPage() {
+  const [value, setValue] = useState("");
+  const [from, setFrom] = useState("lumen");
+  const [to, setTo] = useState("candela·sr");
+
+  const toBase: Record<string, number> = {
+    "lumen": 1,
+    "candela·sr": 1,
+    "kilolumen": 1000,
+    "megalumen": 1000000,
+    "candlepower": 12.566,
   };
+
+  const result = value !== "" ? (parseFloat(value) * toBase[from] / toBase[to]).toLocaleString(undefined, {maximumSignificantDigits: 8}) : "";
+
   return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
+    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
       <div className="max-w-xl mx-auto">
         <h1 className="text-3xl font-bold mb-2">Luminous Flux Converter</h1>
-        <p className="text-gray-400 mb-6">Convert lumens to lux, candelas, watts and more</p>
+        <p className="text-gray-400 mb-8">Convert between luminous flux and light output units.</p>
         <div className="bg-gray-900 rounded-xl p-6 space-y-4">
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Luminous Flux (lumens)</label>
-            <input type="number" value={lumens} onChange={e=>setLumens(e.target.value)} placeholder="e.g. 800" className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white" />
+            <label className="block text-sm text-gray-400 mb-1">Value</label>
+            <input type="number" value={value} onChange={e => setValue(e.target.value)}
+              className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white" placeholder="Enter value" />
           </div>
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">Surface Area (m², for lux calculation)</label>
-            <input type="number" value={area} onChange={e=>setArea(e.target.value)} placeholder="e.g. 1" className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white" />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">From</label>
+              <select value={from} onChange={e => setFrom(e.target.value)}
+                className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white">
+          <option value="lumen">lumen</option>
+          <option value="candela·sr">candela·sr</option>
+          <option value="kilolumen">kilolumen</option>
+          <option value="megalumen">megalumen</option>
+          <option value="candlepower">candlepower</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">To</label>
+              <select value={to} onChange={e => setTo(e.target.value)}
+                className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white">
+          <option value="lumen">lumen</option>
+          <option value="candela·sr">candela·sr</option>
+          <option value="kilolumen">kilolumen</option>
+          <option value="megalumen">megalumen</option>
+          <option value="candlepower">candlepower</option>
+              </select>
+            </div>
           </div>
-          <button onClick={calculate} className="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-lg font-medium">Convert</button>
-          {result && <pre className="bg-gray-800 rounded-lg p-4 text-green-400 font-mono text-sm whitespace-pre-wrap">{result}</pre>}
-        </div>
-        <div className="mt-6 bg-gray-900 rounded-xl p-4 text-sm text-gray-400">
-          <p className="font-medium text-gray-300 mb-2">Typical Lumen Values</p>
-          {[["Candle","12"],["40W bulb","450"],["60W bulb","800"],["100W bulb","1600"],["LED streetlight","10,000"]].map(([s,l])=>(
-            <div key={s} className="flex justify-between py-1 border-b border-gray-800"><span>{s}</span><span className="text-white">{l} lm</span></div>
-          ))}
+          {result !== "" && (
+            <div className="bg-gray-800 rounded-lg px-4 py-3">
+              <span className="text-2xl font-mono font-bold text-green-400">{result}</span>
+              <span className="text-gray-400 ml-2">{to}</span>
+            </div>
+          )}
         </div>
       </div>
     </main>
