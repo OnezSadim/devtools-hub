@@ -1,10 +1,10 @@
 "use client";
 import { useState } from "react";
 
-const UNITS = ["rad/s", "deg/s", "rpm", "rps", "rev/min", "grad/s", "mrad/s"];
-const TO_BASE = {"rad/s": 1, "deg/s": 0.017453, "rpm": 0.10472, "rps": 6.28319, "rev/min": 0.10472, "grad/s": 0.015708, "mrad/s": 0.001};
+const UNITS: string[] = ["rad/s", "deg/s", "rev/s", "rev/min (RPM)", "rev/h"];
+const TO_BASE: Record<string, number> = {"rad/s": 1, "deg/s": 0.0174533, "rev/s": 6.28318, "rev/min (RPM)": 0.10472, "rev/h": 0.00174533};
 
-export default function Page() {
+export default function AngularVelocityConverterPage() {
   const [val, setVal] = useState("");
   const [from, setFrom] = useState(UNITS[0]);
   const [to, setTo] = useState(UNITS[1]);
@@ -14,20 +14,16 @@ export default function Page() {
     return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
   };
   return (
-    <main style={{padding:"2rem",fontFamily:"monospace",background:"#0f0f0f",minHeight:"100vh",color:"#e5e5e5"}}>
-      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Angular Velocity Converter</h1>
-      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1rem"}}>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",background:"#1a1a1a",border:"1px solid #333",color:"#e5e5e5",borderRadius:"4px",flex:"1"}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1a1a1a",border:"1px solid #333",color:"#e5e5e5",borderRadius:"4px"}}>
-          {UNITS.map(u=><option key={u}>{u}</option>)}
-        </select>
-        <span style={{padding:"0.5rem"}}>to</span>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1a1a1a",border:"1px solid #333",color:"#e5e5e5",borderRadius:"4px"}}>
-          {UNITS.map(u=><option key={u}>{u}</option>)}
-        </select>
-      </div>
-      <div style={{fontSize:"1.25rem",padding:"1rem",background:"#1a1a1a",borderRadius:"4px",border:"1px solid #333"}}>
-        {val ? convert() + " " + to : "Result will appear here"}
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <h1 className="text-3xl font-bold mb-6">Angular Velocity Converter</h1>
+      <div className="bg-gray-900 rounded-xl p-6 max-w-xl">
+        <input className="w-full bg-gray-800 rounded p-3 mb-4 text-white" placeholder="Enter value" value={val} onChange={e => setVal(e.target.value)} />
+        <div className="flex gap-4 mb-4">
+          <select className="flex-1 bg-gray-800 rounded p-3 text-white" value={from} onChange={e => setFrom(e.target.value)}>{UNITS.map(u => <option key={u}>{u}</option>)}</select>
+          <span className="self-center text-gray-400">to</span>
+          <select className="flex-1 bg-gray-800 rounded p-3 text-white" value={to} onChange={e => setTo(e.target.value)}>{UNITS.map(u => <option key={u}>{u}</option>)}</select>
+        </div>
+        {val && <div className="bg-gray-800 rounded p-4 text-2xl font-mono text-green-400">{convert()} {to}</div>}
       </div>
     </main>
   );
