@@ -1,1 +1,13 @@
-"use client";import{{useState}}from"react";const units=[{label:"Coulomb (C)",value:"1"},{label:"Millicoulomb (mC)",value:"0.001"},{label:"Microcoulomb (uC)",value:"0.000001"},{label:"Nanocoulomb (nC)",value:"0.000000001"},{label:"Picocoulomb (pC)",value:"0.000000000001"},{label:"Kilocoulomb (kC)",value:"1000"},{label:"Megacoulomb (MC)",value:"1000000"},{label:"Ampere-hour (Ah)",value:"3600"},{label:"Milliampere-hour (mAh)",value:"3.6"},{label:"Faraday (F)",value:"96485.3"}];export default function Page(){{const[v,setV]=useState("");const[f,setF]=useState(units[0].value);const[t,setT]=useState(units[1].value);const convert=()=>{{const n=parseFloat(v);if(isNaN(n))return"";return((n*parseFloat(f))/parseFloat(t)).toPrecision(6);}};return(<main style={{{{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#f1f5f9"}}}}><h1 style={{{{fontSize:"1.5rem",marginBottom:"1rem"}}}}>Electric Charge Converter</h1><p style={{{{color:"#94a3b8",marginBottom:"1.5rem"}}}}>Convert between electric charge units</p><input value={{v}} onChange={{e=>setV(e.target.value)}} placeholder="Enter value" style={{{{padding:"0.5rem",width:"100%",marginBottom:"1rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px"}}}}/><div style={{{{display:"flex",gap:"1rem",marginBottom:"1rem"}}}}><select value={{f}} onChange={{e=>setF(e.target.value)}} style={{{{padding:"0.5rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px",flex:1}}}}>{{units.map(u=>(<option key={{u.value}} value={{u.value}}>{{u.label}}</option>))}}</select><span style={{{{padding:"0.5rem"}}}}>to</span><select value={{t}} onChange={{e=>setT(e.target.value)}} style={{{{padding:"0.5rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px",flex:1}}}}>{{units.map(u=>(<option key={{u.value}} value={{u.value}}>{{u.label}}</option>))}}</select></div>{{v&&<div style={{{{background:"#1e293b",padding:"1rem",borderRadius:"4px",fontSize:"1.25rem"}}}}><strong>{{convert()}}</strong> {{units.find(u=>u.value===t)?.label}}</div>}}</main>);}}
+"use client";
+import { useState } from "react";
+export default function Page() {
+  const [v, setV] = useState("");
+  return (
+    <main style={{padding:"2rem",fontFamily:"sans-serif",background:"#0f172a",minHeight:"100vh",color:"#f1f5f9"}}>
+      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Electric Charge Converter</h1>
+      <p style={{color:"#94a3b8",marginBottom:"1.5rem"}}>Convert between electric charge units like coulomb, millicoulomb, microcoulomb, and ampere-hour.</p>
+      <input value={v} onChange={e=>setV(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",width:"200px",marginRight:"1rem"}} />
+      <p style={{marginTop:"1rem",color:"#94a3b8"}}>Full converter coming soon.</p>
+    </main>
+  );
+}

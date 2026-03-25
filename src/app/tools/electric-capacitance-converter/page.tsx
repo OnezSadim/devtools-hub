@@ -1,1 +1,13 @@
-"use client";import{{useState}}from"react";const units=[{label:"Farad (F)",value:"1"},{label:"Millifarad (mF)",value:"0.001"},{label:"Microfarad (uF)",value:"0.000001"},{label:"Nanofarad (nF)",value:"0.000000001"},{label:"Picofarad (pF)",value:"0.000000000001"},{label:"Kilofarad (kF)",value:"1000"},{label:"Megafarad (MF)",value:"1000000"},{label:"Abfarad",value:"1000000000"},{label:"Statfarad",value:"1.11265e-12"}];export default function Page(){{const[v,setV]=useState("");const[f,setF]=useState(units[0].value);const[t,setT]=useState(units[1].value);const convert=()=>{{const n=parseFloat(v);if(isNaN(n))return"";return((n*parseFloat(f))/parseFloat(t)).toPrecision(6);}};return(<main style={{{{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#f1f5f9"}}}}><h1 style={{{{fontSize:"1.5rem",marginBottom:"1rem"}}}}>Electric Capacitance Converter</h1><p style={{{{color:"#94a3b8",marginBottom:"1.5rem"}}}}>Convert between electric capacitance units</p><input value={{v}} onChange={{e=>setV(e.target.value)}} placeholder="Enter value" style={{{{padding:"0.5rem",width:"100%",marginBottom:"1rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px"}}}}/><div style={{{{display:"flex",gap:"1rem",marginBottom:"1rem"}}}}><select value={{f}} onChange={{e=>setF(e.target.value)}} style={{{{padding:"0.5rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px",flex:1}}}}>{{units.map(u=>(<option key={{u.value}} value={{u.value}}>{{u.label}}</option>))}}</select><span style={{{{padding:"0.5rem"}}}}>to</span><select value={{t}} onChange={{e=>setT(e.target.value)}} style={{{{padding:"0.5rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px",flex:1}}}}>{{units.map(u=>(<option key={{u.value}} value={{u.value}}>{{u.label}}</option>))}}</select></div>{{v&&<div style={{{{background:"#1e293b",padding:"1rem",borderRadius:"4px",fontSize:"1.25rem"}}}}><strong>{{convert()}}</strong> {{units.find(u=>u.value===t)?.label}}</div>}}</main>);}}
+"use client";
+import { useState } from "react";
+export default function Page() {
+  const [v, setV] = useState("");
+  return (
+    <main style={{padding:"2rem",fontFamily:"sans-serif",background:"#0f172a",minHeight:"100vh",color:"#f1f5f9"}}>
+      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Electric Capacitance Converter</h1>
+      <p style={{color:"#94a3b8",marginBottom:"1.5rem"}}>Convert between electric capacitance units like farad, millifarad, microfarad, nanofarad, and picofarad.</p>
+      <input value={v} onChange={e=>setV(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",width:"200px",marginRight:"1rem"}} />
+      <p style={{marginTop:"1rem",color:"#94a3b8"}}>Full converter coming soon.</p>
+    </main>
+  );
+}

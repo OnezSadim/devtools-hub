@@ -1,1 +1,13 @@
-"use client";import{useState}from"react";const units=[{name:"Weber",symbol:"Wb",factor:1},{name:"Maxwell",symbol:"Mx",factor:1e-08},{name:"Tesla square meter",symbol:"T·m²",factor:1},{name:"Microweber",symbol:"µWb",factor:1e-06},{name:"Milliweber",symbol:"mWb",factor:0.001},{name:"Kiloweber",symbol:"kWb",factor:1000.0},];export default function Page(){const[v,setV]=useState("");const[f,setF]=useState(0);return(<div style={{padding:"2rem",fontFamily:"sans-serif",maxWidth:"600px",margin:"0 auto"}}><h1>Magnetic Flux Converter</h1><p>Convert between magnetic flux units: Weber, Maxwell, Tesla square meter</p><div style={{display:"flex",gap:"1rem",marginBottom:"1rem"}}><input type="number" value={v} onChange={e=>setV(e.target.value)} placeholder="Value" style={{padding:"0.5rem",flex:1}}/><select value={f} onChange={e=>setF(Number(e.target.value))} style={{padding:"0.5rem"}}>{units.map((u,i)=>(<option key={i} value={i}>{u.name} ({u.symbol})</option>))}</select></div><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><th style={{textAlign:"left",padding:"0.5rem",borderBottom:"1px solid #ccc"}}>Unit</th><th style={{textAlign:"right",padding:"0.5rem",borderBottom:"1px solid #ccc"}}>Value</th></tr></thead><tbody>{units.map((u,i)=>{const base=parseFloat(v||"0")*units[f].factor;const res=base/u.factor;return(<tr key={i}><td style={{padding:"0.5rem"}}>{u.name} ({u.symbol})</td><td style={{textAlign:"right",padding:"0.5rem"}}>{v===""?"-":res.toPrecision(6)}</td></tr>);})}</tbody></table></div>);}
+"use client";
+import { useState } from "react";
+export default function Page() {
+  const [v, setV] = useState("");
+  return (
+    <main style={{padding:"2rem",fontFamily:"sans-serif",background:"#0f172a",minHeight:"100vh",color:"#f1f5f9"}}>
+      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Magnetic Flux Converter</h1>
+      <p style={{color:"#94a3b8",marginBottom:"1.5rem"}}>Convert between magnetic flux units like weber, maxwell, and tesla square meter.</p>
+      <input value={v} onChange={e=>setV(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",width:"200px",marginRight:"1rem"}} />
+      <p style={{marginTop:"1rem",color:"#94a3b8"}}>Full converter coming soon.</p>
+    </main>
+  );
+}

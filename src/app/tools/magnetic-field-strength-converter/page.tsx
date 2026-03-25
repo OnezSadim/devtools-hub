@@ -1,1 +1,13 @@
-"use client";import{useState}from"react";const units=[{name:"Ampere/meter",symbol:"A/m",factor:1},{name:"Oersted",symbol:"Oe",factor:79.5775},{name:"Ampere/cm",symbol:"A/cm",factor:100},{name:"Ampere/inch",symbol:"A/in",factor:39.3701},{name:"Kiloampere/meter",symbol:"kA/m",factor:1000.0},{name:"Milliampere/meter",symbol:"mA/m",factor:0.001},];export default function Page(){const[v,setV]=useState("");const[f,setF]=useState(0);return(<div style={{padding:"2rem",fontFamily:"sans-serif",maxWidth:"600px",margin:"0 auto"}}><h1>Magnetic Field Strength Converter</h1><p>Convert between magnetic field strength units: Ampere/meter, Oersted</p><div style={{display:"flex",gap:"1rem",marginBottom:"1rem"}}><input type="number" value={v} onChange={e=>setV(e.target.value)} placeholder="Value" style={{padding:"0.5rem",flex:1}}/><select value={f} onChange={e=>setF(Number(e.target.value))} style={{padding:"0.5rem"}}>{units.map((u,i)=>(<option key={i} value={i}>{u.name} ({u.symbol})</option>))}</select></div><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><th style={{textAlign:"left",padding:"0.5rem",borderBottom:"1px solid #ccc"}}>Unit</th><th style={{textAlign:"right",padding:"0.5rem",borderBottom:"1px solid #ccc"}}>Value</th></tr></thead><tbody>{units.map((u,i)=>{const base=parseFloat(v||"0")*units[f].factor;const res=base/u.factor;return(<tr key={i}><td style={{padding:"0.5rem"}}>{u.name} ({u.symbol})</td><td style={{textAlign:"right",padding:"0.5rem"}}>{v===""?"-":res.toPrecision(6)}</td></tr>);})}</tbody></table></div>);}
+"use client";
+import { useState } from "react";
+export default function Page() {
+  const [v, setV] = useState("");
+  return (
+    <main style={{padding:"2rem",fontFamily:"sans-serif",background:"#0f172a",minHeight:"100vh",color:"#f1f5f9"}}>
+      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Magnetic Field Strength Converter</h1>
+      <p style={{color:"#94a3b8",marginBottom:"1.5rem"}}>Convert between magnetic field strength units like ampere per meter, oersted, and gilbert per meter.</p>
+      <input value={v} onChange={e=>setV(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",width:"200px",marginRight:"1rem"}} />
+      <p style={{marginTop:"1rem",color:"#94a3b8"}}>Full converter coming soon.</p>
+    </main>
+  );
+}
