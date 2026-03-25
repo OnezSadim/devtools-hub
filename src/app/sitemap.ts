@@ -84,6 +84,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'css-variables-generator',
     'csv-to-html',
     'csv-to-json',
+    'csv-to-json-converter',
     'curl-builder',
     'curl-command-builder',
     'curl-to-code',
@@ -361,6 +362,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'text-diff-checker',
     'text-diff-highlighter',
     'text-diff-inline',
+    'text-diff-viewer',
     'text-reverser',
     'text-shadow-generator',
     'text-sorter',
@@ -421,6 +423,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ];
   return [
     { url: base, lastModified: new Date(), changeFrequency: "daily", priority: 1 },
-    ...tools.map(t => ({ url: base + "/tools/" + t, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.8 }))
+    ...tools.map(t => ({ url: `${base}/tools/${t}`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.8 }))
   ];
 }
