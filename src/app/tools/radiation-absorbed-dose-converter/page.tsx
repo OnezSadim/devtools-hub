@@ -1,32 +1,35 @@
 "use client";
 import { useState } from "react";
 
-const units = ['Gray (Gy)', 'Milligray (mGy)', 'Rad', 'Centigray (cGy)', 'Microgray (uGy)'];
-const factors = {'Gray (Gy)': 1.0, 'Milligray (mGy)': 0.001, 'Rad': 0.01, 'Centigray (cGy)': 0.01, 'Microgray (uGy)': 1e-06};
+const UNITS = ["Gray (Gy)", "Milligray (mGy)", "Microgray (uGy)", "Rad", "Millirad", "Joule/kilogram (J/kg)", "Centigray (cGy)", "Kilogray (kGy)"];
+const TO_BASE: Record<string, number> = {"Gray (Gy)": 1, "Milligray (mGy)": 0.001, "Microgray (uGy)": 1e-06, "Rad": 0.01, "Millirad": 1e-05, "Joule/kilogram (J/kg)": 1, "Centigray (cGy)": 0.01, "Kilogray (kGy)": 1000};
 
-export default function Page() {
+export default function RadiationAbsorbedDoseConverterPage() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(units[0]);
-  const [to, setTo] = useState(units[1]);
-  function convert(v, f, t) {
-    const n = parseFloat(v);
+  const [from, setFrom] = useState(UNITS[0]);
+  const convert = (to: string) => {
+    const n = parseFloat(val);
     if (isNaN(n)) return "";
-    return ((n * factors[f]) / factors[t]).toPrecision(6);
-  }
+    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
+  };
   return (
-    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",flexDirection:"column",alignItems:"center",padding:"2rem"}}>
+    <main style={{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"sans-serif"}}>
       <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Radiation Absorbed Dose Converter</h1>
-      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginTop:"1rem",alignItems:"center"}}>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",width:"140px"}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9"}}>
-          {units.map(u=><option key={u}>{u}</option>)}
-        </select>
-        <span style={{fontSize:"1.2rem"}}>→</span>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9"}}>
-          {units.map(u=><option key={u}>{u}</option>)}
+      <p style={{color:"#888",marginBottom:"1.5rem"}}>Convert between radiation absorbed dose units instantly.</p>
+      <div style={{display:"flex",gap:"1rem",marginBottom:"1.5rem",flexWrap:"wrap"}}>
+        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{flex:1,minWidth:"150px",padding:"0.75rem",borderRadius:"8px",border:"1px solid #333",background:"#1a1a1a",color:"#fff",fontSize:"1rem"}} />
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.75rem",borderRadius:"8px",border:"1px solid #333",background:"#1a1a1a",color:"#fff",fontSize:"1rem"}}>
+          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
         </select>
       </div>
-      {val && <p style={{marginTop:"1.5rem",fontSize:"1.4rem",color:"#38bdf8"}}>{val} {from} = {convert(val,from,to)} {to}</p>}
+      <div style={{display:"grid",gap:"0.75rem"}}>
+        {UNITS.map(u=>(
+          <div key={u} style={{background:"#1a1a1a",border:"1px solid #2a2a2a",borderRadius:"8px",padding:"1rem",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+            <span style={{color:"#aaa"}}>{u}</span>
+            <span style={{color:"#fff",fontWeight:600,fontSize:"1.1rem"}}>{convert(u) || "—"}</span>
+          </div>
+        ))}
+      </div>
     </main>
   );
 }
