@@ -1,9 +1,85 @@
 "use client";
 import { useState } from "react";
-export default function Page() {
-  const units = [{name:"Sievert (Sv)",factor:1},{name:"Millisievert (mSv)",factor:0.001},{name:"Microsievert (µSv)",factor:1e-06},{name:"Rem",factor:0.01},{name:"Millirem (mrem)",factor:1e-05}];
-  const [val, setVal] = useState("1");
-  const [from, setFrom] = useState(0);
-  const base = parseFloat(val) * units[from].factor;
-  return (<div style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}><h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Radiation Dose Equivalent Converter</h1><p style={{color:"#94a3b8",marginBottom:"1.5rem"}}>Convert between radiation dose equivalent units: sievert, rem, millisievert.</p><div style={{display:"flex",gap:"1rem",marginBottom:"1.5rem",flexWrap:"wrap"}}><input type="number" value={val} onChange={e=>setVal(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",borderRadius:"6px",color:"#e2e8f0",width:"150px"}} /><select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",borderRadius:"6px",color:"#e2e8f0"}}>{units.map((u,i)=>(<option key={i} value={i}>{u.name}</option>))}</select></div><div style={{display:"grid",gap:"0.5rem"}}>{units.map((u,i)=><div key={i} style={{background:"#1e293b",padding:"0.75rem 1rem",borderRadius:"6px",display:"flex",justifyContent:"space-between"}}><span style={{color:"#94a3b8"}}>{u.name}</span><span style={{fontWeight:"bold"}}>{u.factor>0?(base/u.factor).toLocaleString(undefined,{maximumFractionDigits:6}):"N/A"}</span></div>)}</div></div>);
+
+export default function RadiationDoseEquivalentConverter() {
+  const [value, setValue] = useState("");
+  const [from, setFrom] = useState("Sievert (Sv)");
+  const [to, setTo] = useState("Millisievert (mSv)");
+  const [result, setResult] = useState<number | null>(null);
+
+  function convert() {
+    const v = parseFloat(value);
+    if (isNaN(v)) return;
+    let toBase = 0;
+    switch (from) {
+      case "Sievert (Sv)": toBase = v * 1.0; break;
+      case "Millisievert (mSv)": toBase = v * 0.001; break;
+      case "Microsievert (μSv)": toBase = v * 1e-06; break;
+      case "Rem (rem)": toBase = v * 0.01; break;
+      case "Millirem (mrem)": toBase = v * 1e-05; break;
+      case "Microrem (μrem)": toBase = v * 1e-08; break;
+      case "Joule/kilogram (J/kg)": toBase = v * 1.0; break;
+    }
+    let result = 0;
+    switch (to) {
+FROM_      case "Sievert (Sv)": toBase = v * 1.0; break;
+      case "Millisievert (mSv)": toBase = v * 0.001; break;
+      case "Microsievert (μSv)": toBase = v * 1e-06; break;
+      case "Rem (rem)": toBase = v * 0.01; break;
+      case "Millirem (mrem)": toBase = v * 1e-05; break;
+      case "Microrem (μrem)": toBase = v * 1e-08; break;
+      case "Joule/kilogram (J/kg)": toBase = v * 1.0; break;
+    }
+    setResult(result);
+  }
+
+  return (
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Radiation Dose Equivalent Converter</h1>
+        <p className="text-gray-400 mb-6">Convert between dose equivalent units: sievert, rem, and more.</p>
+        <div className="space-y-4">
+          <input
+            type="number"
+            value={value}
+            onChange={e => setValue(e.target.value)}
+            placeholder="Enter value"
+            className="w-full bg-gray-800 rounded px-4 py-2 text-white"
+          />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-gray-400 text-sm mb-1">From</label>
+              <select value={from} onChange={e => setFrom(e.target.value)} className="w-full bg-gray-800 rounded px-4 py-2 text-white">
+          <option value="Sievert (Sv)">Sievert (Sv)</option>
+          <option value="Millisievert (mSv)">Millisievert (mSv)</option>
+          <option value="Microsievert (μSv)">Microsievert (μSv)</option>
+          <option value="Rem (rem)">Rem (rem)</option>
+          <option value="Millirem (mrem)">Millirem (mrem)</option>
+          <option value="Microrem (μrem)">Microrem (μrem)</option>
+          <option value="Joule/kilogram (J/kg)">Joule/kilogram (J/kg)</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-gray-400 text-sm mb-1">To</label>
+              <select value={to} onChange={e => setTo(e.target.value)} className="w-full bg-gray-800 rounded px-4 py-2 text-white">
+          <option value="Sievert (Sv)">Sievert (Sv)</option>
+          <option value="Millisievert (mSv)">Millisievert (mSv)</option>
+          <option value="Microsievert (μSv)">Microsievert (μSv)</option>
+          <option value="Rem (rem)">Rem (rem)</option>
+          <option value="Millirem (mrem)">Millirem (mrem)</option>
+          <option value="Microrem (μrem)">Microrem (μrem)</option>
+          <option value="Joule/kilogram (J/kg)">Joule/kilogram (J/kg)</option>
+              </select>
+            </div>
+          </div>
+          <button onClick={convert} className="w-full bg-blue-600 hover:bg-blue-700 rounded px-4 py-2 font-semibold">Convert</button>
+          {result !== null && (
+            <div className="bg-gray-800 rounded p-4 text-xl font-bold text-green-400">
+              {value} {from} = {result.toExponential ? result.toPrecision(6) : result} {to}
+            </div>
+          )}
+        </div>
+      </div>
+    </main>
+  );
 }
