@@ -1,1 +1,40 @@
-"use client";import { useState } from "react";const UNITS = [{name: "Sievert", symbol: "Sv", factor: 1},{name: "Millisievert", symbol: "mSv", factor: 0.001},{name: "Microsievert", symbol: "uSv", factor: 1e-06},{name: "Rem", symbol: "rem", factor: 0.01},{name: "Millirem", symbol: "mrem", factor: 1e-05},{name: "Microrem", symbol: "urem", factor: 1e-08},{name: "Joule/kilogram", symbol: "J/kg", factor: 1},];export default function Page() {  const [val, setVal] = useState("");  const [from, setFrom] = useState(0);  const [to, setTo] = useState(1);  const convert = () => {    const n = parseFloat(val);    if (isNaN(n)) return "";    return ((n * UNITS[from].factor) / UNITS[to].factor).toPrecision(6);  };  return (    <div style={{minHeight:"100vh",background:"#0f172a",color:"#e2e8f0",padding:"2rem",fontFamily:"sans-serif"}}>      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Radiation Equivalent Dose Converter</h1>      <p style={{color:"#94a3b8",marginBottom:"2rem"}}>Convert between radiation equivalent dose units: sievert, rem, millisievert and more.</p>      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1rem"}}>        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",width:"160px"}} />        <select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0"}}>          {UNITS.map((u,i)=><option key={i} value={i}>{u.name} ({u.symbol})</option>)}        </select>        <span style={{alignSelf:"center",fontSize:"1.2rem"}}>→</span>        <select value={to} onChange={e=>setTo(Number(e.target.value))} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0"}}>          {UNITS.map((u,i)=><option key={i} value={i}>{u.name} ({u.symbol})</option>)}        </select>      </div>      {val && <div style={{fontSize:"1.4rem",padding:"1rem",background:"#1e293b",borderRadius:"8px",display:"inline-block"}}>{val} {UNITS[from].symbol} = <strong>{convert()}</strong> {UNITS[to].symbol}</div>}    </div>  );}
+"use client";
+import { useState } from "react";
+
+const UNITS: Record<string, number> = {
+  "Sv": 1.0,
+  "mSv": 0.001,
+  "uSv": 1e-06,
+  "rem": 0.01,
+  "mrem": 1e-05,
+};
+
+export default function Page() {
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState("Sv");
+  const [to, setTo] = useState("mSv");
+  const result = val && !isNaN(Number(val)) ? (Number(val) * UNITS[from] / UNITS[to]).toFixed(6) : "";
+  return (
+    <main className="min-h-screen bg-gray-900 text-white p-8">
+      <h1 className="text-3xl font-bold mb-6">Radiation Equivalent Dose Converter</h1>
+      <div className="max-w-md space-y-4">
+        <input className="w-full bg-gray-800 rounded p-2" type="number" placeholder="Value" value={val} onChange={e => setVal(e.target.value)} />
+        <select className="w-full bg-gray-800 rounded p-2" value={from} onChange={e => setFrom(e.target.value)}>
+          <option value="Sv">Sv</option>
+          <option value="mSv">mSv</option>
+          <option value="uSv">uSv</option>
+          <option value="rem">rem</option>
+          <option value="mrem">mrem</option>
+        </select>
+        <select className="w-full bg-gray-800 rounded p-2" value={to} onChange={e => setTo(e.target.value)}>
+          <option value="Sv">Sv</option>
+          <option value="mSv">mSv</option>
+          <option value="uSv">uSv</option>
+          <option value="rem">rem</option>
+          <option value="mrem">mrem</option>
+        </select>
+        {result && <div className="bg-gray-800 rounded p-4 text-xl font-mono">{result} {to}</div>}
+      </div>
+    </main>
+  );
+}
