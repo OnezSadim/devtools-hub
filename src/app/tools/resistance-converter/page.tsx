@@ -1,44 +1,30 @@
 "use client";
 import { useState } from "react";
 
-const UNITS = [
-      { value: '1', label: 'Ohm (Ω)' },
-      { value: '1e3', label: 'Kilohm (kΩ)' },
-      { value: '1e6', label: 'Megaohm (MΩ)' },
-      { value: '1e-3', label: 'Milliohm (mΩ)' },
-      { value: '1e-6', label: 'Microohm (µΩ)' },
-      { value: '1e9', label: 'Gigaohm (GΩ)' },
-];
+const UNITS = [{name: "Ohm", factor: 1}, {name: "Kilohm", factor: 1000}, {name: "Megaohm", factor: 1000000}, {name: "Milliohm", factor: 0.001}, {name: "Microohm", factor: 1e-06}];
 
 export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(UNITS[0].value);
-  const [to, setTo] = useState(UNITS[1].value);
-  const convert = () => {
-    const n = parseFloat(val);
-    if (isNaN(n)) return "";
-    const base = n * parseFloat(from);
-    return (base / parseFloat(to)).toPrecision(6);
-  };
+  const [from, setFrom] = useState(UNITS[0].name);
+  const [to, setTo] = useState(UNITS[1].name);
+  const fromF = UNITS.find(u => u.name === from)?.factor ?? 1;
+  const toF = UNITS.find(u => u.name === to)?.factor ?? 1;
+  const result = val === "" ? "" : ((parseFloat(val) * fromF) / toF).toPrecision(8);
   return (
-    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",padding:"2rem",fontFamily:"monospace"}}>
-      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Resistance Converter</h1>
-      <p style={{color:"#94a3b8",marginBottom:"2rem"}}>Convert between electrical resistance units: ohm, kilohm, megaohm, milliohm.</p>
-      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",alignItems:"flex-end"}}>
-        <div><label style={{display:"block",marginBottom:"0.25rem",color:"#94a3b8"}}>Value</label>
-        <input value={val} onChange={e=>setVal(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px",width:"160px"}} /></div>
-        <div><label style={{display:"block",marginBottom:"0.25rem",color:"#94a3b8"}}>From</label>
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px"}}>
-          {UNITS.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
-        </select></div>
-        <div><label style={{display:"block",marginBottom:"0.25rem",color:"#94a3b8"}}>To</label>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px"}}>
-          {UNITS.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
-        </select></div>
+    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",fontFamily:"sans-serif",padding:"2rem"}}>
+      <h1 style={{fontSize:"2rem",fontWeight:700,marginBottom:"0.5rem"}}>Resistance Converter</h1>
+      <p style={{color:"#94a3b8",marginBottom:"2rem"}}>Convert between electrical resistance units: Ohm, Kilohm, Megaohm, and more.</p>
+      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",justifyContent:"center",marginBottom:"1rem"}}>
+        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",fontSize:"1rem",width:"160px"}} />
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",fontSize:"1rem"}}>
+          {UNITS.map(u=><option key={u.name} value={u.name}>{u.name}</option>)}
+        </select>
+        <span style={{alignSelf:"center",fontSize:"1.5rem"}}>→</span>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",fontSize:"1rem"}}>
+          {UNITS.map(u=><option key={u.name} value={u.name}>{u.name}</option>)}
+        </select>
       </div>
-      <div style={{marginTop:"2rem",padding:"1rem",background:"#1e293b",borderRadius:"8px",fontSize:"1.4rem"}}>
-        Result: <strong>{convert()}</strong>
-      </div>
+      {result !== "" && <div style={{fontSize:"1.5rem",fontWeight:700,color:"#38bdf8",marginTop:"1rem"}}>{result} {to}</div>}
     </main>
   );
 }

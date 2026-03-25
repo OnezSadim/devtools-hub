@@ -1,31 +1,30 @@
 "use client";
 import { useState } from "react";
 
-const units = ["A/m", "Oe", "kA/m", "mA/m"];
-const toBase = {"A/m": 1, "Oe": 79.5775, "kA/m": 1000, "mA/m": 0.001};
+const UNITS = [{name: "Ampere/meter", factor: 1}, {name: "Oersted", factor: 79.5775}, {name: "Ampere/cm", factor: 100}, {name: "Kiloampere/meter", factor: 1000}];
 
-export default function MagneticFieldStrengthConverterPage() {
+export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(units[0]);
-  const [to, setTo] = useState(units[1]);
-  const convert = () => {
-    const n = parseFloat(val);
-    if (isNaN(n)) return "";
-    return ((n * toBase[from]) / toBase[to]).toPrecision(6);
-  };
+  const [from, setFrom] = useState(UNITS[0].name);
+  const [to, setTo] = useState(UNITS[1].name);
+  const fromF = UNITS.find(u => u.name === from)?.factor ?? 1;
+  const toF = UNITS.find(u => u.name === to)?.factor ?? 1;
+  const result = val === "" ? "" : ((parseFloat(val) * fromF) / toF).toPrecision(8);
   return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
-      <h1 className="text-3xl font-bold mb-2">Magnetic Field Strength Converter</h1>
-      <p className="text-gray-400 mb-6">Convert between magnetic field strength units instantly.</p>
-      <div className="bg-gray-900 rounded-xl p-6 max-w-lg space-y-4">
-        <input className="w-full bg-gray-800 rounded p-2" placeholder="Value" value={val} onChange={e => setVal(e.target.value)} />
-        <div className="flex gap-2">
-          <select className="flex-1 bg-gray-800 rounded p-2" value={from} onChange={e => setFrom(e.target.value)}>{units.map(u => <option key={u}>{u}</option>)}</select>
-          <span className="self-center">to</span>
-          <select className="flex-1 bg-gray-800 rounded p-2" value={to} onChange={e => setTo(e.target.value)}>{units.map(u => <option key={u}>{u}</option>)}</select>
-        </div>
-        <div className="bg-gray-800 rounded p-3 text-xl font-mono">{convert() || "—"}</div>
+    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",fontFamily:"sans-serif",padding:"2rem"}}>
+      <h1 style={{fontSize:"2rem",fontWeight:700,marginBottom:"0.5rem"}}>Magnetic Field Strength Converter</h1>
+      <p style={{color:"#94a3b8",marginBottom:"2rem"}}>Convert between magnetic field strength units: A/m, Oersted, and more.</p>
+      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",justifyContent:"center",marginBottom:"1rem"}}>
+        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",fontSize:"1rem",width:"160px"}} />
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",fontSize:"1rem"}}>
+          {UNITS.map(u=><option key={u.name} value={u.name}>{u.name}</option>)}
+        </select>
+        <span style={{alignSelf:"center",fontSize:"1.5rem"}}>→</span>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",fontSize:"1rem"}}>
+          {UNITS.map(u=><option key={u.name} value={u.name}>{u.name}</option>)}
+        </select>
       </div>
+      {result !== "" && <div style={{fontSize:"1.5rem",fontWeight:700,color:"#38bdf8",marginTop:"1rem"}}>{result} {to}</div>}
     </main>
   );
 }
