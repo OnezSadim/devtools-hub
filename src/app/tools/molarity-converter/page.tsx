@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
 
-const units = [{ value: '1', label: 'V/m' }, { value: '1000', label: 'kV/m' }, { value: '1000000', label: 'MV/m' }, { value: '0.01', label: 'V/cm' }, { value: '0.001', label: 'V/mm' }];
+const units = [{ value: '1', label: 'mol/L (M)' }, { value: '0.001', label: 'mol/mL' }, { value: '1000', label: 'mol/m³' }, { value: '0.1', label: 'mol/dL' }];
 
-export default function ElectricFieldConverterPage() {
+export default function MolarityConverterPage() {
   const [value, setValue] = useState("");
   const [from, setFrom] = useState(units[0].value);
   const [to, setTo] = useState(units[1].value);
@@ -18,8 +18,8 @@ export default function ElectricFieldConverterPage() {
 
   return (
     <main style={{ maxWidth: 480, margin: "40px auto", padding: "0 16px", fontFamily: "monospace" }}>
-      <h1 style={{ fontSize: 24, marginBottom: 8 }}>Electric Field Converter</h1>
-      <p style={{ color: "#aaa", marginBottom: 24 }}>Convert between electric field strength units: V/m, kV/m, MV/m.</p>
+      <h1 style={{ fontSize: 24, marginBottom: 8 }}>Molarity Converter</h1>
+      <p style={{ color: "#aaa", marginBottom: 24 }}>Convert between molarity and concentration units.</p>
       <input type="number" value={value} onChange={e => setValue(e.target.value)} placeholder="Enter value" style={{ width: "100%", padding: 8, marginBottom: 12, background: "#1a1a1a", border: "1px solid #333", color: "#fff", borderRadius: 4 }} />
       <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
         <select value={from} onChange={e => setFrom(e.target.value)} style={{ flex: 1, padding: 8, background: "#1a1a1a", border: "1px solid #333", color: "#fff", borderRadius: 4 }}>{units.map(u => <option key={u.value} value={u.value}>{u.label}</option>)}</select>
