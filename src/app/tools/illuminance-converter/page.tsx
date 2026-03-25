@@ -1,3 +1,77 @@
 'use client';
-import{useState}from 'react';
-export default function Page(){const[v,setV]=useState('');const[f,setF]=useState('Lux');const[t,setT]=useState('Foot-candle');const u=[['Lux', 1], ['Foot-candle', 10.764], ['Phot', 10000], ['Nox', 0.001], ['Millilux', 0.001], ['Kilolux', 1000]];const cv=(val,from,to)=>{const base=parseFloat(val)*u.find(x=>x[0]===from)[1];return(base/u.find(x=>x[0]===to)[1]).toFixed(6);};return(<div style={{padding:'2rem',fontFamily:'sans-serif',background:'#0f172a',minHeight:'100vh',color:'#f1f5f9'}}><h1 style={{fontSize:'1.5rem',marginBottom:'1rem'}}>{"Illuminance Converter"}</h1><p style={{color:'#94a3b8',marginBottom:'1.5rem'}}>{"Convert between illuminance units: lux, foot-candle, phot, and more."}</p><div style={{display:'flex',gap:'1rem',flexWrap:'wrap',alignItems:'flex-end'}}><div><label style={{display:'block',marginBottom:'4px',color:'#94a3b8'}}>Value</label><input value={v} onChange={e=>setV(e.target.value)} style={{padding:'8px',background:'#1e293b',border:'1px solid #334155',borderRadius:'6px',color:'#f1f5f9',width:'160px'}} /></div><div><label style={{display:'block',marginBottom:'4px',color:'#94a3b8'}}>From</label><select value={f} onChange={e=>setF(e.target.value)} style={{padding:'8px',background:'#1e293b',border:'1px solid #334155',borderRadius:'6px',color:'#f1f5f9'}}>{u.map(x=>(<option key={x[0]} value={x[0]}>{x[0]}</option>))}</select></div><div><label style={{display:'block',marginBottom:'4px',color:'#94a3b8'}}>To</label><select value={t} onChange={e=>setT(e.target.value)} style={{padding:'8px',background:'#1e293b',border:'1px solid #334155',borderRadius:'6px',color:'#f1f5f9'}}>{u.map(x=>(<option key={x[0]} value={x[0]}>{x[0]}</option>))}</select></div></div>{v&&(<div style={{marginTop:'1.5rem',padding:'1rem',background:'#1e293b',borderRadius:'8px',fontSize:'1.2rem'}}>{v} {f} = <strong>{cv(v,f,t)}</strong> {t}</div>)}</div>);}
+import { useState } from 'react';
+
+export default function IlluminanceconverterConverter() {
+  const [val, setVal] = useState('1');
+  const [from, setFrom] = useState('Lux');
+  const [to, setTo] = useState('Foot-candle');
+
+  const toBase: Record<string,number> = {
+    'Lux': 1.0,
+    'Foot-candle': 10.7639,
+    'Phot': 10000.0,
+    'Nox': 0.001,
+    'Millilux': 0.001,
+    'Kilolux': 1000.0,
+    'Lumen/m2': 1.0,
+    'Lumen/ft2': 10.7639,
+  };
+
+  const convert = () => {
+    const n = parseFloat(val);
+    if (isNaN(n)) return 'Invalid';
+    const base = n * (toBase[from] || 1);
+    const result = base / (toBase[to] || 1);
+    return result.toPrecision(6);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Illuminance Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between illuminance units: lux, foot-candle, phot, and more.</p>
+        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Value</label>
+            <input type="number" value={val} onChange={e=>setVal(e.target.value)}
+              className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white border border-gray-700 focus:outline-none focus:border-blue-500" />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">From</label>
+              <select value={from} onChange={e=>setFrom(e.target.value)}
+                className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white border border-gray-700 focus:outline-none focus:border-blue-500">
+      <option value="Lux">Lux</option>
+      <option value="Foot-candle">Foot-candle</option>
+      <option value="Phot">Phot</option>
+      <option value="Nox">Nox</option>
+      <option value="Millilux">Millilux</option>
+      <option value="Kilolux">Kilolux</option>
+      <option value="Lumen/m2">Lumen/m2</option>
+      <option value="Lumen/ft2">Lumen/ft2</option>
+            </select>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">To</label>
+              <select value={to} onChange={e=>setTo(e.target.value)}
+                className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white border border-gray-700 focus:outline-none focus:border-blue-500">
+      <option value="Lux">Lux</option>
+      <option value="Foot-candle">Foot-candle</option>
+      <option value="Phot">Phot</option>
+      <option value="Nox">Nox</option>
+      <option value="Millilux">Millilux</option>
+      <option value="Kilolux">Kilolux</option>
+      <option value="Lumen/m2">Lumen/m2</option>
+      <option value="Lumen/ft2">Lumen/ft2</option>
+            </select>
+            </div>
+          </div>
+          <div className="bg-gray-800 rounded-lg p-4 text-center">
+            <span className="text-3xl font-mono text-blue-400">{convert()}</span>
+            <span className="ml-2 text-gray-400">{to}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
