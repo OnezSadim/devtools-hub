@@ -1,3 +1,3 @@
 import { Metadata } from "next";
-export const metadata: Metadata = { title: "Illuminance Converter | DevTools Hub", description: "Convert between lux, foot-candle, phot and other illuminance units." };
-export default function Layout({children}:{children:React.ReactNode}){return <>{children}</>;}
+export const metadata: Metadata = { title: "Illuminance Converter", description: "Convert between illuminance units: lux, foot-candle, phot, nox." };
+export default function Layout({ children }: { children: React.ReactNode }) { return <>{children}</> }
