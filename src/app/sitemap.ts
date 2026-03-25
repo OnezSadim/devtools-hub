@@ -1,6 +1,5 @@
-import { MetadataRoute } from 'next';
-
-const toolSlugs = [
+import { MetadataRoute } from "next";
+const tools = [
   'age-calculator',
   'anagram-checker',
   'anagram-finder',
@@ -26,6 +25,7 @@ const toolSlugs = [
   'box-shadow-generator',
   'budget-calculator',
   'caesar-cipher',
+  'calorie-calculator',
   'character-counter',
   'character-frequency',
   'character-frequency-analyzer',
@@ -63,6 +63,7 @@ const toolSlugs = [
   'currency-formatter',
   'data-size-converter',
   'data-storage-converter',
+  'data-transfer-calculator',
   'date-calculator',
   'diff-checker',
   'discount-calculator',
@@ -70,6 +71,7 @@ const toolSlugs = [
   'docker-compose-generator',
   'dockerfile-generator',
   'duplicate-line-remover',
+  'electricity-cost-calculator',
   'email-validator',
   'encryption-tool',
   'energy-converter',
@@ -85,10 +87,13 @@ const toolSlugs = [
   'font-size-converter',
   'fraction-calculator',
   'fraction-simplifier',
+  'fuel-cost-calculator',
   'git-cheatsheet',
   'git-commit-message-generator',
   'git-ignore-generator',
   'gitignore-generator',
+  'gpa-calculator',
+  'grade-calculator',
   'gradient-generator',
   'graphql-query-builder',
   'grid-generator',
@@ -203,6 +208,7 @@ const toolSlugs = [
   'semver-calculator',
   'sentence-counter',
   'sitemap-generator',
+  'sleep-calculator',
   'sort-lines',
   'speed-converter',
   'sql-formatter',
@@ -257,6 +263,7 @@ const toolSlugs = [
   'url-encoder',
   'url-parser',
   'uuid-generator',
+  'vat-calculator',
   'volume-converter',
   'webpack-config-generator',
   'weight-converter',
@@ -272,19 +279,10 @@ const toolSlugs = [
   'yaml-formatter',
   'yaml-to-json',
   'yaml-validator',
-  'z-index-manager'
+  'z-index-manager',
 ];
-
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = 'https://devtools-hub-green.vercel.app';
-  const toolUrls = toolSlugs.map(slug => ({
-    url: base + '/tools/' + slug,
-    lastModified: new Date(),
-    changeFrequency: 'monthly' as const,
-    priority: 0.7,
-  }));
-  return [
-    { url: base, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 1.0 },
-    ...toolUrls,
-  ];
+  const base = "https://devtools-hub-green.vercel.app";
+  const toolUrls = tools.map((t) => ({ url: `${base}/tools/${t}`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.7 }));
+  return [{ url: base, lastModified: new Date(), changeFrequency: "daily" as const, priority: 1.0 }, ...toolUrls];
 }
