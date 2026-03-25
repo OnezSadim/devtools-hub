@@ -1,42 +1,49 @@
-"use client";
-import { useState } from "react";
+'''use client'''
+import { useState } from 'react';
+
 export default function TextCaseConverter() {
-  const [input, setInput] = useState("");
-  const toUpper = (s: string) => s.toUpperCase();
-  const toLower = (s: string) => s.toLowerCase();
-  const toTitle = (s: string) => s.replace(/\w\S*/g, t => t.charAt(0).toUpperCase() + t.substr(1).toLowerCase());
-  const toCamel = (s: string) => s.replace(/[-_\s]+(.)?/g, (_, c) => c ? c.toUpperCase() : "").replace(/^(.)/, m => m.toLowerCase());
-  const toSnake = (s: string) => s.replace(/\s+/g, "_").replace(/([a-z])([A-Z])/g, "$1_$2").toLowerCase();
-  const toKebab = (s: string) => s.replace(/\s+/g, "-").replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
-  const toPascal = (s: string) => s.replace(/[-_\s]+(.)?/g, (_, c) => c ? c.toUpperCase() : "").replace(/^(.)/, m => m.toUpperCase());
-  const toConstant = (s: string) => s.replace(/\s+/g, "_").replace(/([a-z])([A-Z])/g, "$1_$2").toUpperCase();
+  const [input, setInput] = useState('');
+
+  const toCamelCase = (s: string) => s.replace(/[-_\s]+(.)/g, (_, c) => c.toUpperCase()).replace(/^(.)/, c => c.toLowerCase());
+  const toSnakeCase = (s: string) => s.replace(/([a-z])([A-Z])/g, '$1_$2').replace(/[-\s]+/g, '_').toLowerCase();
+  const toPascalCase = (s: string) => s.replace(/[-_\s]+(.)/g, (_, c) => c.toUpperCase()).replace(/^(.)/, c => c.toUpperCase());
+  const toKebabCase = (s: string) => s.replace(/([a-z])([A-Z])/g, '$1-$2').replace(/[_\s]+/g, '-').toLowerCase();
+  const toConstantCase = (s: string) => toSnakeCase(s).toUpperCase();
+  const toDotCase = (s: string) => toSnakeCase(s).replace(/_/g, '.');
+  const toTitleCase = (s: string) => s.replace(/\w\S*/g, t => t.charAt(0).toUpperCase() + t.slice(1).toLowerCase());
+  const toSentenceCase = (s: string) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+
   const cases = [
-    { label: "UPPERCASE", fn: toUpper },
-    { label: "lowercase", fn: toLower },
-    { label: "Title Case", fn: toTitle },
-    { label: "camelCase", fn: toCamel },
-    { label: "snake_case", fn: toSnake },
-    { label: "kebab-case", fn: toKebab },
-    { label: "PascalCase", fn: toPascal },
-    { label: "CONSTANT_CASE", fn: toConstant },
+    { label: 'camelCase', value: toCamelCase(input) },
+    { label: 'snake_case', value: toSnakeCase(input) },
+    { label: 'PascalCase', value: toPascalCase(input) },
+    { label: 'kebab-case', value: toKebabCase(input) },
+    { label: 'CONSTANT_CASE', value: toConstantCase(input) },
+    { label: 'dot.case', value: toDotCase(input) },
+    { label: 'Title Case', value: toTitleCase(input) },
+    { label: 'Sentence case', value: toSentenceCase(input) },
+    { label: 'UPPERCASE', value: input.toUpperCase() },
+    { label: 'lowercase', value: input.toLowerCase() },
   ];
+
   return (
-    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Text Case Converter</h1>
-        <p className="text-gray-400 mb-6">Convert text between different case formats instantly.</p>
-        <textarea className="w-full bg-gray-900 border border-gray-700 rounded p-3 text-sm font-mono mb-6 h-28" placeholder="Enter your text here..." value={input} onChange={e => setInput(e.target.value)} />
-        <div className="grid grid-cols-1 gap-3">
-          {cases.map(({ label, fn }) => (
-            <div key={label} className="bg-gray-900 border border-gray-700 rounded p-3 flex items-center justify-between">
-              <div>
-                <div className="text-xs text-gray-500 mb-1">{label}</div>
-                <div className="font-mono text-sm">{input ? fn(input) : <span className="text-gray-600">result</span>}</div>
-              </div>
-              <button onClick={() => navigator.clipboard.writeText(fn(input))} className="text-xs bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded ml-4">Copy</button>
-            </div>
-          ))}
-        </div>
+    <main style={{minHeight:'100vh',background:'#0f172a',color:'#e2e8f0',fontFamily:'monospace',padding:'2rem'}}>
+      <h1 style={{fontSize:'2rem',fontWeight:'bold',marginBottom:'0.5rem',color:'#38bdf8'}}>Text Case Converter</h1>
+      <p style={{color:'#94a3b8',marginBottom:'2rem'}}>Convert text between camelCase, snake_case, PascalCase, kebab-case and more.</p>
+      <textarea
+        value={input}
+        onChange={e => setInput(e.target.value)}
+        placeholder="Enter text to convert..."
+        style={{width:'100%',minHeight:'80px',background:'#1e293b',border:'1px solid #334155',borderRadius:'8px',padding:'0.75rem',color:'#e2e8f0',fontSize:'1rem',marginBottom:'1.5rem',boxSizing:'border-box'}}
+      />
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',gap:'1rem'}}>
+        {cases.map(c => (
+          <div key={c.label} style={{background:'#1e293b',border:'1px solid #334155',borderRadius:'8px',padding:'1rem'}}>
+            <div style={{fontSize:'0.75rem',color:'#64748b',marginBottom:'0.5rem'}}>{c.label}</div>
+            <div style={{color:'#f1f5f9',wordBreak:'break-all',marginBottom:'0.5rem'}}>{c.value || <span style={{color:'#475569'}}>—</span>}</div>
+            <button onClick={() => navigator.clipboard.writeText(c.value)} style={{background:'#0ea5e9',border:'none',borderRadius:'4px',padding:'0.25rem 0.75rem',color:'#fff',cursor:'pointer',fontSize:'0.75rem'}}>Copy</button>
+          </div>
+        ))}
       </div>
     </main>
   );

@@ -1,25 +1,35 @@
-"use client"
-import { useState } from "react"
+'''use client'''
+import { useState } from 'react';
+
 export default function HtmlEntityEncoder() {
-  const [input, setInput] = useState("<h1>Hello & World!</h1>")
-  const [mode, setMode] = useState("encode")
-  const encode = (s) => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;")
-  const decode = (s) => s.replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;/g,'"').replace(/&#39;/g,"'")
-  const output = mode === "encode" ? encode(input) : decode(input)
+  const [input, setInput] = useState('');
+  const [mode, setMode] = useState<'encode'|'decode'>('encode');
+
+  const encode = (s: string) => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  const decode = (s: string) => s.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&#(\d+);/g,(_,n)=>String.fromCharCode(parseInt(n))).replace(/&#x([0-9a-fA-F]+);/g,(_,h)=>String.fromCharCode(parseInt(h,16)));
+
+  const output = mode === 'encode' ? encode(input) : decode(input);
+
   return (
-    <div className="min-h-screen bg-gray-950 text-white p-8">
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">HTML Entity Encoder</h1>
-        <p className="text-gray-400 mb-8">Encode or decode HTML special characters</p>
-        <div className="flex gap-2 mb-4">
-          {["encode","decode"].map(m=><button key={m} onClick={()=>setMode(m)} className={`px-4 py-2 rounded capitalize ${mode===m?"bg-blue-600":"bg-gray-800"}`}>{m}</button>)}
+    <main style={{minHeight:'100vh',background:'#0f172a',color:'#e2e8f0',fontFamily:'monospace',padding:'2rem'}}>
+      <h1 style={{fontSize:'2rem',fontWeight:'bold',marginBottom:'0.5rem',color:'#38bdf8'}}>HTML Entity Encoder</h1>
+      <p style={{color:'#94a3b8',marginBottom:'2rem'}}>Encode and decode HTML entities in text.</p>
+      <div style={{display:'flex',gap:'1rem',marginBottom:'1.5rem'}}>
+        {(['encode','decode'] as const).map(m => (
+          <button key={m} onClick={() => setMode(m)} style={{background:mode===m?'#0ea5e9':'#1e293b',border:'1px solid #334155',borderRadius:'6px',padding:'0.5rem 1.5rem',color:mode===m?'#fff':'#94a3b8',cursor:'pointer',textTransform:'capitalize'}}>{m}</button>
+        ))}
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1.5rem'}}>
+        <div>
+          <label style={{display:'block',marginBottom:'0.5rem',color:'#94a3b8'}}>Input</label>
+          <textarea value={input} onChange={e => setInput(e.target.value)} placeholder="Enter text..." style={{width:'100%',minHeight:'200px',background:'#1e293b',border:'1px solid #334155',borderRadius:'8px',padding:'0.75rem',color:'#e2e8f0',fontSize:'0.9rem',boxSizing:'border-box'}} />
         </div>
-        <div className="space-y-4">
-          <div><label className="block text-sm text-gray-400 mb-1">Input</label><textarea className="w-full bg-gray-800 rounded p-3 h-32 font-mono text-sm" value={input} onChange={e=>setInput(e.target.value)}/></div>
-          <div><label className="block text-sm text-gray-400 mb-1">Output</label><textarea className="w-full bg-gray-900 rounded p-3 h-32 font-mono text-sm text-green-400" readOnly value={output}/></div>
-          <button onClick={()=>navigator.clipboard.writeText(output)} className="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded font-semibold">Copy Output</button>
+        <div>
+          <label style={{display:'block',marginBottom:'0.5rem',color:'#94a3b8'}}>Output</label>
+          <textarea readOnly value={output} style={{width:'100%',minHeight:'200px',background:'#0f172a',border:'1px solid #334155',borderRadius:'8px',padding:'0.75rem',color:'#4ade80',fontSize:'0.9rem',boxSizing:'border-box'}} />
+          <button onClick={() => navigator.clipboard.writeText(output)} style={{marginTop:'0.5rem',background:'#0ea5e9',border:'none',borderRadius:'6px',padding:'0.5rem 1.5rem',color:'#fff',cursor:'pointer'}}>Copy</button>
         </div>
       </div>
-    </div>
-  )
+    </main>
+  );
 }
