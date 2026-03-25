@@ -1,31 +1,30 @@
 "use client";
 import { useState } from "react";
-const UNITS = ["N·m", "kN·m", "N·cm", "kgf·m", "kgf·cm", "lbf·ft", "lbf·in", "ozf·in"];
-const TO_BASE: Record<string, number> = {"N·m": 1.0, "kN·m": 1000.0, "N·cm": 0.01, "kgf·m": 9.80665, "kgf·cm": 0.0980665, "lbf·ft": 1.3558179483, "lbf·in": 0.11298482933, "ozf·in": 0.0070615509};
-export default function Page() {
+
+const UNITS: string[] = ["N·m", "kN·m", "lbf·ft", "lbf·in", "kgf·m", "ozf·in"];
+const FACTORS: Record<string, number> = {"N·m": 1, "kN·m": 1000, "lbf·ft": 1.35582, "lbf·in": 0.112985, "kgf·m": 9.80665, "ozf·in": 0.00706155};
+
+export default function TorqueConverterPage() {
   const [val, setVal] = useState("");
   const [from, setFrom] = useState(UNITS[0]);
-  const convert = (to: string) => {
+  const [to, setTo] = useState(UNITS[1]);
+  function convert() {
     const n = parseFloat(val);
-    if (isNaN(n)) return "-";
-    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
-  };
+    if (isNaN(n)) return "";
+    return ((n * FACTORS[from]) / FACTORS[to]).toPrecision(6);
+  }
   return (
-    <main style={{maxWidth:600,margin:"40px auto",padding:"0 16px",fontFamily:"sans-serif",color:"#e2e8f0",background:"#0f172a",minHeight:"100vh"}}>
-      <h1 style={{fontSize:28,fontWeight:700,marginBottom:8}}>Torque Converter</h1>
-      <div style={{display:"flex",gap:8,marginBottom:24,flexWrap:"wrap"}}>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{flex:1,minWidth:120,padding:"8px 12px",borderRadius:6,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:16}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"8px 12px",borderRadius:6,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:16}}>
-          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
-        </select>
-      </div>
-      <div style={{display:"flex",flexDirection:"column",gap:8}}>
-        {UNITS.map(u=>(
-          <div key={u} style={{display:"flex",justifyContent:"space-between",padding:"10px 14px",background:"#1e293b",borderRadius:6,border:u===from?"1px solid #6366f1":"1px solid #334155"}}>
-            <span style={{color:"#94a3b8"}}>{u}</span>
-            <span style={{fontWeight:600}}>{convert(u)}</span>
-          </div>
-        ))}
+    <main style={{padding:"2rem",maxWidth:"480px",margin:"0 auto",fontFamily:"monospace"}}>
+      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Torque Converter</h1>
+      <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{width:"100%",padding:"0.5rem",marginBottom:"0.5rem",background:"#1a1a1a",color:"#fff",border:"1px solid #444",borderRadius:"4px"}} />
+      <select value={from} onChange={e=>setFrom(e.target.value)} style={{width:"100%",padding:"0.5rem",marginBottom:"0.5rem",background:"#1a1a1a",color:"#fff",border:"1px solid #444",borderRadius:"4px"}}>
+        {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
+      </select>
+      <select value={to} onChange={e=>setTo(e.target.value)} style={{width:"100%",padding:"0.5rem",marginBottom:"0.5rem",background:"#1a1a1a",color:"#fff",border:"1px solid #444",borderRadius:"4px"}}>
+        {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
+      </select>
+      <div style={{padding:"1rem",background:"#111",borderRadius:"4px",color:"#0f0"}}>
+        {val ? convert() + " " + to : "Enter a value"}
       </div>
     </main>
   );

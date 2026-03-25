@@ -1,32 +1,30 @@
 "use client";
 import { useState } from "react";
 
-const units = ["N/m", "mN/m", "dyn/cm", "lbf/ft", "lbf/in"];
-const toBase = [1, 0.001, 0.001, 14.5939, 175.127];
+const UNITS: string[] = ["N/m", "mN/m", "dyn/cm", "lbf/ft", "erg/cm²"];
+const FACTORS: Record<string, number> = {"N/m": 1, "mN/m": 0.001, "dyn/cm": 0.001, "lbf/ft": 14.5939, "erg/cm²": 0.001};
 
-export default function Page() {
+export default function SurfaceTensionConverterPage() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(0);
-  const results = units.map((u, i) => {
-    const base = parseFloat(val) * toBase[from];
-    return { unit: u, value: isNaN(base) ? "" : (base / toBase[i]).toPrecision(6) };
-  });
+  const [from, setFrom] = useState(UNITS[0]);
+  const [to, setTo] = useState(UNITS[1]);
+  function convert() {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    return ((n * FACTORS[from]) / FACTORS[to]).toPrecision(6);
+  }
   return (
-    <main style={{maxWidth:600,margin:"40px auto",padding:"0 16px",fontFamily:"sans-serif"}}>
-      <h1 style={{fontSize:28,fontWeight:700,marginBottom:8}}>Surface Tension Converter</h1>
-      <div style={{display:"flex",gap:8,marginBottom:24}}>
-        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{flex:1,padding:"10px 12px",borderRadius:6,border:"1px solid #ccc",fontSize:16}} />
-        <select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{padding:"10px 12px",borderRadius:6,border:"1px solid #ccc",fontSize:16}}>
-          {units.map((u,i)=><option key={i} value={i}>{u}</option>)}
-        </select>
-      </div>
-      <div style={{display:"grid",gap:8}}>
-        {results.map((r,i)=>(
-          <div key={i} style={{display:"flex",justifyContent:"space-between",padding:"12px 16px",background:"#f9f9f9",borderRadius:6}}>
-            <span style={{color:"#555"}}>{r.unit}</span>
-            <strong>{r.value || "—"}</strong>
-          </div>
-        ))}
+    <main style={{padding:"2rem",maxWidth:"480px",margin:"0 auto",fontFamily:"monospace"}}>
+      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Surface Tension Converter</h1>
+      <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{width:"100%",padding:"0.5rem",marginBottom:"0.5rem",background:"#1a1a1a",color:"#fff",border:"1px solid #444",borderRadius:"4px"}} />
+      <select value={from} onChange={e=>setFrom(e.target.value)} style={{width:"100%",padding:"0.5rem",marginBottom:"0.5rem",background:"#1a1a1a",color:"#fff",border:"1px solid #444",borderRadius:"4px"}}>
+        {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
+      </select>
+      <select value={to} onChange={e=>setTo(e.target.value)} style={{width:"100%",padding:"0.5rem",marginBottom:"0.5rem",background:"#1a1a1a",color:"#fff",border:"1px solid #444",borderRadius:"4px"}}>
+        {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
+      </select>
+      <div style={{padding:"1rem",background:"#111",borderRadius:"4px",color:"#0f0"}}>
+        {val ? convert() + " " + to : "Enter a value"}
       </div>
     </main>
   );
