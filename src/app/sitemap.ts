@@ -292,6 +292,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'rc-circuit-calculator',
     'readability-score',
     'reading-time-calculator',
+    'reading-time-estimator',
     'recipe-scaler',
     'regex-tester',
     'remove-duplicate-lines',
@@ -412,21 +413,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'z-index-manager',
     'zodiac-sign-calculator',
   ];
-
-  const toolUrls = tools.map((tool) => ({
-    url: `https://devtools-hub-green.vercel.app/tools/${tool}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: 0.7,
-  }));
-
+  const base_url = 'https://devtools-hub-green.vercel.app';
   return [
-    {
-      url: 'https://devtools-hub-green.vercel.app',
-      lastModified: new Date(),
-      changeFrequency: 'daily' as const,
-      priority: 1,
-    },
-    ...toolUrls,
+    { url: base_url, lastModified: new Date() },
+    ...tools.map(t => ({ url: `${base_url}/tools/${t}`, lastModified: new Date() }))
   ];
 }
