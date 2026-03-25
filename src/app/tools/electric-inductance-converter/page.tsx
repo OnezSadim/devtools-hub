@@ -1,55 +1,33 @@
 "use client";
 import { useState } from "react";
 
-const units = [
-  { label: "Henry (H)", value: "H" },
-  { label: "Millihenry (mH)", value: "mH" },
-  { label: "Microhenry (uH)", value: "uH" },
-  { label: "Nanohenry (nH)", value: "nH" },
-  { label: "Kilohenry (kH)", value: "kH" },
-  { label: "Abhenry", value: "abH" },
-  { label: "Stathenry", value: "statH" },
-];
-
-const toBase: Record<string, number> = {
-  "H": 1,
-  "mH": 0.001,
-  "uH": 1e-06,
-  "nH": 1e-09,
-  "kH": 1000.0,
-  "abH": 1e-09,
-  "statH": 898755000000.0,
-};
+const units = ["Henry (H)", "Millihenry (mH)", "Microhenry (uH)", "Nanohenry (nH)", "Kilohenry (kH)"];
+const toBase = [1, 0.001, 1e-06, 1e-09, 1000.0];
 
 export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(units[0].value);
-  const [to, setTo] = useState(units[1].value);
-  function convert() {
-    const n = parseFloat(val);
-    if (isNaN(n)) return "";
-    return ((n * toBase[from]) / toBase[to]).toPrecision(6);
-  }
-  const sel = "bg-gray-700 text-white rounded px-2 py-1 text-sm";
+  const [from, setFrom] = useState(0);
+  const num = parseFloat(val);
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-8">
-      <h1 className="text-3xl font-bold mb-2">Electric Inductance Converter</h1>
-      <p className="text-gray-400 mb-6">Convert between electric inductance units instantly.</p>
-      <div className="bg-gray-800 rounded-xl p-6 max-w-lg space-y-4">
-        <div className="flex gap-2 items-center">
-          <input value={val} onChange={e => setVal(e.target.value)} placeholder="Enter value" className="flex-1 bg-gray-700 rounded px-3 py-2 text-sm" />
-          <select value={from} onChange={e => setFrom(e.target.value)} className={sel}>
-            {units.map(u => <option key={u.value} value={u.value}>{u.label}</option>)}
-          </select>
-        </div>
-        <div className="text-center text-gray-400">=</div>
-        <div className="flex gap-2 items-center">
-          <div className="flex-1 bg-gray-700 rounded px-3 py-2 text-sm min-h-[36px]">{convert()}</div>
-          <select value={to} onChange={e => setTo(e.target.value)} className={sel}>
-            {units.map(u => <option key={u.value} value={u.value}>{u.label}</option>)}
-          </select>
-        </div>
-      </div>
-    </div>
+    <main style={{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"sans-serif",background:"#0f172a",minHeight:"100vh",color:"#f1f5f9"}}>
+      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Electric Inductance Converter</h1>
+      <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"0.5rem",marginBottom:"1rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px"}} />
+      <select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{width:"100%",padding:"0.5rem",marginBottom:"1.5rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px"}}>
+        {units.map((u,i)=><option key={i} value={i}>{u}</option>)}
+      </select>
+      {!isNaN(num) && val !== "" && (
+        <table style={{width:"100%",borderCollapse:"collapse"}}>
+          <thead><tr><th style={{textAlign:"left",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Unit</th><th style={{textAlign:"right",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Value</th></tr></thead>
+          <tbody>
+            {units.map((u,i)=>(
+              <tr key={i} style={{background:i===from?"#1e3a5f":"transparent"}}>
+                <td style={{padding:"0.5rem",borderBottom:"1px solid #1e293b"}}>{u}</td>
+                <td style={{padding:"0.5rem",textAlign:"right",borderBottom:"1px solid #1e293b"}}>{(num * toBase[from] / toBase[i]).toPrecision(6)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </main>
   );
 }
