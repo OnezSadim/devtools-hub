@@ -1,1 +1,71 @@
-'use client';import{useState}from 'react';export default function NumberBaseConverter(){const[input,setInput]=useState('');const[fromBase,setFromBase]=useState('10');const[results,setResults]=useState(null);const convert=()=>{try{const n=parseInt(input,parseInt(fromBase));if(isNaN(n)){setResults(null);return;}setResults({binary:n.toString(2),octal:n.toString(8),decimal:n.toString(10),hex:n.toString(16).toUpperCase()});}catch{setResults(null);}};return(<div style={{padding:'2rem',fontFamily:'monospace',background:'#0f172a',minHeight:'100vh',color:'#e2e8f0'}}><h1 style={{fontSize:'1.5rem',marginBottom:'1rem'}}>Number Base Converter</h1><div style={{display:'flex',gap:'1rem',marginBottom:'1rem',flexWrap:'wrap'}}><div style={{flex:1}}><label style={{display:'block',marginBottom:'0.25rem',color:'#94a3b8'}}>Input</label><input value={input} onChange={e=>setInput(e.target.value)} placeholder='Enter number' style={{width:'100%',padding:'0.75rem',background:'#1e293b',border:'1px solid #334155',borderRadius:'4px',color:'#e2e8f0',boxSizing:'border-box'}}/></div><div><label style={{display:'block',marginBottom:'0.25rem',color:'#94a3b8'}}>From Base</label><select value={fromBase} onChange={e=>setFromBase(e.target.value)} style={{padding:'0.75rem',background:'#1e293b',border:'1px solid #334155',borderRadius:'4px',color:'#e2e8f0'}}><option value='2'>Binary (2)</option><option value='8'>Octal (8)</option><option value='10'>Decimal (10)</option><option value='16'>Hex (16)</option></select></div></div><button onClick={convert} style={{padding:'0.75rem 1.5rem',background:'#6366f1',color:'#fff',border:'none',borderRadius:'4px',cursor:'pointer',marginBottom:'1rem'}}>Convert</button>{results&&<div style={{display:'grid',gap:'0.75rem'}}>{[['Binary','binary','#86efac'],['Octal','octal','#fde68a'],['Decimal','decimal','#a5f3fc'],['Hexadecimal','hex','#f9a8d4']].map(([label,key,color])=><div key={key} style={{padding:'1rem',background:'#1e293b',borderRadius:'4px',display:'flex',justifyContent:'space-between',alignItems:'center'}}><span style={{color:'#94a3b8'}}>{label}</span><span style={{color,fontSize:'1.1rem',fontWeight:'bold'}}>{results[key]}</span></div>)}</div>}</div>)}
+'''use client'''
+import { useState } from 'react'
+
+export default function Page() {
+  const [number, setNumber] = useState('255')
+  const [fromBase, setFrombase] = useState('10')
+  const [toBase, setTobase] = useState('16')
+
+  const convert = () => {
+    try {
+
+      const fromB = parseInt(fromBase, 10)
+      const toB = parseInt(toBase, 10)
+      if (fromB < 2 || fromB > 36 || toB < 2 || toB > 36) return
+      const decimal = parseInt(number, fromB)
+      if (isNaN(decimal)) return
+      setToBase(toB.toString())
+      // show result inline
+      alert('Result: ' + decimal.toString(toB).toUpperCase())
+
+    } catch (e) {}
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Number Base Converter</h1>
+        <p className="text-gray-400 mb-8">Convert numbers between any base from 2 to 36</p>
+        <div className="space-y-4">
+
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-1">Number</label>
+            <textarea
+              value={number}
+              onChange={e => setNumber(e.target.value)}
+              className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white font-mono text-sm focus:outline-none focus:border-blue-500"
+              rows={2}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-1">From Base</label>
+            <textarea
+              value={fromBase}
+              onChange={e => setFrombase(e.target.value)}
+              className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white font-mono text-sm focus:outline-none focus:border-blue-500"
+              rows={2}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-1">To Base</label>
+            <textarea
+              value={toBase}
+              onChange={e => setTobase(e.target.value)}
+              className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white font-mono text-sm focus:outline-none focus:border-blue-500"
+              rows={2}
+            />
+          </div>
+
+          <button
+            onClick={convert}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+          >
+            Convert
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}

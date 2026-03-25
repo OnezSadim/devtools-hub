@@ -1,1 +1,59 @@
-'use client';import{useState}from 'react';export default function RomanNumeralConverter(){const[num,setNum]=useState('');const[roman,setRoman]=useState('');const[mode,setMode]=useState('toRoman');const toRoman=(n)=>{const vals=[1000,900,500,400,100,90,50,40,10,9,5,4,1];const syms=['M','CM','D','CD','C','XC','L','XL','X','IX','V','IV','I'];let r='';vals.forEach((v,i)=>{while(n>=v){r+=syms[i];n-=v;}});return r;};const fromRoman=(s)=>{const map={I:1,V:5,X:10,L:50,C:100,D:500,M:1000};let r=0;for(let i=0;i<s.length;i++){const c=map[s[i]],n=map[s[i+1]];r+=n&&c<n?-c:c;}return r;};const convert=()=>{if(mode==='toRoman'){const n=parseInt(num);if(n>=1&&n<=3999)setRoman(toRoman(n));else setRoman('Invalid (1-3999)');}else{setRoman(String(fromRoman(num.toUpperCase())));}};return(<div style={{padding:'2rem',fontFamily:'monospace',background:'#0f172a',minHeight:'100vh',color:'#e2e8f0'}}><h1 style={{fontSize:'1.5rem',marginBottom:'1rem'}}>Roman Numeral Converter</h1><div style={{marginBottom:'1rem'}}><button onClick={()=>setMode('toRoman')} style={{marginRight:'0.5rem',padding:'0.5rem 1rem',background:mode==='toRoman'?'#6366f1':'#1e293b',color:'#fff',border:'none',borderRadius:'4px',cursor:'pointer'}}>Number → Roman</button><button onClick={()=>setMode('fromRoman')} style={{padding:'0.5rem 1rem',background:mode==='fromRoman'?'#6366f1':'#1e293b',color:'#fff',border:'none',borderRadius:'4px',cursor:'pointer'}}>Roman → Number</button></div><input value={num} onChange={e=>setNum(e.target.value)} placeholder={mode==='toRoman'?'Enter number (1-3999)':'Enter Roman numeral'} style={{width:'100%',padding:'0.75rem',background:'#1e293b',border:'1px solid #334155',borderRadius:'4px',color:'#e2e8f0',marginBottom:'1rem',boxSizing:'border-box'}}/><button onClick={convert} style={{padding:'0.75rem 1.5rem',background:'#6366f1',color:'#fff',border:'none',borderRadius:'4px',cursor:'pointer',marginBottom:'1rem'}}>Convert</button>{roman&&<div style={{padding:'1rem',background:'#1e293b',borderRadius:'4px',fontSize:'1.5rem',textAlign:'center'}}>{roman}</div>}</div>)}
+'''use client'''
+import { useState } from 'react'
+
+export default function Page() {
+  const [arabic, setArabic] = useState('2024')
+  const [roman, setRoman] = useState('MMXXIV')
+
+  const convert = () => {
+    try {
+
+      const num = parseInt(arabic, 10)
+      if (isNaN(num) || num < 1 || num > 3999) { setRoman('Invalid (1-3999)'); return }
+      const vals = [1000,900,500,400,100,90,50,40,10,9,5,4,1]
+      const syms = ['M','CM','D','CD','C','XC','L','XL','X','IX','V','IV','I']
+      let result = '', n = num
+      for (let i = 0; i < vals.length; i++) { while (n >= vals[i]) { result += syms[i]; n -= vals[i] } }
+      setRoman(result)
+
+    } catch (e) {}
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Roman Numeral Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between Arabic numbers and Roman numerals</p>
+        <div className="space-y-4">
+
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-1">Arabic Number</label>
+            <textarea
+              value={arabic}
+              onChange={e => setArabic(e.target.value)}
+              className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white font-mono text-sm focus:outline-none focus:border-blue-500"
+              rows={2}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-1">Roman Numeral</label>
+            <textarea
+              value={roman}
+              onChange={e => setRoman(e.target.value)}
+              className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white font-mono text-sm focus:outline-none focus:border-blue-500"
+              rows={2}
+            />
+          </div>
+
+          <button
+            onClick={convert}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+          >
+            Convert
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
