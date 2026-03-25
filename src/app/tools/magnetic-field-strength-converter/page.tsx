@@ -1,13 +1,1 @@
-"use client";
-import { useState } from "react";
-export default function Page() {
-  const [v, setV] = useState("");
-  return (
-    <main style={{padding:"2rem",fontFamily:"sans-serif",background:"#0f172a",minHeight:"100vh",color:"#f1f5f9"}}>
-      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Magnetic Field Strength Converter</h1>
-      <p style={{color:"#94a3b8",marginBottom:"1.5rem"}}>Convert between magnetic field strength units like ampere per meter, oersted, and gilbert per meter.</p>
-      <input value={v} onChange={e=>setV(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",width:"200px",marginRight:"1rem"}} />
-      <p style={{marginTop:"1rem",color:"#94a3b8"}}>Full converter coming soon.</p>
-    </main>
-  );
-}
+"use client";import{useState}from"react";const units=[{"label":"A/m","value":1},{"label":"Oersted","value":79.5775},{"label":"kA/m","value":1000.0},{"label":"mA/m","value":0.001},{"label":"A/cm","value":100}];export default function Page(){const[v,setV]=useState("");const[f,setF]=useState(units[0].value);const[t,setT]=useState(units[1].value);const r=v===""?"":((parseFloat(v)*f)/t).toFixed(8).replace(/\.?0+$/,"");return(<div style={{padding:"2rem",fontFamily:"sans-serif",maxWidth:"600px",margin:"0 auto"}}><h1>Magnetic Field Strength Converter</h1><p>Convert between Ampere per meter, Oersted, and other magnetic field strength units.</p><input type="number" value={v} onChange={e=>setV(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"0.5rem",marginBottom:"1rem"}}/><div style={{display:"flex",gap:"1rem",marginBottom:"1rem"}}><select value={f} onChange={e=>setF(parseFloat(e.target.value))} style={{flex:1,padding:"0.5rem"}}>{units.map(u=>(<option key={u.label} value={u.value}>{u.label}</option>))}</select><span style={{alignSelf:"center"}}>→</span><select value={t} onChange={e=>setT(parseFloat(e.target.value))} style={{flex:1,padding:"0.5rem"}}>{units.map(u=>(<option key={u.label} value={u.value}>{u.label}</option>))}</select></div>{r!==""&&<div style={{padding:"1rem",background:"#f0f0f0",borderRadius:"8px"}}>Result: <strong>{r} {units.find(u=>u.value===t)?.label}</strong></div>}</div>);}
