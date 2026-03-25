@@ -1,10 +1,35 @@
 "use client";
 import { useState } from "react";
+
+const UNITS: [string, string, number][] = [['SI', 'SI (dimensionless)', 1.0], ['CGS', 'CGS (dimensionless)', 1.0], ['mSI', 'milli-SI', 0.001]];
+
 export default function Page() {
-  const units = [('Dimensionless', 1), ('SI (unitless)', 1), ('CGS esu', 0.07957753876221914), ('Per 4π', 0.07957753876221914)];
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(units[0][0]);
-  const base = units.find(u => u[0] === from)?.[1] || 1;
-  const input = parseFloat(val) || 0;
-  return (<div style={{padding:"2rem",fontFamily:"monospace",background:"#0a0a0a",minHeight:"100vh",color:"#e5e5e5"}}><h1 style={{color:"#a78bfa",marginBottom:"0.5rem"}}>Electric Susceptibility Converter</h1><p style={{color:"#888",marginBottom:"1.5rem"}}>Convert between electric susceptibility units (dimensionless).</p><div style={{display:"flex",gap:"1rem",marginBottom:"1.5rem",flexWrap:"wrap"}}><input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",background:"#1a1a1a",border:"1px solid #333",color:"#e5e5e5",borderRadius:"4px",flex:1,minWidth:"150px"}}/><select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1a1a1a",border:"1px solid #333",color:"#e5e5e5",borderRadius:"4px"}}>{units.map(u=><option key={u[0]} value={u[0]}>{u[0]}</option>)}</select></div><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><th style={{padding:"8px",border:"1px solid #333",textAlign:"left",background:"#1a1a1a"}}>Unit</th><th style={{padding:"8px",border:"1px solid #333",textAlign:"left",background:"#1a1a1a"}}>Result</th></tr></thead><tbody>{units.map(u=><tr key={u[0]}><td style={{padding:"8px",border:"1px solid #333"}}>{u[0]}</td><td style={{padding:"8px",border:"1px solid #333",color:"#a78bfa"}}>{val===''?'—':((input/base)*u[1]).toExponential(6)}</td></tr>)}</tbody></table></div>);
+  const [from, setFrom] = useState(UNITS[0][0]);
+  const [to, setTo] = useState(UNITS[1][0]);
+  const convert = () => {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    const f = UNITS.find(u => u[0] === from);
+    const t = UNITS.find(u => u[0] === to);
+    if (!f || !t) return "";
+    return ((n * f[2]) / t[2]).toPrecision(6);
+  };
+  return (
+    <div style={{maxWidth:600,margin:"40px auto",padding:"0 16px",fontFamily:"sans-serif",color:"#e2e8f0",background:"#0f172a",minHeight:"100vh"}}>
+      <h1 style={{fontSize:28,fontWeight:700,marginBottom:8}}>Electric Susceptibility Converter</h1>
+      <p style={{color:"#94a3b8",marginBottom:24}}>Convert electric susceptibility dimensionless values across SI and CGS systems.</p>
+      <div style={{display:"flex",gap:12,flexWrap:"wrap",marginBottom:16}}>
+        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{flex:1,minWidth:120,padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:16}} />
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,minWidth:140,padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:15}}>
+          {UNITS.map(u=><option key={u[0]} value={u[0]}>{u[1]}</option>)}
+        </select>
+        <span style={{padding:"10px 4px",color:"#94a3b8",fontSize:18}}>to</span>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,minWidth:140,padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:15}}>
+          {UNITS.map(u=><option key={u[0]} value={u[0]}>{u[1]}</option>)}
+        </select>
+      </div>
+      {val && <div style={{padding:"16px 20px",background:"#1e293b",borderRadius:10,fontSize:20,fontWeight:600}}>{val} {UNITS.find(u=>u[0]===from)?.[1]} = {convert()} {UNITS.find(u=>u[0]===to)?.[1]}</div>}
+    </div>
+  );
 }

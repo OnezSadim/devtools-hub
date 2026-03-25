@@ -1,3 +1,2 @@
-import type { Metadata } from "next";
-export const metadata: Metadata = { title: "Electric Flux Converter | DevTools Hub", description: "Convert between electric flux units: V·m, kV·m, MV·m, N·m2/C." };
-export default function Layout({ children }: { children: React.ReactNode }) { return <>{children}</>; }
+export const metadata = { title: "Electric Flux Converter | DevTools Hub", description: "Convert between electric flux units: volt-meter, newton-meter squared per coulomb, and more." };
+export default function L({ children }: { children: React.ReactNode }) { return <>{children}</>; }

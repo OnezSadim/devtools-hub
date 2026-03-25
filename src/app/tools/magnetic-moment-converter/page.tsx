@@ -1,1 +1,35 @@
-"use client";import{useState}from"react";const U=[["Ampere square meter","A·m²","1"],["Joule per tesla","J/T","1"],["Milliampere square meter","mA·m²","0.001"],["Bohr magneton","μB","9.2740100783e-24"],["Nuclear magneton","μN","5.0507837461e-27"],["Emu (CGS)","emu","0.001"]];export default function P(){const[v,setV]=useState("");const[f,setF]=useState(0);const[t,setT]=useState(1);const c=(val,fi,ti)=>{const n=parseFloat(val);if(isNaN(n)){setV(val);return;}const base=n/parseFloat(U[fi][2]);setV((base*parseFloat(U[ti][2])).toPrecision(6));};return(<main style={{padding:"2rem",fontFamily:"sans-serif",maxWidth:"600px",margin:"0 auto"}}><h1>Magnetic Moment Converter</h1><p>Convert between magnetic moment units.</p><div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginTop:"1rem"}}><select value={f} onChange={e=>{setF(+e.target.value);c(v,+e.target.value,t);}}>{U.map((u,i)=><option key={i} value={i}>{u[0]} ({u[1]})</option>)}</select><input type="number" value={v} onChange={e=>{setV(e.target.value);c(e.target.value,f,t);}} style={{width:"140px",padding:"0.4rem"}}/><span style={{alignSelf:"center"}}>→</span><select value={t} onChange={e=>{setT(+e.target.value);c(v,f,+e.target.value);}}>{U.map((u,i)=><option key={i} value={i}>{u[0]} ({u[1]})</option>)}</select></div></main>);}
+"use client";
+import { useState } from "react";
+
+const UNITS: [string, string, number][] = [['J/T', 'Joule/Tesla (J/T)', 1.0], ['erg/G', 'Erg/Gauss', 0.001], ['muB', 'Bohr Magneton', 9.2740100783e-24], ['muN', 'Nuclear Magneton', 5.0507837461e-27]];
+
+export default function Page() {
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState(UNITS[0][0]);
+  const [to, setTo] = useState(UNITS[1][0]);
+  const convert = () => {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    const f = UNITS.find(u => u[0] === from);
+    const t = UNITS.find(u => u[0] === to);
+    if (!f || !t) return "";
+    return ((n * f[2]) / t[2]).toPrecision(6);
+  };
+  return (
+    <div style={{maxWidth:600,margin:"40px auto",padding:"0 16px",fontFamily:"sans-serif",color:"#e2e8f0",background:"#0f172a",minHeight:"100vh"}}>
+      <h1 style={{fontSize:28,fontWeight:700,marginBottom:8}}>Magnetic Moment Converter</h1>
+      <p style={{color:"#94a3b8",marginBottom:24}}>Convert magnetic moment between joule per tesla, erg per gauss, Bohr magneton, and nuclear magneton.</p>
+      <div style={{display:"flex",gap:12,flexWrap:"wrap",marginBottom:16}}>
+        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{flex:1,minWidth:120,padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:16}} />
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,minWidth:140,padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:15}}>
+          {UNITS.map(u=><option key={u[0]} value={u[0]}>{u[1]}</option>)}
+        </select>
+        <span style={{padding:"10px 4px",color:"#94a3b8",fontSize:18}}>to</span>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,minWidth:140,padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:15}}>
+          {UNITS.map(u=><option key={u[0]} value={u[0]}>{u[1]}</option>)}
+        </select>
+      </div>
+      {val && <div style={{padding:"16px 20px",background:"#1e293b",borderRadius:10,fontSize:20,fontWeight:600}}>{val} {UNITS.find(u=>u[0]===from)?.[1]} = {convert()} {UNITS.find(u=>u[0]===to)?.[1]}</div>}
+    </div>
+  );
+}
