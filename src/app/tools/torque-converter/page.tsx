@@ -1,28 +1,44 @@
 "use client";
 import { useState } from "react";
-const UNITS = [{"key": "Nm", "label": "N\u00b7m", "factor": 1}, {"key": "kNm", "label": "kN\u00b7m", "factor": 1000}, {"key": "ftlb", "label": "ft\u00b7lb", "factor": 1.35582}, {"key": "inlb", "label": "in\u00b7lb", "factor": 0.112985}, {"key": "kgfm", "label": "kgf\u00b7m", "factor": 9.80665}, {"key": "kgfcm", "label": "kgf\u00b7cm", "factor": 0.0980665}, {"key": "ozin", "label": "oz\u00b7in", "factor": 0.00706155}];
+
+const units: Record<string, number> = {
+  "Newton-meter (N*m)": 1,
+  "Newton-centimeter (N*cm)": 0.01,
+  "Kilonewton-meter (kN*m)": 1000,
+  "Millinewton-meter (mN*m)": 0.001,
+  "Pound-foot (lbf*ft)": 1.35582,
+  "Pound-inch (lbf*in)": 0.112985,
+  "Ounce-foot (ozf*ft)": 0.0847866,
+  "Ounce-inch (ozf*in)": 0.00706155,
+  "Dyne-centimeter (dyn*cm)": 1e-07,
+  "Kilogram-force meter (kgf*m)": 9.80665,
+};
+
 export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(UNITS[0].key);
-  const [to, setTo] = useState(UNITS[1].key);
-  const fromU = UNITS.find(u => u.key === from);
-  const toU = UNITS.find(u => u.key === to);
-  const result = fromU && toU && val !== "" ? ((parseFloat(val) * fromU.factor) / toU.factor).toPrecision(6) : "";
+  const [from, setFrom] = useState("Newton-meter (N*m)");
+  const [to, setTo] = useState("Newton-centimeter (N*cm)");
+  const result = val !== "" && !isNaN(Number(val))
+    ? (Number(val) * units[from] / units[to]).toPrecision(6)
+    : "";
   return (
-    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",padding:"2rem",fontFamily:"monospace"}}>
-      <h1 style={{fontSize:"1.5rem",fontWeight:700,marginBottom:".5rem"}}>Torque Converter</h1>
-      <p style={{color:"#94a3b8",marginBottom:"1.5rem"}}>Convert between torque units like N·m, ft·lb, in·lb, kgf·m.</p>
-      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1rem"}}>
-        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:".5rem",background:"#1e293b",border:"1px solid #334155",color:"#f1f5f9",borderRadius:"6px",width:"140px"}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:".5rem",background:"#1e293b",border:"1px solid #334155",color:"#f1f5f9",borderRadius:"6px"}}>
-          {UNITS.map(u=><option key={u.key} value={u.key}>{u.label}</option>)}
+    <main style={{padding:"2rem",maxWidth:"480px",margin:"0 auto",fontFamily:"sans-serif"}}>
+      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Torque Converter</h1>
+      <input type="number" value={val} onChange={e=>setVal(e.target.value)}
+        placeholder="Enter value"
+        style={{width:"100%",padding:"0.5rem",marginBottom:"0.75rem",fontSize:"1rem",boxSizing:"border-box"}} />
+      <div style={{display:"flex",gap:"0.5rem",marginBottom:"0.75rem"}}>
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:"0.5rem"}}>
+          {Object.keys(units).map(u=><option key={u} value={u}>{u}</option>)}
         </select>
-        <span style={{lineHeight:"2rem"}}>to</span>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:".5rem",background:"#1e293b",border:"1px solid #334155",color:"#f1f5f9",borderRadius:"6px"}}>
-          {UNITS.map(u=><option key={u.key} value={u.key}>{u.label}</option>)}
+        <span style={{alignSelf:"center"}}>to</span>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:"0.5rem"}}>
+          {Object.keys(units).map(u=><option key={u} value={u}>{u}</option>)}
         </select>
       </div>
-      {result !== "" && <div style={{fontSize:"1.25rem",background:"#1e293b",padding:"1rem",borderRadius:"8px",border:"1px solid #22d3ee"}}>{val} {fromU?.label} = <strong>{result}</strong> {toU?.label}</div>}
+      {result !== "" && (
+        <p style={{fontSize:"1.25rem",fontWeight:"bold"}}>{val} {from} = {result} {to}</p>
+      )}
     </main>
   );
 }

@@ -1,63 +1,43 @@
 "use client";
 import { useState } from "react";
 
-const units: { name: string; factor: number }[] = [
-  { name: "kg·m²", factor: 1.0 },
-  { name: "kg·cm²", factor: 0.0001 },
-  { name: "kg·mm²", factor: 1e-06 },
-  { name: "g·cm²", factor: 1e-07 },
-  { name: "g·mm²", factor: 1e-09 },
-  { name: "lb·ft²", factor: 0.04214011 },
-  { name: "lb·in²", factor: 0.00029264 },
-  { name: "oz·in²", factor: 1.829e-05 },
-  { name: "slug·ft²", factor: 1.35581795 }
-];
-
-function toBase(val: number, unit: string): number {
-  const u = units.find(x => x.name === unit);
-  return u ? val * u.factor : val;
-}
-
-function fromBase(val: number, unit: string): number {
-  const u = units.find(x => x.name === unit);
-  return u ? val / u.factor : val;
-}
+const units: Record<string, number> = {
+  "Kilogram sq meter (kg*m2)": 1,
+  "Kilogram sq cm (kg*cm2)": 0.0001,
+  "Kilogram sq mm (kg*mm2)": 1e-06,
+  "Gram sq cm (g*cm2)": 1e-07,
+  "Gram sq mm (g*mm2)": 1e-09,
+  "Pound sq foot (lb*ft2)": 0.0421401,
+  "Pound sq inch (lb*in2)": 0.00029264,
+  "Ounce sq inch (oz*in2)": 1.829e-05,
+  "Slug sq foot (slug*ft2)": 1.35582,
+};
 
 export default function Page() {
-  const [value, setValue] = useState("");
-  const [from, setFrom] = useState(units[0].name);
-  const [to, setTo] = useState(units[1].name);
-
-  const result = value !== "" ? fromBase(toBase(parseFloat(value), from), to) : null;
-
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState("Kilogram sq meter (kg*m2)");
+  const [to, setTo] = useState("Kilogram sq cm (kg*cm2)");
+  const result = val !== "" && !isNaN(Number(val))
+    ? (Number(val) * units[from] / units[to]).toPrecision(6)
+    : "";
   return (
-    <main className="min-h-screen bg-gray-950 text-gray-100 flex flex-col items-center justify-center p-8">
-      <h1 className="text-3xl font-bold mb-2">Moment of Inertia Converter</h1>
-      <p className="text-gray-400 mb-8">Convert between moment of inertia units</p>
-      <div className="bg-gray-900 rounded-xl p-6 w-full max-w-md space-y-4">
-        <input
-          type="number"
-          className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white"
-          placeholder="Enter value"
-          value={value}
-          onChange={e => setValue(e.target.value)}
-        />
-        <div className="flex gap-4">
-          <select className="flex-1 bg-gray-800 rounded-lg px-3 py-2" value={from} onChange={e => setFrom(e.target.value)}>
-            {units.map(u => <option key={u.name} value={u.name}>{u.name}</option>)}
-          </select>
-          <span className="self-center text-gray-400">→</span>
-          <select className="flex-1 bg-gray-800 rounded-lg px-3 py-2" value={to} onChange={e => setTo(e.target.value)}>
-            {units.map(u => <option key={u.name} value={u.name}>{u.name}</option>)}
-          </select>
-        </div>
-        {result !== null && (
-          <div className="bg-gray-800 rounded-lg px-4 py-3 text-center">
-            <span className="text-2xl font-bold text-blue-400">{isFinite(result) ? result.toPrecision(6) : "∞"}</span>
-            <span className="text-gray-400 ml-2">{to}</span>
-          </div>
-        )}
+    <main style={{padding:"2rem",maxWidth:"480px",margin:"0 auto",fontFamily:"sans-serif"}}>
+      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Moment of Inertia Converter</h1>
+      <input type="number" value={val} onChange={e=>setVal(e.target.value)}
+        placeholder="Enter value"
+        style={{width:"100%",padding:"0.5rem",marginBottom:"0.75rem",fontSize:"1rem",boxSizing:"border-box"}} />
+      <div style={{display:"flex",gap:"0.5rem",marginBottom:"0.75rem"}}>
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:"0.5rem"}}>
+          {Object.keys(units).map(u=><option key={u} value={u}>{u}</option>)}
+        </select>
+        <span style={{alignSelf:"center"}}>to</span>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:"0.5rem"}}>
+          {Object.keys(units).map(u=><option key={u} value={u}>{u}</option>)}
+        </select>
       </div>
+      {result !== "" && (
+        <p style={{fontSize:"1.25rem",fontWeight:"bold"}}>{val} {from} = {result} {to}</p>
+      )}
     </main>
   );
 }
