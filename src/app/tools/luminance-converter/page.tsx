@@ -1,94 +1,73 @@
 "use client";
 import { useState } from "react";
-
-const conversionFactors: Record<string, number> = {
-  'candela/m²': 1.0,
-  'nit': 1.0,
-  'stilb': 10000.0,
-  'lambert': 3183.0988618379065,
-  'foot-lambert': 3.4262590996354,
-  'candela/cm²': 10000.0,
-  'candela/ft²': 10.7639104167097,
-  'millilambert': 3.183098861837907,
-  'apostilb': 0.3183098861837907,
-  'skot': 0.0003183098861837907,
-};
-
-export default function LuminanceConverterPage() {
-  const [inputValue, setInputValue] = useState("");
-  const [fromUnit, setFromUnit] = useState("candela/m²");
-  const [toUnit, setToUnit] = useState("nit");
-
-  const convert = () => {
-    const val = parseFloat(inputValue);
-    if (isNaN(val)) return "";
-    const base = val * conversionFactors[fromUnit];
-    const result = base / conversionFactors[toUnit];
-    return result.toPrecision(8).replace(/\.?0+$/, "");
-  };
-
+export default function Page() {
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState("Candela/sq meter (cd/m²)");
+  const [to, setTo] = useState("Nit (nt)");
+  function convert() {
+    const v = parseFloat(val);
+    if (isNaN(v)) return "Invalid input";
+    let base = 0;
+    switch(from) {
+      case "Candela/sq meter (cd/m²)": base = v * 1; break;
+      case "Nit (nt)": base = v * 1; break;
+      case "Stilb (sb)": base = v * 10000; break;
+      case "Apostilb (asb)": base = v * 0.31830988654751274; break;
+      case "Footlambert (fL)": base = v * 3.42626; break;
+      case "Lambert (L)": base = v * 3183.098861; break;
+      case "Millilambert (mL)": base = v * 3.183098861; break;
+      case "Candela/sq cm (cd/cm²)": base = v * 10000; break;
+      case "Candela/sq foot (cd/ft²)": base = v * 10.7639; break;
+      default: base = v;
+    }
+    let result = 0;
+    switch(to) {
+      case "Candela/sq meter (cd/m²)": result = base / 1; break;
+      case "Nit (nt)": result = base / 1; break;
+      case "Stilb (sb)": result = base / 10000; break;
+      case "Apostilb (asb)": result = base / 0.31830988654751274; break;
+      case "Footlambert (fL)": result = base / 3.42626; break;
+      case "Lambert (L)": result = base / 3183.098861; break;
+      case "Millilambert (mL)": result = base / 3.183098861; break;
+      case "Candela/sq cm (cd/cm²)": result = base / 10000; break;
+      case "Candela/sq foot (cd/ft²)": result = base / 10.7639; break;
+      default: result = base;
+    }
+    return result.toPrecision(8);
+  }
   return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
-      <div className="max-w-xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Luminance Converter</h1>
-        <p className="text-gray-400 mb-8">Convert between luminance units: candela per square meter, nit, stilb, lambert, foot-lambert, and more.</p>
-        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">Value</label>
-            <input
-              type="number"
-              value={inputValue}
-              onChange={e => setInputValue(e.target.value)}
-              placeholder="Enter value"
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500"
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">From</label>
-              <select
-                value={fromUnit}
-                onChange={e => setFromUnit(e.target.value)}
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500"
-              >
-          <option value="candela/m²">candela/m²</option>
-          <option value="nit">nit</option>
-          <option value="stilb">stilb</option>
-          <option value="lambert">lambert</option>
-          <option value="foot-lambert">foot-lambert</option>
-          <option value="candela/cm²">candela/cm²</option>
-          <option value="candela/ft²">candela/ft²</option>
-          <option value="millilambert">millilambert</option>
-          <option value="apostilb">apostilb</option>
-          <option value="skot">skot</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">To</label>
-              <select
-                value={toUnit}
-                onChange={e => setToUnit(e.target.value)}
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500"
-              >
-          <option value="candela/m²">candela/m²</option>
-          <option value="nit">nit</option>
-          <option value="stilb">stilb</option>
-          <option value="lambert">lambert</option>
-          <option value="foot-lambert">foot-lambert</option>
-          <option value="candela/cm²">candela/cm²</option>
-          <option value="candela/ft²">candela/ft²</option>
-          <option value="millilambert">millilambert</option>
-          <option value="apostilb">apostilb</option>
-          <option value="skot">skot</option>
-              </select>
-            </div>
-          </div>
-          {inputValue && (
-            <div className="bg-blue-900/30 border border-blue-700 rounded-lg px-4 py-3">
-              <span className="text-2xl font-mono font-bold text-blue-300">{convert()}</span>
-              <span className="text-gray-400 ml-2">{toUnit}</span>
-            </div>
-          )}
+    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",alignItems:"center",justifyContent:"center"}}>
+      <div style={{background:"#1e293b",borderRadius:12,padding:32,width:"100%",maxWidth:480}}>
+        <h1 style={{fontSize:24,fontWeight:700,marginBottom:8}}>Luminance Converter</h1>
+        <p style={{color:"#94a3b8",marginBottom:24,fontSize:14}}>Convert between units of luminance (brightness of a surface).</p>
+        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",fontSize:16,marginBottom:12,boxSizing:"border-box"}} />
+        <div style={{display:"flex",gap:8,marginBottom:12}}>
+          <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",fontSize:14}}>
+          <option value="Candela/sq meter (cd/m²)">Candela/sq meter (cd/m²)</option>
+          <option value="Nit (nt)">Nit (nt)</option>
+          <option value="Stilb (sb)">Stilb (sb)</option>
+          <option value="Apostilb (asb)">Apostilb (asb)</option>
+          <option value="Footlambert (fL)">Footlambert (fL)</option>
+          <option value="Lambert (L)">Lambert (L)</option>
+          <option value="Millilambert (mL)">Millilambert (mL)</option>
+          <option value="Candela/sq cm (cd/cm²)">Candela/sq cm (cd/cm²)</option>
+          <option value="Candela/sq foot (cd/ft²)">Candela/sq foot (cd/ft²)</option>
+          </select>
+          <span style={{alignSelf:"center",color:"#94a3b8"}}>→</span>
+          <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",fontSize:14}}>
+          <option value="Candela/sq meter (cd/m²)">Candela/sq meter (cd/m²)</option>
+          <option value="Nit (nt)">Nit (nt)</option>
+          <option value="Stilb (sb)">Stilb (sb)</option>
+          <option value="Apostilb (asb)">Apostilb (asb)</option>
+          <option value="Footlambert (fL)">Footlambert (fL)</option>
+          <option value="Lambert (L)">Lambert (L)</option>
+          <option value="Millilambert (mL)">Millilambert (mL)</option>
+          <option value="Candela/sq cm (cd/cm²)">Candela/sq cm (cd/cm²)</option>
+          <option value="Candela/sq foot (cd/ft²)">Candela/sq foot (cd/ft²)</option>
+          </select>
+        </div>
+        <div style={{background:"#0f172a",borderRadius:8,padding:"14px 16px",fontSize:18,fontWeight:600,color:"#38bdf8",minHeight:50}}>
+          {val ? convert() + " " + to : <span style={{color:"#475569"}}>Result appears here</span>}
         </div>
       </div>
     </main>
