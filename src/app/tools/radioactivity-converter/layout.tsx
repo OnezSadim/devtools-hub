@@ -1,0 +1,2 @@
+export const metadata = { title: "Radioactivity Converter | DevTools Hub", description: "Convert between radioactivity units like becquerel, curie, and rutherford." };
+export default function Layout({ children }: { children: React.ReactNode }) { return <>{children}</> }

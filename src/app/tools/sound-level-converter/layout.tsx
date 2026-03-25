@@ -1,0 +1,2 @@
+export const metadata = { title: "Sound Level Converter | DevTools Hub", description: "Convert between sound level and pressure units for acoustics." };
+export default function Layout({ children }: { children: React.ReactNode }) { return <>{children}</> }

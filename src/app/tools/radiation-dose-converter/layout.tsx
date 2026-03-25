@@ -1,0 +1,2 @@
+export const metadata = { title: "Radiation Dose Converter | DevTools Hub", description: "Convert between absorbed radiation dose units like gray and rad." };
+export default function Layout({ children }: { children: React.ReactNode }) { return <>{children}</> }

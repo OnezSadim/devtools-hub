@@ -1,0 +1,2 @@
+export const metadata = { title: "Radiation Exposure Converter | DevTools Hub", description: "Convert between radiation exposure units like roentgen and coulomb/kg." };
+export default function Layout({ children }: { children: React.ReactNode }) { return <>{children}</> }

@@ -1,60 +1,67 @@
-'use client';
-import { useState } from 'react';
+"use client";
+import { useState } from "react";
 
-const units = [
-  { label: "Bits", factor: 1 },
-  { label: "Bytes", factor: 8 },
-  { label: "Kilobytes (KB)", factor: 8000 },
-  { label: "Megabytes (MB)", factor: 8000000 },
-  { label: "Gigabytes (GB)", factor: 8000000000 },
-  { label: "Terabytes (TB)", factor: 8000000000000 },
-  { label: "Petabytes (PB)", factor: 8000000000000000 },
-  { label: "Kibibytes (KiB)", factor: 8192 },
-  { label: "Mebibytes (MiB)", factor: 8388608 },
-  { label: "Gibibytes (GiB)", factor: 8589934592 },
-];
+const units = ["Bit", "Byte", "Kilobyte (KB)", "Megabyte (MB)", "Gigabyte (GB)", "Terabyte (TB)", "Petabyte (PB)", "Kibibyte (KiB)", "Mebibyte (MiB)", "Gibibyte (GiB)", "Tebibyte (TiB)"];
+
+const conversions: Record<string, number> = {
+  "Bit": 1,
+  "Byte": 1,
+  "Kilobyte (KB)": 1,
+  "Megabyte (MB)": 1,
+  "Gigabyte (GB)": 1,
+  "Terabyte (TB)": 1,
+  "Petabyte (PB)": 1,
+  "Kibibyte (KiB)": 1,
+  "Mebibyte (MiB)": 1,
+  "Gibibyte (GiB)": 1,
+  "Tebibyte (TiB)": 1,
+};
 
 export default function Page() {
-  const [value, setValue] = useState('1');
-  const [from, setFrom] = useState('Bits');
-  const [to, setTo] = useState('Bytes');
-
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState(units[0]);
+  const [to, setTo] = useState(units[1]);
   const convert = () => {
-    const v = parseFloat(value);
-    if (isNaN(v)) return '';
-    const fromUnit = units.find(u => u.label === from);
-    const toUnit = units.find(u => u.label === to);
-    if (!fromUnit || !toUnit) return '';
-    const result = v * fromUnit.factor / toUnit.factor;
-    return parseFloat(result.toPrecision(10)).toString();
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    return ((n * conversions[from]) / conversions[to]).toPrecision(6);
   };
-
   return (
-    <main style={{minHeight:'100vh',background:'#0f172a',color:'#f1f5f9',padding:'2rem',fontFamily:'sans-serif',maxWidth:'600px',margin:'0 auto'}}>
-      <h1 style={{fontSize:'1.8rem',fontWeight:'bold',marginBottom:'0.5rem',color:'#38bdf8'}}>Data Storage Converter</h1>
-      <p style={{color:'#94a3b8',marginBottom:'2rem'}}>Convert between bits, bytes, kilobytes, megabytes, gigabytes and terabytes.</p>
-      <div style={{background:'#1e293b',borderRadius:'12px',padding:'1.5rem',display:'flex',flexDirection:'column',gap:'1rem'}}>
-        <div>
-          <label style={{display:'block',color:'#94a3b8',marginBottom:'0.5rem',fontSize:'0.875rem'}}>Value</label>
-          <input type="number" value={value} onChange={e => setValue(e.target.value)} style={{width:'100%',background:'#0f172a',border:'1px solid #334155',borderRadius:'8px',padding:'0.75rem',color:'#f1f5f9',fontSize:'1rem',boxSizing:'border-box'}} />
-        </div>
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem'}}>
-          <div>
-            <label style={{display:'block',color:'#94a3b8',marginBottom:'0.5rem',fontSize:'0.875rem'}}>From</label>
-            <select value={from} onChange={e => setFrom(e.target.value)} style={{width:'100%',background:'#0f172a',border:'1px solid #334155',borderRadius:'8px',padding:'0.75rem',color:'#f1f5f9',fontSize:'0.9rem'}}>
-              {units.map(u => <option key={u.label} value={u.label}>{u.label}</option>)}
-            </select>
+    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Data Storage Converter</h1>
+        <p className="text-gray-400 mb-6">Convert between digital data storage units like bytes, kilobytes, megabytes, and more.</p>
+        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
+          <input type="number" value={val} onChange={e => setVal(e.target.value)} placeholder="Enter value" className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white" />
+          <div className="grid grid-cols-2 gap-4">
+            <div><label className="text-sm text-gray-400">From</label><select value={from} onChange={e => setFrom(e.target.value)} className="w-full bg-gray-800 rounded-lg px-3 py-2 mt-1">
+              <option value="Bit">Bit</option>
+              <option value="Byte">Byte</option>
+              <option value="Kilobyte (KB)">Kilobyte (KB)</option>
+              <option value="Megabyte (MB)">Megabyte (MB)</option>
+              <option value="Gigabyte (GB)">Gigabyte (GB)</option>
+              <option value="Terabyte (TB)">Terabyte (TB)</option>
+              <option value="Petabyte (PB)">Petabyte (PB)</option>
+              <option value="Kibibyte (KiB)">Kibibyte (KiB)</option>
+              <option value="Mebibyte (MiB)">Mebibyte (MiB)</option>
+              <option value="Gibibyte (GiB)">Gibibyte (GiB)</option>
+              <option value="Tebibyte (TiB)">Tebibyte (TiB)</option>
+            </select></div>
+            <div><label className="text-sm text-gray-400">To</label><select value={to} onChange={e => setTo(e.target.value)} className="w-full bg-gray-800 rounded-lg px-3 py-2 mt-1">
+              <option value="Bit">Bit</option>
+              <option value="Byte">Byte</option>
+              <option value="Kilobyte (KB)">Kilobyte (KB)</option>
+              <option value="Megabyte (MB)">Megabyte (MB)</option>
+              <option value="Gigabyte (GB)">Gigabyte (GB)</option>
+              <option value="Terabyte (TB)">Terabyte (TB)</option>
+              <option value="Petabyte (PB)">Petabyte (PB)</option>
+              <option value="Kibibyte (KiB)">Kibibyte (KiB)</option>
+              <option value="Mebibyte (MiB)">Mebibyte (MiB)</option>
+              <option value="Gibibyte (GiB)">Gibibyte (GiB)</option>
+              <option value="Tebibyte (TiB)">Tebibyte (TiB)</option>
+            </select></div>
           </div>
-          <div>
-            <label style={{display:'block',color:'#94a3b8',marginBottom:'0.5rem',fontSize:'0.875rem'}}>To</label>
-            <select value={to} onChange={e => setTo(e.target.value)} style={{width:'100%',background:'#0f172a',border:'1px solid #334155',borderRadius:'8px',padding:'0.75rem',color:'#f1f5f9',fontSize:'0.9rem'}}>
-              {units.map(u => <option key={u.label} value={u.label}>{u.label}</option>)}
-            </select>
-          </div>
-        </div>
-        <div style={{background:'#0f172a',borderRadius:'8px',padding:'1rem',border:'1px solid #334155'}}>
-          <div style={{color:'#94a3b8',fontSize:'0.875rem',marginBottom:'0.25rem'}}>Result</div>
-          <div style={{fontSize:'1.5rem',fontWeight:'bold',color:'#34d399'}}>{convert()} <span style={{fontSize:'1rem',color:'#94a3b8'}}>{to}</span></div>
+          {val && <div className="bg-gray-800 rounded-lg p-4 text-center"><span className="text-2xl font-bold text-blue-400">{convert()}</span><span className="ml-2 text-gray-400">{to}</span></div>}
         </div>
       </div>
     </main>

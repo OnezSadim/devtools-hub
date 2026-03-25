@@ -1,0 +1,2 @@
+export const metadata = { title: "Data Storage Converter | DevTools Hub", description: "Convert between digital data storage units like bytes, kilobytes, megabytes, and more." };
+export default function Layout({ children }: { children: React.ReactNode }) { return <>{children}</> }

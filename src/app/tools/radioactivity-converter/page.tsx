@@ -1,32 +1,65 @@
 "use client";
 import { useState } from "react";
+
+const units = ["Becquerel (Bq)", "Kilobecquerel (kBq)", "Megabecquerel (MBq)", "Gigabecquerel (GBq)", "Curie (Ci)", "Millicurie (mCi)", "Microcurie (uCi)", "Rutherford (Rd)", "Disintegrations/second", "Disintegrations/minute"];
+
+const conversions: Record<string, number> = {
+  "Becquerel (Bq)": 1,
+  "Kilobecquerel (kBq)": 1,
+  "Megabecquerel (MBq)": 1,
+  "Gigabecquerel (GBq)": 1,
+  "Curie (Ci)": 1,
+  "Millicurie (mCi)": 1,
+  "Microcurie (uCi)": 1,
+  "Rutherford (Rd)": 1,
+  "Disintegrations/second": 1,
+  "Disintegrations/minute": 1,
+};
+
 export default function Page() {
-  const units: Record<string, number> = {"Bq": 1, "kBq": 1000, "MBq": 1000000.0, "GBq": 1000000000.0, "Ci": 37000000000.0, "mCi": 37000000.0, "uCi": 37000, "Rd": 1000000.0, };
-  const [from, setFrom] = useState("Bq");
-  const [to, setTo] = useState("kBq");
   const [val, setVal] = useState("");
+  const [from, setFrom] = useState(units[0]);
+  const [to, setTo] = useState(units[1]);
   const convert = () => {
     const n = parseFloat(val);
     if (isNaN(n)) return "";
-    return ((n * units[from]) / units[to]).toPrecision(6);
+    return ((n * conversions[from]) / conversions[to]).toPrecision(6);
   };
-  const opts = Object.keys(units).map(u => <option key={u} value={u}>{u}</option>);
   return (
-    <main style={{maxWidth:600,margin:"40px auto",padding:"0 16px",fontFamily:"sans-serif",color:"#e2e8f0",background:"#0f172a",minHeight:"100vh"}}>
-      <h1 style={{fontSize:"1.8rem",fontWeight:700,marginBottom:8}}>Radioactivity Converter</h1>
-      <p style={{color:"#94a3b8",marginBottom:24}}>Convert between becquerels, curies, rutherfords, and more.</p>
-      <div style={{display:"flex",gap:12,flexWrap:"wrap",alignItems:"center",marginBottom:16}}>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{flex:1,minWidth:120,padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:"1rem"}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0"}}>
-          {opts}
-        </select>
-        <span style={{color:"#64748b"}}>to</span>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0"}}>
-          {opts}
-        </select>
-      </div>
-      <div style={{padding:"20px 24px",borderRadius:12,background:"#1e293b",border:"1px solid #334155",fontSize:"1.4rem",fontWeight:600,color:"#38bdf8",minHeight:64}}>
-        {val ? convert() + " " + to : <span style={{color:"#475569"}}>Result appears here</span>}
+    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Radioactivity Converter</h1>
+        <p className="text-gray-400 mb-6">Convert between radioactivity units like becquerel, curie, and rutherford.</p>
+        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
+          <input type="number" value={val} onChange={e => setVal(e.target.value)} placeholder="Enter value" className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white" />
+          <div className="grid grid-cols-2 gap-4">
+            <div><label className="text-sm text-gray-400">From</label><select value={from} onChange={e => setFrom(e.target.value)} className="w-full bg-gray-800 rounded-lg px-3 py-2 mt-1">
+              <option value="Becquerel (Bq)">Becquerel (Bq)</option>
+              <option value="Kilobecquerel (kBq)">Kilobecquerel (kBq)</option>
+              <option value="Megabecquerel (MBq)">Megabecquerel (MBq)</option>
+              <option value="Gigabecquerel (GBq)">Gigabecquerel (GBq)</option>
+              <option value="Curie (Ci)">Curie (Ci)</option>
+              <option value="Millicurie (mCi)">Millicurie (mCi)</option>
+              <option value="Microcurie (uCi)">Microcurie (uCi)</option>
+              <option value="Rutherford (Rd)">Rutherford (Rd)</option>
+              <option value="Disintegrations/second">Disintegrations/second</option>
+              <option value="Disintegrations/minute">Disintegrations/minute</option>
+            </select></div>
+            <div><label className="text-sm text-gray-400">To</label><select value={to} onChange={e => setTo(e.target.value)} className="w-full bg-gray-800 rounded-lg px-3 py-2 mt-1">
+              <option value="Becquerel (Bq)">Becquerel (Bq)</option>
+              <option value="Kilobecquerel (kBq)">Kilobecquerel (kBq)</option>
+              <option value="Megabecquerel (MBq)">Megabecquerel (MBq)</option>
+              <option value="Gigabecquerel (GBq)">Gigabecquerel (GBq)</option>
+              <option value="Curie (Ci)">Curie (Ci)</option>
+              <option value="Millicurie (mCi)">Millicurie (mCi)</option>
+              <option value="Microcurie (uCi)">Microcurie (uCi)</option>
+              <option value="Rutherford (Rd)">Rutherford (Rd)</option>
+              <option value="Disintegrations/second">Disintegrations/second</option>
+              <option value="Disintegrations/minute">Disintegrations/minute</option>
+            </select></div>
+          </div>
+          {val && <div className="bg-gray-800 rounded-lg p-4 text-center"><span className="text-2xl font-bold text-blue-400">{convert()}</span><span className="ml-2 text-gray-400">{to}</span></div>}
+        </div>
       </div>
     </main>
   );
