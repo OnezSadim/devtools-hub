@@ -1,48 +1,51 @@
 "use client";
 import { useState } from "react";
 export default function BinaryCalculator() {
-  const [input, setInput] = useState("42");
-  const [base, setBase] = useState("decimal");
-  const parse = (v: string, b: string): number => {
-    const n = b === "decimal" ? parseInt(v, 10) : b === "binary" ? parseInt(v, 2) : b === "octal" ? parseInt(v, 8) : parseInt(v, 16);
-    return isNaN(n) ? 0 : n;
-  };
-  const n = parse(input, base);
-  const results = [
-    {label:"Decimal",val:n.toString(10)},
-    {label:"Binary",val:n.toString(2)},
-    {label:"Octal",val:n.toString(8)},
-    {label:"Hexadecimal",val:n.toString(16).toUpperCase()},
-    {label:"ASCII",val:n >= 32 && n <= 126 ? String.fromCharCode(n) : "N/A"},
-    {label:"Bits",val:n.toString(2).length.toString()},
-  ];
+  const [a, setA] = useState("");
+  const [b, setB] = useState("");
+  const [op, setOp] = useState("+");
+  const [result, setResult] = useState(null);
+  function calculate() {
+    const av = parseInt(a,2), bv = parseInt(b,2);
+    if (isNaN(av)||isNaN(bv)) { setResult({error:"Enter valid binary numbers"}); return; }
+    let r;
+    if (op==="+") r=av+bv;
+    else if (op==="-") r=av-bv;
+    else if (op==="*") r=av*bv;
+    else if (op==="/") r=bv===0?NaN:Math.floor(av/bv);
+    else if (op==="AND") r=av&bv;
+    else if (op==="OR") r=av|bv;
+    else if (op==="XOR") r=av^bv;
+    else if (op==="NOT") r=~av;
+    if (isNaN(r)) { setResult({error:"Division by zero"}); return; }
+    setResult({decimal:r,binary:r.toString(2),hex:r.toString(16).toUpperCase(),octal:r.toString(8)});
+  }
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Binary / Number Base Calculator</h1>
-      <div className="flex gap-3 mb-4">
-        <input value={input} onChange={e => setInput(e.target.value)} placeholder="Enter number" className="flex-1 p-2 bg-gray-800 border border-gray-700 rounded font-mono" />
-        <select value={base} onChange={e => setBase(e.target.value)} className="p-2 bg-gray-800 border border-gray-700 rounded">
-          <option value="decimal">Decimal</option>
-          <option value="binary">Binary</option>
-          <option value="octal">Octal</option>
-          <option value="hexadecimal">Hex</option>
-        </select>
-      </div>
-      <div className="grid grid-cols-2 gap-3">
-        {results.map(r => (
-          <div key={r.label} className="bg-gray-800 rounded p-3">
-            <div className="text-xs text-gray-400 mb-1">{r.label}</div>
-            <div className="font-mono text-lg font-bold break-all">{r.val}</div>
+    <div className="min-h-screen bg-gray-950 text-gray-100 p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Binary Calculator</h1>
+        <p className="text-gray-400 mb-6">Arithmetic and bitwise operations on binary numbers</p>
+        <div className="space-y-4 mb-4">
+          <div><label className="block text-sm text-gray-400 mb-1">Binary A</label><input value={a} onChange={e=>setA(e.target.value.replace(/[^01]/g,""))} placeholder="e.g. 1010" className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 font-mono" /></div>
+          <div className="flex gap-2 flex-wrap">
+            {["+","-","*","/","AND","OR","XOR","NOT"].map(o=>(
+              <button key={o} onClick={()=>setOp(o)} className={`px-3 py-1 rounded text-sm ${op===o?"bg-blue-600":"bg-gray-700"}`}>{o}</button>
+            ))}
           </div>
-        ))}
-      </div>
-      <div className="mt-4 bg-gray-800 rounded p-3">
-        <div className="text-xs text-gray-400 mb-2">Binary visualization</div>
-        <div className="flex flex-wrap gap-1">
-          {n.toString(2).padStart(Math.max(8, n.toString(2).length), "0").split("").map((b, i) => (
-            <span key={i} className={`w-8 h-8 flex items-center justify-center rounded font-mono font-bold ${b==="1" ? "bg-indigo-600" : "bg-gray-700"}`}>{b}</span>
-          ))}
+          <div><label className="block text-sm text-gray-400 mb-1">Binary B {op==="NOT"&&"(not used)"}</label><input value={b} onChange={e=>setB(e.target.value.replace(/[^01]/g,""))} placeholder="e.g. 0110" className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 font-mono" disabled={op==="NOT"} /></div>
         </div>
+        <button onClick={calculate} className="w-full bg-blue-600 hover:bg-blue-700 rounded py-2 font-semibold mb-4">Calculate</button>
+        {result&&!result.error&&(
+          <div className="bg-gray-800 rounded p-4 grid grid-cols-2 gap-3">
+            {Object.entries(result).map(([k,v])=>(
+              <div key={k} className="bg-gray-700 rounded p-3">
+                <div className="text-xs text-gray-400 capitalize">{k}</div>
+                <div className="text-lg font-mono text-green-400">{v}</div>
+              </div>
+            ))}
+          </div>
+        )}
+        {result&&result.error&&<div className="bg-red-900/30 text-red-400 rounded p-4">{result.error}</div>}
       </div>
     </div>
   );
