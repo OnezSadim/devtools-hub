@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
 
-const UNITS: string[] = ["henry", "millihenry", "microhenry", "nanohenry", "picohenry", "kilohenry"];
-const TO_BASE: Record<string, number> = {"henry": 1, "millihenry": 0.001, "microhenry": 1e-06, "nanohenry": 1e-09, "picohenry": 1e-12, "kilohenry": 1000.0};
+const UNITS: string[] = ["Henry", "Millihenry", "Microhenry", "Nanohenry", "Kilohenry"];
+const TO_BASE: Record<string, number> = {"Henry": 1, "Millihenry": 0.001, "Microhenry": 1e-06, "Nanohenry": 1e-09, "Kilohenry": 1000};
 
 export default function Page() {
   const [val, setVal] = useState("");
@@ -11,21 +11,22 @@ export default function Page() {
   const convert = () => {
     const n = parseFloat(val);
     if (isNaN(n)) return "";
-    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
+    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(8);
   };
-  const sel = "bg-gray-800 text-white border border-gray-600 rounded px-3 py-2";
   return (
-    <main className="min-h-screen bg-gray-900 text-white p-8">
-      <h1 className="text-3xl font-bold mb-6">Electric Inductance Converter</h1>
-      <div className="bg-gray-800 rounded-xl p-6 max-w-lg space-y-4">
-        <input className="w-full bg-gray-700 text-white border border-gray-600 rounded px-3 py-2" placeholder="Value" value={val} onChange={e => setVal(e.target.value)} />
-        <div className="flex gap-3">
-          <select className={sel} value={from} onChange={e => setFrom(e.target.value)}>{UNITS.map(u => <option key={u} value={u}>{u}</option>)}</select>
-          <span className="self-center text-gray-400">to</span>
-          <select className={sel} value={to} onChange={e => setTo(e.target.value)}>{UNITS.map(u => <option key={u} value={u}>{u}</option>)}</select>
-        </div>
-        <div className="text-2xl font-mono text-green-400">{convert() || "—"}</div>
+    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",fontFamily:"monospace",padding:"2rem"}}>
+      <h1 style={{fontSize:"1.8rem",marginBottom:"1.5rem"}}>Electric Inductance Converter</h1>
+      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",justifyContent:"center",marginBottom:"1rem"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",fontSize:"1rem",width:"150px"}} />
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9"}}>
+          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
+        </select>
+        <span style={{lineHeight:"2.2rem"}}>→</span>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9"}}>
+          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
+        </select>
       </div>
+      <div style={{fontSize:"1.4rem",color:"#38bdf8",marginTop:"0.5rem"}}>{convert() || "—"} {to}</div>
     </main>
   );
 }
