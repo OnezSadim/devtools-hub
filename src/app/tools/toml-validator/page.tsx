@@ -1,45 +1,50 @@
 "use client";
 import { useState } from "react";
-
-export default function TomlValidator() {
-  const [input, setInput] = useState("");
+export default function TOMLValidator() {
+  const [toml, setToml] = useState("");
   const [result, setResult] = useState("");
-  const [error, setError] = useState("");
-
+  const [valid, setValid] = useState<boolean|null>(null);
   const validate = () => {
-    setError(""); setResult("");
-    try {
-      const lines = input.split("\n");
-      let valid = true;
-      const issues: string[] = [];
-      lines.forEach((line, i) => {
-        const trimmed = line.trim();
-        if (!trimmed || trimmed.startsWith("#")) return;
-        if (trimmed.startsWith("[") && !trimmed.endsWith("]")) {
-          issues.push(`Line ${i+1}: Unclosed section header`);
-          valid = false;
-        }
-        if (trimmed.includes("=")) {
-          const [k] = trimmed.split("=");
-          if (!k.trim()) { issues.push(`Line ${i+1}: Empty key`); valid = false; }
-        }
-      });
-      if (valid && issues.length === 0) setResult("Valid TOML! No syntax errors found.");
-      else setError(issues.join("\n"));
-    } catch(e: unknown) { setError(String(e)); }
+    const lines = toml.split("
+");
+    const errors: string[] = [];
+    let inTable = false;
+    lines.forEach((line, i) => {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith("#")) return;
+      if (trimmed.startsWith("[")) {
+        if (!trimmed.endsWith("]")) errors.push(`Line ${i+1}: Unclosed table header: ${trimmed}`);
+        return;
+      }
+      if (!trimmed.includes("=")) errors.push(`Line ${i+1}: Missing = in key-value pair: ${trimmed}`);
+    });
+    if (errors.length === 0) {
+      setValid(true);
+      setResult("TOML is valid! " + lines.filter(l => l.trim() && !l.trim().startsWith("#")).length + " key-value pairs or sections found.");
+    } else {
+      setValid(false);
+      setResult(errors.join("
+"));
+    }
   };
-
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100 p-8">
-      <div className="max-w-3xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2 text-blue-400">TOML Validator</h1>
-        <p className="text-gray-400 mb-6">Validate your TOML configuration files for syntax errors.</p>
-        <textarea className="w-full h-64 bg-gray-900 border border-gray-700 rounded-lg p-4 font-mono text-sm mb-4 focus:outline-none focus:border-blue-500" placeholder="[database]
-host = &apos;localhost&apos;
-port = 5432" value={input} onChange={e => setInput(e.target.value)} />
-        <button onClick={validate} className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg mb-4">Validate</button>
-        {result && <div className="bg-green-900/30 border border-green-600 rounded-lg p-4 text-green-400">{result}</div>}
-        {error && <div className="bg-red-900/30 border border-red-600 rounded-lg p-4 text-red-400 whitespace-pre">{error}</div>}
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">TOML Validator</h1>
+        <p className="text-gray-400 mb-6">Validate TOML configuration files for syntax errors.</p>
+        <textarea value={toml} onChange={e => setToml(e.target.value)} rows={12} placeholder="[server]
+host = "localhost"
+port = 8080
+
+[database]
+url = "postgres://localhost/mydb"" className="w-full bg-gray-800 border border-gray-700 rounded p-3 font-mono text-sm mb-3" />
+        <button onClick={validate} className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded font-medium mb-4 w-full">Validate TOML</button>
+        {valid !== null && (
+          <div className={"rounded p-4 " + (valid ? "bg-green-900 border border-green-700" : "bg-red-900 border border-red-700")}>
+            <p className={"font-medium mb-1 " + (valid ? "text-green-300" : "text-red-300")}>{valid ? "Valid" : "Invalid"}</p>
+            <pre className="text-sm font-mono whitespace-pre-wrap">{result}</pre>
+          </div>
+        )}
       </div>
     </div>
   );

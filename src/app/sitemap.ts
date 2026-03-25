@@ -1,4 +1,4 @@
-import { MetadataRoute } from 'next';
+import { MetadataRoute } from "next";
 
 const tools = [
   'age-calculator',
@@ -79,6 +79,7 @@ const tools = [
   'git-ignore-generator',
   'gitignore-generator',
   'gradient-generator',
+  'graphql-query-builder',
   'grid-generator',
   'grid-layout-generator',
   'hash-generator',
@@ -93,6 +94,7 @@ const tools = [
   'html-to-text',
   'htmx-reference',
   'htpasswd-generator',
+  'http-header-analyzer',
   'http-headers-checker',
   'http-status-codes',
   'iban-validator',
@@ -223,6 +225,7 @@ const tools = [
   'volume-converter',
   'webpack-config-generator',
   'weight-unit-converter',
+  'whois-lookup',
   'word-counter',
   'word-frequency',
   'word-frequency-counter',
@@ -235,15 +238,15 @@ const tools = [
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = 'https://devtools-hub-green.vercel.app';
-  const toolRoutes = tools.map(tool => ({
-    url: `${base}/tools/${tool}`,
+  const base = "https://devtools-hub-green.vercel.app";
+  const toolRoutes = tools.map((slug) => ({
+    url: `${base}/tools/${slug}`,
     lastModified: new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: 0.8,
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
   }));
   return [
-    { url: base, lastModified: new Date(), changeFrequency: 'daily' as const, priority: 1.0 },
+    { url: base, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 1 },
     ...toolRoutes,
   ];
 }
