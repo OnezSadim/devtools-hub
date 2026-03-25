@@ -1,33 +1,30 @@
 "use client";
 import { useState } from "react";
 
-const units = ["Ohm (Ω)", "Milliohm (mΩ)", "Kilohm (kΩ)", "Megaohm (MΩ)", "Microohm (μΩ)"];
+const units = ["Ohm", "Milliohm", "Kilohm", "Megaohm", "Microohm"];
 const toBase = [1, 0.001, 1000.0, 1000000.0, 1e-06];
 
 export default function Page() {
   const [val, setVal] = useState("");
   const [from, setFrom] = useState(0);
   const num = parseFloat(val);
+  const base = isNaN(num) ? null : num * toBase[from];
+
   return (
-    <main style={{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"sans-serif",background:"#0f172a",minHeight:"100vh",color:"#f1f5f9"}}>
-      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Electric Resistance Converter</h1>
-      <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"0.5rem",marginBottom:"1rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px"}} />
-      <select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{width:"100%",padding:"0.5rem",marginBottom:"1.5rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px"}}>
+    <main style={{maxWidth:600,margin:"40px auto",padding:"0 16px",fontFamily:"sans-serif",color:"#e2e8f0",background:"#0f172a",minHeight:"100vh"}}>
+      <h1 style={{fontSize:28,fontWeight:700,marginBottom:8}}>Electric Resistance Converter</h1>
+      <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"10px",borderRadius:6,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:16,boxSizing:"border-box",marginBottom:12}} />
+      <select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{width:"100%",padding:"10px",borderRadius:6,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:16,marginBottom:20}}>
         {units.map((u,i)=><option key={i} value={i}>{u}</option>)}
       </select>
-      {!isNaN(num) && val !== "" && (
-        <table style={{width:"100%",borderCollapse:"collapse"}}>
-          <thead><tr><th style={{textAlign:"left",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Unit</th><th style={{textAlign:"right",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Value</th></tr></thead>
-          <tbody>
-            {units.map((u,i)=>(
-              <tr key={i} style={{background:i===from?"#1e3a5f":"transparent"}}>
-                <td style={{padding:"0.5rem",borderBottom:"1px solid #1e293b"}}>{u}</td>
-                <td style={{padding:"0.5rem",textAlign:"right",borderBottom:"1px solid #1e293b"}}>{(num * toBase[from] / toBase[i]).toPrecision(6)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+      {base!==null&&<div style={{display:"grid",gap:8}}>
+        {units.map((u,i)=>(
+          <div key={i} style={{background:"#1e293b",borderRadius:8,padding:"12px 16px",display:"flex",justifyContent:"space-between"}}>
+            <span style={{color:"#94a3b8"}}>{u}</span>
+            <span style={{fontWeight:600}}>{(base/toBase[i]).toPrecision(6)}</span>
+          </div>
+        ))}
+      </div>}
     </main>
   );
 }

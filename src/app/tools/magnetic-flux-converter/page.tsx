@@ -1,35 +1,30 @@
 "use client";
 import { useState } from "react";
 
-const UNITS = ["Weber (Wb)", "Milliweber (mWb)", "Microweber (uWb)", "Maxwell (Mx)", "Kiloweber (kWb)", "Tesla square meter (T·m²)", "Volt second (V·s)", "Nanoweber (nWb)"];
-const TO_BASE: Record<string, number> = {"Weber (Wb)": 1, "Milliweber (mWb)": 0.001, "Microweber (uWb)": 1e-06, "Maxwell (Mx)": 1e-08, "Kiloweber (kWb)": 1000.0, "Tesla square meter (T·m²)": 1, "Volt second (V·s)": 1, "Nanoweber (nWb)": 1e-09};
+const units = ["Weber", "Maxwell", "Milliweber", "Microweber", "Tesla·m²"];
+const toBase = [1, 1e-08, 0.001, 1e-06, 1];
 
-export default function MagneticFluxConverterPage() {
+export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(UNITS[0]);
-  const convert = (to: string) => {
-    const n = parseFloat(val);
-    if (isNaN(n)) return "";
-    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
-  };
+  const [from, setFrom] = useState(0);
+  const num = parseFloat(val);
+  const base = isNaN(num) ? null : num * toBase[from];
+
   return (
-    <main style={{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"sans-serif"}}>
-      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Magnetic Flux Converter</h1>
-      <p style={{color:"#888",marginBottom:"1.5rem"}}>Convert between magnetic flux units instantly.</p>
-      <div style={{display:"flex",gap:"1rem",marginBottom:"1.5rem",flexWrap:"wrap"}}>
-        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{flex:1,minWidth:"150px",padding:"0.75rem",borderRadius:"8px",border:"1px solid #333",background:"#1a1a1a",color:"#fff",fontSize:"1rem"}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.75rem",borderRadius:"8px",border:"1px solid #333",background:"#1a1a1a",color:"#fff",fontSize:"1rem"}}>
-          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
-        </select>
-      </div>
-      <div style={{display:"grid",gap:"0.75rem"}}>
-        {UNITS.map(u=>(
-          <div key={u} style={{background:"#1a1a1a",border:"1px solid #2a2a2a",borderRadius:"8px",padding:"1rem",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-            <span style={{color:"#aaa"}}>{u}</span>
-            <span style={{color:"#fff",fontWeight:600,fontSize:"1.1rem"}}>{convert(u) || "—"}</span>
+    <main style={{maxWidth:600,margin:"40px auto",padding:"0 16px",fontFamily:"sans-serif",color:"#e2e8f0",background:"#0f172a",minHeight:"100vh"}}>
+      <h1 style={{fontSize:28,fontWeight:700,marginBottom:8}}>Magnetic Flux Converter</h1>
+      <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"10px",borderRadius:6,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:16,boxSizing:"border-box",marginBottom:12}} />
+      <select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{width:"100%",padding:"10px",borderRadius:6,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:16,marginBottom:20}}>
+        {units.map((u,i)=><option key={i} value={i}>{u}</option>)}
+      </select>
+      {base!==null&&<div style={{display:"grid",gap:8}}>
+        {units.map((u,i)=>(
+          <div key={i} style={{background:"#1e293b",borderRadius:8,padding:"12px 16px",display:"flex",justifyContent:"space-between"}}>
+            <span style={{color:"#94a3b8"}}>{u}</span>
+            <span style={{fontWeight:600}}>{(base/toBase[i]).toPrecision(6)}</span>
           </div>
         ))}
-      </div>
+      </div>}
     </main>
   );
 }
