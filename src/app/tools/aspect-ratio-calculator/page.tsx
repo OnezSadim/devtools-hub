@@ -2,52 +2,68 @@
 import { useState } from "react";
 
 export default function AspectRatioCalculator() {
-  const [w, setW] = useState(1920);
-  const [h, setH] = useState(1080);
+  const [w, setW] = useState("");
+  const [h, setH] = useState("");
+  const [ratioW, setRatioW] = useState("");
+  const [ratioH, setRatioH] = useState("");
+  const [newW, setNewW] = useState("");
+  const [newH, setNewH] = useState("");
 
-  function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
-  const d = gcd(w, h);
-  const ratioW = w / d, ratioH = h / d;
-  const common = [["16:9",16,9],["4:3",4,3],["21:9",21,9],["1:1",1,1],["3:2",3,2],["2:1",2,1],["9:16",9,16],["4:5",4,5]];
+  const gcd = (a: number, b: number): number => b === 0 ? a : gcd(b, a % b);
+
+  const calcRatio = () => {
+    const width = parseFloat(w), height = parseFloat(h);
+    if (!width || !height) return;
+    const d = gcd(Math.round(width), Math.round(height));
+    setRatioW(String(Math.round(width/d)));
+    setRatioH(String(Math.round(height/d)));
+  };
+
+  const scaleFromWidth = () => {
+    if (!newW || !w || !h) return;
+    setNewH(String((parseFloat(newW) * parseFloat(h) / parseFloat(w)).toFixed(2)));
+  };
+
+  const scaleFromHeight = () => {
+    if (!newH || !w || !h) return;
+    setNewW(String((parseFloat(newH) * parseFloat(w) / parseFloat(h)).toFixed(2)));
+  };
+
+  const commonRatios = ["16:9","4:3","1:1","21:9","3:2","9:16"];
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white p-6">
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-xl mx-auto">
         <h1 className="text-3xl font-bold mb-2">Aspect Ratio Calculator</h1>
-        <p className="text-gray-400 mb-6">Calculate and convert aspect ratios for any dimensions</p>
+        <p className="text-gray-400 mb-6">Calculate and scale aspect ratios for images and video</p>
         <div className="bg-gray-900 rounded-xl p-6 space-y-6">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm text-gray-300 mb-1">Width (px)</label>
-              <input type="number" value={w} onChange={e => setW(parseInt(e.target.value)||1)} className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white font-mono focus:outline-none focus:border-blue-500" />
+          <div>
+            <h3 className="font-semibold mb-3">Find Ratio</h3>
+            <div className="flex gap-3 mb-3">
+              <input value={w} onChange={e => setW(e.target.value)} placeholder="Width" className="flex-1 bg-gray-800 rounded-lg px-3 py-2" />
+              <input value={h} onChange={e => setH(e.target.value)} placeholder="Height" className="flex-1 bg-gray-800 rounded-lg px-3 py-2" />
+              <button onClick={calcRatio} className="bg-blue-600 hover:bg-blue-700 px-4 rounded-lg">Calc</button>
             </div>
-            <div>
-              <label className="block text-sm text-gray-300 mb-1">Height (px)</label>
-              <input type="number" value={h} onChange={e => setH(parseInt(e.target.value)||1)} className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white font-mono focus:outline-none focus:border-blue-500" />
-            </div>
-          </div>
-          <div className="bg-blue-900/30 border border-blue-500/30 rounded-xl p-6 text-center">
-            <p className="text-5xl font-bold text-blue-400">{ratioW}:{ratioH}</p>
-            <p className="text-gray-400 mt-2">Aspect Ratio</p>
-            <p className="text-gray-500 text-sm mt-1">{(w/h).toFixed(4)} : 1</p>
+            {ratioW && <div className="bg-gray-800 rounded-lg p-3 text-center text-xl font-bold">{ratioW}:{ratioH}</div>}
           </div>
           <div>
-            <label className="block text-sm text-gray-300 mb-3">Find height for given width:</label>
-            <div className="grid grid-cols-2 gap-3">
-              {[640,800,1024,1280,1366,1440,1920,2560].map(pw => (
-                <div key={pw} className="bg-gray-800 rounded-lg px-4 py-3 flex justify-between">
-                  <span className="text-gray-400">{pw}px</span>
-                  <span className="font-mono text-green-400">{Math.round(pw * h / w)}px</span>
-                </div>
-              ))}
+            <h3 className="font-semibold mb-3">Scale Dimensions</h3>
+            <div className="flex gap-3">
+              <input value={newW} onChange={e => setNewW(e.target.value)} onBlur={scaleFromWidth} placeholder="New Width" className="flex-1 bg-gray-800 rounded-lg px-3 py-2" />
+              <span className="flex items-center text-gray-500">×</span>
+              <input value={newH} onChange={e => setNewH(e.target.value)} onBlur={scaleFromHeight} placeholder="New Height" className="flex-1 bg-gray-800 rounded-lg px-3 py-2" />
             </div>
           </div>
           <div>
-            <p className="text-sm text-gray-300 mb-2">Common ratios:</p>
-            <div className="flex flex-wrap gap-2">
-              {common.map(([label, rw, rh]) => (
-                <button key={label} onClick={() => { setW(rw * 160); setH(rh * 160); }} className="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded-full text-sm">{label}</button>
-              ))}
+            <h3 className="font-semibold mb-3">Common Ratios</h3>
+            <div className="grid grid-cols-3 gap-2">
+              {commonRatios.map(r => {
+                const [rw,rh] = r.split(":").map(Number);
+                return (
+                  <button key={r} onClick={() => { setW(String(rw*100)); setH(String(rh*100)); setRatioW(String(rw)); setRatioH(String(rh)); }}
+                    className="bg-gray-800 hover:bg-gray-700 rounded-lg py-2 text-sm font-mono">{r}</button>
+                );
+              })}
             </div>
           </div>
         </div>

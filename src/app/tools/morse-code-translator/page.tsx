@@ -2,51 +2,42 @@
 import { useState } from "react";
 
 const MORSE: Record<string, string> = {
-  A: ".-", B: "-...", C: "-.-.", D: "-..", E: ".", F: "..-.",
-  G: "--.", H: "....", I: "..", J: ".---", K: "-.-", L: ".-..",
-  M: "--", N: "-.", O: "---", P: ".--.", Q: "--.-", R: ".-.",
-  S: "...", T: "-", U: "..-", V: "...-", W: ".--", X: "-..-",
-  Y: "-.--", Z: "--..",
-  "0": "-----", "1": ".----", "2": "..---", "3": "...--",
-  "4": "....-", "5": ".....", "6": "-....", "7": "--...",
-  "8": "---..", "9": "----.",
+  a:".-",b:"-...",c:"-.-.",d:"-..",e:".",f:"..-.",g:"--.",h:"....",i:"..",j:".---",
+  k:"-.-",l:".-..",m:"--",n:"-.",o:"---",p:".--.",q:"--.-",r:".-.",s:"...",t:"-",
+  u:"..-",v:"...-",w:".--",x:"-..-",y:"-.--",z:"--..",
+  "0":"-----","1":".----","2":"..---","3":"...--","4":"....-","5":".....",
+  "6":"-....","7":"--...","8":"---..","9":"----."
 };
-const REVERSE_MORSE = Object.fromEntries(Object.entries(MORSE).map(([k, v]) => [v, k]));
+const REVERSE = Object.fromEntries(Object.entries(MORSE).map(([k,v]) => [v,k]));
 
 export default function MorseCodeTranslator() {
-  const [text, setText] = useState("");
-  const [morse, setMorse] = useState("");
-  const [mode, setMode] = useState<"toMorse" | "fromMorse">("toMorse");
+  const [mode, setMode] = useState<"encode"|"decode">("encode");
+  const [input, setInput] = useState("");
 
-  const toMorse = (t: string) =>
-    t.toUpperCase().split("").map(c => c === " " ? "/" : MORSE[c] || c).join(" ");
-
-  const fromMorse = (m: string) =>
-    m.split(" / ").map(word =>
-      word.split(" ").map(code => REVERSE_MORSE[code] || code).join("")
-    ).join(" ");
-
-  const handleTextChange = (v: string) => { setText(v); setMorse(toMorse(v)); };
-  const handleMorseChange = (v: string) => { setMorse(v); setText(fromMorse(v)); };
+  const output = mode === "encode"
+    ? input.toLowerCase().split("").map(c => c === " " ? "/" : (MORSE[c] || "?")).join(" ")
+    : input.split(" / ").map(word => word.split(" ").map(code => REVERSE[code] || "?").join("")).join(" ");
 
   return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
-      <h1 className="text-3xl font-bold mb-2">Morse Code Translator</h1>
-      <p className="text-gray-400 mb-6">Translate text to Morse code and back</p>
-      <div className="flex gap-4 mb-6">
-        <button onClick={() => setMode("toMorse")} className={"px-4 py-2 rounded " + (mode === "toMorse" ? "bg-blue-600" : "bg-gray-800")}>Text → Morse</button>
-        <button onClick={() => setMode("fromMorse")} className={"px-4 py-2 rounded " + (mode === "fromMorse" ? "bg-blue-600" : "bg-gray-800")}>Morse → Text</button>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label className="block text-sm text-gray-400 mb-2">Text</label>
-          <textarea value={text} onChange={e => handleTextChange(e.target.value)} className="w-full h-48 bg-gray-900 border border-gray-700 rounded p-3 font-mono" placeholder="Enter text..." />
+    <div className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Morse Code Translator</h1>
+        <p className="text-gray-400 mb-6">Encode text to Morse code and decode Morse to text</p>
+        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
+          <div className="flex gap-2">
+            <button onClick={() => setMode("encode")} className={`flex-1 py-2 rounded-lg font-semibold ${mode==="encode" ? "bg-blue-600" : "bg-gray-800"}`}>Text → Morse</button>
+            <button onClick={() => setMode("decode")} className={`flex-1 py-2 rounded-lg font-semibold ${mode==="decode" ? "bg-blue-600" : "bg-gray-800"}`}>Morse → Text</button>
+          </div>
+          <textarea value={input} onChange={e => setInput(e.target.value)}
+            placeholder={mode==="encode" ? "Enter text to encode..." : "Enter morse code (use / for spaces)..."}
+            rows={4} className="w-full bg-gray-800 rounded-lg px-3 py-2 font-mono" />
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Output</label>
+            <div className="bg-gray-800 rounded-lg p-4 font-mono text-sm min-h-16 whitespace-pre-wrap break-all">{output}</div>
+          </div>
+          <button onClick={() => navigator.clipboard.writeText(output)} className="text-blue-400 text-sm hover:text-blue-300">Copy output</button>
         </div>
-        <div>
-          <label className="block text-sm text-gray-400 mb-2">Morse Code (/ = word separator)</label>
-          <textarea value={morse} onChange={e => handleMorseChange(e.target.value)} className="w-full h-48 bg-gray-900 border border-gray-700 rounded p-3 font-mono" placeholder="--- .-. / . -. - . .-. / -- --- .-. ... ." />
-        </div>
       </div>
-    </main>
+    </div>
   );
 }
