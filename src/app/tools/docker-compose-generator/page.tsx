@@ -1,55 +1,80 @@
 "use client";
 import { useState } from "react";
-export default function DockerComposeGenerator() {
-  const [services, setServices] = useState([{name:"app",image:"node:18",port:"3000",env:""}]);
-  const [output, setOutput] = useState("");
-  const addService = () => setServices([...services, {name:"",image:"",port:"",env:""}]);
-  const update = (i,k,v) => { const s=[...services]; s[i]={...s[i],[k]:v}; setServices(s); };
-  const generate = () => {
-    let yaml = "version: '3.8'
+const TEMPLATES:Record<string,string>={
+  "Node.js + PostgreSQL":`version: '3.8'
 services:
-";
-    services.forEach(s => {
-      yaml += `  ${s.name}:
-    image: ${s.image}
-`;
-      if (s.port) yaml += `    ports:
-      - "${s.port}:${s.port}"
-`;
-      if (s.env) { yaml += `    environment:
-`; s.env.split("
-").forEach(e=>{ if(e.trim()) yaml+=`      - ${e.trim()}
-`; }); }
-    });
-    setOutput(yaml);
-  };
-  return (
-    <div className="min-h-screen bg-gray-950 text-gray-100 p-8">
-      <div className="max-w-3xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Docker Compose Generator</h1>
-        <p className="text-gray-400 mb-8">Generate docker-compose.yml configurations</p>
-        <div className="space-y-4 mb-6">
-          {services.map((s,i) => (
-            <div key={i} className="bg-gray-900 rounded-xl p-6 space-y-3">
-              <h3 className="font-medium">Service {i+1}</h3>
-              <div className="grid grid-cols-2 gap-3">
-                <div><label className="block text-xs text-gray-400 mb-1">Name</label><input value={s.name} onChange={e=>update(i,"name",e.target.value)} className="w-full bg-gray-800 rounded p-2 text-sm" /></div>
-                <div><label className="block text-xs text-gray-400 mb-1">Image</label><input value={s.image} onChange={e=>update(i,"image",e.target.value)} className="w-full bg-gray-800 rounded p-2 text-sm" /></div>
-                <div><label className="block text-xs text-gray-400 mb-1">Port</label><input value={s.port} onChange={e=>update(i,"port",e.target.value)} className="w-full bg-gray-800 rounded p-2 text-sm" /></div>
-                <div><label className="block text-xs text-gray-400 mb-1">Env Vars (one per line)</label><textarea value={s.env} onChange={e=>update(i,"env",e.target.value)} rows={2} className="w-full bg-gray-800 rounded p-2 text-sm" /></div>
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="flex gap-3 mb-6">
-          <button onClick={addService} className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded text-sm">+ Add Service</button>
-          <button onClick={generate} className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded font-medium">Generate</button>
-        </div>
-        {output && <div className="bg-gray-900 rounded-xl p-6">
-          <div className="flex justify-between mb-2"><span className="text-sm text-gray-400">docker-compose.yml</span><button onClick={()=>navigator.clipboard.writeText(output)} className="text-xs bg-gray-700 px-3 py-1 rounded">Copy</button></div>
-          <pre className="text-sm text-green-400 overflow-auto whitespace-pre-wrap">{output}</pre>
-        </div>}
-      </div>
-    </div>
-  );
+  app:
+    build: .
+    ports:
+      - '3000:3000'
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@db:5432/mydb
+    depends_on:
+      - db
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:`,
+  "Next.js + Redis":`version: '3.8'
+services:
+  web:
+    build: .
+    ports:
+      - '3000:3000'
+    environment:
+      - REDIS_URL=redis://cache:6379
+    depends_on:
+      - cache
+  cache:
+    image: redis:7-alpine
+    ports:
+      - '6379:6379'`,
+  "NGINX + PHP + MySQL":`version: '3.8'
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - '80:80'
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./src:/var/www/html
+  php:
+    image: php:8.2-fpm
+    volumes:
+      - ./src:/var/www/html
+  mysql:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: app
+    volumes:
+      - mysqldata:/var/lib/mysql
+volumes:
+  mysqldata:`,
+  "Python FastAPI + MongoDB":`version: '3.8'
+services:
+  api:
+    build: .
+    ports:
+      - '8000:8000'
+    environment:
+      - MONGO_URL=mongodb://mongo:27017/mydb
+    depends_on:
+      - mongo
+  mongo:
+    image: mongo:6
+    volumes:
+      - mongodata:/data/db
+volumes:
+  mongodata:`,
+};
+export default function DockerCompose() {
+  const [tmpl,setTmpl]=useState(Object.keys(TEMPLATES)[0]),[yaml,setYaml]=useState(TEMPLATES[Object.keys(TEMPLATES)[0]]);
+  const copy=()=>navigator.clipboard.writeText(yaml).catch(()=>{});
+  return(<div className="min-h-screen bg-gray-950 text-white p-8"><div className="max-w-2xl mx-auto"><h1 className="text-3xl font-bold mb-2">Docker Compose Generator</h1><p className="text-gray-400 mb-6">Generate docker-compose.yml for common stacks.</p><div className="flex gap-2 flex-wrap mb-4">{Object.keys(TEMPLATES).map(t=><button key={t} onClick={()=>{setTmpl(t);setYaml(TEMPLATES[t]);}} className={`rounded px-3 py-1.5 text-sm ${tmpl===t?"bg-blue-600":"bg-gray-700 hover:bg-gray-600"}`}>{t}</button>)}</div><div className="relative"><textarea className="w-full bg-gray-800 rounded p-4 font-mono text-sm text-green-400 h-96 resize-y" value={yaml} onChange={e=>setYaml(e.target.value)} spellCheck={false} /><button onClick={copy} className="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 rounded px-3 py-1 text-xs">Copy</button></div><p className="text-gray-500 text-sm mt-3">Edit the YAML above to customize. Use <code className="bg-gray-800 px-1 rounded">docker compose up -d</code> to start.</p></div></div>);
 }

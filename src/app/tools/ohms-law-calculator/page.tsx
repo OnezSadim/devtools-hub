@@ -1,30 +1,13 @@
 "use client";
 import { useState } from "react";
 export default function OhmsLaw() {
-  const [voltage, setVoltage] = useState('');
-  const [current, setCurrent] = useState('');
-  const [resistance, setResistance] = useState('');
-  const [result, setResult] = useState('');
-  const calculate = () => {
-    const v = parseFloat(voltage), i = parseFloat(current), r = parseFloat(resistance);
-    if (!isNaN(v) && !isNaN(i) && isNaN(r)) setResult('Resistance: ' + (v / i).toFixed(4) + ' Ω');
-    else if (!isNaN(v) && isNaN(i) && !isNaN(r)) setResult('Current: ' + (v / r).toFixed(4) + ' A');
-    else if (isNaN(v) && !isNaN(i) && !isNaN(r)) setResult('Voltage: ' + (i * r).toFixed(4) + ' V');
-    else setResult('Leave exactly one field empty to calculate.');
+  const [v,setV]=useState(""),[i,setI]=useState(""),[r,setR]=useState(""),[res,setRes]=useState("");
+  const calc=(solve:string)=>{
+    const vn=parseFloat(v),inn=parseFloat(i),rn=parseFloat(r);
+    if(solve==="v"&&!isNaN(inn)&&!isNaN(rn))setRes(`Voltage = ${(inn*rn).toFixed(4)} V`);
+    else if(solve==="i"&&!isNaN(vn)&&!isNaN(rn)&&rn!==0)setRes(`Current = ${(vn/rn).toFixed(4)} A`);
+    else if(solve==="r"&&!isNaN(vn)&&!isNaN(inn)&&inn!==0)setRes(`Resistance = ${(vn/inn).toFixed(4)} Ω`);
+    else setRes("Enter two values to solve for the third.");
   };
-  return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
-      <div className="max-w-lg mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Ohm's Law Calculator</h1>
-        <p className="text-gray-400 mb-8">Calculate voltage, current, or resistance. Leave one field empty.</p>
-        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
-          <div><label className="block text-sm text-gray-400 mb-1">Voltage (V)</label><input type="number" value={voltage} onChange={e => setVoltage(e.target.value)} placeholder="e.g. 12" className="w-full bg-gray-800 rounded-lg px-4 py-3 text-white" /></div>
-          <div><label className="block text-sm text-gray-400 mb-1">Current (A)</label><input type="number" value={current} onChange={e => setCurrent(e.target.value)} placeholder="e.g. 2" className="w-full bg-gray-800 rounded-lg px-4 py-3 text-white" /></div>
-          <div><label className="block text-sm text-gray-400 mb-1">Resistance (Ω)</label><input type="number" value={resistance} onChange={e => setResistance(e.target.value)} placeholder="e.g. 6" className="w-full bg-gray-800 rounded-lg px-4 py-3 text-white" /></div>
-          <button onClick={calculate} className="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded-lg font-semibold">Calculate</button>
-          {result && <div className="bg-gray-800 rounded-lg p-4 text-center text-xl font-bold text-blue-400">{result}</div>}
-        </div>
-      </div>
-    </main>
-  );
+  return(<div className="min-h-screen bg-gray-950 text-white p-8"><div className="max-w-lg mx-auto"><h1 className="text-3xl font-bold mb-2">Ohm's Law Calculator</h1><p className="text-gray-400 mb-6">V = I × R — solve for voltage, current, or resistance.</p><div className="space-y-4"><div><label className="block text-sm text-gray-400 mb-1">Voltage (V)</label><input className="w-full bg-gray-800 rounded px-3 py-2 text-white" value={v} onChange={e=>setV(e.target.value)} placeholder="Leave blank to solve" /></div><div><label className="block text-sm text-gray-400 mb-1">Current (A)</label><input className="w-full bg-gray-800 rounded px-3 py-2 text-white" value={i} onChange={e=>setI(e.target.value)} placeholder="Leave blank to solve" /></div><div><label className="block text-sm text-gray-400 mb-1">Resistance (Ω)</label><input className="w-full bg-gray-800 rounded px-3 py-2 text-white" value={r} onChange={e=>setR(e.target.value)} placeholder="Leave blank to solve" /></div><div className="flex gap-2"><button onClick={()=>calc("v")} className="flex-1 bg-blue-600 hover:bg-blue-500 rounded py-2 text-sm">Solve V</button><button onClick={()=>calc("i")} className="flex-1 bg-green-600 hover:bg-green-500 rounded py-2 text-sm">Solve I</button><button onClick={()=>calc("r")} className="flex-1 bg-purple-600 hover:bg-purple-500 rounded py-2 text-sm">Solve R</button></div>{res&&<div className="bg-gray-800 rounded p-4 text-center text-lg font-mono text-green-400">{res}</div>}</div></div></div>);
 }
