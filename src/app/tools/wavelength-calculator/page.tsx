@@ -1,20 +1,23 @@
 "use client";
 import { useState } from "react";
 
-const units = ["Pa·s/m", "Rayl", "MRayl", "g/cm²·s", "kg/m²·s"];
+const units = ["nm", "um", "mm", "cm", "m", "km", "angstrom", "pm"];
 
 const conversions: Record<string, number> = {
-  "Pa·s/m": 1,
-  "Rayl": 1,
-  "MRayl": 1,
-  "g/cm²·s": 1,
-  "kg/m²·s": 1,
+  "nm": 1,
+  "um": 1,
+  "mm": 1,
+  "cm": 1,
+  "m": 1,
+  "km": 1,
+  "angstrom": 1,
+  "pm": 1,
 };
 
 export default function Page() {
   const [value, setValue] = useState("");
-  const [from, setFrom] = useState("Pa·s/m");
-  const [to, setTo] = useState("Rayl");
+  const [from, setFrom] = useState("nm");
+  const [to, setTo] = useState("um");
 
   const convert = () => {
     const v = parseFloat(value);
@@ -25,8 +28,8 @@ export default function Page() {
   return (
     <main className="min-h-screen bg-gray-950 text-white p-8">
       <div className="max-w-xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Acoustic Impedance Converter</h1>
-        <p className="text-gray-400 mb-8">Convert acoustic impedance values between SI and CGS units.</p>
+        <h1 className="text-3xl font-bold mb-2">Wavelength Calculator</h1>
+        <p className="text-gray-400 mb-8">Convert between wavelength units used in optics and physics.</p>
         <div className="space-y-4">
           <input type="number" value={value} onChange={e => setValue(e.target.value)}
             placeholder="Enter value" className="w-full bg-gray-800 rounded px-4 py-3 text-lg" />
@@ -35,22 +38,28 @@ export default function Page() {
               <label className="text-gray-400 text-sm mb-1 block">From</label>
               <select value={from} onChange={e => setFrom(e.target.value)}
                 className="w-full bg-gray-800 rounded px-4 py-3">
-              <option value="Pa·s/m">Pa·s/m</option>
-              <option value="Rayl">Rayl</option>
-              <option value="MRayl">MRayl</option>
-              <option value="g/cm²·s">g/cm²·s</option>
-              <option value="kg/m²·s">kg/m²·s</option>
+              <option value="nm">nm</option>
+              <option value="um">um</option>
+              <option value="mm">mm</option>
+              <option value="cm">cm</option>
+              <option value="m">m</option>
+              <option value="km">km</option>
+              <option value="angstrom">angstrom</option>
+              <option value="pm">pm</option>
               </select>
             </div>
             <div>
               <label className="text-gray-400 text-sm mb-1 block">To</label>
               <select value={to} onChange={e => setTo(e.target.value)}
                 className="w-full bg-gray-800 rounded px-4 py-3">
-              <option value="Pa·s/m">Pa·s/m</option>
-              <option value="Rayl">Rayl</option>
-              <option value="MRayl">MRayl</option>
-              <option value="g/cm²·s">g/cm²·s</option>
-              <option value="kg/m²·s">kg/m²·s</option>
+              <option value="nm">nm</option>
+              <option value="um">um</option>
+              <option value="mm">mm</option>
+              <option value="cm">cm</option>
+              <option value="m">m</option>
+              <option value="km">km</option>
+              <option value="angstrom">angstrom</option>
+              <option value="pm">pm</option>
               </select>
             </div>
           </div>
