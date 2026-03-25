@@ -1,11 +1,11 @@
 "use client";
 import { useState } from "react";
 
-const units: [string, string, number][] = [["sqm", "Square Meter", 1], ["sqkm", "Square Kilometer", 1000000.0], ["sqmi", "Square Mile", 2589988.11], ["sqft", "Square Foot", 0.092903], ["sqyd", "Square Yard", 0.836127], ["acre", "Acre", 4046.856], ["ha", "Hectare", 10000], ["sqin", "Square Inch", 0.00064516]];
+const units: [string, string, number][] = [["bps", "bps", 1], ["kbps", "Kbps", 1000], ["mbps", "Mbps", 1000000.0], ["gbps", "Gbps", 1000000000.0], ["tbps", "Tbps", 1000000000000.0], ["kibps", "Kibps", 1024], ["mibps", "Mibps", 1048576], ["gibps", "Gibps", 1073741824]];
 
-export default function AreaConverterPage() {
+export default function DigitalBandwidthConverterPage() {
   const [from, setFrom] = useState(units[0][0]);
-  const [to, setTo] = useState("sqkm");
+  const [to, setTo] = useState("kbps");
   const [val, setVal] = useState("");
   const toBase = (v: number, u: string) => { const f = units.find(x => x[0]===u); return f ? v * f[2] : v; };
   const fromBase = (v: number, u: string) => { const f = units.find(x => x[0]===u); return f ? v / f[2] : v; };
@@ -13,8 +13,8 @@ export default function AreaConverterPage() {
   return (
     <main className="min-h-screen bg-gray-950 text-white p-8">
       <div className="max-w-xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Area Converter</h1>
-        <p className="text-gray-400 mb-8">Convert between square meters, acres, hectares, square feet, and more.</p>
+        <h1 className="text-3xl font-bold mb-2">Digital Bandwidth Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between bps, Kbps, Mbps, Gbps, Tbps and more.</p>
         <div className="space-y-4">
           <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" className="w-full bg-gray-800 border border-gray-700 rounded px-4 py-3 text-white" />
           <div className="grid grid-cols-2 gap-4">

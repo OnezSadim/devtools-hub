@@ -1,57 +1,29 @@
 "use client";
 import { useState } from "react";
 
-const units = [
-  { label: "m/s", factor: 1 },
-  { label: "km/h", factor: 0.277778 },
-  { label: "mph", factor: 0.44704 },
-  { label: "knot", factor: 0.514444 },
-  { label: "ft/s", factor: 0.3048 },
-  { label: "Mach", factor: 343 },
-];
+const units: [string, string, number][] = [["ms", "m/s", 1], ["kmh", "km/h", 0.277778], ["mph", "mph", 0.44704], ["knot", "Knot", 0.514444], ["fts", "ft/s", 0.3048], ["mach", "Mach", 340.3]];
 
-export default function SpeedConverter() {
-  const [value, setValue] = useState("");
-  const [from, setFrom] = useState(1);
-  const [to, setTo] = useState(2);
-
-  const result = value !== "" ? (parseFloat(value) * units[from].factor / units[to].factor).toPrecision(8) : "";
-
+export default function SpeedConverterPage() {
+  const [from, setFrom] = useState(units[0][0]);
+  const [to, setTo] = useState("kmh");
+  const [val, setVal] = useState("");
+  const toBase = (v: number, u: string) => { const f = units.find(x => x[0]===u); return f ? v * f[2] : v; };
+  const fromBase = (v: number, u: string) => { const f = units.find(x => x[0]===u); return f ? v / f[2] : v; };
+  const result = val !== "" && !isNaN(Number(val)) ? fromBase(toBase(Number(val), from), to).toPrecision(6) : "";
   return (
-    <div className="min-h-screen bg-gray-950 text-white p-8">
+    <main className="min-h-screen bg-gray-950 text-white p-8">
       <div className="max-w-xl mx-auto">
         <h1 className="text-3xl font-bold mb-2">Speed Converter</h1>
-        <p className="text-gray-400 mb-8">Convert between m/s, km/h, mph, knots, ft/s, and Mach.</p>
-        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">Value</label>
-            <input type="number" value={value} onChange={e => setValue(e.target.value)}
-              className="w-full bg-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter value" />
-          </div>
+        <p className="text-gray-400 mb-8">Convert between mph, km/h, m/s, knots, and more.</p>
+        <div className="space-y-4">
+          <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" className="w-full bg-gray-800 border border-gray-700 rounded px-4 py-3 text-white" />
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">From</label>
-              <select value={from} onChange={e => setFrom(Number(e.target.value))}
-                className="w-full bg-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                {units.map((u, i) => <option key={i} value={i}>{u.label}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">To</label>
-              <select value={to} onChange={e => setTo(Number(e.target.value))}
-                className="w-full bg-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                {units.map((u, i) => <option key={i} value={i}>{u.label}</option>)}
-              </select>
-            </div>
+            <div><label className="text-gray-400 text-sm">From</label><select value={from} onChange={e=>setFrom(e.target.value)} className="w-full mt-1 bg-gray-800 border border-gray-700 rounded px-3 py-2">{units.map(u=><option key={u[0]} value={u[0]}>{u[1]}</option>)}</select></div>
+            <div><label className="text-gray-400 text-sm">To</label><select value={to} onChange={e=>setTo(e.target.value)} className="w-full mt-1 bg-gray-800 border border-gray-700 rounded px-3 py-2">{units.map(u=><option key={u[0]} value={u[0]}>{u[1]}</option>)}</select></div>
           </div>
-          {result !== "" && (
-            <div className="bg-blue-900/30 border border-blue-500/30 rounded-lg p-4">
-              <p className="text-sm text-gray-400">Result</p>
-              <p className="text-2xl font-bold text-blue-400">{result} {units[to].label}</p>
-            </div>
-          )}
+          {result && <div className="bg-gray-800 rounded p-4 text-center"><span className="text-2xl font-mono text-green-400">{result}</span><span className="text-gray-400 ml-2">{to}</span></div>}
         </div>
       </div>
-    </div>
+    </main>
   );
 }

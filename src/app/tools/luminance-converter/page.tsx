@@ -1,1 +1,29 @@
-"use client";import{useState}from"react";const units=[["cd/m2","1"],["nit","1"],["stilb","10000"],["lambert","3183.1"],["foot-lambert","3.4263"],["mcd/m2","0.001"]];export default function Page(){const[v,setV]=useState("");const[f,setF]=useState(units[0][0]);const[t,setT]=useState(units[1][0]);const toBase=(val,u)=>{const r=units.find(x=>x[0]===u);return r?parseFloat(val)*parseFloat(r[1]):0};const fromBase=(val,u)=>{const r=units.find(x=>x[0]===u);return r?val/parseFloat(r[1]):0};const result=v&&!isNaN(v)?fromBase(toBase(v,f),t).toPrecision(6):"";return(<main style={{padding:"2rem",fontFamily:"sans-serif",maxWidth:"600px",margin:"0 auto"}}><h1>Luminance Converter</h1><p>Convert between luminance units.</p><div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginTop:"1rem"}}><input type="number" value={v} onChange={e=>setV(e.target.value)} placeholder="Value" style={{flex:1,padding:"0.5rem",minWidth:"120px"}}/><select value={f} onChange={e=>setF(e.target.value)} style={{flex:1,padding:"0.5rem"}}>{units.map(u=><option key={u[0]} value={u[0]}>{u[0]}</option>)}</select><span style={{alignSelf:"center"}}>→</span><select value={t} onChange={e=>setT(e.target.value)} style={{flex:1,padding:"0.5rem"}}>{units.map(u=><option key={u[0]} value={u[0]}>{u[0]}</option>)}</select></div>{result&&<p style={{marginTop:"1rem",fontSize:"1.2rem"}}><strong>{v} {f} = {result} {t}</strong></p>}</main>)}
+"use client";
+import { useState } from "react";
+
+const units: [string, string, number][] = [["cdm2", "cd/m² (Nit)", 1], ["fL", "Foot-Lambert", 3.42626], ["sb", "Stilb", 10000], ["asb", "Apostilb", 0.31831], ["La", "Lambert", 3183.099]];
+
+export default function LuminanceConverterPage() {
+  const [from, setFrom] = useState(units[0][0]);
+  const [to, setTo] = useState("fL");
+  const [val, setVal] = useState("");
+  const toBase = (v: number, u: string) => { const f = units.find(x => x[0]===u); return f ? v * f[2] : v; };
+  const fromBase = (v: number, u: string) => { const f = units.find(x => x[0]===u); return f ? v / f[2] : v; };
+  const result = val !== "" && !isNaN(Number(val)) ? fromBase(toBase(Number(val), from), to).toPrecision(6) : "";
+  return (
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Luminance Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between candela/m², foot-lambert, nit, stilb, and more.</p>
+        <div className="space-y-4">
+          <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" className="w-full bg-gray-800 border border-gray-700 rounded px-4 py-3 text-white" />
+          <div className="grid grid-cols-2 gap-4">
+            <div><label className="text-gray-400 text-sm">From</label><select value={from} onChange={e=>setFrom(e.target.value)} className="w-full mt-1 bg-gray-800 border border-gray-700 rounded px-3 py-2">{units.map(u=><option key={u[0]} value={u[0]}>{u[1]}</option>)}</select></div>
+            <div><label className="text-gray-400 text-sm">To</label><select value={to} onChange={e=>setTo(e.target.value)} className="w-full mt-1 bg-gray-800 border border-gray-700 rounded px-3 py-2">{units.map(u=><option key={u[0]} value={u[0]}>{u[1]}</option>)}</select></div>
+          </div>
+          {result && <div className="bg-gray-800 rounded p-4 text-center"><span className="text-2xl font-mono text-green-400">{result}</span><span className="text-gray-400 ml-2">{to}</span></div>}
+        </div>
+      </div>
+    </main>
+  );
+}
