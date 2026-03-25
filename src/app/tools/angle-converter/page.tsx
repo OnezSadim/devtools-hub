@@ -1,63 +1,34 @@
 "use client";
 import { useState } from "react";
 
-const units = [
-      { name: 'Degree', factor: 1.0 },
-      { name: 'Radian', factor: 57.29577951 },
-      { name: 'Gradian', factor: 0.9 },
-      { name: 'Arcminute', factor: 0.016666667 },
-      { name: 'Arcsecond', factor: 0.000277778 },
-      { name: 'Milliradian', factor: 0.05729578 },
-      { name: 'Turn', factor: 360.0 }
-    ];
+const UNITS: string[] = ["degree", "radian", "gradian", "arcminute", "arcsecond", "turn"];
+const TO_BASE: Record<string, number> = {"degree": 1, "radian": 57.2958, "gradian": 0.9, "arcminute": 0.016667, "arcsecond": 0.000278, "turn": 360};
 
 export default function AngleConverterPage() {
-  const [value, setValue] = useState("");
-  const [from, setFrom] = useState(units[0].name);
-  const [to, setTo] = useState(units[1].name);
-
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState(UNITS[0]);
+  const [to, setTo] = useState(UNITS[1]);
   const convert = () => {
-    const num = parseFloat(value);
-    if (isNaN(num)) return "";
-    const fromUnit = units.find(u => u.name === from);
-    const toUnit = units.find(u => u.name === to);
-    if (!fromUnit || !toUnit) return "";
-    return ((num * fromUnit.factor) / toUnit.factor).toPrecision(8);
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
   };
-
   return (
-    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
-      <div className="max-w-xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Angle Converter</h1>
-        <p className="text-gray-400 mb-8">Convert between angle units: degrees, radians, gradians, arcminutes, arcseconds, and more.</p>
-        <div className="space-y-4">
-          <input
-            type="number"
-            value={value}
-            onChange={e => setValue(e.target.value)}
-            placeholder="Enter value"
-            className="w-full bg-gray-800 border border-gray-700 rounded px-4 py-2"
-          />
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-sm text-gray-400 mb-1 block">From</label>
-              <select value={from} onChange={e => setFrom(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded px-4 py-2">
-                {units.map(u => <option key={u.name} value={u.name}>{u.name}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="text-sm text-gray-400 mb-1 block">To</label>
-              <select value={to} onChange={e => setTo(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded px-4 py-2">
-                {units.map(u => <option key={u.name} value={u.name}>{u.name}</option>)}
-              </select>
-            </div>
-          </div>
-          {value && (
-            <div className="bg-gray-800 rounded p-4 text-xl font-mono">
-              {value} {from} = <span className="text-green-400">{convert()}</span> {to}
-            </div>
-          )}
-        </div>
+    <main style={{maxWidth:480,margin:"40px auto",padding:"0 16px",fontFamily:"sans-serif",color:"#e2e8f0"}}>
+      <h1 style={{fontSize:"1.6rem",marginBottom:8}}>Angle Converter</h1>
+      <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value"
+        style={{width:"100%",padding:"10px",marginBottom:12,background:"#1e293b",border:"1px solid #334155",borderRadius:6,color:"#e2e8f0",fontSize:"1rem"}} />
+      <div style={{display:"flex",gap:8,marginBottom:16}}>
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:"8px",background:"#1e293b",border:"1px solid #334155",borderRadius:6,color:"#e2e8f0"}}>
+          {UNITS.map(u=><option key={u}>{u}</option>)}
+        </select>
+        <span style={{lineHeight:"36px"}}>to</span>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:"8px",background:"#1e293b",border:"1px solid #334155",borderRadius:6,color:"#e2e8f0"}}>
+          {UNITS.map(u=><option key={u}>{u}</option>)}
+        </select>
+      </div>
+      <div style={{padding:"16px",background:"#1e293b",borderRadius:8,fontSize:"1.2rem",minHeight:48}}>
+        {val ? <><strong>{convert()}</strong> {to}</> : <span style={{color:"#64748b"}}>Result appears here</span>}
       </div>
     </main>
   );
