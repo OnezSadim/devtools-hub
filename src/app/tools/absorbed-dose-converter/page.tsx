@@ -1,28 +1,28 @@
 "use client";
 import { useState } from "react";
 
-const UNITS: string[] = ["gray", "sievert", "rad", "rem", "milligray", "millisievert"];
-const FACTORS: Record<string, number> = {"gray": 1.0, "sievert": 1.0, "rad": 0.01, "rem": 0.01, "milligray": 0.001, "millisievert": 0.001};
+const UNITS: string[] = ["gray", "milligray", "microgray", "rad", "millirad", "joule-per-kilogram", "sievert", "millisievert"];
+const TO_BASE: Record<string, number> = {"gray": 1, "milligray": 0.001, "microgray": 1e-06, "rad": 0.01, "millirad": 1e-05, "joule-per-kilogram": 1, "sievert": 1, "millisievert": 0.001};
 
 export default function Page() {
   const [val, setVal] = useState("");
   const [from, setFrom] = useState(UNITS[0]);
   const [to, setTo] = useState(UNITS[1]);
-  const result = val !== "" && !isNaN(Number(val)) ? (Number(val) * FACTORS[from] / FACTORS[to]).toPrecision(6) : "";
+  const convert = () => {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
+  };
+  const sel = "bg-gray-800 text-white p-2 rounded border border-gray-600 w-full";
   return (
-    <main style={{padding:"2rem",fontFamily:"sans-serif",background:"#0f172a",minHeight:"100vh",color:"#f1f5f9"}}>
-      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Absorbed Dose Converter</h1>
-      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",alignItems:"center"}}>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",width:"140px"}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9"}}>
-          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
-        </select>
-        <span>to</span>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9"}}>
-          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
-        </select>
+    <main className="min-h-screen bg-gray-900 text-white p-8">
+      <h1 className="text-3xl font-bold mb-6">Absorbed Dose Converter</h1>
+      <div className="max-w-xl space-y-4">
+        <input className="bg-gray-800 text-white p-2 rounded border border-gray-600 w-full" placeholder="Value" value={val} onChange={e => setVal(e.target.value)} />
+        <select className={sel} value={from} onChange={e => setFrom(e.target.value)}>{UNITS.map(u => <option key={u}>{u}</option>)}</select>
+        <select className={sel} value={to} onChange={e => setTo(e.target.value)}>{UNITS.map(u => <option key={u}>{u}</option>)}</select>
+        <div className="bg-gray-800 p-4 rounded text-xl font-mono">{convert() || "—"}</div>
       </div>
-      {result && <p style={{marginTop:"1.5rem",fontSize:"1.25rem",color:"#38bdf8"}}>= {result} {to}</p>}
     </main>
   );
 }
