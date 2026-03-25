@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
 
-const units = ['candela', 'millicandela', 'kilocandela', 'hefnerkerze', 'candlepower'];
-const factors = {'candela': 1.0, 'millicandela': 0.001, 'kilocandela': 1000.0, 'hefnerkerze': 0.9, 'candlepower': 0.981};
+const units: string[] = ["candela", "millicandela", "kilocandela", "candlepower", "hefnerkerze"];
+const factors: Record<string, number> = {"candela": 1, "millicandela": 0.001, "kilocandela": 1000, "candlepower": 0.981, "hefnerkerze": 0.9};
 
 export default function Page() {
   const [val, setVal] = useState("");
@@ -19,15 +19,15 @@ export default function Page() {
       <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1rem"}}>
         <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px"}} />
         <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px"}}>
-          {units.map(u=><option key={u}>{u}</option>)}
+          {units.map((u: string) => <option key={u} value={u}>{u}</option>)}
         </select>
         <span style={{alignSelf:"center"}}>to</span>
         <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px"}}>
-          {units.map(u=><option key={u}>{u}</option>)}
+          {units.map((u: string) => <option key={u} value={u}>{u}</option>)}
         </select>
       </div>
       <div style={{fontSize:"1.25rem",padding:"1rem",background:"#1e293b",borderRadius:"8px"}}>
-        {val ? <span>{val} {from} = <b>{convert()}</b> {to}</span> : <span style={{color:"#64748b"}}>Enter a value above</span>}
+        {val ? convert() + " " + to : "Enter a value above"}
       </div>
     </main>
   );

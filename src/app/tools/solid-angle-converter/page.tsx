@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
 
-const units = ['Steradian (sr)', 'Millisteradian (msr)', 'Square degree', 'Square arcminute', 'Square arcsecond', 'Hemisphere', 'Full sphere'];
-const factors = {'Steradian (sr)': 1, 'Millisteradian (msr)': 0.001, 'Square degree': 0.00030461741978670797, 'Square arcminute': 8.461594994075223e-08, 'Square arcsecond': 2.3504430539097837e-11, 'Hemisphere': 6.28318530717958, 'Full sphere': 12.56637061435916};
+const units: string[] = ["steradian", "square-degree", "square-arcminute", "square-arcsecond", "spat"];
+const factors: Record<string, number> = {"steradian": 1, "square-degree": 0.000304617, "square-arcminute": 8.46159e-08, "square-arcsecond": 2.35044e-11, "spat": 12.5664};
 
 export default function Page() {
   const [val, setVal] = useState("");
@@ -14,16 +14,21 @@ export default function Page() {
     return ((n * factors[from]) / factors[to]).toPrecision(6);
   };
   return (
-    <main style={{padding:"2rem",maxWidth:"480px",margin:"0 auto",fontFamily:"sans-serif"}}>
-      <h1>Solid Angle Converter</h1>
-      <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{width:"100%",padding:"0.5rem",marginBottom:"1rem"}} />
-      <select value={from} onChange={e=>setFrom(e.target.value)} style={{width:"100%",padding:"0.5rem",marginBottom:"1rem"}}>
-        {units.map(u=><option key={u}>{u}</option>)}
-      </select>
-      <select value={to} onChange={e=>setTo(e.target.value)} style={{width:"100%",padding:"0.5rem",marginBottom:"1rem"}}>
-        {units.map(u=><option key={u}>{u}</option>)}
-      </select>
-      <div style={{fontSize:"1.5rem",fontWeight:"bold"}}>{convert() || "—"} {to}</div>
+    <main style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}>
+      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Solid Angle Converter</h1>
+      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1rem"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px"}} />
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px"}}>
+          {units.map((u: string) => <option key={u} value={u}>{u}</option>)}
+        </select>
+        <span style={{alignSelf:"center"}}>to</span>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px"}}>
+          {units.map((u: string) => <option key={u} value={u}>{u}</option>)}
+        </select>
+      </div>
+      <div style={{fontSize:"1.25rem",padding:"1rem",background:"#1e293b",borderRadius:"8px"}}>
+        {val ? convert() + " " + to : "Enter a value above"}
+      </div>
     </main>
   );
 }
