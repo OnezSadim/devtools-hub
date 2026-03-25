@@ -1,32 +1,30 @@
 "use client";
 import { useState } from "react";
-
-const UNITS: string[] = ["mol/L (M)", "mmol/L (mM)", "umol/L (uM)", "nmol/L (nM)", "mol/m3", "kmol/m3"];
-const TO_BASE: Record<string, number> = {"mol/L (M)": 1000.0, "mmol/L (mM)": 1.0, "umol/L (uM)": 0.001, "nmol/L (nM)": 1e-06, "mol/m3": 1.0, "kmol/m3": 1000.0};
-
+const UNITS = ["g/L", "mg/L", "mg/mL", "kg/m3", "oz/gal (US)"];
+const TO_BASE: Record<string, number> = {"g/L": 1.0, "mg/L": 0.001, "mg/mL": 1.0, "kg/m3": 1.0, "oz/gal (US)": 7.4893};
 export default function Page() {
   const [val, setVal] = useState("");
   const [from, setFrom] = useState(UNITS[0]);
-  const [to, setTo] = useState(UNITS[1]);
-  const convert = () => {
+  const convert = (to: string) => {
     const n = parseFloat(val);
     if (isNaN(n)) return "";
     return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
   };
-  const sel = "bg-gray-800 text-white rounded px-3 py-2 border border-gray-600";
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-8">
-      <h1 className="text-3xl font-bold mb-2">Concentration Converter</h1>
-      <p className="text-gray-400 mb-6">Convert between concentration units instantly.</p>
-      <div className="bg-gray-800 rounded-xl p-6 max-w-lg space-y-4">
-        <input className="w-full bg-gray-700 rounded px-3 py-2 text-white" placeholder="Enter value" value={val} onChange={e => setVal(e.target.value)} />
-        <div className="flex gap-3">
-          <select className={sel} value={from} onChange={e => setFrom(e.target.value)}>{UNITS.map(u => <option key={u}>{u}</option>)}</select>
-          <span className="self-center text-gray-400">to</span>
-          <select className={sel} value={to} onChange={e => setTo(e.target.value)}>{UNITS.map(u => <option key={u}>{u}</option>)}</select>
-        </div>
-        {val && <div className="text-2xl font-mono text-green-400">{convert()} {to}</div>}
+    <main style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}>
+      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Concentration (Mass) Converter</h1>
+      <div style={{display:"flex",gap:"1rem",marginBottom:"1rem",flexWrap:"wrap"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px"}} />
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px"}}>
+          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
+        </select>
       </div>
-    </div>
+      <table style={{width:"100%",borderCollapse:"collapse"}}>
+        <thead><tr><th style={{textAlign:"left",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Unit</th><th style={{textAlign:"right",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Value</th></tr></thead>
+        <tbody>
+          {UNITS.map(u=><tr key={u} style={{background:u===from?"#1e293b":"transparent"}}><td style={{padding:"0.5rem"}}>{u}</td><td style={{textAlign:"right",padding:"0.5rem"}}>{convert(u)}</td></tr>)}
+        </tbody>
+      </table>
+    </main>
   );
 }
