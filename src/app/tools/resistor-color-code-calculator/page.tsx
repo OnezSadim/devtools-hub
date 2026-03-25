@@ -1,1 +1,34 @@
-'use client';import{useState}from 'react';export default function ResistorColorCode(){const COLORS=['Black','Brown','Red','Orange','Yellow','Green','Blue','Violet','Gray','White'];const MULT=['Black','Brown','Red','Orange','Yellow','Green','Blue','Gold','Silver'];const TOL={Gold:'±5%',Silver:'±10%',Brown:'±1%',Red:'±2%',Green:'±0.5%',Blue:'±0.25%',Violet:'±0.1%',Gray:'±0.05%'};const[bands,setBands]=useState(['Brown','Black','Red','Gold']);const COLOR_VAL={Black:0,Brown:1,Red:2,Orange:3,Yellow:4,Green:5,Blue:6,Violet:7,Gray:8,White:9};const MULT_VAL={Black:1,Brown:10,Red:100,Orange:1000,Yellow:10000,Green:100000,Blue:1000000,Gold:0.1,Silver:0.01};const resistance=(COLOR_VAL[bands[0]]*10+COLOR_VAL[bands[1]])*MULT_VAL[bands[2]];const fmt=(r)=>r>=1e6?r/1e6+'MΩ':r>=1e3?r/1e3+'kΩ':r+'Ω';const COLOR_HEX={Black:'#111',Brown:'#92400e',Red:'#dc2626',Orange:'#ea580c',Yellow:'#fbbf24',Green:'#16a34a',Blue:'#2563eb',Violet:'#7c3aed',Gray:'#6b7280',White:'#f1f5f9',Gold:'#ca8a04',Silver:'#94a3b8'};return(<div style={{padding:'2rem',fontFamily:'monospace',background:'#0f172a',minHeight:'100vh',color:'#e2e8f0'}}><h1 style={{fontSize:'1.5rem',marginBottom:'1rem'}}>Resistor Color Code Calculator</h1><div style={{display:'flex',gap:'1rem',marginBottom:'1.5rem',flexWrap:'wrap'}}>{['Band 1','Band 2','Multiplier','Tolerance'].map((label,i)=><div key={i}><label style={{display:'block',marginBottom:'0.25rem',color:'#94a3b8',fontSize:'0.8rem'}}>{label}</label><select value={bands[i]} onChange={e=>{const b=[...bands];b[i]=e.target.value;setBands(b);}} style={{padding:'0.5rem',background:'#1e293b',border:'2px solid '+COLOR_HEX[bands[i]],borderRadius:'4px',color:'#e2e8f0'}}>{(i<2?COLORS:i===2?MULT:Object.keys(TOL)).map(c=><option key={c} value={c}>{c}</option>)}</select></div>)}</div><div style={{display:'flex',gap:'4px',marginBottom:'1.5rem',alignItems:'stretch',height:'60px'}}>{bands.map((b,i)=><div key={i} style={{flex:1,background:COLOR_HEX[b],borderRadius:'4px'}}/>)}</div><div style={{padding:'1.5rem',background:'#1e293b',borderRadius:'8px',textAlign:'center'}}><div style={{fontSize:'2rem',fontWeight:'bold',color:'#86efac'}}>{fmt(resistance)}</div><div style={{color:'#94a3b8',marginTop:'0.5rem'}}>Tolerance: {TOL[bands[3]]}</div></div></div>)}
+"use client";
+import { useState } from "react";
+const COLORS: Record<string, number> = { black: 0, brown: 1, red: 2, orange: 3, yellow: 4, green: 5, blue: 6, violet: 7, grey: 8, white: 9 };
+const MULTIPLIERS: Record<string, number> = { black: 1, brown: 10, red: 100, orange: 1e3, yellow: 1e4, green: 1e5, blue: 1e6, violet: 1e7, grey: 1e8, white: 1e9, gold: 0.1, silver: 0.01 };
+const TOLERANCE: Record<string, string> = { brown: "±1%", red: "±2%", orange: "±3%", yellow: "±4%", green: "±0.5%", blue: "±0.25%", violet: "±0.1%", grey: "±0.05%", gold: "±5%", silver: "±10%", none: "±20%" };
+export default function ResistorColorCodeCalculator() {
+  const colorList = Object.keys(COLORS);
+  const multList = Object.keys(MULTIPLIERS);
+  const tolList = Object.keys(TOLERANCE);
+  const [b1, setB1] = useState("brown");
+  const [b2, setB2] = useState("black");
+  const [mult, setMult] = useState("brown");
+  const [tol, setTol] = useState("gold");
+  const r = (COLORS[b1] * 10 + COLORS[b2]) * MULTIPLIERS[mult];
+  const fmt = (v: number) => v >= 1e6 ? (v/1e6).toFixed(2)+" MΩ" : v >= 1e3 ? (v/1e3).toFixed(2)+" kΩ" : v+" Ω";
+  const sel = (val: string, set: (s:string)=>void, opts: string[]) => (
+    <select value={val} onChange={e => set(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded p-2 capitalize">
+      {opts.map(o => <option key={o} value={o} className="capitalize">{o}</option>)}
+    </select>
+  );
+  return (
+    <div className="max-w-lg mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-2">Resistor Color Code</h1>
+      <p className="text-gray-400 mb-4">4-band resistor decoder</p>
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        <div><label className="block text-sm mb-1">Band 1</label>{sel(b1, setB1, colorList)}</div>
+        <div><label className="block text-sm mb-1">Band 2</label>{sel(b2, setB2, colorList)}</div>
+        <div><label className="block text-sm mb-1">Multiplier</label>{sel(mult, setMult, multList)}</div>
+        <div><label className="block text-sm mb-1">Tolerance</label>{sel(tol, setTol, tolList)}</div>
+      </div>
+      <div className="p-4 bg-gray-800 rounded text-xl font-mono text-green-400">{fmt(r)} {TOLERANCE[tol]}</div>
+    </div>
+  );
+}
