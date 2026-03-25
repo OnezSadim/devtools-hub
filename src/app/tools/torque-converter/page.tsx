@@ -1,74 +1,46 @@
-'use client';
-import { useState } from 'react';
+"use client";
+import { useState } from "react";
 
-export default function Page() {
-  const [val, setVal] = useState('1');
-  const [from, setFrom] = useState('N·m');
-  const [to, setTo] = useState('kN·m');
+const units = [
+  { name: 'Newton-metre', factor: 1 },
+  { name: 'Kilonewton-metre', factor: 1000 },
+  { name: 'Millinewton-metre', factor: 0.001 },
+  { name: 'Newton-centimetre', factor: 0.01 },
+  { name: 'Dyne-metre', factor: 1e-05 },
+  { name: 'Kilogram-force metre', factor: 9.80665 },
+  { name: 'Gram-force metre', factor: 0.00980665 },
+  { name: 'Ounce-force inch', factor: 0.00706155 },
+  { name: 'Pound-force inch', factor: 0.112985 },
+  { name: 'Pound-force foot', factor: 1.35582 },
+];
 
-  function convert(v: number, unit: string): number {
-    let base = 0;
-    switch(unit) {
-      case 'N·m': base = v / 1.0; break;
-      case 'kN·m': base = v / 0.001; break;
-      case 'lbf·ft': base = v / 0.737562; break;
-      case 'lbf·in': base = v / 8.85075; break;
-      case 'kgf·m': base = v / 0.101972; break;
-      case 'ozf·in': base = v / 141.612; break;
-    }
-    switch(to) {
-      case 'N·m': return base * 1.0;
-      case 'kN·m': return base * 0.001;
-      case 'lbf·ft': return base * 0.737562;
-      case 'lbf·in': return base * 8.85075;
-      case 'kgf·m': return base * 0.101972;
-      case 'ozf·in': return base * 141.612;
-    }
-    return base;
-  }
-
-  const result = convert(parseFloat(val) || 0, from);
-
+export default function TorqueConverter() {
+  const [value, setValue] = useState("");
+  const [from, setFrom] = useState(units[0].name);
+  const [to, setTo] = useState(units[1].name);
+  const convert = () => {
+    const v = parseFloat(value);
+    if (isNaN(v)) return "";
+    const f = units.find(u => u.name === from)?.factor ?? 1;
+    const t = units.find(u => u.name === to)?.factor ?? 1;
+    return (v * f / t).toPrecision(8);
+  };
   return (
-    <div className="min-h-screen bg-gray-950 text-white p-8">
-      <div className="max-w-xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Torque Converter</h1>
-        <p className="text-gray-400 mb-8">Convert between torque units.</p>
-        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">Value</label>
-            <input type="number" value={val} onChange={e=>setVal(e.target.value)} className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white" />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">From</label>
-              <select value={from} onChange={e=>setFrom(e.target.value)} className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white">
-          <option value="N·m">N·m</option>
-          <option value="kN·m">kN·m</option>
-          <option value="lbf·ft">lbf·ft</option>
-          <option value="lbf·in">lbf·in</option>
-          <option value="kgf·m">kgf·m</option>
-          <option value="ozf·in">ozf·in</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">To</label>
-              <select value={to} onChange={e=>setTo(e.target.value)} className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white">
-          <option value="N·m">N·m</option>
-          <option value="kN·m">kN·m</option>
-          <option value="lbf·ft">lbf·ft</option>
-          <option value="lbf·in">lbf·in</option>
-          <option value="kgf·m">kgf·m</option>
-          <option value="ozf·in">ozf·in</option>
-              </select>
-            </div>
-          </div>
-          <div className="bg-gray-800 rounded-lg p-4 text-center">
-            <p className="text-3xl font-mono font-bold text-blue-400">{isNaN(result) ? '—' : result.toPrecision(6)}</p>
-            <p className="text-gray-400 mt-1">{to}</p>
-          </div>
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <h1 className="text-3xl font-bold mb-2">Torque Converter</h1>
+      <p className="text-gray-400 mb-8">Convert between torque units including newton-metres, foot-pounds, and kilogram-force metres.</p>
+      <div className="bg-gray-900 rounded-xl p-6 max-w-xl">
+        <input className="w-full bg-gray-800 rounded p-3 mb-4 text-white" type="number" placeholder="Enter value" value={value} onChange={e => setValue(e.target.value)} />
+        <div className="flex gap-4 mb-4">
+          <select className="flex-1 bg-gray-800 rounded p-3 text-white" value={from} onChange={e => setFrom(e.target.value)}>
+            {units.map(u => <option key={u.name} value={u.name}>{u.name}</option>)}
+          </select>
+          <select className="flex-1 bg-gray-800 rounded p-3 text-white" value={to} onChange={e => setTo(e.target.value)}>
+            {units.map(u => <option key={u.name} value={u.name}>{u.name}</option>)}
+          </select>
         </div>
+        {value && <div className="bg-gray-800 rounded p-4 text-2xl font-mono text-green-400">{convert()} {to}</div>}
       </div>
-    </div>
+    </main>
   );
 }

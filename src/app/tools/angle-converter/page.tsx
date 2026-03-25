@@ -1,78 +1,46 @@
-'use client';
-import { useState } from 'react';
+"use client";
+import { useState } from "react";
 
-export default function Page() {
-  const [val, setVal] = useState('1');
-  const [from, setFrom] = useState('degree');
-  const [to, setTo] = useState('radian');
+const units = [
+  { name: 'Degree', factor: 1 },
+  { name: 'Radian', factor: 57.2958 },
+  { name: 'Gradian', factor: 0.9 },
+  { name: 'Milliradian', factor: 0.0572958 },
+  { name: 'Arcminute', factor: 0.0166667 },
+  { name: 'Arcsecond', factor: 0.000277778 },
+  { name: 'Turn', factor: 360 },
+  { name: 'Quadrant', factor: 90 },
+  { name: 'Sextant', factor: 60 },
+  { name: 'Sign', factor: 30 },
+];
 
-  function convert(v: number, unit: string): number {
-    let base = 0;
-    switch(unit) {
-      case 'degree': base = v / 1.0; break;
-      case 'radian': base = v / 0.0174533; break;
-      case 'gradian': base = v / 1.11111; break;
-      case 'arcminute': base = v / 60.0; break;
-      case 'arcsecond': base = v / 3600.0; break;
-      case 'turn': base = v / 0.002777777777777778; break;
-      case 'milliradian': base = v / 17.4533; break;
-    }
-    switch(to) {
-      case 'degree': return base * 1.0;
-      case 'radian': return base * 0.0174533;
-      case 'gradian': return base * 1.11111;
-      case 'arcminute': return base * 60.0;
-      case 'arcsecond': return base * 3600.0;
-      case 'turn': return base * 0.002777777777777778;
-      case 'milliradian': return base * 17.4533;
-    }
-    return base;
-  }
-
-  const result = convert(parseFloat(val) || 0, from);
-
+export default function AngleConverter() {
+  const [value, setValue] = useState("");
+  const [from, setFrom] = useState(units[0].name);
+  const [to, setTo] = useState(units[1].name);
+  const convert = () => {
+    const v = parseFloat(value);
+    if (isNaN(v)) return "";
+    const f = units.find(u => u.name === from)?.factor ?? 1;
+    const t = units.find(u => u.name === to)?.factor ?? 1;
+    return (v * f / t).toPrecision(8);
+  };
   return (
-    <div className="min-h-screen bg-gray-950 text-white p-8">
-      <div className="max-w-xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Angle Converter</h1>
-        <p className="text-gray-400 mb-8">Convert between angle units.</p>
-        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">Value</label>
-            <input type="number" value={val} onChange={e=>setVal(e.target.value)} className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white" />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">From</label>
-              <select value={from} onChange={e=>setFrom(e.target.value)} className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white">
-          <option value="degree">degree</option>
-          <option value="radian">radian</option>
-          <option value="gradian">gradian</option>
-          <option value="arcminute">arcminute</option>
-          <option value="arcsecond">arcsecond</option>
-          <option value="turn">turn</option>
-          <option value="milliradian">milliradian</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">To</label>
-              <select value={to} onChange={e=>setTo(e.target.value)} className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white">
-          <option value="degree">degree</option>
-          <option value="radian">radian</option>
-          <option value="gradian">gradian</option>
-          <option value="arcminute">arcminute</option>
-          <option value="arcsecond">arcsecond</option>
-          <option value="turn">turn</option>
-          <option value="milliradian">milliradian</option>
-              </select>
-            </div>
-          </div>
-          <div className="bg-gray-800 rounded-lg p-4 text-center">
-            <p className="text-3xl font-mono font-bold text-blue-400">{isNaN(result) ? '—' : result.toPrecision(6)}</p>
-            <p className="text-gray-400 mt-1">{to}</p>
-          </div>
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <h1 className="text-3xl font-bold mb-2">Angle Converter</h1>
+      <p className="text-gray-400 mb-8">Convert between angle units including degrees, radians, gradians, and turns.</p>
+      <div className="bg-gray-900 rounded-xl p-6 max-w-xl">
+        <input className="w-full bg-gray-800 rounded p-3 mb-4 text-white" type="number" placeholder="Enter value" value={value} onChange={e => setValue(e.target.value)} />
+        <div className="flex gap-4 mb-4">
+          <select className="flex-1 bg-gray-800 rounded p-3 text-white" value={from} onChange={e => setFrom(e.target.value)}>
+            {units.map(u => <option key={u.name} value={u.name}>{u.name}</option>)}
+          </select>
+          <select className="flex-1 bg-gray-800 rounded p-3 text-white" value={to} onChange={e => setTo(e.target.value)}>
+            {units.map(u => <option key={u.name} value={u.name}>{u.name}</option>)}
+          </select>
         </div>
+        {value && <div className="bg-gray-800 rounded p-4 text-2xl font-mono text-green-400">{convert()} {to}</div>}
       </div>
-    </div>
+    </main>
   );
 }
