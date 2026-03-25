@@ -1,44 +1,31 @@
 "use client";
 import { useState } from "react";
 
-const units: Record<string, number> = {
-  "Becquerel (Bq)": 1,
-  "Kilobecquerel (kBq)": 1000,
-  "Megabecquerel (MBq)": 1000000.0,
-  "Gigabecquerel (GBq)": 1000000000.0,
-  "Terabecquerel (TBq)": 1000000000000.0,
-  "Curie (Ci)": 37000000000.0,
-  "Millicurie (mCi)": 37000000.0,
-  "Microcurie (uCi)": 37000,
-  "Rutherford (Rd)": 1000000.0,
-  "Disintegrations/sec": 1,
-};
+const UNITS = ["Becquerel (Bq)", "Kilobecquerel (kBq)", "Megabecquerel (MBq)", "Gigabecquerel (GBq)", "Curie (Ci)", "Millicurie (mCi)", "Microcurie (uCi)"];
+const TO_BASE = [1, 1000, 1000000, 1000000000, 37000000000, 37000000, 37000];
 
 export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState("Becquerel (Bq)");
-  const [to, setTo] = useState("Kilobecquerel (kBq)");
-  const result = val !== "" && !isNaN(Number(val))
-    ? (Number(val) * units[from] / units[to]).toPrecision(6)
-    : "";
+  const [from, setFrom] = useState(0);
+  const num = parseFloat(val);
+  const base = isNaN(num) ? null : num * TO_BASE[from];
   return (
-    <main style={{padding:"2rem",maxWidth:"480px",margin:"0 auto",fontFamily:"sans-serif"}}>
-      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Radioactivity Converter</h1>
-      <input type="number" value={val} onChange={e=>setVal(e.target.value)}
-        placeholder="Enter value"
-        style={{width:"100%",padding:"0.5rem",marginBottom:"0.75rem",fontSize:"1rem",boxSizing:"border-box"}} />
-      <div style={{display:"flex",gap:"0.5rem",marginBottom:"0.75rem"}}>
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:"0.5rem"}}>
-          {Object.keys(units).map(u=><option key={u} value={u}>{u}</option>)}
-        </select>
-        <span style={{alignSelf:"center"}}>to</span>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:"0.5rem"}}>
-          {Object.keys(units).map(u=><option key={u} value={u}>{u}</option>)}
+    <main style={{maxWidth:600,margin:"40px auto",padding:"0 16px",fontFamily:"sans-serif",color:"#e2e8f0"}}>
+      <h1 style={{fontSize:"1.8rem",fontWeight:700,marginBottom:8}}>Radioactivity Converter</h1>
+      <div style={{display:"flex",gap:8,marginBottom:24}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{flex:1,padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:"1rem"}} />
+        <select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0"}}>
+          {UNITS.map((u,i)=>(<option key={i} value={i}>{u}</option>))}
         </select>
       </div>
-      {result !== "" && (
-        <p style={{fontSize:"1.25rem",fontWeight:"bold"}}>{val} {from} = {result} {to}</p>
-      )}
+      <div style={{display:"flex",flexDirection:"column",gap:10}}>
+        {UNITS.map((u,i)=>(
+          <div key={i} style={{display:"flex",justifyContent:"space-between",padding:"12px 16px",background:"#1e293b",borderRadius:8,border:i===from?"1px solid #6366f1":"1px solid #334155"}}>
+            <span style={{color:"#94a3b8"}}>{u}</span>
+            <span style={{fontWeight:600}}>{base===null?"—":(base/TO_BASE[i]).toPrecision(6)}</span>
+          </div>
+        ))}
+      </div>
     </main>
   );
 }

@@ -1,93 +1,30 @@
 "use client";
 import { useState } from "react";
 
-export default function AbsorbedDoseRateConverter() {
-  const [value, setValue] = useState("");
-  const [from, setFrom] = useState("gy_s");
-  const [to, setTo] = useState("gy_min");
+const UNITS = ["Gray/second (Gy/s)", "Gray/minute (Gy/min)", "Gray/hour (Gy/h)", "Rad/second (rad/s)", "Rad/minute (rad/min)", "Milligray/hour (mGy/h)"];
+const TO_BASE = [1, 0.016666666666666666, 0.0002777777777777778, 0.01, 0.00016666666666666666, 2.7777777777777776e-07];
 
-  function convert() {
-    const v = parseFloat(value);
-    if (isNaN(v)) return "—";
-    let toBase = 0;
-    switch (from) {
-      case "gy_s": toBase = v * 1; break;
-      case "gy_min": toBase = v * 0.016666666666666666; break;
-      case "gy_h": toBase = v * 0.0002777777777777778; break;
-      case "mgy_s": toBase = v * 0.001; break;
-      case "rad_s": toBase = v * 0.01; break;
-      case "rad_min": toBase = v * 0.00016666666666666666; break;
-      case "rad_h": toBase = v * 2.777777777777778e-06; break;
-      case "sv_s": toBase = v * 1; break;
-      case "rem_s": toBase = v * 0.01; break;
-      default: toBase = v;
-    }
-    let baseVal = toBase;
-    let result = 0;
-    switch (to) {
-FROM_      case "gy_s": toBase = v * 1; break;
-      case "gy_min": toBase = v * 0.016666666666666666; break;
-      case "gy_h": toBase = v * 0.0002777777777777778; break;
-      case "mgy_s": toBase = v * 0.001; break;
-      case "rad_s": toBase = v * 0.01; break;
-      case "rad_min": toBase = v * 0.00016666666666666666; break;
-      case "rad_h": toBase = v * 2.777777777777778e-06; break;
-      case "sv_s": toBase = v * 1; break;
-      case "rem_s": toBase = v * 0.01; break;
-      default: result = baseVal;
-    }
-    return result.toPrecision(6);
-  }
-
+export default function Page() {
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState(0);
+  const num = parseFloat(val);
+  const base = isNaN(num) ? null : num * TO_BASE[from];
   return (
-    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
-      <div className="max-w-xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Absorbed Dose Rate Converter</h1>
-        <p className="text-gray-400 mb-8">Convert between absorbed dose rate units</p>
-        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
-          <input
-            type="number"
-            value={value}
-            onChange={e => setValue(e.target.value)}
-            placeholder="Enter value"
-            className="w-full bg-gray-800 rounded-lg px-4 py-3 text-lg outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">From</label>
-              <select value={from} onChange={e => setFrom(e.target.value)}
-                className="w-full bg-gray-800 rounded-lg px-3 py-2">
-              <option value="gy_s">Gray/second (Gy/s)</option>
-              <option value="gy_min">Gray/minute (Gy/min)</option>
-              <option value="gy_h">Gray/hour (Gy/h)</option>
-              <option value="mgy_s">Milligray/second (mGy/s)</option>
-              <option value="rad_s">Rad/second (rad/s)</option>
-              <option value="rad_min">Rad/minute (rad/min)</option>
-              <option value="rad_h">Rad/hour (rad/h)</option>
-              <option value="sv_s">Sievert/second (Sv/s)</option>
-              <option value="rem_s">Rem/second (rem/s)</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">To</label>
-              <select value={to} onChange={e => setTo(e.target.value)}
-                className="w-full bg-gray-800 rounded-lg px-3 py-2">
-              <option value="gy_s">Gray/second (Gy/s)</option>
-              <option value="gy_min">Gray/minute (Gy/min)</option>
-              <option value="gy_h">Gray/hour (Gy/h)</option>
-              <option value="mgy_s">Milligray/second (mGy/s)</option>
-              <option value="rad_s">Rad/second (rad/s)</option>
-              <option value="rad_min">Rad/minute (rad/min)</option>
-              <option value="rad_h">Rad/hour (rad/h)</option>
-              <option value="sv_s">Sievert/second (Sv/s)</option>
-              <option value="rem_s">Rem/second (rem/s)</option>
-              </select>
-            </div>
+    <main style={{maxWidth:600,margin:"40px auto",padding:"0 16px",fontFamily:"sans-serif",color:"#e2e8f0"}}>
+      <h1 style={{fontSize:"1.8rem",fontWeight:700,marginBottom:8}}>Absorbed Dose Rate Converter</h1>
+      <div style={{display:"flex",gap:8,marginBottom:24}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{flex:1,padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:"1rem"}} />
+        <select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0"}}>
+          {UNITS.map((u,i)=>(<option key={i} value={i}>{u}</option>))}
+        </select>
+      </div>
+      <div style={{display:"flex",flexDirection:"column",gap:10}}>
+        {UNITS.map((u,i)=>(
+          <div key={i} style={{display:"flex",justifyContent:"space-between",padding:"12px 16px",background:"#1e293b",borderRadius:8,border:i===from?"1px solid #6366f1":"1px solid #334155"}}>
+            <span style={{color:"#94a3b8"}}>{u}</span>
+            <span style={{fontWeight:600}}>{base===null?"—":(base/TO_BASE[i]).toPrecision(6)}</span>
           </div>
-          <div className="bg-gray-800 rounded-lg px-4 py-4 text-2xl font-mono text-blue-400">
-            {convert()} <span className="text-sm text-gray-400">{to}</span>
-          </div>
-        </div>
+        ))}
       </div>
     </main>
   );

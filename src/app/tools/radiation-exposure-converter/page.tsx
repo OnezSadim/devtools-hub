@@ -1,32 +1,31 @@
 "use client";
 import { useState } from "react";
 
-const units = ['Coulomb/kg (C/kg)', 'Roentgen (R)', 'Milliroentgen (mR)', 'Microroentgen (uR)'];
-const factors = {'Coulomb/kg (C/kg)': 1.0, 'Roentgen (R)': 0.000258, 'Milliroentgen (mR)': 2.58e-07, 'Microroentgen (uR)': 2.58e-10};
+const UNITS = ["Coulomb/kg (C/kg)", "Roentgen (R)", "Milliroentgen (mR)", "Microroentgen (uR)", "Parker"];
+const TO_BASE = [1, 0.000258, 2.58e-07, 2.58e-10, 0.00258];
 
 export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(units[0]);
-  const [to, setTo] = useState(units[1]);
-  function convert(v, f, t) {
-    const n = parseFloat(v);
-    if (isNaN(n)) return "";
-    return ((n * factors[f]) / factors[t]).toPrecision(6);
-  }
+  const [from, setFrom] = useState(0);
+  const num = parseFloat(val);
+  const base = isNaN(num) ? null : num * TO_BASE[from];
   return (
-    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",flexDirection:"column",alignItems:"center",padding:"2rem"}}>
-      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Radiation Exposure Converter</h1>
-      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginTop:"1rem",alignItems:"center"}}>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",width:"140px"}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9"}}>
-          {units.map(u=><option key={u}>{u}</option>)}
-        </select>
-        <span style={{fontSize:"1.2rem"}}>→</span>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9"}}>
-          {units.map(u=><option key={u}>{u}</option>)}
+    <main style={{maxWidth:600,margin:"40px auto",padding:"0 16px",fontFamily:"sans-serif",color:"#e2e8f0"}}>
+      <h1 style={{fontSize:"1.8rem",fontWeight:700,marginBottom:8}}>Radiation Exposure Converter</h1>
+      <div style={{display:"flex",gap:8,marginBottom:24}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{flex:1,padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:"1rem"}} />
+        <select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0"}}>
+          {UNITS.map((u,i)=>(<option key={i} value={i}>{u}</option>))}
         </select>
       </div>
-      {val && <p style={{marginTop:"1.5rem",fontSize:"1.4rem",color:"#38bdf8"}}>{val} {from} = {convert(val,from,to)} {to}</p>}
+      <div style={{display:"flex",flexDirection:"column",gap:10}}>
+        {UNITS.map((u,i)=>(
+          <div key={i} style={{display:"flex",justifyContent:"space-between",padding:"12px 16px",background:"#1e293b",borderRadius:8,border:i===from?"1px solid #6366f1":"1px solid #334155"}}>
+            <span style={{color:"#94a3b8"}}>{u}</span>
+            <span style={{fontWeight:600}}>{base===null?"—":(base/TO_BASE[i]).toPrecision(6)}</span>
+          </div>
+        ))}
+      </div>
     </main>
   );
 }
