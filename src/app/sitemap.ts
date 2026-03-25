@@ -1,4 +1,5 @@
-import { MetadataRoute } from "next";
+import { MetadataRoute } from 'next';
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const tools = [
     'age-calculator',
@@ -241,14 +242,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'world-clock',
     'xml-formatter',
     'xml-to-json',
+    'xpath-tester',
     'yaml-formatter',
     'yaml-to-json',
     'yaml-validator',
     'z-index-manager',
   ];
-  const base = "https://devtools-hub-green.vercel.app";
+  const base = 'https://devtools-hub-green.vercel.app';
   return [
-    { url: base, lastModified: new Date(), changeFrequency: "daily", priority: 1 },
-    ...tools.map(t => ({ url: base + "/tools/" + t, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.8 }))
+    { url: base, lastModified: new Date(), changeFrequency: 'weekly', priority: 1 },
+    ...tools.map(t => ({ url: `${base}/tools/${t}`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.8 }))
   ];
 }

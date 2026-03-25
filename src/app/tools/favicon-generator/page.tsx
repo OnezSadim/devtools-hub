@@ -1,64 +1,38 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 export default function FaviconGenerator() {
-  const [text, setText] = useState("A");
-  const [bg, setBg] = useState("#6366f1");
-  const [fg, setFg] = useState("#ffffff");
-  const [size, setSize] = useState(64);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const draw = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    canvas.width = size;
-    canvas.height = size;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, size, size);
-    ctx.fillStyle = fg;
-    ctx.font = `bold ${size * 0.6}px sans-serif`;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(text.slice(0, 2), size / 2, size / 2);
-  };
-  useEffect(draw, [text, bg, fg, size]);
-  const download = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const a = document.createElement("a");
-    a.download = `favicon-${size}x${size}.png`;
-    a.href = canvas.toDataURL("image/png");
-    a.click();
-  };
+  const [emoji, setEmoji] = useState("🚀");
+  const [size, setSize] = useState(32);
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}"><text y=".9em" font-size="${size * 0.85}">${emoji}</text></svg>`;
+  const dataUrl = "data:image/svg+xml," + encodeURIComponent(svg);
+  const linkTag = `<link rel="icon" href="${dataUrl}" />`;
   return (
-    <div className="max-w-lg mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Favicon Generator</h1>
-      <div className="flex justify-center mb-6">
-        <canvas ref={canvasRef} style={{ imageRendering: "pixelated", width: 128, height: 128, border: "1px solid #374151", borderRadius: 4 }} />
-      </div>
-      <div className="space-y-4">
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <h1 className="text-3xl font-bold mb-2">Favicon Generator</h1>
+      <p className="text-gray-400 mb-6">Generate an emoji favicon with SVG data URL — no image file needed.</p>
+      <div className="flex gap-4 items-center mb-6">
         <div>
-          <label className="block text-sm font-medium mb-1">Text (1-2 chars)</label>
-          <input value={text} onChange={e => setText(e.target.value)} maxLength={2} className="w-full p-2 bg-gray-800 border border-gray-700 rounded font-bold text-2xl" />
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Background</label>
-            <input type="color" value={bg} onChange={e => setBg(e.target.value)} className="w-full h-10 rounded cursor-pointer" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Text Color</label>
-            <input type="color" value={fg} onChange={e => setFg(e.target.value)} className="w-full h-10 rounded cursor-pointer" />
-          </div>
+          <label className="block text-sm text-gray-400 mb-1">Emoji</label>
+          <input className="bg-gray-900 border border-gray-700 rounded p-2 text-2xl w-20 text-center" value={emoji} onChange={e => setEmoji(e.target.value)} maxLength={2} />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Size: {size}x{size}px</label>
-          <select value={size} onChange={e => setSize(Number(e.target.value))} className="w-full p-2 bg-gray-800 border border-gray-700 rounded">
-            {[16,32,48,64,128,256].map(s => <option key={s} value={s}>{s}x{s}</option>)}
+          <label className="block text-sm text-gray-400 mb-1">Size</label>
+          <select className="bg-gray-900 border border-gray-700 rounded p-2" value={size} onChange={e => setSize(Number(e.target.value))}>
+            <option value={16}>16px</option>
+            <option value={32}>32px</option>
+            <option value={64}>64px</option>
           </select>
         </div>
       </div>
-      <button onClick={download} className="mt-4 w-full py-2 bg-indigo-600 rounded hover:bg-indigo-700 font-medium">Download PNG</button>
-    </div>
+      <div className="flex items-center gap-4 mb-4">
+        <img src={dataUrl} width={size} height={size} alt="favicon preview" className="border border-gray-600 rounded" />
+        <span className="text-gray-400 text-sm">Preview</span>
+      </div>
+      <div>
+        <label className="block text-sm text-gray-400 mb-1">HTML Link Tag</label>
+        <textarea className="w-full h-20 bg-gray-900 border border-gray-700 rounded p-3 font-mono text-sm" value={linkTag} readOnly />
+      </div>
+      <button onClick={() => navigator.clipboard.writeText(linkTag)} className="mt-2 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-sm">Copy</button>
+    </main>
   );
 }
