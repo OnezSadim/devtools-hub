@@ -1,4 +1,4 @@
-import { MetadataRoute } from "next";
+import { MetadataRoute } from 'next'
 
 const tools = [
   'age-calculator',
@@ -24,11 +24,13 @@ const tools = [
   'binary-to-text',
   'bitwise-calculator',
   'bmi-calculator',
+  'body-fat-calculator',
   'border-radius-generator',
   'box-shadow-generator',
   'break-even-calculator',
   'budget-calculator',
   'caesar-cipher',
+  'calorie-burn-calculator',
   'calorie-calculator',
   'character-counter',
   'character-frequency',
@@ -71,6 +73,7 @@ const tools = [
   'data-size-converter',
   'data-storage-converter',
   'data-transfer-calculator',
+  'data-transfer-speed-calculator',
   'date-calculator',
   'days-between-dates',
   'diff-checker',
@@ -134,6 +137,7 @@ const tools = [
   'image-to-base64',
   'inflation-calculator',
   'investment-calculator',
+  'investment-return-calculator',
   'ip-address-info',
   'ip-address-lookup',
   'ip-address-validator',
@@ -166,11 +170,13 @@ const tools = [
   'linux-commands',
   'list-deduplicator',
   'list-randomizer',
+  'loan-amortization',
   'loan-calculator',
   'loan-emi-calculator',
   'lorem-ipsum',
   'lorem-ipsum-advanced',
   'luhn-checker',
+  'macro-calculator',
   'markdown-preview',
   'markdown-table-generator',
   'markdown-to-html',
@@ -185,6 +191,7 @@ const tools = [
   'nato-alphabet',
   'nato-alphabet-converter',
   'nato-phonetic-alphabet',
+  'net-worth-calculator',
   'nginx-config-generator',
   'number-base-converter',
   'number-formatter',
@@ -214,6 +221,7 @@ const tools = [
   'prime-factorization',
   'prime-number-checker',
   'profit-margin-calculator',
+  'protein-intake-calculator',
   'quadratic-solver',
   'ratio-calculator',
   'readability-score',
@@ -227,6 +235,8 @@ const tools = [
   'roman-numeral-converter',
   'rot13-encoder',
   'rsa-key-generator',
+  'sales-tax-calculator',
+  'savings-goal-calculator',
   'scientific-notation-converter',
   'screen-resolution',
   'screen-resolution-info',
@@ -234,6 +244,7 @@ const tools = [
   'sentence-counter',
   'sitemap-generator',
   'sleep-calculator',
+  'sleep-cycle-calculator',
   'sort-lines',
   'speed-calculator',
   'speed-converter',
@@ -262,6 +273,7 @@ const tools = [
   'svg-viewer',
   'tab-space-converter',
   'tailwind-class-reference',
+  'tax-bracket-calculator',
   'temperature-converter',
   'text-case-converter',
   'text-diff',
@@ -271,6 +283,7 @@ const tools = [
   'text-shadow-generator',
   'text-sorter',
   'text-statistics',
+  'text-to-ascii',
   'text-to-binary',
   'text-to-binary-converter',
   'text-to-hashtags',
@@ -279,6 +292,7 @@ const tools = [
   'text-to-slug',
   'text-to-speech',
   'text-to-speech-tester',
+  'time-zone-converter',
   'timestamp-converter',
   'timezone-converter',
   'tip-calculator',
@@ -294,6 +308,8 @@ const tools = [
   'uuid-generator',
   'vat-calculator',
   'volume-converter',
+  'waist-to-hip-ratio-calculator',
+  'water-intake-calculator',
   'webpack-config-generator',
   'weight-converter',
   'weight-unit-converter',
@@ -309,18 +325,18 @@ const tools = [
   'yaml-to-json',
   'yaml-validator',
   'z-index-manager',
-];
+]
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = "https://devtools-hub-green.vercel.app";
-  const toolUrls = tools.map((slug) => ({
+  const base = 'https://devtools-hub-green.vercel.app'
+  const toolPages = tools.map(slug => ({
     url: `${base}/tools/${slug}`,
     lastModified: new Date(),
-    changeFrequency: "weekly" as const,
+    changeFrequency: 'monthly' as const,
     priority: 0.8,
-  }));
+  }))
   return [
-    { url: base, lastModified: new Date(), changeFrequency: "daily", priority: 1 },
-    ...toolUrls,
-  ];
+    { url: base, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 1.0 },
+    ...toolPages,
+  ]
 }
