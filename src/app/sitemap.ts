@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
+  const base = 'https://devtools-hub-green.vercel.app';
   const tools = [
     'age-calculator',
     'anagram-checker',
@@ -219,14 +220,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'yaml-to-json',
     'yaml-validator',
   ];
-  const base = 'https://devtools-hub-green.vercel.app';
   return [
     { url: base, lastModified: new Date(), changeFrequency: 'weekly', priority: 1 },
-    ...tools.map(t => ({
-      url: `${base}/tools/${t}`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
-      priority: 0.8,
-    })),
+    ...tools.map(t => ({ url: `${base}/tools/${t}`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 }))
   ];
 }
