@@ -1,10 +1,1 @@
-"use client";
-import { useState } from "react";
-export default function Page() {
-  const [v, setV] = useState("");
-  const [f, setF] = useState("unit1");
-  const [t, setT] = useState("unit2");
-  const title = "Electric Potential Converter";
-  const desc = "Convert between volt, millivolt, microvolt, kilovolt, megavolt, gigavolt, statvolt, and abvolt units.";
-  return (<div style={{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"sans-serif"}}><h1>{title}</h1><p>{desc}</p><input value={v} onChange={e=>setV(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"0.5rem",marginBottom:"1rem",fontSize:"1rem"}}/><p style={{color:"#888"}}>Select units and enter a value to convert.</p></div>);
-}
+"use client";import{useState}from"react";const units=[{name:"Volt",symbol:"V",factor:1},{name:"Millivolt",symbol:"mV",factor:0.001},{name:"Kilovolt",symbol:"kV",factor:1000.0},{name:"Megavolt",symbol:"MV",factor:1000000.0},{name:"Microvolt",symbol:"µV",factor:1e-06},{name:"Gigavolt",symbol:"GV",factor:1000000000.0},];export default function Page(){const[v,setV]=useState("");const[f,setF]=useState(0);return(<div style={{padding:"2rem",fontFamily:"sans-serif",maxWidth:"600px",margin:"0 auto"}}><h1>Electric Potential Converter</h1><p>Convert between electric potential units: Volt, Millivolt, Kilovolt, Megavolt</p><div style={{display:"flex",gap:"1rem",marginBottom:"1rem"}}><input type="number" value={v} onChange={e=>setV(e.target.value)} placeholder="Value" style={{padding:"0.5rem",flex:1}}/><select value={f} onChange={e=>setF(Number(e.target.value))} style={{padding:"0.5rem"}}>{units.map((u,i)=>(<option key={i} value={i}>{u.name} ({u.symbol})</option>))}</select></div><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><th style={{textAlign:"left",padding:"0.5rem",borderBottom:"1px solid #ccc"}}>Unit</th><th style={{textAlign:"right",padding:"0.5rem",borderBottom:"1px solid #ccc"}}>Value</th></tr></thead><tbody>{units.map((u,i)=>{const base=parseFloat(v||"0")*units[f].factor;const res=base/u.factor;return(<tr key={i}><td style={{padding:"0.5rem"}}>{u.name} ({u.symbol})</td><td style={{textAlign:"right",padding:"0.5rem"}}>{v===""?"-":res.toPrecision(6)}</td></tr>);})}</tbody></table></div>);}
