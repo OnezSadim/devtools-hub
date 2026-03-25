@@ -1,26 +1,31 @@
 "use client";
 import { useState } from "react";
 
-const UNITS = ["m2/s", "cm2/s (stokes)", "mm2/s (centistokes)", "ft2/s"];
-const TO_BASE: Record<string, number> = {"m2/s": 1, "cm2/s (stokes)": 0.0001, "mm2/s (centistokes)": 1e-06, "ft2/s": 0.092903};
+const UNITS: string[] = ["m²/s", "cm²/s", "mm²/s", "cSt", "St", "ft²/s", "in²/s"];
+const TO_BASE: Record<string, number> = {"m²/s": 1, "cm²/s": 0.0001, "mm²/s": 1e-06, "cSt": 1e-06, "St": 0.0001, "ft²/s": 0.092903, "in²/s": 0.00064516};
 
-export default function KinematicViscosityConverterPage() {
-  const [value, setValue] = useState("");
+export default function Page() {
+  const [val, setVal] = useState("");
   const [from, setFrom] = useState(UNITS[0]);
   const [to, setTo] = useState(UNITS[1]);
-  const result = value && !isNaN(Number(value)) ? (Number(value) * TO_BASE[from] / TO_BASE[to]).toPrecision(6) : "";
+  const convert = () => {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
+  };
+  const sel = "bg-gray-800 text-white rounded px-3 py-2 border border-gray-600";
   return (
-    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",fontFamily:"sans-serif",padding:"2rem"}}>
-      <h1 style={{fontSize:"2rem",fontWeight:700,marginBottom:"0.5rem"}}>Kinematic Viscosity Converter</h1>
-      <p style={{color:"#94a3b8",marginBottom:"2rem"}}>Convert between kinematic viscosity units</p>
-      <div style={{background:"#1e293b",borderRadius:"1rem",padding:"2rem",width:"100%",maxWidth:"480px",display:"flex",flexDirection:"column",gap:"1rem"}}>
-        <input type="number" placeholder="Enter value" value={value} onChange={e=>setValue(e.target.value)} style={{padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",fontSize:"1.1rem"}} />
-        <div style={{display:"flex",gap:"1rem"}}>
-          <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>{UNITS.map(u=><option key={u} value={u}>{u}</option>)}</select>
-          <span style={{alignSelf:"center",color:"#64748b"}}>to</span>
-          <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>{UNITS.map(u=><option key={u} value={u}>{u}</option>)}</select>
+    <main className="min-h-screen bg-gray-900 text-white p-8">
+      <h1 className="text-3xl font-bold mb-2">Kinematic Viscosity Converter</h1>
+      <p className="text-gray-400 mb-6">Convert between kinematic viscosity units instantly.</p>
+      <div className="bg-gray-800 rounded-xl p-6 max-w-lg space-y-4">
+        <input className="w-full bg-gray-700 rounded px-3 py-2 border border-gray-600" placeholder="Enter value" value={val} onChange={e => setVal(e.target.value)} />
+        <div className="flex gap-3">
+          <select className={sel} value={from} onChange={e => setFrom(e.target.value)}>{UNITS.map(u => <option key={u}>{u}</option>)}</select>
+          <span className="self-center text-gray-400">→</span>
+          <select className={sel} value={to} onChange={e => setTo(e.target.value)}>{UNITS.map(u => <option key={u}>{u}</option>)}</select>
         </div>
-        {result && <div style={{textAlign:"center",fontSize:"1.5rem",fontWeight:700,color:"#38bdf8",padding:"1rem",background:"#0f172a",borderRadius:"0.5rem"}}>{value} {from} = {result} {to}</div>}
+        {val && <div className="text-2xl font-mono text-green-400">{convert()} {to}</div>}
       </div>
     </main>
   );
