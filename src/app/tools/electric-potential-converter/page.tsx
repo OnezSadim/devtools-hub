@@ -1,1 +1,74 @@
-"use client";import{useState}from"react";const units=[{"label":"Volt (V)","value":"V","factor":1},{"label":"Millivolt (mV)","value":"mV","factor":0.001},{"label":"Microvolt (uV)","value":"uV","factor":1e-06},{"label":"Nanovolt (nV)","value":"nV","factor":1e-09},{"label":"Kilovolt (kV)","value":"kV","factor":1000.0},{"label":"Megavolt (MV)","value":"MV","factor":1000000.0},{"label":"Gigavolt (GV)","value":"GV","factor":1000000000.0},{"label":"Abvolt (abV)","value":"abV","factor":1e-08},{"label":"Statvolt (statV)","value":"statV","factor":299.792458}];export default function Page(){const[val,setVal]=useState("");const[from,setFrom]=useState(units[0].value);const[to,setTo]=useState(units[1].value);const convert=()=>{const f=units.find(u=>u.value===from);const t=units.find(u=>u.value===to);if(!f||!t||val==="")return"";return((parseFloat(val)*f.factor)/t.factor).toPrecision(6);};return(<main style={{padding:"2rem",fontFamily:"monospace",background:"#0f0f0f",minHeight:"100vh",color:"#e0e0e0"}}><h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Electric Potential Converter</h1><p style={{color:"#aaa",marginBottom:"1.5rem"}}>Convert between electric potential units: volts, millivolts, microvolts, kilovolts, megavolts.</p><div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1rem"}}><input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",background:"#1a1a1a",color:"#e0e0e0",border:"1px solid #333",borderRadius:"4px",flex:1}} /><select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1a1a1a",color:"#e0e0e0",border:"1px solid #333",borderRadius:"4px"}}>{units.map(u=>(<option key={u.value} value={u.value}>{u.label}</option>))}</select><select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1a1a1a",color:"#e0e0e0",border:"1px solid #333",borderRadius:"4px"}}>{units.map(u=>(<option key={u.value} value={u.value}>{u.label}</option>))}</select></div><div style={{padding:"1rem",background:"#1a1a1a",borderRadius:"4px",fontSize:"1.2rem"}}>{val&&<span>{val} {units.find(u=>u.value===from)?.label} = <strong style={{color:"#4ade80"}}>{convert()}</strong> {units.find(u=>u.value===to)?.label}</span>}</div></main>);}
+"use client";
+import { useState } from "react";
+
+const units: { value: string; label: string; factor: number }[] = [
+  { value: "V", label: "Volt (V)", factor: 1 },
+  { value: "mV", label: "Millivolt (mV)", factor: 0.001 },
+  { value: "kV", label: "Kilovolt (kV)", factor: 1000 },
+  { value: "MV", label: "Megavolt (MV)", factor: 1000000 },
+  { value: "uV", label: "Microvolt (μV)", factor: 1e-06 },
+  { value: "nV", label: "Nanovolt (nV)", factor: 1e-09 },
+];
+
+export default function ElectricPotentialConverterPage() {
+  const [value, setValue] = useState("");
+  const [from, setFrom] = useState(units[0].value);
+  const [to, setTo] = useState(units[1].value);
+
+  const convert = () => {
+    const num = parseFloat(value);
+    if (isNaN(num)) return "";
+    const fromUnit = units.find(u => u.value === from);
+    const toUnit = units.find(u => u.value === to);
+    if (!fromUnit || !toUnit) return "";
+    const result = (num * fromUnit.factor) / toUnit.factor;
+    return result.toPrecision(8).replace(/\.?0+$/, "");
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-950 text-gray-100 p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Electric Potential Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between voltage units: volt, millivolt, kilovolt, megavolt, microvolt.</p>
+        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Value</label>
+            <input
+              type="number"
+              value={value}
+              onChange={e => setValue(e.target.value)}
+              placeholder="Enter value"
+              className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">From</label>
+              <select
+                value={from}
+                onChange={e => setFrom(e.target.value)}
+                className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                {units.map(u => <option key={u.value} value={u.value}>{u.label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">To</label>
+              <select
+                value={to}
+                onChange={e => setTo(e.target.value)}
+                className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                {units.map(u => <option key={u.value} value={u.value}>{u.label}</option>)}
+              </select>
+            </div>
+          </div>
+          <div className="bg-gray-800 rounded-lg px-4 py-3">
+            <p className="text-sm text-gray-400">Result</p>
+            <p className="text-2xl font-mono text-green-400">{convert() || "—"}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

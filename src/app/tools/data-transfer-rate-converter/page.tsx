@@ -1,1 +1,76 @@
-"use client";import{useState}from"react";export default function Page(){const units=[['bps',1],['kbps',1000],['Mbps',1000000],['Gbps',1000000000],['Tbps',1000000000000]];const[v,setV]=useState("");const[f,setF]=useState(units[0][0]);const[t,setT]=useState(units[1][0]);const res=()=>{const n=parseFloat(v);if(isNaN(n))return"";const fr=units.find(u=>u[0]===f);const to=units.find(u=>u[0]===t);return fr&&to?(n*fr[1]/to[1]).toFixed(8).replace(/\.?0+$/,""):""};return(<div style={{padding:"2rem",fontFamily:"monospace",maxWidth:"600px",margin:"0 auto"}}><h1>Data Transfer Rate Converter</h1><p>Convert between bps, kbps, Mbps, Gbps and Tbps</p><input type="number" value={v} onChange={e=>setV(e.target.value)} placeholder="Enter value" style={{display:"block",width:"100%",padding:"0.5rem",marginBottom:"0.5rem",boxSizing:"border-box"}}/><select value={f} onChange={e=>setF(e.target.value)} style={{display:"block",width:"100%",padding:"0.5rem",marginBottom:"0.5rem"}}>{units.map(u=><option key={u[0]}>{u[0]}</option>)}</select><select value={t} onChange={e=>setT(e.target.value)} style={{display:"block",width:"100%",padding:"0.5rem",marginBottom:"0.5rem"}}>{units.map(u=><option key={u[0]}>{u[0]}</option>)}</select><div style={{fontSize:"1.5rem",fontWeight:"bold",marginTop:"1rem"}}>{res()}</div></div>);}
+"use client";
+import { useState } from "react";
+
+const units: { value: string; label: string; factor: number }[] = [
+  { value: "bps", label: "Bit per second (bps)", factor: 1 },
+  { value: "kbps", label: "Kilobit per second (kbps)", factor: 1000 },
+  { value: "Mbps", label: "Megabit per second (Mbps)", factor: 1000000 },
+  { value: "Gbps", label: "Gigabit per second (Gbps)", factor: 1000000000 },
+  { value: "Tbps", label: "Terabit per second (Tbps)", factor: 1000000000000 },
+  { value: "KBps", label: "Kilobyte per second (KB/s)", factor: 8000 },
+  { value: "MBps", label: "Megabyte per second (MB/s)", factor: 8000000 },
+  { value: "GBps", label: "Gigabyte per second (GB/s)", factor: 8000000000 },
+];
+
+export default function DataTransferRateConverterPage() {
+  const [value, setValue] = useState("");
+  const [from, setFrom] = useState(units[0].value);
+  const [to, setTo] = useState(units[1].value);
+
+  const convert = () => {
+    const num = parseFloat(value);
+    if (isNaN(num)) return "";
+    const fromUnit = units.find(u => u.value === from);
+    const toUnit = units.find(u => u.value === to);
+    if (!fromUnit || !toUnit) return "";
+    const result = (num * fromUnit.factor) / toUnit.factor;
+    return result.toPrecision(8).replace(/\.?0+$/, "");
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-950 text-gray-100 p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Data Transfer Rate Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between data transfer rates: bps, kbps, Mbps, Gbps, Tbps.</p>
+        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Value</label>
+            <input
+              type="number"
+              value={value}
+              onChange={e => setValue(e.target.value)}
+              placeholder="Enter value"
+              className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">From</label>
+              <select
+                value={from}
+                onChange={e => setFrom(e.target.value)}
+                className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                {units.map(u => <option key={u.value} value={u.value}>{u.label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">To</label>
+              <select
+                value={to}
+                onChange={e => setTo(e.target.value)}
+                className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                {units.map(u => <option key={u.value} value={u.value}>{u.label}</option>)}
+              </select>
+            </div>
+          </div>
+          <div className="bg-gray-800 rounded-lg px-4 py-3">
+            <p className="text-sm text-gray-400">Result</p>
+            <p className="text-2xl font-mono text-green-400">{convert() || "—"}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
