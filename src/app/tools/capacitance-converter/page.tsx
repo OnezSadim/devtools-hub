@@ -1,57 +1,43 @@
 "use client";
 import { useState } from "react";
 
-const units: {value:string,label:string,factor:number}[] = [
-        { value: 'F', label: 'Farad (F)', factor: 1.0 },
-        { value: 'mF', label: 'Millifarad (mF)', factor: 0.001 },
-        { value: 'uF', label: 'Microfarad (μF)', factor: 1e-06 },
-        { value: 'nF', label: 'Nanofarad (nF)', factor: 1e-09 },
-        { value: 'pF', label: 'Picofarad (pF)', factor: 1e-12 },
-        { value: 'kF', label: 'Kilofarad (kF)', factor: 1000.0 },
-        { value: 'abF', label: 'Abfarad (abF)', factor: 1000000000.0 },
-        { value: 'statF', label: 'Statfarad (statF)', factor: 1.11265e-12 },
+const UNITS = [
+      { value: '1', label: 'Farad (F)' },
+      { value: '1e-3', label: 'Millifarad (mF)' },
+      { value: '1e-6', label: 'Microfarad (µF)' },
+      { value: '1e-9', label: 'Nanofarad (nF)' },
+      { value: '1e-12', label: 'Picofarad (pF)' },
+      { value: '1e-15', label: 'Femtofarad (fF)' },
 ];
 
-export default function CapacitanceConverterPage() {
+export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(units[0].value);
-  const [to, setTo] = useState(units[1].value);
-  const [result, setResult] = useState<string | null>(null);
-
-  function convert() {
+  const [from, setFrom] = useState(UNITS[0].value);
+  const [to, setTo] = useState(UNITS[1].value);
+  const convert = () => {
     const n = parseFloat(val);
-    if (isNaN(n)) { setResult("Invalid input"); return; }
-    const fromU = units.find(u => u.value === from)!;
-    const toU = units.find(u => u.value === to)!;
-    const base = n * fromU.factor;
-    const out = base / toU.factor;
-    setResult(out.toPrecision(8).replace(/\.?0+$/, ""));
-  }
-
+    if (isNaN(n)) return "";
+    const base = n * parseFloat(from);
+    return (base / parseFloat(to)).toPrecision(6);
+  };
   return (
-    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",flexDirection:"column",alignItems:"center",padding:"40px 16px"}}>
-      <h1 style={{fontSize:"2rem",fontWeight:700,marginBottom:8}}>Capacitance Converter</h1>
-      <p style={{color:"#94a3b8",marginBottom:32}}>Convert between farads, microfarads, picofarads and other capacitance units.</p>
-      <div style={{background:"#1e293b",borderRadius:12,padding:32,width:"100%",maxWidth:480}}>
-        <input type="number" value={val} onChange={e=>setVal(e.target.value)}
-          placeholder="Enter value" style={{width:"100%",padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",fontSize:"1rem",marginBottom:16,boxSizing:"border-box"}} />
-        <div style={{display:"flex",gap:12,marginBottom:16}}>
-          <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:"10px",borderRadius:8,border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>
-            {units.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
-          </select>
-          <span style={{alignSelf:"center",color:"#94a3b8"}}>→</span>
-          <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:"10px",borderRadius:8,border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>
-            {units.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
-          </select>
-        </div>
-        <button onClick={convert} style={{width:"100%",padding:"12px",borderRadius:8,background:"#6366f1",color:"#fff",fontWeight:600,fontSize:"1rem",border:"none",cursor:"pointer"}}>
-          Convert
-        </button>
-        {result !== null && (
-          <div style={{marginTop:20,padding:16,background:"#0f172a",borderRadius:8,textAlign:"center",fontSize:"1.25rem",fontWeight:600,color:"#a5b4fc"}}>
-            {result} {units.find(u=>u.value===to)?.label}
-          </div>
-        )}
+    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",padding:"2rem",fontFamily:"monospace"}}>
+      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Capacitance Converter</h1>
+      <p style={{color:"#94a3b8",marginBottom:"2rem"}}>Convert between capacitance units: farad, microfarad, nanofarad, picofarad.</p>
+      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",alignItems:"flex-end"}}>
+        <div><label style={{display:"block",marginBottom:"0.25rem",color:"#94a3b8"}}>Value</label>
+        <input value={val} onChange={e=>setVal(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px",width:"160px"}} /></div>
+        <div><label style={{display:"block",marginBottom:"0.25rem",color:"#94a3b8"}}>From</label>
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px"}}>
+          {UNITS.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
+        </select></div>
+        <div><label style={{display:"block",marginBottom:"0.25rem",color:"#94a3b8"}}>To</label>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px"}}>
+          {UNITS.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
+        </select></div>
+      </div>
+      <div style={{marginTop:"2rem",padding:"1rem",background:"#1e293b",borderRadius:"8px",fontSize:"1.4rem"}}>
+        Result: <strong>{convert()}</strong>
       </div>
     </main>
   );
