@@ -2,19 +2,9 @@
 import { useState } from "react";
 export default function ViscosityConverter() {
   const [val, setVal] = useState("");
-  const n = parseFloat(val) || 0;
-  return (
-    <div style={{padding:"2rem",maxWidth:"600px",margin:"0 auto"}}>
-      <h1>Viscosity Converter</h1>
-      <p>Convert dynamic viscosity units. Enter value in Pascal-second (Pa·s).</p>
-      <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter Pa·s" style={{width:"100%",padding:"0.5rem",marginBottom:"1rem",fontSize:"1rem"}} />
-      <table style={{width:"100%",borderCollapse:"collapse"}}>
-        <tbody>
-          {[["Pa·s",1],["mPa·s",1000],["cP (centipoise)",1000],["Poise (P)",10],["lbf·s/ft²",0.020885]].map(([u,f])=>(
-            <tr key={u as string}><td style={{padding:"0.5rem 0"}}>{u}</td><td style={{textAlign:"right"}}>{(n*(f as number)).toPrecision(6)}</td></tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
+  const [from, setFrom] = useState("pascal-second");
+  const [to, setTo] = useState("poise");
+  const units = { "pascal-second": 1, poise: 0.1, centipoise: 0.001, "pound-force-sec-sqft": 47.8803 };
+  const convert = () => { const v = parseFloat(val); if (isNaN(v)) return ""; return ((v * units[from]) / units[to]).toFixed(6); };
+  return (<div style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}><h1 style={{color:"#38bdf8"}}>Viscosity Converter</h1><p style={{color:"#94a3b8"}}>Convert between Pa·s, poise, centipoise, lbf·s/ft²</p><div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginTop:"1rem"}}><input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}} /><select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>{Object.keys(units).map(u=><option key={u}>{u}</option>)}</select><span style={{alignSelf:"center"}}>→</span><select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>{Object.keys(units).map(u=><option key={u}>{u}</option>)}</select></div>{val && <p style={{marginTop:"1rem",fontSize:"1.5rem",color:"#38bdf8"}}>{val} {from} = {convert()} {to}</p>}</div>);
 }

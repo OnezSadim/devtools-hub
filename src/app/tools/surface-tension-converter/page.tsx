@@ -1,0 +1,10 @@
+"use client";
+import { useState } from "react";
+export default function SurfaceTensionConverter() {
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState("newton-per-meter");
+  const [to, setTo] = useState("dyne-per-cm");
+  const units = { "newton-per-meter": 1, "dyne-per-cm": 0.001, "millinewton-per-meter": 0.001, "pound-force-per-foot": 14.5939 };
+  const convert = () => { const v = parseFloat(val); if (isNaN(v)) return ""; return ((v * units[from]) / units[to]).toFixed(6); };
+  return (<div style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}><h1 style={{color:"#38bdf8"}}>Surface Tension Converter</h1><p style={{color:"#94a3b8"}}>Convert between N/m, dyne/cm, mN/m, lbf/ft</p><div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginTop:"1rem"}}><input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}} /><select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>{Object.keys(units).map(u=><option key={u}>{u}</option>)}</select><span style={{alignSelf:"center"}}>→</span><select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>{Object.keys(units).map(u=><option key={u}>{u}</option>)}</select></div>{val && <p style={{marginTop:"1rem",fontSize:"1.5rem",color:"#38bdf8"}}>{val} {from} = {convert()} {to}</p>}</div>);
+}

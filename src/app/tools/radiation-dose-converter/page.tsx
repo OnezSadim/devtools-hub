@@ -2,9 +2,9 @@
 import { useState } from "react";
 export default function RadiationDoseConverter() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState("sievert");
-  const units: Record<string, number> = { sievert: 1, millisievert: 0.001, microsievert: 0.000001, rem: 0.01, millirem: 0.00001, gray: 1, rad: 0.01 };
-  const convert = (v: string, f: string) => { const n = parseFloat(v); if (isNaN(n)) return {}; return Object.fromEntries(Object.entries(units).map(([k, r]) => [k, ((n * units[f]) / r).toFixed(8)])); };
-  const results = convert(val, from);
-  return (<div style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}><h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Radiation Dose Converter</h1><div style={{marginBottom:"1rem"}}><input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",marginRight:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}/><select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>{Object.keys(units).map(u=><option key={u} value={u}>{u}</option>)}</select></div><div>{Object.entries(results).map(([k,v])=><div key={k} style={{padding:"0.5rem",marginBottom:"0.5rem",background:"#1e293b",borderRadius:"4px"}}><strong>{k}:</strong> {v}</div>)}</div></div>);
+  const [from, setFrom] = useState("gray");
+  const [to, setTo] = useState("rad");
+  const units = { gray: 1, rad: 0.01, milligray: 0.001, centigray: 0.01, sievert: 1, rem: 0.01 };
+  const convert = () => { const v = parseFloat(val); if (isNaN(v)) return ""; return ((v * units[from]) / units[to]).toFixed(6); };
+  return (<div style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}><h1 style={{color:"#38bdf8"}}>Radiation Dose Converter</h1><p style={{color:"#94a3b8"}}>Convert between gray, rad, sievert, rem and more</p><div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginTop:"1rem"}}><input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}} /><select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>{Object.keys(units).map(u=><option key={u}>{u}</option>)}</select><span style={{alignSelf:"center"}}>→</span><select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>{Object.keys(units).map(u=><option key={u}>{u}</option>)}</select></div>{val && <p style={{marginTop:"1rem",fontSize:"1.5rem",color:"#38bdf8"}}>{val} {from} = {convert()} {to}</p>}</div>);
 }
