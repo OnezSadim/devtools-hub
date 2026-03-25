@@ -1,61 +1,28 @@
 "use client";
 import { useState } from "react";
-
-const units: { name: string; factor: number }[] = [
-  { name: "rad/s²", factor: 1.0 },
-  { name: "rad/min²", factor: 0.000277778 },
-  { name: "deg/s²", factor: 0.017453293 },
-  { name: "deg/min²", factor: 4.8481e-06 },
-  { name: "rev/s²", factor: 6.2831853 },
-  { name: "rpm/s", factor: 0.10471976 },
-  { name: "rpm²", factor: 0.001745329 }
-];
-
-function toBase(val: number, unit: string): number {
-  const u = units.find(x => x.name === unit);
-  return u ? val * u.factor : val;
-}
-
-function fromBase(val: number, unit: string): number {
-  const u = units.find(x => x.name === unit);
-  return u ? val / u.factor : val;
-}
-
+const UNITS = [{"key": "rad_s2", "label": "rad/s2", "factor": 1}, {"key": "deg_s2", "label": "deg/s2", "factor": 0.0174533}, {"key": "rev_s2", "label": "rev/s2", "factor": 6.28318}, {"key": "rpm_s", "label": "RPM/s", "factor": 0.10472}, {"key": "grad_s2", "label": "grad/s2", "factor": 0.015708}];
 export default function Page() {
-  const [value, setValue] = useState("");
-  const [from, setFrom] = useState(units[0].name);
-  const [to, setTo] = useState(units[1].name);
-
-  const result = value !== "" ? fromBase(toBase(parseFloat(value), from), to) : null;
-
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState(UNITS[0].key);
+  const [to, setTo] = useState(UNITS[1].key);
+  const fromU = UNITS.find(u => u.key === from);
+  const toU = UNITS.find(u => u.key === to);
+  const result = fromU && toU && val !== "" ? ((parseFloat(val) * fromU.factor) / toU.factor).toPrecision(6) : "";
   return (
-    <main className="min-h-screen bg-gray-950 text-gray-100 flex flex-col items-center justify-center p-8">
-      <h1 className="text-3xl font-bold mb-2">Angular Acceleration Converter</h1>
-      <p className="text-gray-400 mb-8">Convert between angular acceleration units</p>
-      <div className="bg-gray-900 rounded-xl p-6 w-full max-w-md space-y-4">
-        <input
-          type="number"
-          className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white"
-          placeholder="Enter value"
-          value={value}
-          onChange={e => setValue(e.target.value)}
-        />
-        <div className="flex gap-4">
-          <select className="flex-1 bg-gray-800 rounded-lg px-3 py-2" value={from} onChange={e => setFrom(e.target.value)}>
-            {units.map(u => <option key={u.name} value={u.name}>{u.name}</option>)}
-          </select>
-          <span className="self-center text-gray-400">→</span>
-          <select className="flex-1 bg-gray-800 rounded-lg px-3 py-2" value={to} onChange={e => setTo(e.target.value)}>
-            {units.map(u => <option key={u.name} value={u.name}>{u.name}</option>)}
-          </select>
-        </div>
-        {result !== null && (
-          <div className="bg-gray-800 rounded-lg px-4 py-3 text-center">
-            <span className="text-2xl font-bold text-blue-400">{isFinite(result) ? result.toPrecision(6) : "∞"}</span>
-            <span className="text-gray-400 ml-2">{to}</span>
-          </div>
-        )}
+    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",padding:"2rem",fontFamily:"monospace"}}>
+      <h1 style={{fontSize:"1.5rem",fontWeight:700,marginBottom:".5rem"}}>Angular Acceleration Converter</h1>
+      <p style={{color:"#94a3b8",marginBottom:"1.5rem"}}>Convert between angular acceleration units like rad/s2, deg/s2, rev/s2.</p>
+      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1rem"}}>
+        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:".5rem",background:"#1e293b",border:"1px solid #334155",color:"#f1f5f9",borderRadius:"6px",width:"140px"}} />
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:".5rem",background:"#1e293b",border:"1px solid #334155",color:"#f1f5f9",borderRadius:"6px"}}>
+          {UNITS.map(u=><option key={u.key} value={u.key}>{u.label}</option>)}
+        </select>
+        <span style={{lineHeight:"2rem"}}>to</span>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:".5rem",background:"#1e293b",border:"1px solid #334155",color:"#f1f5f9",borderRadius:"6px"}}>
+          {UNITS.map(u=><option key={u.key} value={u.key}>{u.label}</option>)}
+        </select>
       </div>
+      {result !== "" && <div style={{fontSize:"1.25rem",background:"#1e293b",padding:"1rem",borderRadius:"8px",border:"1px solid #22d3ee"}}>{val} {fromU?.label} = <strong>{result}</strong> {toU?.label}</div>}
     </main>
   );
 }
