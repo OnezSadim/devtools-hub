@@ -1,28 +1,34 @@
 "use client";
 import { useState } from "react";
-const UNITS = [{"key": "Hz", "label": "Hz", "factor": 1}, {"key": "kHz", "label": "kHz", "factor": 1000.0}, {"key": "MHz", "label": "MHz", "factor": 1000000.0}, {"key": "GHz", "label": "GHz", "factor": 1000000000.0}, {"key": "THz", "label": "THz", "factor": 1000000000000.0}, {"key": "rpm", "label": "RPM", "factor": 0.016666666666666666}, {"key": "rps", "label": "RPS", "factor": 1}];
+
+const UNITS = ["Hz", "kHz", "MHz", "GHz", "THz", "rpm", "rad/s", "mHz"];
+const TO_BASE = {"Hz": 1, "kHz": 1000, "MHz": 1000000.0, "GHz": 1000000000.0, "THz": 1000000000000.0, "rpm": 0.016667, "rad/s": 0.15915, "mHz": 0.001};
+
 export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(UNITS[0].key);
-  const [to, setTo] = useState(UNITS[1].key);
-  const fromU = UNITS.find(u => u.key === from);
-  const toU = UNITS.find(u => u.key === to);
-  const result = fromU && toU && val !== "" ? ((parseFloat(val) * fromU.factor) / toU.factor).toPrecision(6) : "";
+  const [from, setFrom] = useState(UNITS[0]);
+  const [to, setTo] = useState(UNITS[1]);
+  const convert = () => {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
+  };
   return (
-    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",padding:"2rem",fontFamily:"monospace"}}>
-      <h1 style={{fontSize:"1.5rem",fontWeight:700,marginBottom:".5rem"}}>Frequency Converter</h1>
-      <p style={{color:"#94a3b8",marginBottom:"1.5rem"}}>Convert between frequency units like Hz, kHz, MHz, GHz, RPM.</p>
+    <main style={{padding:"2rem",fontFamily:"monospace",background:"#0f0f0f",minHeight:"100vh",color:"#e5e5e5"}}>
+      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Frequency Converter</h1>
       <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1rem"}}>
-        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:".5rem",background:"#1e293b",border:"1px solid #334155",color:"#f1f5f9",borderRadius:"6px",width:"140px"}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:".5rem",background:"#1e293b",border:"1px solid #334155",color:"#f1f5f9",borderRadius:"6px"}}>
-          {UNITS.map(u=><option key={u.key} value={u.key}>{u.label}</option>)}
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",background:"#1a1a1a",border:"1px solid #333",color:"#e5e5e5",borderRadius:"4px",flex:"1"}} />
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1a1a1a",border:"1px solid #333",color:"#e5e5e5",borderRadius:"4px"}}>
+          {UNITS.map(u=><option key={u}>{u}</option>)}
         </select>
-        <span style={{lineHeight:"2rem"}}>to</span>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:".5rem",background:"#1e293b",border:"1px solid #334155",color:"#f1f5f9",borderRadius:"6px"}}>
-          {UNITS.map(u=><option key={u.key} value={u.key}>{u.label}</option>)}
+        <span style={{padding:"0.5rem"}}>to</span>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1a1a1a",border:"1px solid #333",color:"#e5e5e5",borderRadius:"4px"}}>
+          {UNITS.map(u=><option key={u}>{u}</option>)}
         </select>
       </div>
-      {result !== "" && <div style={{fontSize:"1.25rem",background:"#1e293b",padding:"1rem",borderRadius:"8px",border:"1px solid #22d3ee"}}>{val} {fromU?.label} = <strong>{result}</strong> {toU?.label}</div>}
+      <div style={{fontSize:"1.25rem",padding:"1rem",background:"#1a1a1a",borderRadius:"4px",border:"1px solid #333"}}>
+        {val ? convert() + " " + to : "Result will appear here"}
+      </div>
     </main>
   );
 }
