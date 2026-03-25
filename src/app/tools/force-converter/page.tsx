@@ -1,64 +1,31 @@
 "use client";
 import { useState } from "react";
-
-const units = [
-      { name: 'Newton', factor: 1.0 },
-      { name: 'Kilonewton', factor: 1000.0 },
-      { name: 'Meganewton', factor: 1000000.0 },
-      { name: 'Dyne', factor: 1e-05 },
-      { name: 'Pound-force', factor: 4.448222 },
-      { name: 'Kilogram-force', factor: 9.80665 },
-      { name: 'Ounce-force', factor: 0.278014 },
-      { name: 'Poundal', factor: 0.138255 }
-    ];
-
-export default function ForceConverterPage() {
-  const [value, setValue] = useState("");
-  const [from, setFrom] = useState(units[0].name);
-  const [to, setTo] = useState(units[1].name);
-
-  const convert = () => {
-    const num = parseFloat(value);
-    if (isNaN(num)) return "";
-    const fromUnit = units.find(u => u.name === from);
-    const toUnit = units.find(u => u.name === to);
-    if (!fromUnit || !toUnit) return "";
-    return ((num * fromUnit.factor) / toUnit.factor).toPrecision(8);
-  };
-
+const UNITS: string[] = ["N", "kN", "MN", "lbf", "kgf", "dyn", "ozf", "poundal"];
+const TO_BASE: Record<string, number> = {"N": 1, "kN": 1000, "MN": 1000000.0, "lbf": 4.44822, "kgf": 9.80665, "dyn": 1e-05, "ozf": 0.278014, "poundal": 0.138255};
+export default function Page() {
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState(UNITS[0]);
+  const [to, setTo] = useState(UNITS[1]);
+  function convert() {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
+  }
   return (
-    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
-      <div className="max-w-xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Force Converter</h1>
-        <p className="text-gray-400 mb-8">Convert between force units: newtons, kilonewtons, pound-force, dyne, kgf, and more.</p>
-        <div className="space-y-4">
-          <input
-            type="number"
-            value={value}
-            onChange={e => setValue(e.target.value)}
-            placeholder="Enter value"
-            className="w-full bg-gray-800 border border-gray-700 rounded px-4 py-2"
-          />
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-sm text-gray-400 mb-1 block">From</label>
-              <select value={from} onChange={e => setFrom(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded px-4 py-2">
-                {units.map(u => <option key={u.name} value={u.name}>{u.name}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="text-sm text-gray-400 mb-1 block">To</label>
-              <select value={to} onChange={e => setTo(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded px-4 py-2">
-                {units.map(u => <option key={u.name} value={u.name}>{u.name}</option>)}
-              </select>
-            </div>
-          </div>
-          {value && (
-            <div className="bg-gray-800 rounded p-4 text-xl font-mono">
-              {value} {from} = <span className="text-green-400">{convert()}</span> {to}
-            </div>
-          )}
+    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"2rem"}}>
+      <h1 style={{fontSize:"2rem",fontWeight:700,marginBottom:"1.5rem"}}>Force Converter</h1>
+      <div style={{background:"#1e293b",borderRadius:"1rem",padding:"2rem",width:"100%",maxWidth:"480px"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:".75rem",borderRadius:".5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",fontSize:"1rem",marginBottom:"1rem",boxSizing:"border-box"}} />
+        <div style={{display:"flex",gap:"1rem",marginBottom:"1rem"}}>
+          <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:".75rem",borderRadius:".5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>
+            {UNITS.map(u=><option key={u}>{u}</option>)}
+          </select>
+          <span style={{alignSelf:"center",fontSize:"1.5rem"}}>&#8594;</span>
+          <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:".75rem",borderRadius:".5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>
+            {UNITS.map(u=><option key={u}>{u}</option>)}
+          </select>
         </div>
+        <div style={{background:"#0f172a",borderRadius:".5rem",padding:"1rem",textAlign:"center",fontSize:"1.25rem",fontWeight:600,color:"#38bdf8"}}>{convert() || "—"}</div>
       </div>
     </main>
   );

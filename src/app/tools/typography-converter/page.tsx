@@ -1,68 +1,31 @@
 "use client";
 import { useState } from "react";
-
-const units: Record<string, number> = {
-  "pt": 1,
-  "pc": 12,
-  "px": 0.75,
-  "in": 72,
-  "cm": 28.3465,
-  "mm": 2.83465,
-  "em": 12,
-};
-
-export default function TypographyUnitConverterPage() {
+const UNITS: string[] = ["px", "pt", "em", "rem", "cm", "mm", "in", "pc"];
+const TO_BASE: Record<string, number> = {"px": 1, "pt": 1.33333, "em": 16, "rem": 16, "cm": 37.7953, "mm": 3.77953, "in": 96, "pc": 16};
+export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState("pt");
-  const [to, setTo] = useState("pc");
-
-  const convert = () => {
+  const [from, setFrom] = useState(UNITS[0]);
+  const [to, setTo] = useState(UNITS[1]);
+  function convert() {
     const n = parseFloat(val);
     if (isNaN(n)) return "";
-    return ((n * units[from]) / units[to]).toPrecision(6);
-  };
-
+    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
+  }
   return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
-      <div className="max-w-xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Typography Unit Converter</h1>
-        <p className="text-gray-400 mb-6">Convert between typographic units: points, picas, pixels, em, inches and centimeters.</p>
-        <div className="space-y-4">
-          <input
-            type="number"
-            value={val}
-            onChange={e => setVal(e.target.value)}
-            placeholder="Enter value"
-            className="w-full bg-gray-800 rounded p-3 text-white"
-          />
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-sm text-gray-400 mb-1 block">From</label>
-              <select value={from} onChange={e => setFrom(e.target.value)} className="w-full bg-gray-800 rounded p-3 text-white">
-          <option value="pt">Point (pt)</option>
-          <option value="pc">Pica (pc)</option>
-          <option value="px">Pixel (px) at 96dpi</option>
-          <option value="in">Inch (in)</option>
-          <option value="cm">Centimeter (cm)</option>
-          <option value="mm">Millimeter (mm)</option>
-          <option value="em">Em (at 16px)</option>
-              </select>
-            </div>
-            <div>
-              <label className="text-sm text-gray-400 mb-1 block">To</label>
-              <select value={to} onChange={e => setTo(e.target.value)} className="w-full bg-gray-800 rounded p-3 text-white">
-          <option value="pt">Point (pt)</option>
-          <option value="pc">Pica (pc)</option>
-          <option value="px">Pixel (px) at 96dpi</option>
-          <option value="in">Inch (in)</option>
-          <option value="cm">Centimeter (cm)</option>
-          <option value="mm">Millimeter (mm)</option>
-          <option value="em">Em (at 16px)</option>
-              </select>
-            </div>
-          </div>
-          {val && <div className="bg-gray-800 rounded p-4 text-2xl font-mono text-green-400">{convert()} {to}</div>}
+    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"2rem"}}>
+      <h1 style={{fontSize:"2rem",fontWeight:700,marginBottom:"1.5rem"}}>Typography Unit Converter</h1>
+      <div style={{background:"#1e293b",borderRadius:"1rem",padding:"2rem",width:"100%",maxWidth:"480px"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:".75rem",borderRadius:".5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",fontSize:"1rem",marginBottom:"1rem",boxSizing:"border-box"}} />
+        <div style={{display:"flex",gap:"1rem",marginBottom:"1rem"}}>
+          <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:".75rem",borderRadius:".5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>
+            {UNITS.map(u=><option key={u}>{u}</option>)}
+          </select>
+          <span style={{alignSelf:"center",fontSize:"1.5rem"}}>&#8594;</span>
+          <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:".75rem",borderRadius:".5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>
+            {UNITS.map(u=><option key={u}>{u}</option>)}
+          </select>
         </div>
+        <div style={{background:"#0f172a",borderRadius:".5rem",padding:"1rem",textAlign:"center",fontSize:"1.25rem",fontWeight:600,color:"#38bdf8"}}>{convert() || "—"}</div>
       </div>
     </main>
   );

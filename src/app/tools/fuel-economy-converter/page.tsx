@@ -1,1 +1,32 @@
-"use client";import{useState}from"react";const U=[{'n': 'km/L', 'x': 1}, {'n': 'L/100km', 'x': 0}, {'n': 'MPG (US)', 'x': 0.425144}, {'n': 'MPG (UK)', 'x': 0.354006}, {'n': 'miles/L', 'x': 0.621371}];export default function Page(){const[v,setV]=useState("");const[f,setF]=useState(0);const cv=(u)=>{if(!v||isNaN(+v))return"";return((+v/U[f].x)*u.x).toPrecision(6)};return(<div style={{padding:"2rem",maxWidth:800,margin:"0 auto"}}><h1>Fuel Economy Converter</h1><p>Convert fuel consumption and efficiency</p><input type="number" value={v} onChange={e=>setV(e.target.value)} style={{width:"100%",padding:"0.5rem",marginBottom:"1rem"}}/><select value={f} onChange={e=>setF(+e.target.value)} style={{width:"100%",padding:"0.5rem",marginBottom:"1rem"}}>{U.map((u,i)=><option key={i} value={i}>{u.n}</option>)}</select><table style={{width:"100%",borderCollapse:"collapse"}}><tbody>{U.map((u,i)=><tr key={i} style={{borderBottom:"1px solid #eee"}}><td style={{padding:"0.5rem"}}>{u.n}</td><td style={{padding:"0.5rem",fontWeight:"bold"}}>{cv(u)||"—"}</td></tr>)}</tbody></table></div>)}
+"use client";
+import { useState } from "react";
+const UNITS: string[] = ["km/L", "L/100km", "mpg (US)", "mpg (UK)", "mi/L"];
+const TO_BASE: Record<string, number> = {"km/L": 1, "L/100km": 100, "mpg (US)": 0.425144, "mpg (UK)": 0.354006, "mi/L": 0.621371};
+export default function Page() {
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState(UNITS[0]);
+  const [to, setTo] = useState(UNITS[1]);
+  function convert() {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
+  }
+  return (
+    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"2rem"}}>
+      <h1 style={{fontSize:"2rem",fontWeight:700,marginBottom:"1.5rem"}}>Fuel Economy Converter</h1>
+      <div style={{background:"#1e293b",borderRadius:"1rem",padding:"2rem",width:"100%",maxWidth:"480px"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:".75rem",borderRadius:".5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",fontSize:"1rem",marginBottom:"1rem",boxSizing:"border-box"}} />
+        <div style={{display:"flex",gap:"1rem",marginBottom:"1rem"}}>
+          <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:".75rem",borderRadius:".5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>
+            {UNITS.map(u=><option key={u}>{u}</option>)}
+          </select>
+          <span style={{alignSelf:"center",fontSize:"1.5rem"}}>&#8594;</span>
+          <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:".75rem",borderRadius:".5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>
+            {UNITS.map(u=><option key={u}>{u}</option>)}
+          </select>
+        </div>
+        <div style={{background:"#0f172a",borderRadius:".5rem",padding:"1rem",textAlign:"center",fontSize:"1.25rem",fontWeight:600,color:"#38bdf8"}}>{convert() || "—"}</div>
+      </div>
+    </main>
+  );
+}
