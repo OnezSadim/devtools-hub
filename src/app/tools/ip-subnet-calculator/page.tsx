@@ -2,40 +2,42 @@
 import { useState } from "react";
 export default function IpSubnetCalculator() {
   const [ip, setIp] = useState("192.168.1.0");
-  const [cidr, setCidr] = useState("24");
-  const [result, setResult] = useState<any>(null);
-  const calculate = () => {
-    const prefix = parseInt(cidr);
-    if (prefix < 0 || prefix > 32) return;
-    const parts = ip.split(".").map(Number);
-    if (parts.length !== 4) return;
-    const ipInt = (parts[0]<<24)|(parts[1]<<16)|(parts[2]<<8)|parts[3];
-    const mask = prefix===0?0:(0xFFFFFFFF<<(32-prefix))>>>0;
-    const network = (ipInt & mask)>>>0;
-    const broadcast = (network | (~mask>>>0))>>>0;
-    const toIp = (n: number) => [(n>>>24)&255,(n>>>16)&255,(n>>>8)&255,n&255].join(".");
-    setResult({
-      network: toIp(network)+"/"+prefix,
-      mask: toIp(mask),
-      broadcast: toIp(broadcast),
-      first: toIp(network+1),
-      last: toIp(broadcast-1),
-      hosts: Math.max(0, broadcast-network-1)
-    });
-  };
+  const [cidr, setCidr] = useState(24);
+  const ipToNum = (s: string) => s.split(".").reduce((acc, o) => (acc << 8) + parseInt(o), 0) >>> 0;
+  const numToIp = (n: number) => [(n>>>24)&255,(n>>>16)&255,(n>>>8)&255,n&255].join(".");
+  const mask = cidr === 0 ? 0 : (0xFFFFFFFF << (32 - cidr)) >>> 0;
+  const network = (ipToNum(ip.trim()) & mask) >>> 0;
+  const broadcast = (network | (~mask >>> 0)) >>> 0;
+  const hosts = cidr >= 31 ? Math.pow(2, 32 - cidr) : Math.max(0, Math.pow(2, 32 - cidr) - 2);
+  const first = cidr >= 31 ? network : network + 1;
+  const last = cidr >= 31 ? broadcast : broadcast - 1;
+  const rows = [
+    ["Network", numToIp(network)],
+    ["Netmask", numToIp(mask)],
+    ["Broadcast", numToIp(broadcast)],
+    ["First Host", numToIp(first)],
+    ["Last Host", numToIp(last)],
+    ["Usable Hosts", hosts.toLocaleString()],
+    ["CIDR", `/${cidr}`],
+  ];
   return (
-    <div className="min-h-screen bg-gray-950 text-white p-8">
-      <h1 className="text-3xl font-bold mb-2">IP Subnet Calculator</h1>
-      <p className="text-gray-400 mb-6">Calculate subnet details from CIDR notation</p>
-      <div className="flex gap-4 mb-4">
-        <input value={ip} onChange={e=>setIp(e.target.value)} placeholder="IP Address" className="flex-1 bg-gray-900 border border-gray-700 rounded p-3" />
-        <span className="self-center text-gray-400">/</span>
-        <input value={cidr} onChange={e=>setCidr(e.target.value)} placeholder="CIDR" className="w-20 bg-gray-900 border border-gray-700 rounded p-3" />
-        <button onClick={calculate} className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded font-semibold">Calculate</button>
+    <div className="max-w-2xl mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-6">IP Subnet Calculator</h1>
+      <div className="flex gap-3 mb-6">
+        <input value={ip} onChange={e => setIp(e.target.value)} placeholder="192.168.1.0" className="flex-1 p-2 bg-gray-800 border border-gray-700 rounded font-mono" />
+        <div className="flex items-center gap-2">
+          <span className="text-gray-400">/</span>
+          <input type="number" min={0} max={32} value={cidr} onChange={e => setCidr(Number(e.target.value))} className="w-16 p-2 bg-gray-800 border border-gray-700 rounded font-mono" />
+        </div>
       </div>
-      {result && <div className="bg-gray-900 border border-gray-700 rounded p-4 space-y-2">
-        {Object.entries(result).map(([k,v])=>(<div key={k} className="flex justify-between"><span className="text-gray-400 capitalize">{k.replace(/([A-Z])/g," $1")}:</span><span className="font-mono">{String(v)}</span></div>))}
-      </div>}
+      <div className="overflow-hidden rounded-lg border border-gray-700">
+        {rows.map(([label, value]) => (
+          <div key={label} className="flex border-b border-gray-700 last:border-0">
+            <div className="w-36 px-4 py-3 bg-gray-800 text-sm text-gray-400 font-medium">{label}</div>
+            <div className="flex-1 px-4 py-3 font-mono">{value}</div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
