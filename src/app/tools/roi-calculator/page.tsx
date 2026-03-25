@@ -1,30 +1,27 @@
 "use client";
 import { useState } from "react";
 export default function ROICalculator() {
-  const [invested, setInvested] = useState('');
-  const [returned, setReturned] = useState('');
-  const [result, setResult] = useState<{roi: string, gain: string} | null>(null);
-  const calculate = () => {
-    const i = parseFloat(invested), r = parseFloat(returned);
-    if (!isNaN(i) && !isNaN(r) && i > 0) {
-      setResult({ roi: (((r - i) / i) * 100).toFixed(2), gain: (r - i).toFixed(2) });
-    }
-  };
+  const [invest, setInvest] = useState("");
+  const [gain, setGain] = useState("");
+  const roi = invest && gain ? (((parseFloat(gain) - parseFloat(invest)) / parseFloat(invest)) * 100).toFixed(2) : null;
   return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
-      <div className="max-w-lg mx-auto">
-        <h1 className="text-3xl font-bold mb-2">ROI Calculator</h1>
-        <p className="text-gray-400 mb-8">Calculate return on investment percentage.</p>
-        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
-          <div><label className="block text-sm text-gray-400 mb-1">Amount Invested ($)</label><input type="number" value={invested} onChange={e => setInvested(e.target.value)} placeholder="e.g. 1000" className="w-full bg-gray-800 rounded-lg px-4 py-3 text-white" /></div>
-          <div><label className="block text-sm text-gray-400 mb-1">Amount Returned ($)</label><input type="number" value={returned} onChange={e => setReturned(e.target.value)} placeholder="e.g. 1500" className="w-full bg-gray-800 rounded-lg px-4 py-3 text-white" /></div>
-          <button onClick={calculate} className="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded-lg font-semibold">Calculate ROI</button>
-          {result && <div className="bg-gray-800 rounded-lg p-4 space-y-2">
-            <div className="text-center"><span className="text-gray-400">ROI: </span><span className={"text-3xl font-bold " + (parseFloat(result.roi) >= 0 ? 'text-green-400' : 'text-red-400')}>{result.roi}%</span></div>
-            <div className="text-center"><span className="text-gray-400">Net Gain/Loss: </span><span className="text-xl font-bold text-blue-400">${result.gain}</span></div>
-          </div>}
-        </div>
+    <div style={{maxWidth:600,margin:"0 auto",padding:24,fontFamily:"monospace"}}>
+      <h1 style={{fontSize:28,marginBottom:8}}>ROI Calculator</h1>
+      <p style={{color:"#888",marginBottom:24}}>Calculate Return on Investment percentage.</p>
+      <div style={{marginBottom:16}}>
+        <label style={{display:"block",marginBottom:4}}>Initial Investment ($)</label>
+        <input type="number" value={invest} onChange={e=>setInvest(e.target.value)} style={{width:"100%",padding:8,background:"#1a1a1a",border:"1px solid #333",color:"#fff",borderRadius:4}} />
       </div>
-    </main>
+      <div style={{marginBottom:16}}>
+        <label style={{display:"block",marginBottom:4}}>Final Value / Gain ($)</label>
+        <input type="number" value={gain} onChange={e=>setGain(e.target.value)} style={{width:"100%",padding:8,background:"#1a1a1a",border:"1px solid #333",color:"#fff",borderRadius:4}} />
+      </div>
+      {roi !== null && (
+        <div style={{padding:16,background:"#0a2a0a",border:"1px solid #0f5",borderRadius:4}}>
+          <p style={{margin:0,fontSize:20}}>ROI: <strong style={{color:"#0f5"}}>{roi}%</strong></p>
+          <p style={{margin:"8px 0 0",color:"#888",fontSize:14}}>Net: ${(parseFloat(gain)-parseFloat(invest)).toFixed(2)}</p>
+        </div>
+      )}
+    </div>
   );
 }

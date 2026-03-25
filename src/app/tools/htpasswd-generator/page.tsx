@@ -1,46 +1,38 @@
 "use client";
 import { useState } from "react";
 export default function HtpasswdGenerator() {
-  const [username, setUsername] = useState("admin");
-  const [password, setPassword] = useState("");
-  const [entries, setEntries] = useState<string[]>([]);
+  const [user, setUser] = useState("");
+  const [pass, setPass] = useState("");
+  const [result, setResult] = useState("");
   const [copied, setCopied] = useState(false);
-  const md5 = async (str: string) => {
-    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
-    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
-  };
-  const generate = async () => {
-    if (!username || !password) return;
-    const hash = await md5(username + ":" + password);
-    const entry = `${username}:{SHA256}${btoa(hash)}`;
-    setEntries(prev => [...prev.filter(e => !e.startsWith(username + ":")), entry]);
-    setPassword("");
-  };
-  const file = entries.join("
-");
+  async function generate() {
+    if (!user || !pass) return;
+    const encoder = new TextEncoder();
+    const data = encoder.encode(pass);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+    const b64 = btoa(String.fromCharCode(...new Uint8Array(hashBuffer)));
+    setResult(user + ":{SHA}" + b64);
+  }
+  function copy() { navigator.clipboard.writeText(result); setCopied(true); setTimeout(()=>setCopied(false),2000); }
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-2">.htpasswd Generator</h1>
-      <p className="text-gray-400 text-sm mb-6">Generate Apache .htpasswd entries for basic auth. Note: Use a proper tool in production for bcrypt hashing.</p>
-      <div className="grid grid-cols-2 gap-4 mb-4">
-        <div>
-          <label className="block text-sm font-medium mb-1">Username</label>
-          <input value={username} onChange={e => setUsername(e.target.value)} className="w-full p-2 bg-gray-800 border border-gray-700 rounded" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Password</label>
-          <input type="password" value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === "Enter" && generate()} className="w-full p-2 bg-gray-800 border border-gray-700 rounded" />
-        </div>
+    <div style={{maxWidth:600,margin:"0 auto",padding:24,fontFamily:"monospace"}}>
+      <h1 style={{fontSize:28,marginBottom:8}}>htpasswd Generator</h1>
+      <p style={{color:"#888",marginBottom:24}}>Generate Apache htpasswd entries (SHA-1 format).</p>
+      <div style={{marginBottom:16}}>
+        <label style={{display:"block",marginBottom:4}}>Username</label>
+        <input value={user} onChange={e=>setUser(e.target.value)} style={{width:"100%",padding:8,background:"#1a1a1a",border:"1px solid #333",color:"#fff",borderRadius:4}} />
       </div>
-      <button onClick={generate} className="px-4 py-2 bg-indigo-600 rounded hover:bg-indigo-700 mb-6">Add Entry</button>
-      {entries.length > 0 && (
-        <div>
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium">.htpasswd file ({entries.length} user{entries.length !== 1 ? "s" : ""})</span>
-            <button onClick={() => { navigator.clipboard.writeText(file); setCopied(true); setTimeout(() => setCopied(false), 2000); }} className="text-xs px-3 py-1 bg-indigo-600 rounded">{copied ? "Copied!" : "Copy"}</button>
-          </div>
-          <pre className="bg-gray-800 rounded p-3 text-sm font-mono whitespace-pre-wrap">{file}</pre>
-          <button onClick={() => setEntries([])} className="mt-2 text-xs text-red-400 hover:text-red-300">Clear all</button>
+      <div style={{marginBottom:16}}>
+        <label style={{display:"block",marginBottom:4}}>Password</label>
+        <input type="password" value={pass} onChange={e=>setPass(e.target.value)} style={{width:"100%",padding:8,background:"#1a1a1a",border:"1px solid #333",color:"#fff",borderRadius:4}} />
+      </div>
+      <button onClick={generate} style={{padding:"10px 24px",background:"#0f5",color:"#000",border:"none",borderRadius:4,cursor:"pointer",fontWeight:"bold"}}>Generate</button>
+      {result && (
+        <div style={{marginTop:16}}>
+          <div style={{padding:12,background:"#111",border:"1px solid #333",borderRadius:4,wordBreak:"break-all"}}>{result}</div>
+          <button onClick={copy} style={{marginTop:8,padding:"8px 16px",background:copied?"#0a5":"#333",color:"#fff",border:"none",borderRadius:4,cursor:"pointer"}}>{copied?"Copied!":"Copy"}</button>
         </div>
       )}
     </div>

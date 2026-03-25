@@ -1,82 +1,47 @@
 "use client";
 import { useState } from "react";
 export default function NginxConfigGenerator() {
-  const [serverName, setServerName] = useState("example.com");
-  const [rootPath, setRootPath] = useState("/var/www/html");
-  const [port, setPort] = useState("80");
-  const [enableSSL, setEnableSSL] = useState(false);
-  const [enableGzip, setEnableGzip] = useState(true);
-  const [proxyPass, setProxyPass] = useState("");
-  const [output, setOutput] = useState("");
-  const generate = () => {
-    let cfg = `server {
-    listen ${port};
-    server_name ${serverName};
-    root ${rootPath};
-    index index.html index.htm;
-`;
-    if (enableGzip) cfg += `
-    gzip on;
-    gzip_types text/plain text/css application/json application/javascript;
-`;
-    if (proxyPass) {
-      cfg += `
-    location / {
-        proxy_pass ${proxyPass};
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-    }
-`;
-    } else {
-      cfg += `
-    location / {
-        try_files $uri $uri/ =404;
-    }
-`;
-    }
-    if (enableSSL) cfg += `
+  const [domain, setDomain] = useState("example.com");
+  const [port, setPort] = useState("3000");
+  const [ssl, setSsl] = useState(true);
+  const [www, setWww] = useState(true);
+  const config = `server {
+    listen 80;
+    server_name ${www ? "www." : ""}${domain} ${domain};
+${ssl ? `    return 301 https://$host$request_uri;
+}
+
+server {
     listen 443 ssl;
-    ssl_certificate /etc/letsencrypt/live/${serverName}/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/${serverName}/privkey.pem;
-`;
-    cfg += `}`;
-    setOutput(cfg);
-  };
+    server_name ${www ? "www." : ""}${domain} ${domain};
+    ssl_certificate /etc/letsencrypt/live/${domain}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/${domain}/privkey.pem;
+` : ""}
+    location / {
+        proxy_pass http://localhost:${port};
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}`;
+  const [copied, setCopied] = useState(false);
+  function copy() { navigator.clipboard.writeText(config); setCopied(true); setTimeout(()=>setCopied(false),2000); }
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100 p-8">
-      <div className="max-w-3xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Nginx Config Generator</h1>
-        <p className="text-gray-400 mb-8">Generate nginx server block configurations</p>
-        <div className="bg-gray-900 rounded-xl p-6 mb-6 space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">Server Name</label>
-              <input value={serverName} onChange={e=>setServerName(e.target.value)} className="w-full bg-gray-800 rounded p-2 text-sm" />
-            </div>
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">Port</label>
-              <input value={port} onChange={e=>setPort(e.target.value)} className="w-full bg-gray-800 rounded p-2 text-sm" />
-            </div>
-          </div>
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">Root Path</label>
-            <input value={rootPath} onChange={e=>setRootPath(e.target.value)} className="w-full bg-gray-800 rounded p-2 text-sm" />
-          </div>
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">Proxy Pass (optional)</label>
-            <input value={proxyPass} onChange={e=>setProxyPass(e.target.value)} placeholder="http://localhost:3000" className="w-full bg-gray-800 rounded p-2 text-sm" />
-          </div>
-          <div className="flex gap-6">
-            <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={enableSSL} onChange={e=>setEnableSSL(e.target.checked)} />Enable SSL</label>
-            <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={enableGzip} onChange={e=>setEnableGzip(e.target.checked)} />Enable Gzip</label>
-          </div>
-          <button onClick={generate} className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded font-medium">Generate Config</button>
-        </div>
-        {output && <div className="bg-gray-900 rounded-xl p-6">
-          <div className="flex justify-between mb-2"><span className="text-sm text-gray-400">nginx.conf</span><button onClick={()=>navigator.clipboard.writeText(output)} className="text-xs bg-gray-700 px-3 py-1 rounded">Copy</button></div>
-          <pre className="text-sm text-green-400 overflow-auto whitespace-pre-wrap">{output}</pre>
-        </div>}
+    <div style={{maxWidth:700,margin:"0 auto",padding:24,fontFamily:"monospace"}}>
+      <h1 style={{fontSize:28,marginBottom:8}}>Nginx Config Generator</h1>
+      <p style={{color:"#888",marginBottom:24}}>Generate Nginx reverse proxy configuration.</p>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:16}}>
+        <div><label style={{display:"block",marginBottom:4}}>Domain</label><input value={domain} onChange={e=>setDomain(e.target.value)} style={{width:"100%",padding:8,background:"#1a1a1a",border:"1px solid #333",color:"#fff",borderRadius:4}} /></div>
+        <div><label style={{display:"block",marginBottom:4}}>App Port</label><input value={port} onChange={e=>setPort(e.target.value)} style={{width:"100%",padding:8,background:"#1a1a1a",border:"1px solid #333",color:"#fff",borderRadius:4}} /></div>
       </div>
+      <div style={{marginBottom:16,display:"flex",gap:24}}>
+        <label><input type="checkbox" checked={ssl} onChange={e=>setSsl(e.target.checked)} style={{marginRight:6}} />SSL/HTTPS</label>
+        <label><input type="checkbox" checked={www} onChange={e=>setWww(e.target.checked)} style={{marginRight:6}} />Include www</label>
+      </div>
+      <button onClick={copy} style={{marginBottom:12,padding:"8px 20px",background:copied?"#0a5":"#333",color:"#fff",border:"none",borderRadius:4,cursor:"pointer"}}>{copied?"Copied!":"Copy Config"}</button>
+      <pre style={{padding:16,background:"#111",border:"1px solid #333",borderRadius:4,overflow:"auto",fontSize:12,lineHeight:1.5}}>{config}</pre>
     </div>
   );
 }
