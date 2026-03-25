@@ -1,28 +1,26 @@
 "use client";
 import { useState } from "react";
 
-const units: string[] = ["lumen", "candela-steradian", "kilolumen", "milliLumen"];
-const toBase: Record<string, number> = {"lumen": 1, "candela-steradian": 1, "kilolumen": 1000, "milliLumen": 0.001};
+const UNITS = ["lumen", "candela-steradian", "watt@555nm"];
+const TO_BASE: Record<string, number> = {"lumen": 1, "candela-steradian": 1, "watt@555nm": 683};
 
 export default function LuminousFluxConverterPage() {
-  const [val, setVal] = useState("");
-  const [from, setFrom] = useState(units[0]);
-  const [to, setTo] = useState(units[1]);
-  const convert = () => {
-    const n = parseFloat(val);
-    if (isNaN(n)) return "";
-    return ((n * toBase[from]) / toBase[to]).toPrecision(6);
-  };
+  const [value, setValue] = useState("");
+  const [from, setFrom] = useState(UNITS[0]);
+  const [to, setTo] = useState(UNITS[1]);
+  const result = value && !isNaN(Number(value)) ? (Number(value) * TO_BASE[from] / TO_BASE[to]).toPrecision(6) : "";
   return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
-      <h1 className="text-3xl font-bold mb-6">Luminous Flux Converter</h1>
-      <div className="bg-gray-900 rounded-xl p-6 max-w-lg space-y-4">
-        <input className="w-full bg-gray-800 rounded p-2" value={val} onChange={e => setVal(e.target.value)} placeholder="Value" />
-        <div className="flex gap-4">
-          <select className="flex-1 bg-gray-800 rounded p-2" value={from} onChange={e => setFrom(e.target.value)}>{units.map(u => <option key={u}>{u}</option>)}</select>
-          <select className="flex-1 bg-gray-800 rounded p-2" value={to} onChange={e => setTo(e.target.value)}>{units.map(u => <option key={u}>{u}</option>)}</select>
+    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",fontFamily:"sans-serif",padding:"2rem"}}>
+      <h1 style={{fontSize:"2rem",fontWeight:700,marginBottom:"0.5rem"}}>Luminous Flux Converter</h1>
+      <p style={{color:"#94a3b8",marginBottom:"2rem"}}>Convert between luminous flux units</p>
+      <div style={{background:"#1e293b",borderRadius:"1rem",padding:"2rem",width:"100%",maxWidth:"480px",display:"flex",flexDirection:"column",gap:"1rem"}}>
+        <input type="number" placeholder="Enter value" value={value} onChange={e=>setValue(e.target.value)} style={{padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",fontSize:"1.1rem"}} />
+        <div style={{display:"flex",gap:"1rem"}}>
+          <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>{UNITS.map(u=><option key={u} value={u}>{u}</option>)}</select>
+          <span style={{alignSelf:"center",color:"#64748b"}}>to</span>
+          <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>{UNITS.map(u=><option key={u} value={u}>{u}</option>)}</select>
         </div>
-        <div className="bg-gray-800 rounded p-3 text-xl font-mono">{convert() || "—"}</div>
+        {result && <div style={{textAlign:"center",fontSize:"1.5rem",fontWeight:700,color:"#38bdf8",padding:"1rem",background:"#0f172a",borderRadius:"0.5rem"}}>{value} {from} = {result} {to}</div>}
       </div>
     </main>
   );
