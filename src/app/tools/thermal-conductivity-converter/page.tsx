@@ -1,32 +1,31 @@
 "use client";
 import { useState } from "react";
 
-const UNITS: string[] = ["W/(m·K)", "BTU/(h·ft·°F)", "cal/(s·cm·°C)", "kcal/(h·m·°C)", "W/(cm·K)"];
-const TO_BASE: Record<string, number> = {"W/(m·K)": 1, "BTU/(h·ft·°F)": 1.73073, "cal/(s·cm·°C)": 418.4, "kcal/(h·m·°C)": 1.163, "W/(cm·K)": 100};
+const UNITS: string[] = ["W/m*K", "BTU/h*ft*F", "cal/s*cm*C", "kcal/h*m*C"];
+const TO_BASE: Record<string, number> = {"W/m*K": 1, "BTU/h*ft*F": 1.7307, "cal/s*cm*C": 418.68, "kcal/h*m*C": 1.163};
 
 export default function Page() {
   const [val, setVal] = useState("");
   const [from, setFrom] = useState(UNITS[0]);
   const [to, setTo] = useState(UNITS[1]);
-  const convert = () => {
-    const n = parseFloat(val);
-    if (isNaN(n)) return "";
-    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
-  };
+  const result = val !== "" && !isNaN(Number(val))
+    ? (Number(val) * TO_BASE[from] / TO_BASE[to]).toPrecision(6)
+    : "";
   return (
-    <main style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}>
-      <h1 style={{marginBottom:"1.5rem"}}>Thermal Conductivity Converter</h1>
-      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",alignItems:"flex-end"}}>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>
-          {UNITS.map(u=><option key={u}>{u}</option>)}
+    <main style={{maxWidth:520,margin:"40px auto",padding:"0 16px",fontFamily:"sans-serif",color:"#e2e8f0"}}>
+      <h1 style={{fontSize:"1.5rem",marginBottom:8}}>Thermal Conductivity Converter</h1>
+      <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value"
+        style={{width:"100%",padding:"8px",marginBottom:8,background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:4}} />
+      <div style={{display:"flex",gap:8,marginBottom:8}}>
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:"8px",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:4}}>
+          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
         </select>
-        <span>to</span>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>
-          {UNITS.map(u=><option key={u}>{u}</option>)}
+        <span style={{lineHeight:"36px"}}>→</span>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:"8px",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:4}}>
+          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
         </select>
       </div>
-      {val && <p style={{marginTop:"1.5rem",fontSize:"1.5rem"}}>{val} {from} = <strong>{convert()}</strong> {to}</p>}
+      {result && <div style={{padding:"12px",background:"#0f172a",borderRadius:4,fontSize:"1.2rem"}}>{result} {to}</div>}
     </main>
   );
 }

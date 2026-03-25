@@ -1,30 +1,31 @@
 "use client";
 import { useState } from "react";
 
-const UNITS: string[] = ["rad/s2", "deg/s2", "rev/s2", "rev/min2"];
-const TO_BASE: Record<string, number> = {"rad/s2": 1, "deg/s2": 0.0174533, "rev/s2": 6.28318, "rev/min2": 0.00174533};
+const UNITS: string[] = ["rad/s2", "deg/s2", "rpm/s", "rps/s"];
+const TO_BASE: Record<string, number> = {"rad/s2": 1, "deg/s2": 0.017453293, "rpm/s": 0.10471976, "rps/s": 6.2831853};
 
-export default function AngularAccelerationConverterPage() {
+export default function Page() {
   const [val, setVal] = useState("");
   const [from, setFrom] = useState(UNITS[0]);
   const [to, setTo] = useState(UNITS[1]);
-  const convert = () => {
-    const n = parseFloat(val);
-    if (isNaN(n)) return "";
-    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
-  };
+  const result = val !== "" && !isNaN(Number(val))
+    ? (Number(val) * TO_BASE[from] / TO_BASE[to]).toPrecision(6)
+    : "";
   return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
-      <h1 className="text-3xl font-bold mb-6">Angular Acceleration Converter</h1>
-      <div className="bg-gray-900 rounded-xl p-6 max-w-xl">
-        <input className="w-full bg-gray-800 rounded p-3 mb-4 text-white" placeholder="Enter value" value={val} onChange={e => setVal(e.target.value)} />
-        <div className="flex gap-4 mb-4">
-          <select className="flex-1 bg-gray-800 rounded p-3 text-white" value={from} onChange={e => setFrom(e.target.value)}>{UNITS.map(u => <option key={u}>{u}</option>)}</select>
-          <span className="self-center text-gray-400">to</span>
-          <select className="flex-1 bg-gray-800 rounded p-3 text-white" value={to} onChange={e => setTo(e.target.value)}>{UNITS.map(u => <option key={u}>{u}</option>)}</select>
-        </div>
-        {val && <div className="bg-gray-800 rounded p-4 text-2xl font-mono text-green-400">{convert()} {to}</div>}
+    <main style={{maxWidth:520,margin:"40px auto",padding:"0 16px",fontFamily:"sans-serif",color:"#e2e8f0"}}>
+      <h1 style={{fontSize:"1.5rem",marginBottom:8}}>Angular Acceleration Converter</h1>
+      <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value"
+        style={{width:"100%",padding:"8px",marginBottom:8,background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:4}} />
+      <div style={{display:"flex",gap:8,marginBottom:8}}>
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:"8px",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:4}}>
+          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
+        </select>
+        <span style={{lineHeight:"36px"}}>→</span>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:"8px",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:4}}>
+          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
+        </select>
       </div>
+      {result && <div style={{padding:"12px",background:"#0f172a",borderRadius:4,fontSize:"1.2rem"}}>{result} {to}</div>}
     </main>
   );
 }
