@@ -1,41 +1,28 @@
 "use client";
 import { useState } from "react";
-const UNITS = [
-  { value: "C_m3", label: "Coulomb/m³ (C/m³)", factor: 1 },
-  { value: "mC_m3", label: "Millicoulomb/m³ (mC/m³)", factor: 0.001 },
-  { value: "uC_m3", label: "Microcoulomb/m³ (μC/m³)", factor: 1e-06 },
-  { value: "nC_m3", label: "Nanocoulomb/m³ (nC/m³)", factor: 1e-09 },
-  { value: "C_cm3", label: "Coulomb/cm³ (C/cm³)", factor: 1000000.0 },
-  { value: "C_mm3", label: "Coulomb/mm³ (C/mm³)", factor: 1000000000.0 },
-];
-export default function Page() {
+
+const UNITS: string[] = ["C/m3", "C/cm3", "C/mm3", "mC/m3", "uC/m3"];
+const TO_BASE: number[] = [1, 1000000.0, 1000000000.0, 0.001, 1e-06];
+
+export default function VolumeChargeDensityConverter() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(UNITS[0].value);
-  const [to, setTo] = useState(UNITS[1].value);
-  function convert() {
-    const n = parseFloat(val);
-    if (isNaN(n)) return "";
-    const f = UNITS.find(u => u.value === from)?.factor ?? 1;
-    const t = UNITS.find(u => u.value === to)?.factor ?? 1;
-    return (n * f / t).toPrecision(6);
-  }
+  const [from, setFrom] = useState(0);
+  const [to, setTo] = useState(1);
+  const result = val !== "" && !isNaN(Number(val)) ? (Number(val) * TO_BASE[from] / TO_BASE[to]).toPrecision(6) : "";
   return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
-      <h1 className="text-3xl font-bold mb-2">Volume Charge Density Converter</h1>
-      <p className="text-gray-400 mb-6">Convert between volume charge density units: C/m3, mC/m3, uC/m3, nC/m3, C/cm3, C/mm3.</p>
-      <div className="bg-gray-900 rounded-xl p-6 max-w-lg">
-        <input className="w-full bg-gray-800 rounded p-2 mb-3 text-white" placeholder="Enter value" value={val} onChange={e => setVal(e.target.value)} />
-        <div className="flex gap-2 mb-3">
-          <select className="flex-1 bg-gray-800 rounded p-2 text-white" value={from} onChange={e => setFrom(e.target.value)}>
-            {UNITS.map(u => <option key={u.value} value={u.value}>{u.label}</option>)}
-          </select>
-          <span className="self-center text-gray-400">to</span>
-          <select className="flex-1 bg-gray-800 rounded p-2 text-white" value={to} onChange={e => setTo(e.target.value)}>
-            {UNITS.map(u => <option key={u.value} value={u.value}>{u.label}</option>)}
-          </select>
-        </div>
-        <div className="bg-gray-800 rounded p-3 text-xl font-mono">{convert() || "—"}</div>
+    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",fontFamily:"monospace",padding:"2rem"}}>
+      <h1 style={{fontSize:"1.5rem",marginBottom:"1.5rem"}}>Volume Charge Density Converter</h1>
+      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1rem"}}>
+        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px",width:"160px"}} />
+        <select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{padding:"0.5rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px"}}>
+          {UNITS.map((u,i)=><option key={i} value={i}>{u}</option>)}
+        </select>
+        <span style={{lineHeight:"2.2rem"}}>to</span>
+        <select value={to} onChange={e=>setTo(Number(e.target.value))} style={{padding:"0.5rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px"}}>
+          {UNITS.map((u,i)=><option key={i} value={i}>{u}</option>)}
+        </select>
       </div>
+      {result && <div style={{fontSize:"1.25rem",color:"#38bdf8"}}>= {result} {UNITS[to]}</div>}
     </main>
   );
 }
