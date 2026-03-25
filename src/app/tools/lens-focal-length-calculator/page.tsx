@@ -1,48 +1,26 @@
-
 "use client";
 import { useState } from "react";
 export default function LensFocalLengthCalculator() {
-  const [mode, setMode] = useState("focal");
-  const [v1, setV1] = useState("");
-  const [v2, setV2] = useState("");
-  const [result, setResult] = useState("");
+  const [do_, setDo] = useState("");
+  const [di, setDi] = useState("");
+  const [result, setResult] = useState<string | null>(null);
   const calculate = () => {
-    const a = parseFloat(v1), b = parseFloat(v2);
-    if (isNaN(a)||isNaN(b)||a===0||b===0) { setResult("Enter valid non-zero numbers"); return; }
-    let res = "";
-    if (mode==="focal") {
-      const f = 1/(1/a + 1/b);
-      res = "Focal length: " + f.toFixed(4) + " mm
-Magnification: " + (-b/a).toFixed(4);
-    } else if (mode==="object") {
-      const do_ = 1/(1/a - 1/b);
-      res = "Object distance: " + do_.toFixed(4) + " mm";
-    } else {
-      const di = 1/(1/a - 1/b);
-      res = "Image distance: " + di.toFixed(4) + " mm";
-    }
-    setResult(res);
+    const doV = parseFloat(do_), diV = parseFloat(di);
+    if (isNaN(doV) || isNaN(diV) || doV === 0 || diV === 0) { setResult("Please enter valid non-zero distances."); return; }
+    const f = 1 / (1/doV + 1/diV);
+    const m = -diV / doV;
+    setResult(`Focal length: ${f.toFixed(4)} cm | Magnification: ${m.toFixed(4)}x`);
   };
-  const labels = {focal:["Object distance (mm)","Image distance (mm)"],object:["Focal length (mm)","Image distance (mm)"],image:["Focal length (mm)","Object distance (mm)"]};
   return (
     <main className="min-h-screen bg-gray-950 text-white p-8">
       <div className="max-w-xl mx-auto">
         <h1 className="text-3xl font-bold mb-2">Lens Focal Length Calculator</h1>
-        <p className="text-gray-400 mb-6">Thin lens equation: 1/f = 1/do + 1/di</p>
-        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
-          <div className="flex gap-2 flex-wrap">
-            {["focal","object","image"].map(m=>(
-              <button key={m} onClick={()=>setMode(m)} className={"px-4 py-2 rounded-lg font-medium capitalize " + (mode===m ? "bg-blue-600" : "bg-gray-700 hover:bg-gray-600")}>Find {m}</button>
-            ))}
-          </div>
-          {labels[mode].map((lbl,i)=>(
-            <div key={i}>
-              <label className="block text-sm text-gray-400 mb-1">{lbl}</label>
-              <input type="number" value={i===0?v1:v2} onChange={e=>i===0?setV1(e.target.value):setV2(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white" />
-            </div>
-          ))}
-          <button onClick={calculate} className="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-lg font-medium">Calculate</button>
-          {result && <pre className="bg-gray-800 rounded-lg p-4 text-green-400 font-mono text-sm whitespace-pre-wrap">{result}</pre>}
+        <p className="text-gray-400 mb-6">Thin lens equation: 1/f = 1/d₀ + 1/dᵢ</p>
+        <div className="space-y-4">
+          <div><label className="block text-sm text-gray-400 mb-1">Object Distance d₀ (cm)</label><input value={do_} onChange={e=>setDo(e.target.value)} className="w-full bg-gray-800 rounded px-3 py-2" placeholder="e.g. 30" /></div>
+          <div><label className="block text-sm text-gray-400 mb-1">Image Distance dᵢ (cm)</label><input value={di} onChange={e=>setDi(e.target.value)} className="w-full bg-gray-800 rounded px-3 py-2" placeholder="e.g. 60" /></div>
+          <button onClick={calculate} className="w-full bg-blue-600 hover:bg-blue-700 rounded py-2 font-semibold">Calculate</button>
+          {result && <div className="bg-gray-800 rounded p-4 text-center text-lg font-mono">{result}</div>}
         </div>
       </div>
     </main>
