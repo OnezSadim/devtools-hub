@@ -1,28 +1,29 @@
 "use client";
 import { useState } from "react";
+
+const UNITS = ["V", "mV", "kV", "MV", "µV"];
+const TO_BASE: Record<string, number> = {"V": 1, "mV": 0.001, "kV": 1000, "MV": 1000000.0, "µV": 1e-06};
+
 export default function Page() {
-  const units = ["volt", "millivolt", "microvolt", "kilovolt", "megavolt"];
-  const toBase = {"volt": 1, "millivolt": 0.001, "microvolt": 1e-06, "kilovolt": 1000, "megavolt": 1000000};
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(units[0]);
-  const convert = (u) => {
+  const [from, setFrom] = useState(UNITS[0]);
+  const [to, setTo] = useState(UNITS[1]);
+  const convert = () => {
     const n = parseFloat(val);
-    if (isNaN(n)) return "-";
-    return ((n * toBase[from]) / toBase[u]).toPrecision(6);
+    if (isNaN(n)) return "";
+    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
   };
   return (
-    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",padding:"2rem",fontFamily:"monospace"}}>
-      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Electric Potential (Voltage) Converter</h1>
-      <div style={{display:"flex",gap:"1rem",marginBottom:"1.5rem",flexWrap:"wrap"}}>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px",fontSize:"1rem",width:"180px"}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px",fontSize:"1rem"}}>
-          {units.map(u=><option key={u} value={u}>{u}</option>)}
-        </select>
+    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"2rem"}}>
+      <h1 style={{fontSize:"1.8rem",fontWeight:700,marginBottom:"1.5rem"}}>Electric Potential Converter</h1>
+      <div style={{background:"#1e293b",borderRadius:"1rem",padding:"2rem",width:"100%",maxWidth:"480px",display:"flex",flexDirection:"column",gap:"1rem"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",fontSize:"1rem"}} />
+        <div style={{display:"flex",gap:"1rem"}}>
+          <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>{UNITS.map(u=><option key={u} value={u}>{u}</option>)}</select>
+          <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>{UNITS.map(u=><option key={u} value={u}>{u}</option>)}</select>
+        </div>
+        <div style={{textAlign:"center",fontSize:"1.5rem",fontWeight:700,color:"#38bdf8",padding:"1rem",background:"#0f172a",borderRadius:"0.5rem"}}>{convert() || "—"}</div>
       </div>
-      <table style={{width:"100%",borderCollapse:"collapse"}}>
-        <thead><tr><th style={{textAlign:"left",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Unit</th><th style={{textAlign:"left",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Value</th></tr></thead>
-        <tbody>{units.map(u=><tr key={u}><td style={{padding:"0.5rem",borderBottom:"1px solid #1e293b"}}>{u}</td><td style={{padding:"0.5rem",borderBottom:"1px solid #1e293b",color:"#38bdf8"}}>{convert(u)}</td></tr>)}</tbody>
-      </table>
     </main>
   );
 }
