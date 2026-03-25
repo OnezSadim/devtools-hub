@@ -1,10 +1,9 @@
 "use client";
-import { useState } from "react";
-const UNITS: Record<string, number> = {"katal": 1, "millimol/s": 0.001, "micromol/s": 1e-06, "nanomol/s": 1e-09, "enzyme unit": 1.6667e-08};
-export default function Page() {
+import {{ useState }} from "react";
+export default function Page() {{
+  const units = [['Katal (kat)', 1], ['Millikatal (mkat)', 0.001], ['Microkatal (µkat)', 1e-06], ['Nanokatal (nkat)', 1e-09], ['Mole per second', 1], ['Millimole per second', 0.001], ['Micromole per second', 1e-06], ['Enzyme unit (U)', 1.6666666666666667e-08]];
   const [val, setVal] = useState("1");
-  const [from, setFrom] = useState("katal");
-  const [to, setTo] = useState("millimol/s");
-  const result = (parseFloat(val) * UNITS[from] / UNITS[to]) || 0;
-  return (<div style={{padding:"2rem",fontFamily:"sans-serif",maxWidth:"600px",margin:"0 auto"}}><h1>Catalytic Activity Converter</h1><p>Convert between katal, millimol per second, micromol per second, enzyme unit and other catalytic activity units.</p><div style={{display:"flex",gap:"1rem",flexWrap:"wrap",margin:"1rem 0"}}><input type="number" value={val} onChange={e=>setVal(e.target.value)} style={{padding:"0.5rem",fontSize:"1.1rem",width:"150px"}}/><select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem"}}>{Object.keys(UNITS).map(u=>(<option key={u}>{u}</option>))}</select><span style={{fontSize:"1.5rem"}}>→</span><select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem"}}>{Object.keys(UNITS).map(u=>(<option key={u}>{u}</option>))}</select></div><div style={{fontSize:"2rem",fontWeight:"bold",color:"#2563eb"}}>{result.toPrecision(6)} {to}</div></div>);
-}
+  const [from, setFrom] = useState(0);
+  const convert = (v, f, t) => {{ const n = parseFloat(v); if (isNaN(n)) return ""; const base = n * units[f][1]; return (base / units[t][1]).toPrecision(6); }};
+  return (<div style={{{{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"sans-serif"}}}}><h1 style={{{{fontSize:"1.8rem",marginBottom:"1rem"}}}}>Catalytic Activity Converter</h1><p style={{{{color:"#666",marginBottom:"2rem"}}}}>Convert between katal, mole per second, and other catalytic activity units.</p><div style={{{{display:"flex",gap:"1rem",marginBottom:"1rem",flexWrap:"wrap"}}}}><input type="number" value={{val}} onChange={{e=>setVal(e.target.value)}} style={{{{padding:"0.5rem",fontSize:"1rem",border:"1px solid #ccc",borderRadius:"4px",width:"150px"}}}}/><select value={{from}} onChange={{e=>setFrom(Number(e.target.value))}} style={{{{padding:"0.5rem",fontSize:"1rem",border:"1px solid #ccc",borderRadius:"4px"}}}}> {{units.map((u,i)=><option key={{i}} value={{i}}>{{u[0]}}</option>)}} </select></div><table style={{{{width:"100%",borderCollapse:"collapse"}}}}><thead><tr><th style={{{{textAlign:"left",padding:"0.5rem",borderBottom:"2px solid #eee"}}}}>Unit</th><th style={{{{textAlign:"right",padding:"0.5rem",borderBottom:"2px solid #eee"}}}}>Value</th></tr></thead><tbody>{{units.map((u,i)=><tr key={{i}} style={{{{background:i===from?"#f0f7ff":"transparent"}}}}><td style={{{{padding:"0.5rem",borderBottom:"1px solid #eee"}}}}>{{u[0]}}</td><td style={{{{padding:"0.5rem",borderBottom:"1px solid #eee",textAlign:"right",fontFamily:"monospace"}}}}>{{convert(val,from,i)}}</td></tr>)}}</tbody></table></div>);
+}}
