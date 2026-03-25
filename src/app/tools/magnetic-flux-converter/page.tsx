@@ -1,40 +1,27 @@
 "use client";
 import { useState } from "react";
 
-const UNITS = ["Weber", "Milliweber", "Microweber", "Maxwell", "Kiloweber"];
-const FACTORS = [1, 0.001, 1e-06, 1e-08, 1000];
+const units = ["weber", "milliweber", "microweber", "maxwell", "tesla-square-meter", "volt-second"];
+const toBase: Record<string, number> = {"weber": 1, "milliweber": 0.001, "microweber": 1e-06, "maxwell": 1e-08, "tesla-square-meter": 1, "volt-second": 1};
 
 export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(0);
-  const convert = (v: string, fi: number) => {
-    const n = parseFloat(v);
-    if (isNaN(n)) return "-";
-    const base = n * FACTORS[fi];
-    return UNITS.map((u, i) => ({ u, v: (base / FACTORS[i]).toPrecision(6) }));
+  const [from, setFrom] = useState(units[0]);
+  const [to, setTo] = useState(units[1]);
+  const convert = () => {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    return ((n * toBase[from]) / toBase[to]).toPrecision(6);
   };
-  const results = convert(val, from);
   return (
-    <main style={{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"monospace"}}>
-      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Magnetic Flux Converter</h1>
-      <div style={{display:"flex",gap:"1rem",marginBottom:"1rem"}}>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value"
-          style={{flex:1,padding:"0.5rem",background:"#1a1a1a",color:"#fff",border:"1px solid #333",borderRadius:"4px"}} />
-        <select value={from} onChange={e=>setFrom(Number(e.target.value))}
-          style={{padding:"0.5rem",background:"#1a1a1a",color:"#fff",border:"1px solid #333",borderRadius:"4px"}}>
-          {UNITS.map((u,i)=>(<option key={i} value={i}>{u}</option>))}
-        </select>
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <h1 className="text-3xl font-bold mb-6">Magnetic Flux Converter</h1>
+      <div className="bg-gray-900 rounded-xl p-6 max-w-lg space-y-4">
+        <input className="w-full bg-gray-800 rounded p-2" value={val} onChange={e => setVal(e.target.value)} placeholder="Enter value" />
+        <select className="w-full bg-gray-800 rounded p-2" value={from} onChange={e => setFrom(e.target.value)}>{units.map(u => <option key={u}>{u}</option>)}</select>
+        <select className="w-full bg-gray-800 rounded p-2" value={to} onChange={e => setTo(e.target.value)}>{units.map(u => <option key={u}>{u}</option>)}</select>
+        <div className="text-2xl font-mono text-green-400">{convert() || "—"} {to}</div>
       </div>
-      {Array.isArray(results) && (
-        <table style={{width:"100%",borderCollapse:"collapse"}}>
-          <tbody>
-            {results.map((r,i)=>(<tr key={i} style={{borderBottom:"1px solid #222"}}>
-              <td style={{padding:"0.4rem",color:"#aaa"}}>{r.u}</td>
-              <td style={{padding:"0.4rem",textAlign:"right"}}>{r.v}</td>
-            </tr>))}
-          </tbody>
-        </table>
-      )}
     </main>
   );
 }
