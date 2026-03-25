@@ -1,1 +1,16 @@
-"use client";import{useState}from"react";export default function Page(){const[val,setVal]=useState("");const[from,setFrom]=useState("1");const[to,setTo]=useState("1e-8");const units={"1":"weber","1e-8":"maxwell","1":"tesla·m²","0.001":"milliweber","1e-6":"microweber"};function convert(){const v=parseFloat(val);if(isNaN(v))return"";return((v*parseFloat(from))/parseFloat(to)).toPrecision(6);}return(<main style={{padding:"2rem",fontFamily:"sans-serif",maxWidth:"600px",margin:"0 auto"}}><h1>Magnetic Flux Converter</h1><p>Convert between weber, maxwell, tesla square meter, and more</p><div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginTop:"1rem"}}><input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",fontSize:"1rem",flex:1}}/><select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem"}}><option value="1">weber</option><option value="1e-8">maxwell</option><option value="1">tesla·m²</option><option value="0.001">milliweber</option><option value="1e-6">microweber</option></select><span style={{alignSelf:"center"}}>→</span><select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem"}}><option value="1">weber</option><option value="1e-8">maxwell</option><option value="1">tesla·m²</option><option value="0.001">milliweber</option><option value="1e-6">microweber</option></select></div>{val&&<p style={{marginTop:"1rem",fontSize:"1.2rem"}}><strong>{val} {units[from]} = {convert()} {units[to]}</strong></p>}</main>);}
+"use client";
+import { useState } from "react";
+const units=[{k:"wb",l:"Weber",r:1},{k:"mx",l:"Maxwell",r:1e-8},{k:"mwb",l:"Milliweber",r:0.001},{k:"uwb",l:"Microweber",r:1e-6}];
+export default function MagneticFluxConverter() {
+ const [v,setV]=useState("");
+ const [from,setFrom]=useState(units[0].k);
+ const [to,setTo]=useState(units[1].k);
+ function convert(){
+ const n=parseFloat(v);
+ if(isNaN(n))return "—";
+ const base=n*(units.find(u=>u.k===from)?.r??1);
+ const res=base/(units.find(u=>u.k===to)?.r??1);
+ return res.toPrecision(6);
+ }
+  return (<div style={{padding:"2rem",maxWidth:"500px",margin:"0 auto",fontFamily:"sans-serif"}}><h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Magnetic Flux Converter</h1><p style={{color:"#888",marginBottom:"1.5rem"}}>Convert between weber, maxwell, volt-second and other units.</p><input value={v} onChange={e=>setV(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"0.5rem",marginBottom:"0.75rem",boxSizing:"border-box"}} /><select value={from} onChange={e=>setFrom(e.target.value)} style={{width:"100%",padding:"0.5rem",marginBottom:"0.75rem"}}>{units.map(u=><option key={u.k} value={u.k}>{u.l}</option>)}</select><select value={to} onChange={e=>setTo(e.target.value)} style={{width:"100%",padding:"0.5rem",marginBottom:"1rem"}}>{units.map(u=><option key={u.k} value={u.k}>{u.l}</option>)}</select><div style={{background:"#1a1a1a",padding:"1rem",borderRadius:"8px",color:"#4ade80",fontSize:"1.25rem"}}>{convert()}</div></div>);
+}

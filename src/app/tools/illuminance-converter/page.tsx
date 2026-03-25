@@ -1,2 +1,16 @@
 "use client";
-import { useState } from 'react'; const units = [{name:'Lux (lx)',factor:1},{name:'Foot-candle (fc)',factor:10.7639},{name:'Phot (ph)',factor:10000},{name:'Nox',factor:0.001},{name:'Millilux',factor:0.001}]; export default function Page() { const [val,setVal]=useState(''); const [from,setFrom]=useState(0); const convert=(to)=>{if(!val)return '';const r=(parseFloat(val)*units[from].factor)/units[to].factor;return isNaN(r)?'':r.toPrecision(6);}; return (<main style={{padding:'2rem',fontFamily:'monospace',background:'#0f172a',minHeight:'100vh',color:'#e2e8f0'}}><h1 style={{color:'#38bdf8'}}>Illuminance Converter</h1><p>Convert lux, foot-candle, phot and other illuminance units.</p><div style={{display:'flex',gap:'1rem',marginBottom:'1rem',flexWrap:'wrap'}}><input value={val} onChange={e=>setVal(e.target.value)} placeholder='Enter value' style={{padding:'0.5rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',borderRadius:'4px',flex:1}}/><select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{padding:'0.5rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',borderRadius:'4px'}}>{units.map((u,i)=><option key={i} value={i}>{u.name}</option>)}</select></div><table style={{width:'100%',borderCollapse:'collapse'}}><tbody>{units.map((u,i)=><tr key={i} style={{borderBottom:'1px solid #1e293b'}}><td style={{padding:'0.5rem',color:'#94a3b8'}}>{u.name}</td><td style={{padding:'0.5rem',color:'#38bdf8'}}>{convert(i)||'-'}</td></tr>)}</tbody></table></main>); }
+import { useState } from "react";
+const units=[{k:"lux",l:"Lux",r:1},{k:"fc",l:"Foot-candle",r:10.764},{k:"phot",l:"Phot",r:10000},{k:"nox",l:"Nox",r:0.001}];
+export default function IlluminanceConverter() {
+ const [v,setV]=useState("");
+ const [from,setFrom]=useState(units[0].k);
+ const [to,setTo]=useState(units[1].k);
+ function convert(){
+ const n=parseFloat(v);
+ if(isNaN(n))return "—";
+ const base=n*(units.find(u=>u.k===from)?.r??1);
+ const res=base/(units.find(u=>u.k===to)?.r??1);
+ return res.toPrecision(6);
+ }
+  return (<div style={{padding:"2rem",maxWidth:"500px",margin:"0 auto",fontFamily:"sans-serif"}}><h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Illuminance Converter</h1><p style={{color:"#888",marginBottom:"1.5rem"}}>Convert between lux, foot-candle, phot, nox and other units.</p><input value={v} onChange={e=>setV(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"0.5rem",marginBottom:"0.75rem",boxSizing:"border-box"}} /><select value={from} onChange={e=>setFrom(e.target.value)} style={{width:"100%",padding:"0.5rem",marginBottom:"0.75rem"}}>{units.map(u=><option key={u.k} value={u.k}>{u.l}</option>)}</select><select value={to} onChange={e=>setTo(e.target.value)} style={{width:"100%",padding:"0.5rem",marginBottom:"1rem"}}>{units.map(u=><option key={u.k} value={u.k}>{u.l}</option>)}</select><div style={{background:"#1a1a1a",padding:"1rem",borderRadius:"8px",color:"#4ade80",fontSize:"1.25rem"}}>{convert()}</div></div>);
+}
