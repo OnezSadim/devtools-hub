@@ -1,14 +1,14 @@
 "use client";
 import { useState } from "react";
-const UNITS = [{name: "Ohm", factor: 1}, {name: "Kilohm (kOhm)", factor: 1000.0}, {name: "Megaohm (MOhm)", factor: 1000000.0}, {name: "Milliohm (mOhm)", factor: 0.001}, {name: "Microohm (uOhm)", factor: 1e-06}, {name: "Abohm", factor: 1e-09}, {name: "Statohm", factor: 898760000000.0}, ];
+const UNITS = [{name: "Ohm", factor: 1}, {name: "Kilohm (kOhm)", factor: 1000.0}, {name: "Megaohm (MOhm)", factor: 1000000.0}, {name: "Milliohm (mOhm)", factor: 0.001}, {name: "Microohm (uOhm)", factor: 1e-06}, ];
 export default function Page() {
   const [val, setVal] = useState("");
   const [from, setFrom] = useState(0);
   const base = parseFloat(val) * UNITS[from].factor;
   return (
     <main style={{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"sans-serif",background:"#0f172a",minHeight:"100vh",color:"#f1f5f9"}}>
-      <h1 style={{fontSize:"1.5rem",fontWeight:700,marginBottom:"1rem"}}>Impedance Converter</h1>
-      <p style={{color:"#94a3b8",marginBottom:"1.5rem"}}>Convert between electrical impedance units.</p>
+      <h1 style={{fontSize:"1.5rem",fontWeight:700,marginBottom:"1rem"}}>Reactance Converter</h1>
+      <p style={{color:"#94a3b8",marginBottom:"1.5rem"}}>Convert between electrical reactance units (inductive and capacitive).</p>
       <div style={{marginBottom:"1rem"}}>
         <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",borderRadius:"4px",color:"#f1f5f9",marginBottom:"0.5rem"}} />
         <select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{width:"100%",padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",borderRadius:"4px",color:"#f1f5f9"}}>
