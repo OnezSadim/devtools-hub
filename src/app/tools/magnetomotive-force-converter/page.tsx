@@ -1,57 +1,31 @@
 "use client";
 import { useState } from "react";
-
-const units = [
-    { name: "Ampere-turn (At)", toBase: 1 },
-    { name: "Kiloampere-turn (kAt)", toBase: 1000 },
-    { name: "Milliampere-turn (mAt)", toBase: 0.001 },
-    { name: "Gilbert (Gb)", toBase: 0.795775 },
-    { name: "Abampere-turn (aAt)", toBase: 10 },
-  ];
-
-export default function MagnetomotiveForceConverter() {
-  const [value, setValue] = useState("1");
-  const [from, setFrom] = useState(units[0].name);
-  const [to, setTo] = useState(units[1].name);
-
-  function convert() {
-    const v = parseFloat(value);
-    if (isNaN(v)) return "Invalid";
-    const fromUnit = units.find(u => u.name === from);
-    const toUnit = units.find(u => u.name === to);
-    if (!fromUnit || !toUnit) return "Error";
-    return (v * fromUnit.toBase / toUnit.toBase).toPrecision(6);
-  }
-
+export default function Page() {
+  const units = ['ampere-turn', 'milliampere-turn', 'kiloampere-turn', 'gilbert'];
+  const toBase = {'ampere-turn': 1, 'milliampere-turn': 0.001, 'kiloampere-turn': 1000.0, 'gilbert': 0.795775};
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState(units[0]);
+  const [to, setTo] = useState(units[1]);
+  const convert = () => {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    return ((n * toBase[from]) / toBase[to]).toPrecision(6);
+  };
   return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
-      <div className="max-w-xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Magnetomotive Force Converter</h1>
-        <p className="text-gray-400 mb-8">Convert between magnetomotive force units: ampere-turn, gilbert, and more.</p>
-        <div className="space-y-4">
-          <input type="number" value={value} onChange={e => setValue(e.target.value)}
-            className="w-full bg-gray-800 rounded p-3 text-white" placeholder="Value" />
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">From</label>
-              <select value={from} onChange={e => setFrom(e.target.value)}
-                className="w-full bg-gray-800 rounded p-3 text-white">
-                {units.map(u => <option key={u.name} value={u.name}>{u.name}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">To</label>
-              <select value={to} onChange={e => setTo(e.target.value)}
-                className="w-full bg-gray-800 rounded p-3 text-white">
-                {units.map(u => <option key={u.name} value={u.name}>{u.name}</option>)}
-              </select>
-            </div>
-          </div>
-          <div className="bg-gray-800 rounded p-4 text-center">
-            <span className="text-2xl font-mono text-green-400">{convert()}</span>
-            <span className="text-gray-400 ml-2">{to}</span>
-          </div>
-        </div>
+    <main style={{padding:"2rem",maxWidth:"480px",margin:"0 auto",fontFamily:"sans-serif"}}>
+      <h1>Magnetomotive Force Converter</h1>
+      <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{width:"100%",padding:"0.5rem",marginBottom:"1rem",fontSize:"1rem"}} />
+      <div style={{display:"flex",gap:"1rem",marginBottom:"1rem"}}>
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:"0.5rem"}}>
+          {units.map(u=><option key={u}>{u}</option>)}
+        </select>
+        <span style={{alignSelf:"center"}}>→</span>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:"0.5rem"}}>
+          {units.map(u=><option key={u}>{u}</option>)}
+        </select>
+      </div>
+      <div style={{fontSize:"1.5rem",fontWeight:"bold",padding:"1rem",background:"#f5f5f5",borderRadius:"8px"}}>
+        {convert() || "—"}
       </div>
     </main>
   );

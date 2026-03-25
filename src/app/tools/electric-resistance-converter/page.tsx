@@ -1,52 +1,32 @@
 "use client";
 import { useState } from "react";
-
-const units: { name: string; factor: number }[] = [
-  { name: 'Ohm (Ω)', factor: 1.0 },
-  { name: 'Milliohm (mΩ)', factor: 0.001 },
-  { name: 'Microohm (μΩ)', factor: 1e-06 },
-  { name: 'Kiloohm (kΩ)', factor: 1000.0 },
-  { name: 'Megaohm (MΩ)', factor: 1000000.0 },
-  { name: 'Gigaohm (GΩ)', factor: 1000000000.0 },
-  { name: 'Statohm (statΩ)', factor: 898755000000.0 },
-  { name: 'Abohm (abΩ)', factor: 1e-09 },
-];
-
 export default function Page() {
-  const [value, setValue] = useState("");
-  const [from, setFrom] = useState(0);
-  const [to, setTo] = useState(1);
-  const result = value !== "" ? (parseFloat(value) * units[from].factor / units[to].factor).toPrecision(6) : "";
+  const units = ['ohm', 'milliohm', 'kiloohm', 'megaohm', 'microohm'];
+  const toBase = {'ohm': 1, 'milliohm': 0.001, 'kiloohm': 1000.0, 'megaohm': 1000000.0, 'microohm': 1e-06};
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState(units[0]);
+  const [to, setTo] = useState(units[1]);
+  const convert = () => {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    return ((n * toBase[from]) / toBase[to]).toPrecision(6);
+  };
   return (
-    <main style={{ padding: "2rem", fontFamily: "sans-serif", maxWidth: 600, margin: "0 auto" }}>
-      <h1 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>Electric Resistance Converter</h1>
-      <p style={{ color: "#666", marginBottom: "1.5rem" }}>Convert between units of electric resistance: ohms, milliohms, kilohms, megaohms, etc.</p>
-      <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-        <div style={{ flex: 1 }}>
-          <label>Value</label><br/>
-          <input type="number" value={value} onChange={e => setValue(e.target.value)}
-            style={{ width: "100%", padding: "0.5rem", marginTop: "0.25rem" }} />
-        </div>
-        <div style={{ flex: 1 }}>
-          <label>From</label><br/>
-          <select value={from} onChange={e => setFrom(Number(e.target.value))}
-            style={{ width: "100%", padding: "0.5rem", marginTop: "0.25rem" }}>
-            {units.map((u, i) => <option key={i} value={i}>{u.name}</option>)}
-          </select>
-        </div>
-        <div style={{ flex: 1 }}>
-          <label>To</label><br/>
-          <select value={to} onChange={e => setTo(Number(e.target.value))}
-            style={{ width: "100%", padding: "0.5rem", marginTop: "0.25rem" }}>
-            {units.map((u, i) => <option key={i} value={i}>{u.name}</option>)}
-          </select>
-        </div>
+    <main style={{padding:"2rem",maxWidth:"480px",margin:"0 auto",fontFamily:"sans-serif"}}>
+      <h1>Electric Resistance Converter</h1>
+      <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{width:"100%",padding:"0.5rem",marginBottom:"1rem",fontSize:"1rem"}} />
+      <div style={{display:"flex",gap:"1rem",marginBottom:"1rem"}}>
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:"0.5rem"}}>
+          {units.map(u=><option key={u}>{u}</option>)}
+        </select>
+        <span style={{alignSelf:"center"}}>→</span>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:"0.5rem"}}>
+          {units.map(u=><option key={u}>{u}</option>)}
+        </select>
       </div>
-      {result !== "" && (
-        <div style={{ marginTop: "1.5rem", padding: "1rem", background: "#f0f0f0", borderRadius: 8 }}>
-          <strong>Result: {result} {units[to].name}</strong>
-        </div>
-      )}
+      <div style={{fontSize:"1.5rem",fontWeight:"bold",padding:"1rem",background:"#f5f5f5",borderRadius:"8px"}}>
+        {convert() || "—"}
+      </div>
     </main>
   );
 }

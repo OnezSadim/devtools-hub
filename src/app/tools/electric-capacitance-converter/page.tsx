@@ -1,66 +1,31 @@
 "use client";
 import { useState } from "react";
 export default function Page() {
+  const units = ['farad', 'millifarad', 'microfarad', 'nanofarad', 'picofarad', 'kilofarad'];
+  const toBase = {'farad': 1, 'millifarad': 0.001, 'microfarad': 1e-06, 'nanofarad': 1e-09, 'picofarad': 1e-12, 'kilofarad': 1000.0};
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState("Farad (F)");
-  const [to, setTo] = useState("Millifarad (mF)");
-  function convert() {
-    const v = parseFloat(val);
-    if (isNaN(v)) return "—";
-    let toBase = 0;
-    switch (from) {
-      case "Farad (F)": toBase = v * 1.0; break;
-      case "Millifarad (mF)": toBase = v * 0.001; break;
-      case "Microfarad (μF)": toBase = v * 1e-06; break;
-      case "Nanofarad (nF)": toBase = v * 1e-09; break;
-      case "Picofarad (pF)": toBase = v * 1e-12; break;
-      case "Femtofarad (fF)": toBase = v * 1e-15; break;
-      case "Kilofarad (kF)": toBase = v * 1000.0; break;
-      default: toBase = v;
-    }
-    let result = 0;
-    switch (to) {
-      case "Farad (F)": result = base / 1.0; break;
-      case "Millifarad (mF)": result = base / 0.001; break;
-      case "Microfarad (μF)": result = base / 1e-06; break;
-      case "Nanofarad (nF)": result = base / 1e-09; break;
-      case "Picofarad (pF)": result = base / 1e-12; break;
-      case "Femtofarad (fF)": result = base / 1e-15; break;
-      case "Kilofarad (kF)": result = base / 1000.0; break;
-      default: result = toBase;
-    }
-    return result.toPrecision(6);
-  }
+  const [from, setFrom] = useState(units[0]);
+  const [to, setTo] = useState(units[1]);
+  const convert = () => {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    return ((n * toBase[from]) / toBase[to]).toPrecision(6);
+  };
   return (
-    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",alignItems:"center",justifyContent:"center"}}>
-      <div style={{background:"#1e293b",borderRadius:12,padding:32,width:"100%",maxWidth:480}}>
-        <h1 style={{fontSize:24,fontWeight:700,marginBottom:8}}>Electric Capacitance Converter</h1>
-        <p style={{color:"#94a3b8",marginBottom:24}}>Convert between farads, microfarads, nanofarads, picofarads and more.</p>
-        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",fontSize:16,marginBottom:16,boxSizing:"border-box"}} />
-        <div style={{display:"flex",gap:12,marginBottom:24}}>
-          <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",fontSize:15}}>
-          <option value="Farad (F)">Farad (F)</option>
-          <option value="Millifarad (mF)">Millifarad (mF)</option>
-          <option value="Microfarad (μF)">Microfarad (μF)</option>
-          <option value="Nanofarad (nF)">Nanofarad (nF)</option>
-          <option value="Picofarad (pF)">Picofarad (pF)</option>
-          <option value="Femtofarad (fF)">Femtofarad (fF)</option>
-          <option value="Kilofarad (kF)">Kilofarad (kF)</option>
-          </select>
-          <span style={{alignSelf:"center",color:"#64748b",fontSize:20}}>→</span>
-          <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",fontSize:15}}>
-          <option value="Farad (F)">Farad (F)</option>
-          <option value="Millifarad (mF)">Millifarad (mF)</option>
-          <option value="Microfarad (μF)">Microfarad (μF)</option>
-          <option value="Nanofarad (nF)">Nanofarad (nF)</option>
-          <option value="Picofarad (pF)">Picofarad (pF)</option>
-          <option value="Femtofarad (fF)">Femtofarad (fF)</option>
-          <option value="Kilofarad (kF)">Kilofarad (kF)</option>
-          </select>
-        </div>
-        <div style={{background:"#0f172a",borderRadius:8,padding:"18px 20px",textAlign:"center",fontSize:22,fontWeight:700,color:"#38bdf8"}}>
-          {val ? convert() : "—"}
-        </div>
+    <main style={{padding:"2rem",maxWidth:"480px",margin:"0 auto",fontFamily:"sans-serif"}}>
+      <h1>Electric Capacitance Converter</h1>
+      <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{width:"100%",padding:"0.5rem",marginBottom:"1rem",fontSize:"1rem"}} />
+      <div style={{display:"flex",gap:"1rem",marginBottom:"1rem"}}>
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:"0.5rem"}}>
+          {units.map(u=><option key={u}>{u}</option>)}
+        </select>
+        <span style={{alignSelf:"center"}}>→</span>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:"0.5rem"}}>
+          {units.map(u=><option key={u}>{u}</option>)}
+        </select>
+      </div>
+      <div style={{fontSize:"1.5rem",fontWeight:"bold",padding:"1rem",background:"#f5f5f5",borderRadius:"8px"}}>
+        {convert() || "—"}
       </div>
     </main>
   );
