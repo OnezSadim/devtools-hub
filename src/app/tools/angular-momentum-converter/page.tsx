@@ -1,28 +1,58 @@
-"use client";
-import { useState } from "react";
-
-const UNITS = ["kg·m²/s", "g·cm²/s", "kg·cm²/s", "lb·ft²/s", "lb·in²/s"];
-const TO_BASE = [1, 1e-07, 0.0001, 0.042140110093805, 0.00029263888954031];
+'use client'
+import { useState } from 'react'
 
 export default function Page() {
-  const [val, setVal] = useState("");
-  const [from, setFrom] = useState(0);
-  const num = parseFloat(val);
-  const base = isNaN(num) ? null : num * TO_BASE[from];
-
+  const units = [
+    { label: 'kg·m²/s', factor: 1 },
+    { label: 'g·cm²/s', factor: 1e-07 },
+    { label: 'kg·cm²/s', factor: 0.0001 },
+    { label: 'lb·ft²/s', factor: 0.04214 },
+    { label: 'lb·in²/s', factor: 0.00029264 },
+    { label: 'slug·ft²/s', factor: 1.35582 },
+  ]
+  const [from, setFrom] = useState(units[0].label)
+  const [to, setTo] = useState(units[1].label)
+  const [input, setInput] = useState('')
+  const convert = () => {
+    const n = parseFloat(input)
+    if (isNaN(n)) return ''
+    const fromU = units.find(u => u.label === from)
+    const toU = units.find(u => u.label === to)
+    if (!fromU || !toU) return ''
+    return ((n * fromU.factor) / toU.factor).toPrecision(6)
+  }
   return (
-    <main style={{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"sans-serif",color:"#e2e8f0",background:"#0f172a",minHeight:"100vh"}}>
-      <h1 style={{fontSize:"1.5rem",fontWeight:700,marginBottom:"1rem"}}>Angular Momentum Converter</h1>
-      <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"0.5rem",marginBottom:"1rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px"}} />
-      <select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{width:"100%",padding:"0.5rem",marginBottom:"1.5rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px"}}>
-        {UNITS.map((u,i)=><option key={i} value={i}>{u}</option>)}
-      </select>
-      {base !== null && (
-        <table style={{width:"100%",borderCollapse:"collapse"}}>
-          <thead><tr><th style={{textAlign:"left",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Unit</th><th style={{textAlign:"right",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Value</th></tr></thead>
-          <tbody>{UNITS.map((u,i)=><tr key={i} style={{background:i===from?"#1e293b":"transparent"}}><td style={{padding:"0.5rem"}}>{u}</td><td style={{textAlign:"right",padding:"0.5rem"}}>{(base/TO_BASE[i]).toPrecision(6)}</td></tr>)}</tbody>
-        </table>
-      )}
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Angular Momentum Converter</h1>
+        <p className="text-gray-400 mb-6">Convert between angular momentum units: kg·m²/s, g·cm²/s, lb·ft²/s</p>
+        <div className="space-y-4">
+          <input type="number" value={input} onChange={e => setInput(e.target.value)}
+            placeholder="Enter value" className="w-full bg-gray-800 rounded p-3 text-white" />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-gray-400 text-sm">From</label>
+              <select value={from} onChange={e => setFrom(e.target.value)}
+                className="w-full bg-gray-800 rounded p-3 text-white mt-1">
+                {units.map(u => <option key={u.label}>{u.label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-gray-400 text-sm">To</label>
+              <select value={to} onChange={e => setTo(e.target.value)}
+                className="w-full bg-gray-800 rounded p-3 text-white mt-1">
+                {units.map(u => <option key={u.label}>{u.label}</option>)}
+              </select>
+            </div>
+          </div>
+          {input && (
+            <div className="bg-gray-800 rounded p-4 text-center">
+              <span className="text-2xl font-mono text-green-400">{convert()}</span>
+              <span className="text-gray-400 ml-2">{to}</span>
+            </div>
+          )}
+        </div>
+      </div>
     </main>
-  );
+  )
 }

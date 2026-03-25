@@ -1,32 +1,60 @@
-"use client";
-import { useState } from "react";
+'use client'
+import { useState } from 'react'
 
-const UNITS: string[] = ["rad/s", "deg/s", "rpm", "rps", "rad/min", "deg/min"];
-const FACTORS: Record<string, number> = {"rad/s": 1.0, "deg/s": 0.0174533, "rpm": 0.10472, "rps": 6.28318, "rad/min": 0.016667, "deg/min": 0.000290888};
-
-export default function AngularVelocityConverterPage() {
-  const [val, setVal] = useState("");
-  const [from, setFrom] = useState(UNITS[0]);
-  const [to, setTo] = useState(UNITS[1]);
+export default function Page() {
+  const units = [
+    { label: 'rad/s', factor: 1 },
+    { label: 'deg/s', factor: 0.0174533 },
+    { label: 'rpm', factor: 0.10472 },
+    { label: 'rps', factor: 6.28318 },
+    { label: 'rad/min', factor: 0.016667 },
+    { label: 'deg/min', factor: 0.000290888 },
+    { label: 'rad/h', factor: 0.000277778 },
+    { label: 'rev/h', factor: 0.00174533 },
+  ]
+  const [from, setFrom] = useState(units[0].label)
+  const [to, setTo] = useState(units[1].label)
+  const [input, setInput] = useState('')
   const convert = () => {
-    const n = parseFloat(val);
-    if (isNaN(n)) return "";
-    return ((n * FACTORS[from]) / FACTORS[to]).toPrecision(6);
-  };
+    const n = parseFloat(input)
+    if (isNaN(n)) return ''
+    const fromU = units.find(u => u.label === from)
+    const toU = units.find(u => u.label === to)
+    if (!fromU || !toU) return ''
+    return ((n * fromU.factor) / toU.factor).toPrecision(6)
+  }
   return (
-    <main style={{padding:"2rem",maxWidth:"480px",margin:"0 auto",fontFamily:"monospace"}}>
-      <h1 style={{marginBottom:"1rem"}}>Angular Velocity Converter</h1>
-      <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{width:"100%",padding:"0.5rem",marginBottom:"0.5rem",background:"#111",color:"#fff",border:"1px solid #333"}} />
-      <div style={{display:"flex",gap:"0.5rem",marginBottom:"0.5rem"}}>
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:"0.5rem",background:"#111",color:"#fff",border:"1px solid #333"}}>
-          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
-        </select>
-        <span style={{alignSelf:"center"}}>to</span>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:"0.5rem",background:"#111",color:"#fff",border:"1px solid #333"}}>
-          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
-        </select>
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Angular Velocity Converter</h1>
+        <p className="text-gray-400 mb-6">Convert between angular velocity units: rad/s, deg/s, rpm, rps, rad/min, deg/min</p>
+        <div className="space-y-4">
+          <input type="number" value={input} onChange={e => setInput(e.target.value)}
+            placeholder="Enter value" className="w-full bg-gray-800 rounded p-3 text-white" />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-gray-400 text-sm">From</label>
+              <select value={from} onChange={e => setFrom(e.target.value)}
+                className="w-full bg-gray-800 rounded p-3 text-white mt-1">
+                {units.map(u => <option key={u.label}>{u.label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-gray-400 text-sm">To</label>
+              <select value={to} onChange={e => setTo(e.target.value)}
+                className="w-full bg-gray-800 rounded p-3 text-white mt-1">
+                {units.map(u => <option key={u.label}>{u.label}</option>)}
+              </select>
+            </div>
+          </div>
+          {input && (
+            <div className="bg-gray-800 rounded p-4 text-center">
+              <span className="text-2xl font-mono text-green-400">{convert()}</span>
+              <span className="text-gray-400 ml-2">{to}</span>
+            </div>
+          )}
+        </div>
       </div>
-      <div style={{padding:"1rem",background:"#111",border:"1px solid #333",fontSize:"1.25rem"}}>{convert() || "Enter a value"}</div>
     </main>
-  );
+  )
 }
