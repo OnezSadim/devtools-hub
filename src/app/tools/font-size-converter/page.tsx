@@ -1,31 +1,27 @@
 "use client";
 import { useState } from "react";
+
 export default function FontSizeConverter() {
   const [base, setBase] = useState(16);
-  const [px, setPx] = useState(16);
-  const rem = px / base;
-  const em = px / base;
-  const pt = px * 0.75;
-  const sizes = [10,12,14,16,18,20,24,28,32,36,48,64,72,96];
+  const [px, setPx] = useState("");
+  const [rem, setRem] = useState("");
+  const [em, setEm] = useState("");
+  const [pt, setPt] = useState("");
+  const fromPx = (v: string) => { const n=parseFloat(v); if(!isNaN(n)){setPx(v);setRem(String(+(n/base).toFixed(4)));setEm(String(+(n/base).toFixed(4)));setPt(String(+(n*0.75).toFixed(4)));} };
+  const fromRem = (v: string) => { const n=parseFloat(v); if(!isNaN(n)){setRem(v);setPx(String(+(n*base).toFixed(4)));setEm(v);setPt(String(+(n*base*0.75).toFixed(4)));} };
+  const fromPt = (v: string) => { const n=parseFloat(v); if(!isNaN(n)){setPt(v);setPx(String(+(n/0.75).toFixed(4)));setRem(String(+(n/(base*0.75)).toFixed(4)));setEm(String(+(n/(base*0.75)).toFixed(4)));} };
   return (
-    <div className="max-w-xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-2">Font Size Converter</h1>
-      <p className="text-gray-400 mb-6">Convert between px, rem, em, and pt units.</p>
-      <div className="bg-gray-800 rounded p-4 mb-6">
-        <label className="block text-sm mb-1">Base font size: {base}px</label>
-        <input type="range" min={10} max={24} value={base} onChange={e=>setBase(+e.target.value)} className="w-full mb-4" />
-        <label className="block text-sm mb-1">Pixel value</label>
-        <input type="number" value={px} onChange={e=>setPx(+e.target.value)} className="w-full bg-gray-700 rounded p-2" />
+    <div className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Font Size Converter</h1>
+        <p className="text-gray-400 mb-6">Convert between px, rem, em, and pt.</p>
+        <div className="mb-4"><label className="text-sm text-gray-400">Base font size (px)</label><input type="number" value={base} onChange={e=>setBase(Number(e.target.value))} className="w-full bg-gray-800 rounded p-2 mt-1" /></div>
+        <div className="grid grid-cols-2 gap-4">
+          {[{l:"PX",v:px,fn:fromPx},{l:"REM",v:rem,fn:fromRem},{l:"EM",v:em,fn:(v:string)=>{setEm(v);fromRem(v);}},{l:"PT",v:pt,fn:fromPt}].map(({l,v,fn})=>(
+            <div key={l}><label className="text-sm text-gray-400">{l}</label><input type="number" value={v} onChange={e=>fn(e.target.value)} placeholder={`Enter ${l}`} className="w-full bg-gray-800 rounded p-3 mt-1" /></div>
+          ))}
+        </div>
       </div>
-      <div className="grid grid-cols-3 gap-4 mb-6">
-        {[{label:"rem",val:rem.toFixed(4)},{label:"em",val:em.toFixed(4)},{label:"pt",val:pt.toFixed(2)}].map(({label,val})=>(
-          <div key={label} className="bg-gray-800 rounded p-4 text-center"><p className="text-sm text-gray-400">{label}</p><p className="text-xl font-bold">{val}</p></div>
-        ))}
-      </div>
-      <table className="w-full text-sm">
-        <thead><tr className="text-gray-400 border-b border-gray-700">{["px","rem","em","pt"].map(h=><th key={h} className="py-2 text-left">{h}</th>)}</tr></thead>
-        <tbody>{sizes.map(s=><tr key={s} className="border-b border-gray-800"><td className="py-1">{s}</td><td>{(s/base).toFixed(4)}</td><td>{(s/base).toFixed(4)}</td><td>{(s*0.75).toFixed(2)}</td></tr>)}</tbody>
-      </table>
     </div>
   );
 }
