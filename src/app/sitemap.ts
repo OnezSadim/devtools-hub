@@ -1,4 +1,6 @@
-export default function sitemap() {
+import { MetadataRoute } from 'next';
+
+export default function sitemap(): MetadataRoute.Sitemap {
   const tools = [
     'acceleration-converter',
     'age-calculator',
@@ -15,6 +17,7 @@ export default function sitemap() {
     'ascii-art-generator',
     'ascii-table',
     'aspect-ratio-calculator',
+    'astronomical-distance-converter',
     'baking-substitution-finder',
     'bandwidth-calculator',
     'base-converter',
@@ -53,6 +56,7 @@ export default function sitemap() {
     'color-name-finder',
     'color-palette-generator',
     'color-picker',
+    'color-temperature-converter',
     'compound-interest-calculator',
     'cooking-measurement-converter',
     'cooking-timer',
@@ -81,6 +85,7 @@ export default function sitemap() {
     'currency-converter',
     'currency-exchange-calculator',
     'currency-formatter',
+    'current-converter',
     'data-size-converter',
     'data-storage-converter',
     'data-transfer-calculator',
@@ -251,6 +256,7 @@ export default function sitemap() {
     'physics-calculator',
     'pixel-converter',
     'pixel-density-calculator',
+    'pixel-em-converter',
     'pixel-to-em-converter',
     'pixel-to-rem',
     'pixel-to-rem-converter',
@@ -289,6 +295,7 @@ export default function sitemap() {
     'scientific-calculator',
     'scientific-notation-converter',
     'screen-resolution',
+    'screen-resolution-calculator',
     'screen-resolution-info',
     'semver-calculator',
     'sentence-counter',
@@ -296,6 +303,7 @@ export default function sitemap() {
     'sleep-calculator',
     'sleep-cycle-calculator',
     'sort-lines',
+    'sound-converter',
     'speed-calculator',
     'speed-converter',
     'sql-formatter',
@@ -342,6 +350,7 @@ export default function sitemap() {
     'text-to-slug',
     'text-to-speech',
     'text-to-speech-tester',
+    'thermal-conductivity-converter',
     'time-zone-converter',
     'timestamp-converter',
     'timezone-converter',
@@ -351,6 +360,7 @@ export default function sitemap() {
     'toml-to-json',
     'toml-validator',
     'torque-converter',
+    'torque-to-power-calculator',
     'tsconfig-generator',
     'typing-speed-test',
     'unicode-lookup',
@@ -363,9 +373,11 @@ export default function sitemap() {
     'vat-calculator',
     'vat-reverse-calculator',
     'viscosity-converter',
+    'voltage-converter',
     'volume-converter',
     'waist-to-hip-ratio-calculator',
     'water-intake-calculator',
+    'wavelength-frequency-converter',
     'webpack-config-generator',
     'weight-converter',
     'weight-unit-converter',
@@ -383,7 +395,9 @@ export default function sitemap() {
     'z-index-manager',
     'zodiac-sign-calculator',
   ];
-  const base = "https://devtools-hub-green.vercel.app";
-  const toolUrls = tools.map(t => ({ url: `${base}/tools/${t}`, lastModified: new Date().toISOString(), changeFrequency: "weekly" as const, priority: 0.7 }));
-  return [{ url: base, lastModified: new Date().toISOString(), changeFrequency: "daily" as const, priority: 1 }, ...toolUrls];
+  const base = 'https://devtools-hub-green.vercel.app';
+  return [
+    { url: base, lastModified: new Date(), changeFrequency: 'daily', priority: 1 },
+    ...tools.map(t => ({ url: base + '/tools/' + t, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 }))
+  ];
 }
