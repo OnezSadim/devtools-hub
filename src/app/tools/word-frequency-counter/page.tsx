@@ -1,48 +1,27 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 export default function WordFrequencyCounter() {
-  const [text, setText] = useState("");
-  const stats = useMemo(() => {
-    if (!text.trim()) return null;
-    const words = text.toLowerCase().match(/\b[a-z]+\b/g) || [];
-    const freq: Record<string, number> = {};
-    words.forEach(w => { freq[w] = (freq[w] || 0) + 1; });
-    const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]);
-    return { words: words.length, unique: sorted.length, chars: text.length, sentences: text.split(/[.!?]+/).filter(Boolean).length, sorted };
-  }, [text]);
-  return (
-    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Word Frequency Counter</h1>
-        <p className="text-gray-400 mb-6">Analyze word frequency and text statistics.</p>
-        <textarea className="w-full bg-gray-900 border border-gray-700 rounded p-3 text-sm h-40 mb-4" placeholder="Paste your text here..." value={text} onChange={e => setText(e.target.value)} />
-        {stats && (
-          <>
-            <div className="grid grid-cols-4 gap-3 mb-6">
-              {[{label:"Words",v:stats.words},{label:"Unique",v:stats.unique},{label:"Chars",v:stats.chars},{label:"Sentences",v:stats.sentences}].map(({label,v}) => (
-                <div key={label} className="bg-gray-900 border border-gray-700 rounded p-3 text-center">
-                  <div className="text-2xl font-bold text-blue-400">{v}</div>
-                  <div className="text-xs text-gray-500">{label}</div>
-                </div>
-              ))}
-            </div>
-            <div className="bg-gray-900 border border-gray-700 rounded p-3">
-              <h2 className="text-sm font-semibold mb-3">Top Words</h2>
-              <div className="space-y-2">
-                {stats.sorted.slice(0, 20).map(([word, count]) => (
-                  <div key={word} className="flex items-center gap-2">
-                    <span className="font-mono text-sm w-40">{word}</span>
-                    <div className="flex-1 bg-gray-800 rounded h-2">
-                      <div className="bg-blue-500 h-2 rounded" style={{width: `${(count/stats.sorted[0][1])*100}%`}} />
-                    </div>
-                    <span className="text-xs text-gray-400 w-8 text-right">{count}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </>
-        )}
-      </div>
-    </main>
-  );
+  const [text, setText] = useState('');
+  const [minLen, setMinLen] = useState(1);
+  const getFreq = () => {
+    const words = text.toLowerCase().replace(/[^a-z\s]/g,'').split(/\s+/).filter(w=>w.length>=minLen);
+    const freq = {};
+    words.forEach(w=>{ freq[w] = (freq[w]||0)+1; });
+    return Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,50);
+  };
+  const freq = text ? getFreq() : [];
+  const max = freq[0]?.[1] || 1;
+  return (<div style={{padding:'2rem',fontFamily:'monospace',background:'#0f172a',minHeight:'100vh',color:'#e2e8f0'}}>
+    <h1 style={{fontSize:'1.5rem',marginBottom:'1rem',color:'#7dd3fc'}}>Word Frequency Counter</h1>
+    <div style={{display:'flex',gap:'1rem',marginBottom:'1rem',alignItems:'center'}}>
+      <label style={{color:'#94a3b8'}}>Min word length:</label>
+      <input type="number" value={minLen} onChange={e=>setMinLen(parseInt(e.target.value)||1)} min={1} max={10} style={{width:'60px',padding:'0.4rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',borderRadius:'4px'}} />
+    </div>
+    <textarea value={text} onChange={e=>setText(e.target.value)} placeholder="Paste text to analyze..." style={{width:'100%',height:'150px',padding:'0.5rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',borderRadius:'4px',fontFamily:'monospace',fontSize:'0.85rem',boxSizing:'border-box',marginBottom:'1rem'}} />
+    {freq.map(([word,count])=><div key={word} style={{display:'flex',alignItems:'center',gap:'0.75rem',marginBottom:'0.4rem'}}>
+      <span style={{width:'120px',color:'#e2e8f0',overflow:'hidden',textOverflow:'ellipsis'}}>{word}</span>
+      <div style={{flex:1,height:'16px',background:'#1e293b',borderRadius:'2px'}}><div style={{width:(count/max*100)+'%',height:'100%',background:'#0ea5e9',borderRadius:'2px'}} /></div>
+      <span style={{color:'#7dd3fc',minWidth:'30px',textAlign:'right'}}>{count}</span>
+    </div>)}
+  </div>);
 }

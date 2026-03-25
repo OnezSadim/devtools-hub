@@ -1,4 +1,4 @@
-import { MetadataRoute } from "next";
+import { MetadataRoute } from "next"
 
 const tools = [
   'age-calculator',
@@ -111,6 +111,7 @@ const tools = [
   'ip-subnet-calculator',
   'javascript-obfuscator',
   'js-formatter',
+  'json-diff',
   'json-formatter',
   'json-minifier',
   'json-path-tester',
@@ -239,7 +240,7 @@ const tools = [
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = "https://devtools-hub-green.vercel.app";
-  const toolRoutes = tools.map((slug) => ({
+  const toolUrls = tools.map(slug => ({
     url: `${base}/tools/${slug}`,
     lastModified: new Date(),
     changeFrequency: "monthly" as const,
@@ -247,6 +248,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
   return [
     { url: base, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 1 },
-    ...toolRoutes,
+    ...toolUrls,
   ];
 }

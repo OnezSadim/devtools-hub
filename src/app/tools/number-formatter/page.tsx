@@ -1,38 +1,30 @@
 "use client";
 import { useState } from "react";
 export default function NumberFormatter() {
-  const [num, setNum] = useState("");
-  const n = Number(num.replace(/,/g, ""));
-  const valid = !isNaN(n) && num.trim() !== "";
-  const fmt = (n, locale, opts={}) => { try { return new Intl.NumberFormat(locale, opts).format(n); } catch(e) { return "-"; } };
-  return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Number Formatter</h1>
-        <p className="text-gray-400 mb-6">Format numbers for different locales and styles.</p>
-        <input type="text" className="w-full bg-gray-900 border border-gray-700 rounded-xl px-5 py-4 text-2xl font-mono mb-6 focus:outline-none focus:border-blue-500" placeholder="Enter a number..." value={num} onChange={e=>setNum(e.target.value)} />
-        {valid && (
-          <div className="space-y-2">
-            {[
-              {label:"US (1,234,567.89)",val:fmt(n,"en-US")},
-              {label:"EU (1.234.567,89)",val:fmt(n,"de-DE")},
-              {label:"Indian (12,34,567)",val:fmt(n,"en-IN")},
-              {label:"Scientific",val:n.toExponential()},
-              {label:"USD Currency",val:fmt(n,"en-US",{style:"currency",currency:"USD"})},
-              {label:"EUR Currency",val:fmt(n,"de-DE",{style:"currency",currency:"EUR"})},
-              {label:"Percentage",val:fmt(n/100,"en-US",{style:"percent",maximumFractionDigits:2})},
-              {label:"Hex",val:"0x"+Math.round(n).toString(16).toUpperCase()},
-              {label:"Binary",val:Math.round(n).toString(2)},
-              {label:"Octal",val:"0o"+Math.round(n).toString(8)},
-            ].map(({label,val}) => (
-              <div key={label} className="flex justify-between items-center bg-gray-900 border border-gray-700 rounded-lg px-4 py-3">
-                <span className="text-sm text-gray-400">{label}</span>
-                <span className="font-mono font-semibold">{val}</span>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </main>
-  );
+  const [num, setNum] = useState('');
+  const [decimals, setDecimals] = useState('2');
+  const [locale, setLocale] = useState('en-US');
+  const format = (n) => {
+    const v = parseFloat(n);
+    if (isNaN(v)) return 'Invalid number';
+    return new Intl.NumberFormat(locale, { minimumFractionDigits: parseInt(decimals), maximumFractionDigits: parseInt(decimals) }).format(v);
+  };
+  const formats = num ? [
+    { label: 'Formatted', value: format(num) },
+    { label: 'Currency (USD)', value: isNaN(parseFloat(num)) ? 'N/A' : new Intl.NumberFormat('en-US', {style:'currency',currency:'USD'}).format(parseFloat(num)) },
+    { label: 'Percentage', value: isNaN(parseFloat(num)) ? 'N/A' : (parseFloat(num)/100).toLocaleString('en-US',{style:'percent',minimumFractionDigits:2}) },
+    { label: 'Scientific', value: isNaN(parseFloat(num)) ? 'N/A' : parseFloat(num).toExponential(2) },
+    { label: 'Binary', value: isNaN(parseInt(num)) ? 'N/A' : parseInt(num).toString(2) },
+    { label: 'Hex', value: isNaN(parseInt(num)) ? 'N/A' : parseInt(num).toString(16).toUpperCase() },
+  ] : [];
+  return (<div style={{padding:'2rem',fontFamily:'monospace',background:'#0f172a',minHeight:'100vh',color:'#e2e8f0'}}>
+    <h1 style={{fontSize:'1.5rem',marginBottom:'1rem',color:'#7dd3fc'}}>Number Formatter</h1>
+    <div style={{display:'flex',gap:'1rem',marginBottom:'1rem',flexWrap:'wrap'}}>
+      <input value={num} onChange={e=>setNum(e.target.value)} placeholder="Enter a number" style={{padding:'0.5rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',borderRadius:'4px',fontFamily:'monospace',flex:1}} />
+      <select value={decimals} onChange={e=>setDecimals(e.target.value)} style={{padding:'0.5rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',borderRadius:'4px'}}>
+        {[0,1,2,3,4].map(d=><option key={d} value={d}>{d} decimals</option>)}
+      </select>
+    </div>
+    {formats.map(f=><div key={f.label} style={{display:'flex',justifyContent:'space-between',padding:'0.75rem',background:'#1e293b',borderRadius:'4px',marginBottom:'0.5rem'}}><span style={{color:'#94a3b8'}}>{f.label}</span><span style={{color:'#a3e635'}}>{f.value}</span></div>)}
+  </div>);
 }
