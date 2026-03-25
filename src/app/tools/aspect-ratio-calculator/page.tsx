@@ -1,35 +1,33 @@
-"use client"
-import { useState } from "react"
-
+"use client";
+import { useState } from "react";
 export default function AspectRatioCalculator() {
-  const [w, setW] = useState("1920")
-  const [h, setH] = useState("1080")
-  const gcd = (a:number,b:number):number => b===0?a:gcd(b,a%b)
-  const g = gcd(parseInt(w)||1, parseInt(h)||1)
-  const rw = (parseInt(w)||0)/g
-  const rh = (parseInt(h)||0)/g
-  const ratio = ((parseInt(w)||0)/(parseInt(h)||1)).toFixed(4)
-  const common = [{label:"16:9",w:1920,h:1080},{label:"4:3",w:1024,h:768},{label:"1:1",w:1080,h:1080},{label:"9:16",w:1080,h:1920},{label:"21:9",w:2560,h:1080},{label:"3:2",w:1500,h:1000}]
+  const [w, setW] = useState("");
+  const [h, setH] = useState("");
+  const [result, setResult] = useState("");
+  function gcd(a: number, b: number): number { return b === 0 ? a : gcd(b, a % b); }
+  function calc() {
+    const nw = parseFloat(w), nh = parseFloat(h);
+    if (!nw || !nh) { setResult("Enter valid dimensions"); return; }
+    const d = gcd(Math.round(nw), Math.round(nh));
+    setResult(`Ratio: ${Math.round(nw/d)}:${Math.round(nh/d)} | Decimal: ${(nw/nh).toFixed(4)}`);
+  }
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100 p-6">
-      <h1 className="text-2xl font-bold mb-6">Aspect Ratio Calculator</h1>
-      <div className="grid grid-cols-2 gap-4 mb-6">
-        <div><label className="block text-sm mb-1">Width</label><input value={w} onChange={e=>setW(e.target.value)} className="w-full bg-gray-800 rounded px-3 py-2" /></div>
-        <div><label className="block text-sm mb-1">Height</label><input value={h} onChange={e=>setH(e.target.value)} className="w-full bg-gray-800 rounded px-3 py-2" /></div>
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Aspect Ratio Calculator</h1>
+        <p className="text-gray-400 mb-6">Calculate aspect ratios for images, videos, and layouts.</p>
+        <div className="flex gap-4 mb-4">
+          <div className="flex-1"><label className="block text-sm text-gray-400 mb-1">Width</label><input value={w} onChange={e=>setW(e.target.value)} placeholder="1920" className="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white" /></div>
+          <div className="flex-1"><label className="block text-sm text-gray-400 mb-1">Height</label><input value={h} onChange={e=>setH(e.target.value)} placeholder="1080" className="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white" /></div>
+        </div>
+        <button onClick={calc} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded mb-4">Calculate</button>
+        {result && <div className="bg-gray-800 border border-gray-700 rounded p-4 text-green-400 font-mono">{result}</div>}
+        <div className="mt-6 grid grid-cols-3 gap-2">
+          {[["16:9","1920x1080"],["4:3","1024x768"],["1:1","1080x1080"],["21:9","2560x1080"],["9:16","1080x1920"],["3:2","1500x1000"]].map(([r,d])=>(
+            <button key={r} onClick={()=>{const[ww,hh]=d.split("x");setW(ww);setH(hh);}} className="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded p-2 text-sm">{r}<br/><span className="text-gray-500 text-xs">{d}</span></button>
+          ))}
+        </div>
       </div>
-      <div className="bg-gray-800 rounded-lg p-6 mb-6">
-        <p className="text-4xl font-bold text-blue-400">{rw}:{rh}</p>
-        <p className="text-gray-400 mt-1">Decimal: {ratio}</p>
-      </div>
-      <h2 className="text-lg font-semibold mb-3">Common Ratios</h2>
-      <div className="grid grid-cols-3 gap-3">
-        {common.map(c=>(
-          <button key={c.label} onClick={()=>{setW(String(c.w));setH(String(c.h))}} className="bg-gray-800 hover:bg-gray-700 rounded-lg p-3 text-center">
-            <p className="font-bold text-blue-400">{c.label}</p>
-            <p className="text-xs text-gray-400">{c.w}x{c.h}</p>
-          </button>
-        ))}
-      </div>
-    </div>
-  )
+    </main>
+  );
 }
