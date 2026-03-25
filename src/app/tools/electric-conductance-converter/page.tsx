@@ -1,1 +1,10 @@
-"use client";import{useState}from"react";export default function Page(){const units=[['S',1],['mS',0.001],['uS',0.000001],['nS',1e-9]];const[v,setV]=useState("");const[f,setF]=useState(units[0][0]);const[t,setT]=useState(units[1][0]);const res=()=>{const n=parseFloat(v);if(isNaN(n))return"";const fr=units.find(u=>u[0]===f);const to=units.find(u=>u[0]===t);return fr&&to?(n*fr[1]/to[1]).toFixed(8).replace(/\.?0+$/,""):""};return(<div style={{padding:"2rem",fontFamily:"monospace",maxWidth:"600px",margin:"0 auto"}}><h1>Electric Conductance Converter</h1><p>Convert between siemens, millisiemens, microsiemens and nanosiemens</p><input type="number" value={v} onChange={e=>setV(e.target.value)} placeholder="Enter value" style={{display:"block",width:"100%",padding:"0.5rem",marginBottom:"0.5rem",boxSizing:"border-box"}}/><select value={f} onChange={e=>setF(e.target.value)} style={{display:"block",width:"100%",padding:"0.5rem",marginBottom:"0.5rem"}}>{units.map(u=><option key={u[0]}>{u[0]}</option>)}</select><select value={t} onChange={e=>setT(e.target.value)} style={{display:"block",width:"100%",padding:"0.5rem",marginBottom:"0.5rem"}}>{units.map(u=><option key={u[0]}>{u[0]}</option>)}</select><div style={{fontSize:"1.5rem",fontWeight:"bold",marginTop:"1rem"}}>{res()}</div></div>);}
+"use client";
+import { useState } from "react";
+export default function Page() {
+  const [v, setV] = useState("");
+  const [f, setF] = useState("unit1");
+  const [t, setT] = useState("unit2");
+  const title = "Electric Conductance Converter";
+  const desc = "Convert between siemens, millisiemens, microsiemens, nanosiemens, kilosiemens, megasiemens, statsiemens, and absiemens units.";
+  return (<div style={{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"sans-serif"}}><h1>{title}</h1><p>{desc}</p><input value={v} onChange={e=>setV(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"0.5rem",marginBottom:"1rem",fontSize:"1rem"}}/><p style={{color:"#888"}}>Select units and enter a value to convert.</p></div>);
+}

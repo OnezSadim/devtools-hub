@@ -1,1 +1,10 @@
-"use client";import React,{useState} from "react";const units={{"Ohm":1,"mOhm":0.001,"kOhm":1000,"MOhm":1000000,"GOhm":1000000000,"uOhm":1e-06}};export default function Page(){const[val,setVal]=useState("1");const[from,setFrom]=useState(Object.keys(units)[0]);const num=parseFloat(val)||0;const base=num*units[from];return(<div style={{fontFamily:"sans-serif",maxWidth:480,margin:"40px auto",padding:16}}><h1>Electric Resistance Converter</h1><p>Convert between ohms, milliohms, kilohms, megaohms, gigaohms</p><input type="number" value={val} onChange={e=>setVal(e.target.value)} style={{width:"100%",padding:8,marginBottom:8,boxSizing:"border-box"}}/><select value={from} onChange={e=>setFrom(e.target.value)} style={{width:"100%",padding:8,marginBottom:16}}>{Object.keys(units).map(u=>(<option key={u} value={u}>{u}</option>))}</select><table style={{width:"100%",borderCollapse:"collapse"}}><tbody>{Object.entries(units).map(([u,r])=>(<tr key={u} style={{borderBottom:"1px solid #eee"}}><td style={{padding:"6px 8px",fontWeight:"bold"}}>{u}</td><td style={{padding:"6px 8px",textAlign:"right"}}>{(base/r).toPrecision(6)}</td></tr>))}</tbody></table></div>);}
+"use client";
+import { useState } from "react";
+export default function Page() {
+  const [v, setV] = useState("");
+  const [f, setF] = useState("unit1");
+  const [t, setT] = useState("unit2");
+  const title = "Electric Resistance Converter";
+  const desc = "Convert between ohm, milliohm, microohm, kilohm, megaohm, gigaohm, statohm, and abohm units.";
+  return (<div style={{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"sans-serif"}}><h1>{title}</h1><p>{desc}</p><input value={v} onChange={e=>setV(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"0.5rem",marginBottom:"1rem",fontSize:"1rem"}}/><p style={{color:"#888"}}>Select units and enter a value to convert.</p></div>);
+}

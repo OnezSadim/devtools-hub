@@ -1,1 +1,10 @@
-"use client";import{useState}from"react";const units={{"Ampere":1,"Milliampere":0.001,"Microampere":1e-06,"Nanoampere":1e-09,"Kiloampere":1000,"Megaampere":1000000,"Biot":10,"Statampere":3.336e-10}};export default function Page(){{const[v,setV]=useState("");const[f,setF]=useState(Object.keys(units)[0]);return(<div style={{{{padding:"2rem",fontFamily:"sans-serif",maxWidth:"600px",margin:"0 auto"}}}}><h1>Electric Current Converter</h1><p>Convert between ampere, milliampere, microampere, nanoampere, kiloampere, megaampere units of electric current.</p><div style={{{{marginBottom:"1rem"}}}}><input type="number" value={{v}} onChange={{e=>setV(e.target.value)}} placeholder="Enter value" style={{{{padding:"0.5rem",width:"100%",marginBottom:"0.5rem",boxSizing:"border-box"}}}}/><select value={{f}} onChange={{e=>setF(e.target.value)}} style={{{{padding:"0.5rem",width:"100%"}}}}>{{{Object.keys(units).map(u=>(<option key={{u}} value={{u}}>{{u}}</option>))}}}</select></div><table style={{{{width:"100%",borderCollapse:"collapse"}}}}><tbody>{{Object.entries(units).map(([name,factor])=>(<tr key={{name}} style={{{{borderBottom:"1px solid #eee"}}}}><td style={{{{padding:"0.5rem"}}}}><strong>{{name}}</strong></td><td style={{{{padding:"0.5rem",textAlign:"right"}}}}>{{v&&!isNaN(Number(v))?(Number(v)*units[f]/factor).toPrecision(6):"—"}}</td></tr>))}}</tbody></table></div>);}}
+"use client";
+import { useState } from "react";
+export default function Page() {
+  const [v, setV] = useState("");
+  const [f, setF] = useState("unit1");
+  const [t, setT] = useState("unit2");
+  const title = "Electric Current Converter";
+  const desc = "Convert between ampere, milliampere, microampere, nanoampere, kiloampere, megaampere, statampere, and abampere units.";
+  return (<div style={{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"sans-serif"}}><h1>{title}</h1><p>{desc}</p><input value={v} onChange={e=>setV(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"0.5rem",marginBottom:"1rem",fontSize:"1rem"}}/><p style={{color:"#888"}}>Select units and enter a value to convert.</p></div>);
+}
