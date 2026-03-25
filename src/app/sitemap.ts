@@ -1,7 +1,6 @@
-import { MetadataRoute } from "next";
+import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = "https://devtools-hub-green.vercel.app";
   const tools = [
     'acceleration-converter',
     'age-calculator',
@@ -34,6 +33,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'bitwise-calculator',
     'bmi-calculator',
     'body-fat-calculator',
+    'boolean-algebra-calculator',
     'border-radius-generator',
     'box-shadow-generator',
     'break-even-calculator',
@@ -51,6 +51,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'chemistry-equation-balancer',
     'chmod-calculator',
     'cidr-calculator',
+    'cidr-range-calculator',
     'code-beautifier',
     'code-snippet-manager',
     'color-contrast-checker',
@@ -60,6 +61,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'color-picker',
     'color-temperature-converter',
     'compound-interest-calculator',
+    'content-security-policy-generator',
     'cooking-measurement-converter',
     'cooking-timer',
     'cooking-unit-converter',
@@ -142,6 +144,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'grade-calculator',
     'gradient-generator',
     'graphql-query-builder',
+    'gravitational-force-calculator',
     'grid-css-generator',
     'grid-generator',
     'grid-layout-generator',
@@ -199,6 +202,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'jwt-decoder',
     'jwt-generator',
     'keyboard-shortcuts',
+    'kinetic-energy-calculator',
     'lcm-gcd-calculator',
     'led-resistor-calculator',
     'length-converter',
@@ -242,6 +246,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'nato-phonetic-alphabet',
     'net-worth-calculator',
     'net-worth-tracker',
+    'network-speed-calculator',
     'nginx-config-generator',
     'number-base-converter',
     'number-formatter',
@@ -309,6 +314,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'screen-resolution-info',
     'semver-calculator',
     'sentence-counter',
+    'service-worker-generator',
     'sitemap-generator',
     'sleep-calculator',
     'sleep-cycle-calculator',
@@ -342,6 +348,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'tab-space-converter',
     'tailwind-class-reference',
     'tax-bracket-calculator',
+    'tcp-flags-reference',
     'temperature-converter',
     'text-case-converter',
     'text-diff',
@@ -407,17 +414,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ];
 
   const toolUrls = tools.map((tool) => ({
-    url: `${base}/tools/${tool}`,
+    url: `https://devtools-hub-green.vercel.app/tools/${tool}`,
     lastModified: new Date(),
-    changeFrequency: "monthly" as const,
+    changeFrequency: 'weekly' as const,
     priority: 0.7,
   }));
 
   return [
     {
-      url: base,
+      url: 'https://devtools-hub-green.vercel.app',
       lastModified: new Date(),
-      changeFrequency: "weekly" as const,
+      changeFrequency: 'daily' as const,
       priority: 1,
     },
     ...toolUrls,
