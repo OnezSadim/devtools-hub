@@ -1,35 +1,31 @@
 "use client";
 import { useState } from "react";
-const UNITS: string[] = ["Tesla", "Millitesla", "Microtesla", "Nanotesla", "Gauss", "Milligauss"];
-const TO_BASE: Record<string, number> = {"Tesla": 1.0, "Millitesla": 0.001, "Microtesla": 1e-06, "Nanotesla": 1e-09, "Gauss": 0.0001, "Milligauss": 1e-07};
+
+const UNITS: string[] = ["tesla", "millitesla", "microtesla", "nanotesla", "gauss", "milligauss", "weber-per-sq-meter"];
+const TO_BASE: Record<string, number> = {"tesla": 1, "millitesla": 0.001, "microtesla": 1e-06, "nanotesla": 1e-09, "gauss": 0.0001, "milligauss": 1e-07, "weber-per-sq-meter": 1};
+
 export default function Page() {
   const [val, setVal] = useState("");
   const [from, setFrom] = useState(UNITS[0]);
-  const convert = (to: string) => {
+  const [to, setTo] = useState(UNITS[1]);
+  const convert = () => {
     const n = parseFloat(val);
     if (isNaN(n)) return "";
     return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
   };
   return (
-    <main style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}>
-      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Magnetic Flux Density Converter</h1>
-      <div style={{display:"flex",gap:"1rem",marginBottom:"1rem",flexWrap:"wrap"}}>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>
-          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
-        </select>
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <h1 className="text-3xl font-bold mb-2">Magnetic Flux Density Converter</h1>
+      <p className="text-gray-400 mb-6">Convert between magnetic flux density units instantly.</p>
+      <div className="bg-gray-900 rounded-xl p-6 max-w-lg space-y-4">
+        <input type="number" value={val} onChange={e => setVal(e.target.value)} placeholder="Enter value" className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white" />
+        <div className="flex gap-4">
+          <select value={from} onChange={e => setFrom(e.target.value)} className="flex-1 bg-gray-800 rounded-lg px-3 py-2">{UNITS.map(u => <option key={u}>{u}</option>)}</select>
+          <span className="self-center text-gray-400">to</span>
+          <select value={to} onChange={e => setTo(e.target.value)} className="flex-1 bg-gray-800 rounded-lg px-3 py-2">{UNITS.map(u => <option key={u}>{u}</option>)}</select>
+        </div>
+        {val && <div className="text-2xl font-mono text-green-400">{convert()} {to}</div>}
       </div>
-      <table style={{borderCollapse:"collapse",width:"100%"}}>
-        <thead><tr><th style={{textAlign:"left",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Unit</th><th style={{textAlign:"left",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Result</th></tr></thead>
-        <tbody>
-          {UNITS.map(u=>(
-            <tr key={u} style={{background:u===from?"#1e293b":"transparent"}}>
-              <td style={{padding:"0.4rem 0.5rem"}}>{u}</td>
-              <td style={{padding:"0.4rem 0.5rem"}}>{convert(u)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
     </main>
   );
 }

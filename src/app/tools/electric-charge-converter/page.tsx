@@ -1,32 +1,30 @@
 "use client";
 import { useState } from "react";
 
-const units = ["Coulomb (C)", "Millicoulomb (mC)", "Microcoulomb (μC)", "Nanocoulomb (nC)", "Picocoulomb (pC)", "Ampere-hour (Ah)", "Milliampere-hour (mAh)"];
-const toBase = [1, 0.001, 1e-06, 1e-09, 1e-12, 3600, 3.6];
+const UNITS: string[] = ["coulomb", "millicoulomb", "microcoulomb", "nanocoulomb", "picocoulomb", "ampere-hour", "milliampere-hour", "faraday"];
+const TO_BASE: Record<string, number> = {"coulomb": 1, "millicoulomb": 0.001, "microcoulomb": 1e-06, "nanocoulomb": 1e-09, "picocoulomb": 1e-12, "ampere-hour": 3600, "milliampere-hour": 3.6, "faraday": 96485.3};
 
 export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(0);
-  const results = units.map((u, i) => {
-    const base = parseFloat(val) * toBase[from];
-    return { unit: u, value: isNaN(base) ? "" : (base / toBase[i]).toPrecision(6) };
-  });
+  const [from, setFrom] = useState(UNITS[0]);
+  const [to, setTo] = useState(UNITS[1]);
+  const convert = () => {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
+  };
   return (
-    <main style={{maxWidth:600,margin:"40px auto",padding:"0 16px",fontFamily:"sans-serif"}}>
-      <h1 style={{fontSize:28,fontWeight:700,marginBottom:8}}>Electric Charge Converter</h1>
-      <div style={{display:"flex",gap:8,marginBottom:24}}>
-        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{flex:1,padding:"10px 12px",borderRadius:6,border:"1px solid #ccc",fontSize:16}} />
-        <select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{padding:"10px 12px",borderRadius:6,border:"1px solid #ccc",fontSize:16}}>
-          {units.map((u,i)=><option key={i} value={i}>{u}</option>)}
-        </select>
-      </div>
-      <div style={{display:"grid",gap:8}}>
-        {results.map((r,i)=>(
-          <div key={i} style={{display:"flex",justifyContent:"space-between",padding:"12px 16px",background:"#f9f9f9",borderRadius:6}}>
-            <span style={{color:"#555"}}>{r.unit}</span>
-            <strong>{r.value || "—"}</strong>
-          </div>
-        ))}
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <h1 className="text-3xl font-bold mb-2">Electric Charge Converter</h1>
+      <p className="text-gray-400 mb-6">Convert between electric charge units instantly.</p>
+      <div className="bg-gray-900 rounded-xl p-6 max-w-lg space-y-4">
+        <input type="number" value={val} onChange={e => setVal(e.target.value)} placeholder="Enter value" className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white" />
+        <div className="flex gap-4">
+          <select value={from} onChange={e => setFrom(e.target.value)} className="flex-1 bg-gray-800 rounded-lg px-3 py-2">{UNITS.map(u => <option key={u}>{u}</option>)}</select>
+          <span className="self-center text-gray-400">to</span>
+          <select value={to} onChange={e => setTo(e.target.value)} className="flex-1 bg-gray-800 rounded-lg px-3 py-2">{UNITS.map(u => <option key={u}>{u}</option>)}</select>
+        </div>
+        {val && <div className="text-2xl font-mono text-green-400">{convert()} {to}</div>}
       </div>
     </main>
   );
