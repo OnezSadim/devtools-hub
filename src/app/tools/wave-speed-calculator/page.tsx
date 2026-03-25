@@ -3,46 +3,23 @@ import { useState } from "react";
 export default function WaveSpeedCalculator() {
   const [freq, setFreq] = useState("");
   const [wl, setWl] = useState("");
-  const [period, setPeriod] = useState("");
-  const [result, setResult] = useState<string | null>(null);
+  const [result, setResult] = useState("");
   const calc = () => {
-    const f = parseFloat(freq);
-    const lambda = parseFloat(wl);
-    if (!isNaN(f) && !isNaN(lambda) && f > 0 && lambda > 0) {
-      const v = f * lambda;
-      const T = 1 / f;
-      setPeriod(T.toFixed(6));
-      setResult(v.toFixed(4));
-    } else setResult("Invalid input");
+    const f = parseFloat(freq), w = parseFloat(wl);
+    if (!isNaN(f) && !isNaN(w) && f > 0 && w > 0) {
+      setResult("Wave Speed: " + (f * w).toFixed(4) + " m/s");
+    } else setResult("Enter valid positive values.");
   };
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100 p-8">
-      <div className="max-w-xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Wave Speed Calculator</h1>
-        <p className="text-gray-400 mb-8">Calculate wave speed using v = f × λ</p>
-        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">Frequency (Hz)</label>
-            <input value={freq} onChange={e=>setFreq(e.target.value)} placeholder="e.g. 440" className="w-full bg-gray-800 rounded px-3 py-2 text-white" />
-          </div>
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">Wavelength (m)</label>
-            <input value={wl} onChange={e=>setWl(e.target.value)} placeholder="e.g. 0.773" className="w-full bg-gray-800 rounded px-3 py-2 text-white" />
-          </div>
-          <button onClick={calc} className="w-full bg-blue-600 hover:bg-blue-500 rounded py-2 font-semibold">Calculate</button>
-          {result !== null && (
-            <div className="bg-gray-800 rounded p-4 space-y-2">
-              <div className="text-2xl font-bold text-blue-400">Wave Speed: {result} m/s</div>
-              {period && <div className="text-gray-300">Period: {period} s</div>}
-            </div>
-          )}
-        </div>
-        <div className="mt-6 bg-gray-900 rounded-xl p-4 text-sm text-gray-400">
-          <p className="font-semibold text-gray-300 mb-2">Formula</p>
-          <p>v = f × λ</p>
-          <p className="mt-1">Where v = wave speed (m/s), f = frequency (Hz), λ = wavelength (m)</p>
-        </div>
-      </div>
-    </div>
+    <main className="min-h-screen bg-gray-950 text-white p-8 max-w-xl mx-auto">
+      <h1 className="text-3xl font-bold mb-2">Wave Speed Calculator</h1>
+      <p className="text-gray-400 mb-6">Calculate wave speed: v = f × λ</p>
+      <label className="block mb-2 text-gray-300">Frequency (Hz)</label>
+      <input className="w-full bg-gray-800 rounded p-2 mb-4" value={freq} onChange={e=>setFreq(e.target.value)} placeholder="e.g. 440" />
+      <label className="block mb-2 text-gray-300">Wavelength (m)</label>
+      <input className="w-full bg-gray-800 rounded p-2 mb-4" value={wl} onChange={e=>setWl(e.target.value)} placeholder="e.g. 0.773" />
+      <button className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded font-semibold" onClick={calc}>Calculate</button>
+      {result && <div className="mt-6 p-4 bg-gray-800 rounded text-green-400 font-mono">{result}</div>}
+    </main>
   );
 }
