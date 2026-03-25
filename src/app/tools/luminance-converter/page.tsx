@@ -1,30 +1,41 @@
 "use client";
 import { useState } from "react";
-
-const UNITS = ["Candela/m2 (nit)", "Foot-lambert", "Lambert", "Stilb", "Apostilb", "Millinit"];
-const TO_BASE = [1, 3.42626, 3183.1, 10000, 0.31831, 0.001];
-
 export default function Page() {
+  const units: string[] = ["candela/m2", "nit", "stilb", "apostilb", "lambert", "foot-lambert"];
+  const toBase: Record<string, number> = {"candela/m2": 1, "nit": 1, "stilb": 10000, "apostilb": 0.31831, "lambert": 3183.1, "foot-lambert": 3.4263};
+  const [from, setFrom] = useState(units[0]);
+  const [to, setTo] = useState(units[1]);
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(0);
-  const num = parseFloat(val);
-  const base = isNaN(num) ? null : num * TO_BASE[from];
+  const result = val === "" ? "" : ((parseFloat(val) * toBase[from]) / toBase[to]).toPrecision(6);
   return (
-    <main style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}>
-      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Luminance Converter</h1>
-      <div style={{display:"flex",gap:"1rem",marginBottom:"1.5rem",flexWrap:"wrap"}}>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px",width:"160px"}} />
-        <select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>
-          {UNITS.map((u,i)=><option key={i} value={i}>{u}</option>)}
-        </select>
-      </div>
-      <div style={{display:"grid",gap:"0.5rem"}}>
-        {UNITS.map((u,i)=>(
-          <div key={i} style={{display:"flex",justifyContent:"space-between",padding:"0.75rem",background:"#1e293b",borderRadius:"6px",border:"1px solid #334155"}}>
-            <span style={{color:"#94a3b8"}}>{u}</span>
-            <span style={{fontWeight:"bold"}}>{base===null?"—":(base/TO_BASE[i]).toPrecision(6)}</span>
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <h1 className="text-3xl font-bold mb-2">Luminance Converter</h1>
+      <p className="text-gray-400 mb-6">Convert between luminance units instantly.</p>
+      <div className="bg-gray-900 rounded-xl p-6 max-w-lg space-y-4">
+        <div>
+          <label className="block text-sm text-gray-400 mb-1">Value</label>
+          <input type="number" value={val} onChange={e => setVal(e.target.value)} className="w-full bg-gray-800 rounded px-3 py-2 text-white" placeholder="Enter value" />
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">From</label>
+            <select value={from} onChange={e => setFrom(e.target.value)} className="w-full bg-gray-800 rounded px-3 py-2 text-white">
+              {units.map(u => <option key={u} value={u}>{u}</option>)}
+            </select>
           </div>
-        ))}
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">To</label>
+            <select value={to} onChange={e => setTo(e.target.value)} className="w-full bg-gray-800 rounded px-3 py-2 text-white">
+              {units.map(u => <option key={u} value={u}>{u}</option>)}
+            </select>
+          </div>
+        </div>
+        {result !== "" && (
+          <div className="bg-gray-800 rounded p-4 text-center">
+            <span className="text-2xl font-bold text-green-400">{result}</span>
+            <span className="text-gray-400 ml-2">{to}</span>
+          </div>
+        )}
       </div>
     </main>
   );
