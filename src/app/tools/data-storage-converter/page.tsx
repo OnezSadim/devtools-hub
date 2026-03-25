@@ -1,21 +1,10 @@
 "use client";
 import { useState } from "react";
-const factors: Record<string,number> = {bit:1,byte:8,KB:8192,MB:8388608,GB:8589934592,TB:8796093022208,KiB:8192,MiB:8388608,GiB:8589934592};
-export default function DataStorageConverter() {
-  const [val,setVal]=useState("");
-  const [from,setFrom]=useState("GB");
-  const n=parseFloat(val);
-  const units=Object.keys(factors);
-  const inBits=isNaN(n)?null:n*factors[from];
-  return (
-    <main className="min-h-screen bg-gray-950 text-white p-8 max-w-xl mx-auto">
-      <h1 className="text-3xl font-bold mb-2">Data Storage Converter</h1>
-      <p className="text-gray-400 mb-6">Convert between bits, bytes, KB, MB, GB, TB, KiB, MiB, GiB</p>
-      <div className="flex gap-2 mb-4">
-        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" className="flex-1 bg-gray-800 rounded p-3 text-white" />
-        <select value={from} onChange={e=>setFrom(e.target.value)} className="bg-gray-800 rounded p-3 text-white">{units.map(u=><option key={u}>{u}</option>)}</select>
-      </div>
-      {inBits!==null && <div className="space-y-2">{units.filter(u=>u!==from).map(u=><div key={u} className="bg-gray-800 rounded p-3"><span className="text-gray-400">{u}: </span><span className="text-green-400 font-mono">{(inBits/factors[u]).toFixed(6)}</span></div>)}</div>}
-    </main>
-  );
+const units: Record<string, number> = { bit: 1, byte: 8, kilobyte: 8000, megabyte: 8000000, gigabyte: 8000000000, terabyte: 8000000000000, kibibyte: 8192, mebibyte: 8388608, gibibyte: 8589934592 };
+export default function Page() {
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState("byte");
+  const keys = Object.keys(units);
+  const base = parseFloat(val) * units[from];
+  return (<div style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}><h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Data Storage Converter</h1><div style={{display:"flex",gap:"1rem",marginBottom:"1.5rem",flexWrap:"wrap"}}><input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px",flex:1}} /><select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>{keys.map(k=><option key={k} value={k}>{k}</option>)}</select></div><div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))",gap:"0.75rem"}}>{keys.map(k=><div key={k} style={{background:"#1e293b",padding:"0.75rem",borderRadius:"6px",border:"1px solid #334155"}}><div style={{color:"#94a3b8",fontSize:"0.75rem",textTransform:"uppercase"}}>{k}</div><div style={{fontSize:"1.1rem",fontWeight:"bold",marginTop:"0.25rem"}}>{val&&!isNaN(base)?(base/units[k]).toFixed(6):"—"}</div></div>)}</div></div>);
 }
