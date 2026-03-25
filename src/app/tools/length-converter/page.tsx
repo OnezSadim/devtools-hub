@@ -1,1 +1,60 @@
-'use client';import{useState}from 'react';export default function LengthConverter(){const[val,setVal]=useState('');const[from,setFrom]=useState('m');const[to,setTo]=useState('ft');const[result,setResult]=useState('');const units={m:1,km:1000,cm:0.01,mm:0.001,ft:0.3048,inch:0.0254,mile:1609.34,yard:0.9144};function convert(){const v=parseFloat(val);if(isNaN(v)){setResult('Enter a number');return;}const inM=v*(units[from]||1);const out=inM/(units[to]||1);setResult(out.toFixed(4)+' '+to);}return(<div style={{padding:'2rem',fontFamily:'monospace',background:'#111',minHeight:'100vh',color:'#eee'}}><h1 style={{color:'#7c3aed'}}>Length Converter</h1><input value={val} onChange={e=>setVal(e.target.value)} placeholder='Value' style={{padding:'0.5rem',marginRight:'0.5rem',background:'#222',color:'#eee',border:'1px solid #444'}}/><select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:'0.5rem',marginRight:'0.5rem',background:'#222',color:'#eee',border:'1px solid #444'}}>{Object.keys(units).map(u=><option key={u} value={u}>{u}</option>)}</select><span style={{marginRight:'0.5rem'}}>to</span><select value={to} onChange={e=>setTo(e.target.value)} style={{padding:'0.5rem',marginRight:'0.5rem',background:'#222',color:'#eee',border:'1px solid #444'}}>{Object.keys(units).map(u=><option key={u} value={u}>{u}</option>)}</select><button onClick={convert} style={{padding:'0.5rem 1rem',background:'#7c3aed',color:'#fff',border:'none',cursor:'pointer'}}>Convert</button>{result&&<p style={{marginTop:'1rem',color:'#a78bfa'}}>Result: {result}</p>}</div>);}
+"use client";
+import { useState } from "react";
+
+const units = [
+  { label: "Millimeter (mm)", factor: 0.001 },
+  { label: "Centimeter (cm)", factor: 0.01 },
+  { label: "Meter (m)", factor: 1 },
+  { label: "Kilometer (km)", factor: 1000 },
+  { label: "Inch (in)", factor: 0.0254 },
+  { label: "Foot (ft)", factor: 0.3048 },
+  { label: "Yard (yd)", factor: 0.9144 },
+  { label: "Mile (mi)", factor: 1609.344 },
+  { label: "Nautical Mile", factor: 1852 },
+];
+
+export default function LengthConverter() {
+  const [value, setValue] = useState("");
+  const [from, setFrom] = useState(0);
+  const [to, setTo] = useState(2);
+
+  const result = value !== "" ? (parseFloat(value) * units[from].factor / units[to].factor).toPrecision(8) : "";
+
+  return (
+    <div className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Length Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between millimeters, centimeters, meters, kilometers, inches, feet, yards, miles, and more.</p>
+        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Value</label>
+            <input type="number" value={value} onChange={e => setValue(e.target.value)}
+              className="w-full bg-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter value" />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">From</label>
+              <select value={from} onChange={e => setFrom(Number(e.target.value))}
+                className="w-full bg-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                {units.map((u, i) => <option key={i} value={i}>{u.label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">To</label>
+              <select value={to} onChange={e => setTo(Number(e.target.value))}
+                className="w-full bg-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                {units.map((u, i) => <option key={i} value={i}>{u.label}</option>)}
+              </select>
+            </div>
+          </div>
+          {result !== "" && (
+            <div className="bg-blue-900/30 border border-blue-500/30 rounded-lg p-4">
+              <p className="text-sm text-gray-400">Result</p>
+              <p className="text-2xl font-bold text-blue-400">{result} {units[to].label}</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

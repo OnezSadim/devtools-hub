@@ -1,1 +1,61 @@
-'use client';import{useState}from 'react';export default function AreaConverter(){const[v,setV]=useState('');const[f,setF]=useState('m2');const[t,setT]=useState('ft2');const toM2={'m2':1,'km2':1e6,'cm2':0.0001,'mm2':0.000001,'ft2':0.092903,'in2':0.00064516,'yd2':0.836127,'acre':4046.86,'ha':10000};const units=Object.keys(toM2);const convert=()=>{const n=parseFloat(v);if(isNaN(n))return'';return((n*toM2[f])/toM2[t]).toFixed(6);};return(<div style={{fontFamily:'monospace',padding:'2rem',background:'#0f0f0f',minHeight:'100vh',color:'#e2e8f0'}}><h1 style={{fontSize:'1.5rem',marginBottom:'1rem'}}>Area Converter</h1><input type='number' value={v} onChange={e=>setV(e.target.value)} placeholder='Value' style={{width:'100%',padding:'0.5rem',marginBottom:'0.5rem',background:'#1e1e1e',color:'#e2e8f0',border:'1px solid #333',borderRadius:'4px'}} /><select value={f} onChange={e=>setF(e.target.value)} style={{width:'100%',padding:'0.5rem',marginBottom:'0.5rem',background:'#1e1e1e',color:'#e2e8f0',border:'1px solid #333',borderRadius:'4px'}}>{units.map(u=>(<option key={u} value={u}>{u}</option>))}</select><div style={{textAlign:'center',color:'#888',margin:'0.25rem 0'}}>to</div><select value={t} onChange={e=>setT(e.target.value)} style={{width:'100%',padding:'0.5rem',marginBottom:'1rem',background:'#1e1e1e',color:'#e2e8f0',border:'1px solid #333',borderRadius:'4px'}}>{units.map(u=>(<option key={u} value={u}>{u}</option>))}</select><div style={{padding:'1rem',background:'#1e1e1e',borderRadius:'4px',fontSize:'1.25rem'}}>{convert()||'Enter a value'}</div></div>);}
+"use client";
+import { useState } from "react";
+
+const units = [
+  { label: "sq mm (mm²)", factor: 0.000001 },
+  { label: "sq cm (cm²)", factor: 0.0001 },
+  { label: "sq m (m²)", factor: 1 },
+  { label: "hectare (ha)", factor: 10000 },
+  { label: "sq km (km²)", factor: 1000000 },
+  { label: "sq inch (in²)", factor: 0.00064516 },
+  { label: "sq foot (ft²)", factor: 0.092903 },
+  { label: "sq yard (yd²)", factor: 0.836127 },
+  { label: "acre", factor: 4046.86 },
+  { label: "sq mile (mi²)", factor: 2589988 },
+];
+
+export default function AreaConverter() {
+  const [value, setValue] = useState("");
+  const [from, setFrom] = useState(2);
+  const [to, setTo] = useState(8);
+
+  const result = value !== "" ? (parseFloat(value) * units[from].factor / units[to].factor).toPrecision(8) : "";
+
+  return (
+    <div className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Area Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between square meters, hectares, acres, square feet, square miles, and more.</p>
+        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Value</label>
+            <input type="number" value={value} onChange={e => setValue(e.target.value)}
+              className="w-full bg-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter value" />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">From</label>
+              <select value={from} onChange={e => setFrom(Number(e.target.value))}
+                className="w-full bg-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                {units.map((u, i) => <option key={i} value={i}>{u.label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">To</label>
+              <select value={to} onChange={e => setTo(Number(e.target.value))}
+                className="w-full bg-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                {units.map((u, i) => <option key={i} value={i}>{u.label}</option>)}
+              </select>
+            </div>
+          </div>
+          {result !== "" && (
+            <div className="bg-blue-900/30 border border-blue-500/30 rounded-lg p-4">
+              <p className="text-sm text-gray-400">Result</p>
+              <p className="text-2xl font-bold text-blue-400">{result} {units[to].label}</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

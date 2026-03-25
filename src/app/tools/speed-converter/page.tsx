@@ -1,1 +1,57 @@
-'use client';import{useState}from 'react';export default function Page(){const[val,setVal]=useState('');const[unit,setUnit]=useState('ms');const[result,setResult]=useState('');function convert(){const v=parseFloat(val);if(isNaN(v)){setResult('Enter a number');return;}let ms=v;if(unit==='kmh')ms=v/3.6;else if(unit==='mph')ms=v*0.44704;else if(unit==='knots')ms=v*0.514444;const kmh=ms*3.6;const mph=ms/0.44704;const knots=ms/0.514444;setResult('m/s: '+ms.toFixed(4)+' | km/h: '+kmh.toFixed(4)+' | mph: '+mph.toFixed(4)+' | knots: '+knots.toFixed(4));}return(<div style={{padding:'2rem',fontFamily:'monospace',background:'#0f0f0f',minHeight:'100vh',color:'#e5e5e5'}}><h1 style={{fontSize:'1.8rem',marginBottom:'1rem'}}>Speed Converter</h1><p style={{color:'#999',marginBottom:'2rem'}}>Convert between m/s, km/h, mph, and knots.</p><input value={val} onChange={e=>setVal(e.target.value)} placeholder='Enter speed' style={{width:'100%',padding:'0.75rem',background:'#1a1a1a',border:'1px solid #333',borderRadius:'6px',color:'#e5e5e5',marginBottom:'1rem',boxSizing:'border-box'}}/><select value={unit} onChange={e=>setUnit(e.target.value)} style={{width:'100%',padding:'0.75rem',background:'#1a1a1a',border:'1px solid #333',borderRadius:'6px',color:'#e5e5e5',marginBottom:'1rem',boxSizing:'border-box'}}><option value='ms'>m/s</option><option value='kmh'>km/h</option><option value='mph'>mph</option><option value='knots'>knots</option></select><button onClick={convert} style={{padding:'0.75rem 1.5rem',background:'#3b82f6',border:'none',borderRadius:'6px',color:'#fff',cursor:'pointer',marginBottom:'1rem'}}>Convert</button>{result&&<div style={{background:'#1a1a1a',padding:'1rem',borderRadius:'6px',border:'1px solid #333'}}>{result}</div>}</div>);}
+"use client";
+import { useState } from "react";
+
+const units = [
+  { label: "m/s", factor: 1 },
+  { label: "km/h", factor: 0.277778 },
+  { label: "mph", factor: 0.44704 },
+  { label: "knot", factor: 0.514444 },
+  { label: "ft/s", factor: 0.3048 },
+  { label: "Mach", factor: 343 },
+];
+
+export default function SpeedConverter() {
+  const [value, setValue] = useState("");
+  const [from, setFrom] = useState(1);
+  const [to, setTo] = useState(2);
+
+  const result = value !== "" ? (parseFloat(value) * units[from].factor / units[to].factor).toPrecision(8) : "";
+
+  return (
+    <div className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Speed Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between m/s, km/h, mph, knots, ft/s, and Mach.</p>
+        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Value</label>
+            <input type="number" value={value} onChange={e => setValue(e.target.value)}
+              className="w-full bg-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter value" />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">From</label>
+              <select value={from} onChange={e => setFrom(Number(e.target.value))}
+                className="w-full bg-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                {units.map((u, i) => <option key={i} value={i}>{u.label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">To</label>
+              <select value={to} onChange={e => setTo(Number(e.target.value))}
+                className="w-full bg-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                {units.map((u, i) => <option key={i} value={i}>{u.label}</option>)}
+              </select>
+            </div>
+          </div>
+          {result !== "" && (
+            <div className="bg-blue-900/30 border border-blue-500/30 rounded-lg p-4">
+              <p className="text-sm text-gray-400">Result</p>
+              <p className="text-2xl font-bold text-blue-400">{result} {units[to].label}</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -1,1 +1,37 @@
-'use client';import{useState}from 'react';export default function Page(){const[val,setVal]=useState('');const[from,setFrom]=useState('celsius');const[result,setResult]=useState('');function convert(){const v=parseFloat(val);if(isNaN(v)){setResult('Enter a number');return;}let c=v;if(from==='fahrenheit')c=(v-32)*5/9;else if(from==='kelvin')c=v-273.15;const f=c*9/5+32;const k=c+273.15;setResult('Celsius: '+c.toFixed(4)+' | Fahrenheit: '+f.toFixed(4)+' | Kelvin: '+k.toFixed(4));}return(<div style={{padding:'2rem',fontFamily:'monospace',background:'#0f0f0f',minHeight:'100vh',color:'#e5e5e5'}}><h1 style={{fontSize:'1.8rem',marginBottom:'1rem'}}>Temperature Converter</h1><p style={{color:'#999',marginBottom:'2rem'}}>Convert between Celsius, Fahrenheit, and Kelvin.</p><input value={val} onChange={e=>setVal(e.target.value)} placeholder='Enter temperature' style={{width:'100%',padding:'0.75rem',background:'#1a1a1a',border:'1px solid #333',borderRadius:'6px',color:'#e5e5e5',marginBottom:'1rem',boxSizing:'border-box'}}/><select value={from} onChange={e=>setFrom(e.target.value)} style={{width:'100%',padding:'0.75rem',background:'#1a1a1a',border:'1px solid #333',borderRadius:'6px',color:'#e5e5e5',marginBottom:'1rem',boxSizing:'border-box'}}><option value='celsius'>Celsius</option><option value='fahrenheit'>Fahrenheit</option><option value='kelvin'>Kelvin</option></select><button onClick={convert} style={{padding:'0.75rem 1.5rem',background:'#3b82f6',border:'none',borderRadius:'6px',color:'#fff',cursor:'pointer',marginBottom:'1rem'}}>Convert</button>{result&&<div style={{background:'#1a1a1a',padding:'1rem',borderRadius:'6px',border:'1px solid #333'}}>{result}</div>}</div>);}
+"use client";
+import { useState } from "react";
+
+export default function TemperatureConverter() {
+  const [celsius, setCelsius] = useState("");
+
+  const c = parseFloat(celsius);
+  const f = celsius !== "" ? (c * 9/5 + 32).toFixed(4) : "";
+  const k = celsius !== "" ? (c + 273.15).toFixed(4) : "";
+  const r = celsius !== "" ? ((c + 273.15) * 9/5).toFixed(4) : "";
+
+  return (
+    <div className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Temperature Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between Celsius, Fahrenheit, Kelvin, and Rankine.</p>
+        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Celsius (°C)</label>
+            <input type="number" value={celsius} onChange={e => setCelsius(e.target.value)}
+              className="w-full bg-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter Celsius" />
+          </div>
+          {celsius !== "" && (
+            <div className="space-y-3">
+              {[["Fahrenheit (°F)", f], ["Kelvin (K)", k], ["Rankine (°R)", r]].map(([label, val]) => (
+                <div key={label} className="bg-gray-800 rounded-lg p-4 flex justify-between items-center">
+                  <span className="text-gray-400">{label}</span>
+                  <span className="text-xl font-bold text-blue-400">{val}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
