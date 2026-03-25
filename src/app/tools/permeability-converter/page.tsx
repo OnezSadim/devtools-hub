@@ -1,42 +1,32 @@
 "use client";
 import { useState } from "react";
-const UNITS = [
-  { value: "H_m", label: "Henry/meter (H/m)", factor: 1 },
-  { value: "mH_m", label: "Millihenry/meter (mH/m)", factor: 0.001 },
-  { value: "uH_m", label: "Microhenry/meter (μH/m)", factor: 1e-06 },
-  { value: "nH_m", label: "Nanohenry/meter (nH/m)", factor: 1e-09 },
-  { value: "pH_m", label: "Picohenry/meter (pH/m)", factor: 1e-12 },
-  { value: "H_cm", label: "Henry/centimeter (H/cm)", factor: 100 },
-  { value: "H_mm", label: "Henry/millimeter (H/mm)", factor: 1000 },
-];
+
+const units = ['darcy', 'millidarcy', 'm2', 'cm2', 'ft2'];
+const factors = {'darcy': 9.869233e-13, 'millidarcy': 9.869233e-16, 'm2': 1, 'cm2': 0.0001, 'ft2': 0.0929};
+
 export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(UNITS[0].value);
-  const [to, setTo] = useState(UNITS[1].value);
+  const [from, setFrom] = useState(units[0]);
+  const [to, setTo] = useState(units[1]);
   function convert() {
     const n = parseFloat(val);
     if (isNaN(n)) return "";
-    const f = UNITS.find(u => u.value === from)?.factor ?? 1;
-    const t = UNITS.find(u => u.value === to)?.factor ?? 1;
-    return (n * f / t).toPrecision(6);
+    return ((n * factors[from]) / factors[to]).toPrecision(6);
   }
   return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
-      <h1 className="text-3xl font-bold mb-2">Permeability Converter</h1>
-      <p className="text-gray-400 mb-6">Convert between magnetic permeability units: H/m, mH/m, uH/m, nH/m, H/cm, H/mm.</p>
-      <div className="bg-gray-900 rounded-xl p-6 max-w-lg">
-        <input className="w-full bg-gray-800 rounded p-2 mb-3 text-white" placeholder="Enter value" value={val} onChange={e => setVal(e.target.value)} />
-        <div className="flex gap-2 mb-3">
-          <select className="flex-1 bg-gray-800 rounded p-2 text-white" value={from} onChange={e => setFrom(e.target.value)}>
-            {UNITS.map(u => <option key={u.value} value={u.value}>{u.label}</option>)}
-          </select>
-          <span className="self-center text-gray-400">to</span>
-          <select className="flex-1 bg-gray-800 rounded p-2 text-white" value={to} onChange={e => setTo(e.target.value)}>
-            {UNITS.map(u => <option key={u.value} value={u.value}>{u.label}</option>)}
-          </select>
-        </div>
-        <div className="bg-gray-800 rounded p-3 text-xl font-mono">{convert() || "—"}</div>
+    <main style={{padding:"2rem",fontFamily:"monospace",background:"#0f0f0f",minHeight:"100vh",color:"#e0e0e0"}}>
+      <h1 style={{color:"#7c3aed"}}>Permeability Converter</h1>
+      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginTop:"1rem"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",background:"#1a1a1a",color:"#e0e0e0",border:"1px solid #333",borderRadius:"4px"}} />
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1a1a1a",color:"#e0e0e0",border:"1px solid #333",borderRadius:"4px"}}>
+          {units.map((u:string)=><option key={u}>{u}</option>)}
+        </select>
+        <span style={{alignSelf:"center"}}>to</span>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1a1a1a",color:"#e0e0e0",border:"1px solid #333",borderRadius:"4px"}}>
+          {units.map((u:string)=><option key={u}>{u}</option>)}
+        </select>
       </div>
+      {val && <p style={{marginTop:"1.5rem",fontSize:"1.5rem"}}>{val} {from} = <strong style={{color:"#7c3aed"}}>{convert()}</strong> {to}</p>}
     </main>
   );
 }
