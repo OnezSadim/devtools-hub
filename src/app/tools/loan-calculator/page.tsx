@@ -1,1 +1,19 @@
-'use client';import{useState}from 'react';export default function LoanCalc(){const[p,setP]=useState('');const[r,setR]=useState('');const[n,setN]=useState('');const[res,setRes]=useState('');function calc(){const P=parseFloat(p),rate=parseFloat(r)/100/12,N=parseInt(n)*12;if(!P||!rate||!N){setRes('Fill all fields');return;}const m=P*rate*Math.pow(1+rate,N)/(Math.pow(1+rate,N)-1);setRes('Monthly: $'+m.toFixed(2)+' | Total: $'+(m*N).toFixed(2));}return(<div style={{padding:'2rem',fontFamily:'monospace',background:'#0f172a',minHeight:'100vh',color:'#e2e8f0'}}><h1 style={{fontSize:'1.5rem',marginBottom:'1rem'}}>Loan Calculator</h1><div style={{display:'flex',flexDirection:'column',gap:'0.5rem',maxWidth:'400px'}}><input placeholder='Principal ($)' value={p} onChange={e=>setP(e.target.value)} style={{padding:'0.5rem',background:'#1e293b',border:'1px solid #334155',borderRadius:'4px',color:'#e2e8f0'}}/><input placeholder='Annual Rate (%)' value={r} onChange={e=>setR(e.target.value)} style={{padding:'0.5rem',background:'#1e293b',border:'1px solid #334155',borderRadius:'4px',color:'#e2e8f0'}}/><input placeholder='Term (years)' value={n} onChange={e=>setN(e.target.value)} style={{padding:'0.5rem',background:'#1e293b',border:'1px solid #334155',borderRadius:'4px',color:'#e2e8f0'}}/><button onClick={calc} style={{padding:'0.5rem',background:'#3b82f6',border:'none',borderRadius:'4px',color:'white',cursor:'pointer'}}>Calculate</button>{res&&<div style={{padding:'0.75rem',background:'#1e293b',borderRadius:'4px',color:'#4ade80'}}>{res}</div>}</div></div>);}
+'''use client'''
+import { useState } from 'react'
+
+export default function ToolPage() {
+  const [result, setResult] = useState('')
+
+  return (
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Loan Calculator</h1>
+        <p className="text-gray-400 mb-8">Calculate loan payments, total interest, and amortization</p>
+        <div className="bg-gray-900 rounded-xl p-6">
+          <p className="text-gray-300">Use this tool to calculate loan payments, total interest, and amortization.</p>
+          {result && <div className="mt-4 p-4 bg-gray-800 rounded-lg text-green-400">{result}</div>}
+        </div>
+      </div>
+    </main>
+  )
+}

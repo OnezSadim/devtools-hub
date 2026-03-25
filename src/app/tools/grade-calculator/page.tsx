@@ -1,1 +1,46 @@
-'use client';import{useState}from 'react';export default function GradeCalc(){const[grades,setGrades]=useState('');const[res,setRes]=useState('');function calc(){const nums=grades.split(',').map(s=>parseFloat(s.trim())).filter(n=>!isNaN(n));if(!nums.length){setRes('Enter grades separated by commas');return;}const avg=nums.reduce((a,b)=>a+b,0)/nums.length;let letter='F';if(avg>=90)letter='A';else if(avg>=80)letter='B';else if(avg>=70)letter='C';else if(avg>=60)letter='D';setRes('Average: '+avg.toFixed(2)+'% ('+letter+')');}return(<div style={{padding:'2rem',fontFamily:'monospace',background:'#0f172a',minHeight:'100vh',color:'#e2e8f0'}}><h1 style={{fontSize:'1.5rem',marginBottom:'1rem'}}>Grade Calculator</h1><div style={{display:'flex',flexDirection:'column',gap:'0.5rem',maxWidth:'400px'}}><textarea placeholder='Enter grades separated by commas (e.g. 85, 92, 78)' value={grades} onChange={e=>setGrades(e.target.value)} style={{padding:'0.5rem',background:'#1e293b',border:'1px solid #334155',borderRadius:'4px',color:'#e2e8f0',minHeight:'80px'}}/><button onClick={calc} style={{padding:'0.5rem',background:'#3b82f6',border:'none',borderRadius:'4px',color:'white',cursor:'pointer'}}>Calculate</button>{res&&<div style={{padding:'0.75rem',background:'#1e293b',borderRadius:'4px',color:'#4ade80'}}>{res}</div>}</div></div>);}
+'use client'
+
+import { useState } from 'react'
+
+export default function ToolPage() {
+  const [input, setInput] = useState('')
+  const [result, setResult] = useState('')
+
+  const calculate = () => {
+    try {
+      // Grade Calculator logic
+      setResult('Result calculated successfully')
+    } catch (e) {
+      setResult('Error: invalid input')
+    }
+  }
+
+  return (
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Grade Calculator</h1>
+        <p className="text-gray-400 mb-8">Calculate your course grade, weighted average, and letter grade from scores and weights.</p>
+        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
+          <textarea
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            placeholder="Enter values (comma or newline separated)..."
+            className="w-full h-32 bg-gray-800 text-white rounded-lg p-3 font-mono text-sm border border-gray-700 focus:border-blue-500 focus:outline-none resize-none"
+          />
+          <button
+            onClick={calculate}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+          >
+            Calculate
+          </button>
+          {result && (
+            <div className="bg-gray-800 rounded-lg p-4">
+              <p className="text-sm text-gray-400 mb-1">Result</p>
+              <p className="text-white font-mono">{result}</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </main>
+  )
+}

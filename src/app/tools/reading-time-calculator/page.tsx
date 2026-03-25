@@ -1,39 +1,57 @@
-"use client";
-import { useState } from "react";
+'use client'
+
+import { useState } from 'react'
+
 export default function ReadingTimeCalculator() {
-  const [text, setText] = useState("");
-  const [wpm, setWpm] = useState("238");
-  const words = text.trim() ? text.trim().split(/\s+/).length : 0;
-  const chars = text.length;
-  const sentences = text.split(/[.!?]+/).filter(s=>s.trim()).length;
-  const minutes = words / parseFloat(wpm||238);
-  const formatTime = (m) => {
-    if (m < 1) return Math.round(m*60) + " seconds";
-    if (m < 60) return Math.round(m) + " min " + Math.round((m%1)*60) + " sec";
-    return Math.floor(m/60) + " hr " + Math.round(m%60) + " min";
-  };
+  const [text, setText] = useState('')
+  const [wpm, setWpm] = useState(200)
+
+  const words = text.trim() === '' ? 0 : text.trim().split(/\s+/).length
+  const seconds = Math.ceil((words / wpm) * 60)
+  const mins = Math.floor(seconds / 60)
+  const secs = seconds % 60
+
+  const formatTime = () => {
+    if (words === 0) return '0 seconds'
+    if (mins === 0) return secs + ' second' + (secs !== 1 ? 's' : '')
+    if (secs === 0) return mins + ' minute' + (mins !== 1 ? 's' : '')
+    return mins + ' min ' + secs + ' sec'
+  }
+
   return (
-    <div className="min-h-screen bg-gray-950 text-white p-8">
-      <div className="max-w-2xl mx-auto">
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold mb-2">Reading Time Calculator</h1>
-        <p className="text-gray-400 mb-6">Paste your text to estimate reading time and get word count statistics.</p>
-        <div className="mb-4"><label className="block text-sm text-gray-400 mb-1">Reading Speed (WPM)</label>
-          <div className="flex gap-2 mb-2">
-            {[["Slow","150"],["Average","238"],["Fast","400"],["Speed","700"]].map(([l,v])=>(
-              <button key={v} onClick={()=>setWpm(v)} className={`px-3 py-1 rounded text-sm ${wpm===v?"bg-blue-600":"bg-gray-700 hover:bg-gray-600"}`}>{l}</button>
-            ))}
+        <p className="text-gray-400 mb-6">Estimate how long it takes to read your content.</p>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+          <div className="bg-gray-800 rounded-lg p-4 text-center">
+            <div className="text-3xl font-bold text-blue-400">{formatTime()}</div>
+            <div className="text-gray-400 text-sm mt-1">Reading Time</div>
           </div>
-          <input className="w-32 bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm" type="number" value={wpm} onChange={e=>setWpm(e.target.value)} /></div>
-        <textarea className="w-full h-48 bg-gray-800 border border-gray-700 rounded px-3 py-2 mb-6 resize-none" value={text} onChange={e=>setText(e.target.value)} placeholder="Paste your text here..." />
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[{label:"Reading Time",val:text?formatTime(minutes):"—",color:"text-green-400"},{label:"Words",val:words.toLocaleString(),color:"text-white"},{label:"Characters",val:chars.toLocaleString(),color:"text-white"},{label:"Sentences",val:sentences.toLocaleString(),color:"text-white"}].map(({label,val,color})=>(
-            <div key={label} className="bg-gray-800 rounded p-4 text-center">
-              <div className={"text-xl font-bold " + color}>{val}</div>
-              <div className="text-gray-400 text-sm">{label}</div>
-            </div>
-          ))}
+          <div className="bg-gray-800 rounded-lg p-4 text-center">
+            <div className="text-3xl font-bold text-green-400">{words}</div>
+            <div className="text-gray-400 text-sm mt-1">Words</div>
+          </div>
+          <div className="bg-gray-800 rounded-lg p-4 text-center">
+            <div className="text-3xl font-bold text-purple-400">{wpm}</div>
+            <div className="text-gray-400 text-sm mt-1">WPM</div>
+          </div>
         </div>
+        <div className="mb-4">
+          <label className="block text-sm text-gray-400 mb-2">Reading Speed: {wpm} words per minute</label>
+          <input type="range" min="100" max="600" value={wpm} onChange={e => setWpm(Number(e.target.value))}
+            className="w-full accent-blue-500" />
+          <div className="flex justify-between text-xs text-gray-500 mt-1">
+            <span>Slow (100)</span><span>Average (200)</span><span>Fast (400)</span><span>Speed (600)</span>
+          </div>
+        </div>
+        <textarea
+          className="w-full h-64 bg-gray-800 border border-gray-700 rounded-lg p-4 text-white resize-none focus:outline-none focus:border-blue-500"
+          placeholder="Paste your article or text here..."
+          value={text}
+          onChange={e => setText(e.target.value)}
+        />
       </div>
-    </div>
-  );
+    </main>
+  )
 }

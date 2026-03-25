@@ -1,1 +1,19 @@
-'use client';import{useState}from 'react';export default function P(){const[goal,setGoal]=useState(10000);const[saved,setSaved]=useState(1000);const[monthly,setMonthly]=useState(200);const[rate,setRate]=useState(4);const[res,setRes]=useState(null);function calc(){const needed=goal-saved;const r=rate/100/12;let months;if(r===0){months=needed/monthly;}else{months=Math.log(1+needed*r/monthly)/Math.log(1+r);}const m=Math.ceil(months);setRes({months:m,years:(m/12).toFixed(1),date:new Date(Date.now()+m*30*24*60*60*1000).toLocaleDateString()});}return(<div style={{padding:'2rem',fontFamily:'monospace',background:'#0f172a',minHeight:'100vh',color:'#e2e8f0'}}><h1 style={{fontSize:'1.5rem',marginBottom:'1rem'}}>Savings Goal Calculator</h1><div style={{display:'flex',flexDirection:'column',gap:'0.75rem',marginBottom:'1rem'}}><label>Savings Goal ($): <input type='number' value={goal} onChange={e=>setGoal(+e.target.value)} style={{background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',padding:'0.5rem',width:'100%'}}/></label><label>Already Saved ($): <input type='number' value={saved} onChange={e=>setSaved(+e.target.value)} style={{background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',padding:'0.5rem',width:'100%'}}/></label><label>Monthly Contribution ($): <input type='number' value={monthly} onChange={e=>setMonthly(+e.target.value)} style={{background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',padding:'0.5rem',width:'100%'}}/></label><label>Annual Interest Rate (%): <input type='number' value={rate} step='0.1' onChange={e=>setRate(+e.target.value)} style={{background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',padding:'0.5rem',width:'100%'}}/></label></div><button onClick={calc} style={{background:'#3b82f6',color:'white',padding:'0.75rem 1.5rem',border:'none',borderRadius:'4px',cursor:'pointer'}}>Calculate</button>{res&&<div style={{marginTop:'1rem',padding:'1rem',background:'#1e293b',borderRadius:'4px'}}><p>Time to reach goal: <span style={{color:'#22c55e',fontSize:'1.5rem'}}>{res.months} months ({res.years} years)</span></p><p style={{color:'#94a3b8'}}>Target date: {res.date}</p></div>}</div>);}
+'use client'
+import { useState } from 'react'
+
+export default function SavingsGoalCalculatorPage() {
+  const [result, setResult] = useState('')
+
+  return (
+    <div className='min-h-screen bg-gray-950 text-white p-8'>
+      <div className='max-w-2xl mx-auto'>
+        <h1 className='text-3xl font-bold mb-2'>Savings Goal Calculator</h1>
+        <p className='text-gray-400 mb-8'>Calculate how long to reach your savings goal with monthly contributions.</p>
+        <div className='bg-gray-900 rounded-xl p-6 border border-gray-800'>
+          <p className='text-gray-300'>Calculator coming soon.</p>
+        </div>
+        {result && <div className='mt-6 p-4 bg-blue-900/30 rounded-lg border border-blue-700'><p>{result}</p></div>}
+      </div>
+    </div>
+  )
+}

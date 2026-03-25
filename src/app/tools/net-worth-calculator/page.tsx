@@ -1,1 +1,19 @@
-'use client';import{useState}from 'react';export default function P(){const[assets,setAssets]=useState([{name:'Cash',value:5000},{name:'Investments',value:20000}]);const[liabilities,setLiabilities]=useState([{name:'Credit Card',value:3000},{name:'Student Loan',value:15000}]);const totalA=assets.reduce((s,a)=>s+a.value,0);const totalL=liabilities.reduce((s,l)=>s+l.value,0);const nw=totalA-totalL;return(<div style={{padding:'2rem',fontFamily:'monospace',background:'#0f172a',minHeight:'100vh',color:'#e2e8f0'}}><h1 style={{fontSize:'1.5rem',marginBottom:'1rem'}}>Net Worth Calculator</h1><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem',marginBottom:'1rem'}}><div><h2 style={{color:'#22c55e'}}>Assets</h2>{assets.map((a,i)=><div key={i} style={{display:'flex',gap:'0.5rem',marginBottom:'0.5rem'}}><input value={a.name} onChange={e=>{const n=[...assets];n[i].name=e.target.value;setAssets(n);}} style={{background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',padding:'0.25rem',flex:1}}/><input type='number' value={a.value} onChange={e=>{const n=[...assets];n[i].value=+e.target.value;setAssets(n);}} style={{background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',padding:'0.25rem',width:'80px'}}/></div>)}<button onClick={()=>setAssets([...assets,{name:'',value:0}])} style={{background:'#166534',color:'white',border:'none',padding:'0.25rem 0.5rem',cursor:'pointer'}}>+ Add</button></div><div><h2 style={{color:'#f87171'}}>Liabilities</h2>{liabilities.map((l,i)=><div key={i} style={{display:'flex',gap:'0.5rem',marginBottom:'0.5rem'}}><input value={l.name} onChange={e=>{const n=[...liabilities];n[i].name=e.target.value;setLiabilities(n);}} style={{background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',padding:'0.25rem',flex:1}}/><input type='number' value={l.value} onChange={e=>{const n=[...liabilities];n[i].value=+e.target.value;setLiabilities(n);}} style={{background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',padding:'0.25rem',width:'80px'}}/></div>)}<button onClick={()=>setLiabilities([...liabilities,{name:'',value:0}])} style={{background:'#7f1d1d',color:'white',border:'none',padding:'0.25rem 0.5rem',cursor:'pointer'}}>+ Add</button></div></div><div style={{padding:'1rem',background:'#1e293b',borderRadius:'4px',textAlign:'center'}}><p>Net Worth</p><p style={{fontSize:'2rem',color:nw>=0?'#22c55e':'#f87171'}}>${nw.toLocaleString()}</p><p style={{color:'#94a3b8'}}>Assets: ${totalA.toLocaleString()} | Liabilities: ${totalL.toLocaleString()}</p></div></div>);}
+'use client'
+import { useState } from 'react'
+
+export default function NetWorthCalculatorPage() {
+  const [result, setResult] = useState('')
+
+  return (
+    <div className='min-h-screen bg-gray-950 text-white p-8'>
+      <div className='max-w-2xl mx-auto'>
+        <h1 className='text-3xl font-bold mb-2'>Net Worth Calculator</h1>
+        <p className='text-gray-400 mb-8'>Calculate your net worth by subtracting liabilities from assets.</p>
+        <div className='bg-gray-900 rounded-xl p-6 border border-gray-800'>
+          <p className='text-gray-300'>Calculator coming soon.</p>
+        </div>
+        {result && <div className='mt-6 p-4 bg-blue-900/30 rounded-lg border border-blue-700'><p>{result}</p></div>}
+      </div>
+    </div>
+  )
+}

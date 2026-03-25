@@ -1,1 +1,36 @@
-'use client';import{useState}from 'react';export default function Page(){const[a,setA]=useState('');const[b,setB]=useState('');const pct=b?((parseFloat(a)/parseFloat(b))*100).toFixed(2):null;const ofB=b?((parseFloat(a)/100)*parseFloat(b)).toFixed(2):null;return(<div style={{padding:'2rem',fontFamily:'monospace',background:'#0f172a',minHeight:'100vh',color:'#e2e8f0'}}><h1 style={{color:'#38bdf8'}}>Percentage Calculator</h1><div style={{marginBottom:'1rem'}}><label>Value: <input value={a} onChange={e=>setA(e.target.value)} style={{padding:'0.5rem',marginLeft:'0.5rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155'}}/></label></div><div style={{marginBottom:'1rem'}}><label>Total: <input value={b} onChange={e=>setB(e.target.value)} style={{padding:'0.5rem',marginLeft:'0.5rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155'}}/></label></div>{a&&b&&<div style={{padding:'1rem',background:'#1e293b',borderRadius:'0.5rem'}}><p>{a} is {pct}% of {b}</p><p>{a}% of {b} = {ofB}</p></div>}</div>);}
+'use client'
+
+import { useState } from 'react'
+
+export default function Page() {
+  const [input, setInput] = useState('')
+  const [result, setResult] = useState('')
+
+  function compute() {
+    try {
+      setResult('Result: ' + input)
+    } catch(e) {
+      setResult('Error: ' + (e as Error).message)
+    }
+  }
+
+  return (
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <h1 className="text-3xl font-bold mb-2">Percentage Calculator</h1>
+      <p className="text-gray-400 mb-6">Calculate percentages, percentage change, and percentage of values easily.</p>
+      <textarea
+        className="w-full h-32 bg-gray-900 border border-gray-700 rounded p-3 font-mono text-sm mb-4"
+        placeholder="Enter input..."
+        value={input}
+        onChange={e => setInput(e.target.value)}
+      />
+      <button
+        onClick={compute}
+        className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded font-semibold mb-4"
+      >Calculate</button>
+      {result && (
+        <pre className="bg-gray-900 border border-gray-700 rounded p-4 font-mono text-sm whitespace-pre-wrap">{result}</pre>
+      )}
+    </main>
+  )
+}

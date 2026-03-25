@@ -1,1 +1,50 @@
-'use client';import{useState}from 'react';export default function P(){const[age,setAge]=useState(30);const[retAge,setRetAge]=useState(65);const[savings,setSavings]=useState(10000);const[monthly,setMonthly]=useState(500);const[ret,setRet]=useState(null);function calc(){const yrs=retAge-age;const r=0.07/12;const n=yrs*12;const fv=savings*Math.pow(1+r,n)+monthly*(Math.pow(1+r,n)-1)/r;setRet(fv);}return(<div style={{padding:'2rem',fontFamily:'monospace',background:'#0f172a',minHeight:'100vh',color:'#e2e8f0'}}><h1 style={{fontSize:'1.5rem',marginBottom:'1rem'}}>Retirement Calculator</h1><div style={{display:'flex',flexDirection:'column',gap:'0.75rem',marginBottom:'1rem'}}><label>Current Age: {age}<input type='range' min='18' max='80' value={age} onChange={e=>setAge(+e.target.value)} style={{width:'100%'}}/></label><label>Retirement Age: {retAge}<input type='range' min='50' max='80' value={retAge} onChange={e=>setRetAge(+e.target.value)} style={{width:'100%'}}/></label><label>Current Savings ($): <input type='number' value={savings} onChange={e=>setSavings(+e.target.value)} style={{background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',padding:'0.5rem',width:'100%'}}/></label><label>Monthly Contribution ($): <input type='number' value={monthly} onChange={e=>setMonthly(+e.target.value)} style={{background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',padding:'0.5rem',width:'100%'}}/></label></div><button onClick={calc} style={{background:'#3b82f6',color:'white',padding:'0.75rem 1.5rem',border:'none',borderRadius:'4px',cursor:'pointer'}}>Calculate</button>{ret&&<div style={{marginTop:'1rem',padding:'1rem',background:'#1e293b',borderRadius:'4px'}}><p>Projected Retirement Savings</p><p style={{fontSize:'2rem',color:'#22c55e'}}>${ret.toLocaleString(undefined,{maximumFractionDigits:0})}</p><p style={{color:'#94a3b8'}}>Over {retAge-age} years at 7% annual return</p></div>}</div>);}
+'use client'
+
+import { useState } from 'react'
+
+export default function ToolPage() {
+  const [input, setInput] = useState('')
+  const [result, setResult] = useState('')
+
+  const process = () => {
+    try {
+      let output = ''
+
+      const parts = input.split(',').map(s => parseFloat(s.trim()))
+      const [age, retireAge, savings, monthly, rate] = parts
+      if (parts.some(isNaN)) { output = 'Enter: currentAge, retirementAge, currentSavings, monthlyContribution, annualReturnRate%\nExample: 30, 65, 50000, 500, 7'; setResult(output); return }
+      const years = retireAge - age
+      const r = rate / 100 / 12
+      const n = years * 12
+      const fv = savings * Math.pow(1 + r, n) + monthly * (Math.pow(1 + r, n) - 1) / r
+      const monthly4pct = fv * 0.04 / 12
+      output = 'Years to retirement: ' + years + '\nProjected savings: $' + fv.toLocaleString('en', {maximumFractionDigits: 0}) + '\nMonthly income (4% rule): $' + monthly4pct.toLocaleString('en', {maximumFractionDigits: 0})
+
+      setResult(output)
+    } catch(e) {
+      setResult('Error: ' + (e as Error).message)
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-950 text-gray-100 p-8">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Retirement Calculator</h1>
+        <p className="text-gray-400 mb-6">Calculate retirement savings and projected income</p>
+        <input
+          className="w-full bg-gray-800 border border-gray-700 rounded p-3 mb-4 font-mono"
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          placeholder="Enter value..."
+        />
+        <button
+          onClick={process}
+          className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded font-semibold mb-6"
+        >Calculate</button>
+        {result && (
+          <pre className="bg-gray-800 border border-gray-700 rounded p-4 whitespace-pre-wrap font-mono text-sm">{result}</pre>
+        )}
+      </div>
+    </div>
+  )
+}

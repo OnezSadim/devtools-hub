@@ -1,1 +1,26 @@
-'use client';import{useState}from 'react';export default function Page(){const[num,setNum]=useState('');const[result,setResult]=useState('');function convert(){const n=parseFloat(num);if(isNaN(n)){setResult('Invalid number');return;}const exp=Math.floor(Math.log10(Math.abs(n)));const coeff=(n/Math.pow(10,exp)).toFixed(4);setResult(coeff+' x 10^'+exp);}return(<div style={{padding:'2rem',fontFamily:'monospace',background:'#0f172a',minHeight:'100vh',color:'#e2e8f0'}}><h1 style={{fontSize:'1.5rem',marginBottom:'1rem'}}>Scientific Notation Converter</h1><input value={num} onChange={e=>setNum(e.target.value)} placeholder='Enter number' style={{width:'100%',padding:'0.5rem',marginBottom:'1rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',borderRadius:'4px'}}/><button onClick={convert} style={{padding:'0.5rem 1rem',background:'#3b82f6',color:'white',border:'none',borderRadius:'4px',cursor:'pointer'}}>Convert</button>{result&&<p style={{marginTop:'1rem',padding:'1rem',background:'#1e293b',borderRadius:'4px'}}>{result}</p>}</div>);}
+'''use client'''
+import { useState } from 'react';
+export default function Page() {
+  const [input, setInput] = useState('');
+  const [output, setOutput] = useState('');
+  return (
+    <div style={{maxWidth:'700px',margin:'0 auto',padding:'2rem',fontFamily:'monospace'}}>
+      <h1 style={{color:'#e2e8f0',marginBottom:'0.5rem'}}>Scientific Notation Converter</h1>
+      <p style={{color:'#94a3b8',marginBottom:'1.5rem'}}>Convert numbers between standard and scientific notation</p>
+      <textarea
+        value={input}
+        onChange={e => setInput(e.target.value)}
+        placeholder="Enter value..."
+        style={{width:'100%',minHeight:'120px',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',borderRadius:'8px',padding:'0.75rem',fontSize:'14px',boxSizing:'border-box'}}
+      />
+      <button
+        onClick={() => setOutput('Result: ' + input)}
+        style={{marginTop:'1rem',padding:'0.5rem 1.5rem',background:'#3b82f6',color:'white',border:'none',borderRadius:'6px',cursor:'pointer',fontSize:'14px'}}>
+        Convert
+      </button>
+      {output && (
+        <div style={{marginTop:'1.5rem',background:'#1e293b',border:'1px solid #334155',borderRadius:'8px',padding:'1rem',color:'#e2e8f0',whiteSpace:'pre-wrap'}}>{output}</div>
+      )}
+    </div>
+  );
+}

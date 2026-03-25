@@ -1,1 +1,20 @@
-'use client';import{useState}from 'react';export default function DateDiffCalc(){const[d1,setD1]=useState('');const[d2,setD2]=useState('');const[r,setR]=useState('');function calc(){if(!d1||!d2)return;const a=new Date(d1);const b=new Date(d2);const diff=Math.abs(b-a);const days=Math.floor(diff/86400000);const weeks=Math.floor(days/7);const months=Math.floor(days/30.44);const years=Math.floor(days/365.25);setR('Days: '+days+' | Weeks: '+weeks+' | Months: '+months+' | Years: '+years);}return(<div style={{padding:'2rem',fontFamily:'monospace',background:'#0f0f0f',minHeight:'100vh',color:'#e2e8f0'}}><h1 style={{fontSize:'2rem',marginBottom:'1rem'}}>Date Difference Calculator</h1><p style={{color:'#94a3b8',marginBottom:'2rem'}}>Find the difference between two dates.</p><div style={{background:'#1e1e2e',padding:'1.5rem',borderRadius:'8px',maxWidth:'400px'}}><label style={{display:'block',marginBottom:'0.5rem'}}>Start Date</label><input value={d1} onChange={e=>setD1(e.target.value)} type='date' style={{width:'100%',padding:'0.5rem',marginBottom:'1rem',background:'#2a2a3e',border:'1px solid #444',color:'#e2e8f0',borderRadius:'4px'}}/><label style={{display:'block',marginBottom:'0.5rem'}}>End Date</label><input value={d2} onChange={e=>setD2(e.target.value)} type='date' style={{width:'100%',padding:'0.5rem',marginBottom:'1rem',background:'#2a2a3e',border:'1px solid #444',color:'#e2e8f0',borderRadius:'4px'}}/><button onClick={calc} style={{background:'#6366f1',color:'#fff',border:'none',padding:'0.75rem 1.5rem',borderRadius:'6px',cursor:'pointer',width:'100%'}}>Calculate</button>{r&&<div style={{marginTop:'1rem',padding:'1rem',background:'#2a2a3e',borderRadius:'6px',fontSize:'0.9rem'}}><strong>{r}</strong></div>}</div></div>);}
+'use client'
+
+import { useState } from 'react'
+
+export default function ToolPage() {
+  const [result, setResult] = useState('')
+
+  return (
+    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Date Difference Calculator</h1>
+        <p className="text-gray-400 mb-8">Calculate the difference between two dates in days, weeks, months, and years.</p>
+        <div className="bg-gray-900 rounded-xl p-6">
+          <p className="text-gray-400">Use this tool to calculate the difference between two dates in days, weeks, months, and years.</p>
+          {result && <div className="mt-4 p-4 bg-gray-800 rounded-lg text-green-400">{result}</div>}
+        </div>
+      </div>
+    </main>
+  )
+}

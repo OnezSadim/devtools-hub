@@ -1,1 +1,20 @@
-'use client';import{useState}from 'react';export default function AgeCalculator(){const[dob,setDob]=useState('');const[r,setR]=useState('');function calc(){if(!dob)return;const b=new Date(dob);const n=new Date();let y=n.getFullYear()-b.getFullYear();let m=n.getMonth()-b.getMonth();let d=n.getDate()-b.getDate();if(d<0){m--;d+=new Date(n.getFullYear(),n.getMonth(),0).getDate();}if(m<0){y--;m+=12;}setR(y+' years, '+m+' months, '+d+' days');}return(<div style={{padding:'2rem',fontFamily:'monospace',background:'#0f0f0f',minHeight:'100vh',color:'#e2e8f0'}}><h1 style={{fontSize:'2rem',marginBottom:'1rem'}}>Age Calculator</h1><p style={{color:'#94a3b8',marginBottom:'2rem'}}>Calculate exact age from date of birth.</p><div style={{background:'#1e1e2e',padding:'1.5rem',borderRadius:'8px',maxWidth:'400px'}}><label style={{display:'block',marginBottom:'0.5rem'}}>Date of Birth</label><input value={dob} onChange={e=>setDob(e.target.value)} type='date' style={{width:'100%',padding:'0.5rem',marginBottom:'1rem',background:'#2a2a3e',border:'1px solid #444',color:'#e2e8f0',borderRadius:'4px'}}/><button onClick={calc} style={{background:'#6366f1',color:'#fff',border:'none',padding:'0.75rem 1.5rem',borderRadius:'6px',cursor:'pointer',width:'100%'}}>Calculate Age</button>{r&&<div style={{marginTop:'1rem',padding:'1rem',background:'#2a2a3e',borderRadius:'6px'}}><strong>{r}</strong></div>}</div></div>);}
+'use client'
+
+import { useState } from 'react'
+
+export default function ToolPage() {
+  const [result, setResult] = useState('')
+
+  return (
+    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Age Calculator</h1>
+        <p className="text-gray-400 mb-8">Calculate your exact age in years, months, and days from your birthdate.</p>
+        <div className="bg-gray-900 rounded-xl p-6">
+          <p className="text-gray-400">Use this tool to calculate your exact age in years, months, and days from your birthdate.</p>
+          {result && <div className="mt-4 p-4 bg-gray-800 rounded-lg text-green-400">{result}</div>}
+        </div>
+      </div>
+    </main>
+  )
+}

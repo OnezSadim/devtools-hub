@@ -1,37 +1,54 @@
-"use client";
-import { useState } from "react";
-export default function DuplicateLineRemover() {
-  const [text, setText] = useState("");
-  const [caseSensitive, setCaseSensitive] = useState(true);
-  const process = () => {
-    const lines = text.split("\n");
-    const seen = new Set();
-    return lines.filter(line => {
-      const key = caseSensitive ? line : line.toLowerCase();
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    }).join("\n");
+'use client'
+
+import { useState } from 'react';
+
+export default function ToolPage() {
+  const [input, setInput] = useState('');
+  const [output, setOutput] = useState('');
+  const [copied, setCopied] = useState(false);
+
+  const convert = () => {
+    const lines = input.split('
+');
+    const unique = [...new Set(lines)];
+    setOutput(unique.join('
+'));
   };
-  const result = process();
-  const removed = text.split("\n").length - result.split("\n").length;
+
+  const copyOutput = () => {
+    navigator.clipboard.writeText(output);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
-    <div className="min-h-screen bg-gray-950 text-white p-8">
-      <h1 className="text-3xl font-bold mb-2">Duplicate Line Remover</h1>
-      <p className="text-gray-400 mb-6">Remove duplicate lines from text, keeping only unique lines.</p>
-      <label className="flex items-center gap-2 mb-4 cursor-pointer">
-        <input type="checkbox" checked={caseSensitive} onChange={e => setCaseSensitive(e.target.checked)} className="w-4 h-4" />
-        <span className="text-gray-300">Case sensitive</span>
-      </label>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <div className="text-sm text-gray-400 mb-2">Input ({text.split("\n").length} lines)</div>
-          <textarea className="w-full h-64 bg-gray-900 border border-gray-700 rounded p-3 text-white resize-none" placeholder="Paste lines here..." value={text} onChange={e => setText(e.target.value)} />
+    <div style={{minHeight:'100vh',background:'#0f172a',color:'#e2e8f0',padding:'2rem',fontFamily:'system-ui,sans-serif'}}>
+      <div style={{maxWidth:'800px',margin:'0 auto'}}>
+        <h1 style={{fontSize:'2rem',fontWeight:'bold',marginBottom:'0.5rem',color:'#38bdf8'}}>Duplicate Line Remover</h1>
+        <p style={{color:'#94a3b8',marginBottom:'2rem'}}>Remove duplicate lines from text quickly and easily online.</p>
+
+        <textarea
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          placeholder="Paste your text here..."
+          style={{width:'100%',height:'180px',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',borderRadius:'0.5rem',padding:'0.75rem',fontFamily:'monospace',fontSize:'0.9rem',resize:'vertical',boxSizing:'border-box'}}
+        />
+        <div style={{margin:'1rem 0',textAlign:'center'}}>
+          <button onClick={convert} style={{background:'#0ea5e9',color:'white',border:'none',borderRadius:'0.5rem',padding:'0.625rem 2rem',fontSize:'1rem',cursor:'pointer',fontWeight:'600'}}>Convert</button>
         </div>
-        <div>
-          <div className="text-sm text-gray-400 mb-2">Output ({result.split("\n").filter(l=>l).length} unique, {removed} removed)</div>
-          <textarea className="w-full h-64 bg-gray-900 border border-gray-700 rounded p-3 text-green-400 resize-none" readOnly value={result} />
-        </div>
+        {output && (
+          <div>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'0.5rem'}}>
+              <label style={{color:'#94a3b8'}}>Result:</label>
+              <button onClick={copyOutput} style={{background:copied?'#10b981':'#334155',color:'white',border:'none',borderRadius:'0.375rem',padding:'0.25rem 0.75rem',cursor:'pointer',fontSize:'0.875rem'}}>{copied?'Copied!':'Copy'}</button>
+            </div>
+            <textarea
+              value={output}
+              readOnly
+              style={{width:'100%',height:'180px',background:'#1e293b',color:'#4ade80',border:'1px solid #334155',borderRadius:'0.5rem',padding:'0.75rem',fontFamily:'monospace',fontSize:'0.9rem',resize:'vertical',boxSizing:'border-box'}}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
