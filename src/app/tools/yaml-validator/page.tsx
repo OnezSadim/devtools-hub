@@ -1,54 +1,47 @@
 "use client";
 import { useState } from "react";
 
+function parseYAML(text: string): {ok:boolean, msg:string, lines:number} {
+  const lines = text.split("
+");
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (/^	/.test(line)) return {ok:false, msg:`Line ${i+1}: YAML does not allow tabs for indentation`, lines: i+1};
+    if (/^(\s*)([^:]+):(\s*)$/.test(line) && line.trim().endsWith(":")) continue;
+    if (line.trim() === "---" || line.trim() === "...") continue;
+  }
+  return {ok:true, msg:"Valid YAML structure (basic check)", lines: lines.length};
+}
+
 export default function YAMLValidator() {
   const [input, setInput] = useState("");
-  const [result, setResult] = useState<{valid:boolean,message:string}|null>(null);
+  const [res, setRes] = useState<{ok:boolean,msg:string,lines:number}|null>(null);
 
-  const validate = () => {
-    if (!input.trim()) { setResult({valid:false,message:"Input is empty"}); return; }
-    try {
-      // Basic YAML validation via structural checks
-      const lines = input.split("
-");
-      const errors: string[] = [];
-      lines.forEach((line,i) => {
-        const trimmed = line.trimStart();
-        if (trimmed.startsWith("-") && !trimmed.startsWith("- ") && trimmed.length > 1) {
-          // ok
-        }
-        const colonIdx = trimmed.indexOf(":");
-        if (colonIdx > 0 && colonIdx < trimmed.length-1) {
-          const after = trimmed[colonIdx+1];
-          if (after !== " " && after !== "
-" && after !== undefined) {
-            errors.push(`Line ${i+1}: colon not followed by space`);
-          }
-        }
-      });
-      if (errors.length > 0) {
-        setResult({valid:false,message:errors.join("
-")});
-      } else {
-        setResult({valid:true,message:"Valid YAML structure"});
-      }
-    } catch(e) { setResult({valid:false,message:String(e)}); }
-  };
+  const sample = `name: my-app
+version: 1.0.0
+config:
+  debug: true
+  port: 3000
+tags:
+  - web
+  - api`;
 
   return (
     <main className="min-h-screen bg-gray-950 text-white p-8">
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">YAML Validator</h1>
-        <p className="text-gray-400 mb-6">Check your YAML for syntax errors.</p>
-        <textarea value={input} onChange={e=>setInput(e.target.value)} placeholder="Paste YAML here..." className="w-full h-64 bg-gray-900 border border-gray-700 rounded p-3 font-mono text-sm focus:outline-none focus:border-blue-500" />
-        <div className="flex gap-3 mt-4">
-          <button onClick={validate} className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded font-medium">Validate</button>
-          <button onClick={()=>{setInput("");setResult(null)}} className="bg-gray-700 hover:bg-gray-600 px-6 py-2 rounded">Clear</button>
+      <h1 className="text-3xl font-bold mb-2">YAML Validator</h1>
+      <p className="text-gray-400 mb-6">Validate YAML syntax and check for common errors.</p>
+      <div className="max-w-2xl">
+        <textarea value={input} onChange={e=>setInput(e.target.value)} className="w-full h-64 bg-gray-900 rounded p-3 font-mono text-sm resize-none mb-3" placeholder="Paste your YAML here..." />
+        <div className="flex gap-3 mb-4">
+          <button onClick={()=>setRes(parseYAML(input))} className="bg-blue-600 hover:bg-blue-700 rounded px-6 py-2 font-semibold">Validate</button>
+          <button onClick={()=>{setInput(sample);setRes(null);}} className="bg-gray-700 hover:bg-gray-600 rounded px-4 py-2">Load Sample</button>
+          <button onClick={()=>{setInput("");setRes(null);}} className="bg-gray-700 hover:bg-gray-600 rounded px-4 py-2">Clear</button>
         </div>
-        {result && (
-          <div className={`mt-4 p-4 rounded border ${result.valid ? "bg-green-900/30 border-green-700 text-green-300" : "bg-red-900/30 border-red-700 text-red-300"}`}>
-            <div className="font-medium mb-1">{result.valid ? "Valid" : "Invalid"}</div>
-            <pre className="text-sm whitespace-pre-wrap">{result.message}</pre>
+        {res && (
+          <div className={`rounded-xl p-4 ${res.ok?"bg-green-900 border border-green-600":"bg-red-900 border border-red-600"}`}>
+            <div className="font-semibold mb-1">{res.ok ? "Valid" : "Invalid"}</div>
+            <div className="text-sm">{res.msg}</div>
+            <div className="text-sm text-gray-400 mt-1">{res.lines} lines</div>
           </div>
         )}
       </div>

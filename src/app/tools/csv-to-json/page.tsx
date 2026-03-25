@@ -1,43 +1,56 @@
 "use client";
 import { useState } from "react";
-export default function CsvToJson() {
+
+export default function CSVToJSON() {
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
   const [error, setError] = useState("");
-  const convert = () => {
+
+  function convert() {
     try {
-      setError("");
       const lines = input.trim().split("
-");
-      if (lines.length < 2) throw new Error("Need header + at least one data row");
-      const headers = lines[0].split(",").map(h => h.trim());
+").filter(Boolean);
+      if (lines.length < 2) { setError("Need header row + at least one data row"); setOutput(""); return; }
+      const headers = lines[0].split(",").map(h=>h.trim().replace(/^"|"$/g,""));
       const rows = lines.slice(1).map(line => {
-        const vals = line.split(",").map(v => v.trim());
-        return Object.fromEntries(headers.map((h, i) => [h, vals[i] ?? ""]));
+        const vals = line.split(",").map(v=>v.trim().replace(/^"|"$/g,""));
+        const obj: Record<string,string> = {};
+        headers.forEach((h,i)=>{ obj[h] = vals[i] || ""; });
+        return obj;
       });
       setOutput(JSON.stringify(rows, null, 2));
-    } catch (e: any) { setError(e.message); }
-  };
+      setError("");
+    } catch(e) {
+      setError("Parse error: " + (e as Error).message);
+      setOutput("");
+    }
+  }
+
+  const sample = "name,age,city
+Alice,30,Amsterdam
+Bob,25,Berlin
+Carol,35,Paris";
+
   return (
     <main className="min-h-screen bg-gray-950 text-white p-8">
-      <h1 className="text-3xl font-bold mb-2">CSV to JSON</h1>
-      <p className="text-gray-400 mb-6">Convert CSV data to a JSON array of objects.</p>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <h1 className="text-3xl font-bold mb-2">CSV to JSON Converter</h1>
+      <p className="text-gray-400 mb-6">Convert CSV data to JSON format instantly.</p>
+      <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm text-gray-400 mb-1">CSV Input</label>
-          <textarea className="w-full h-64 bg-gray-900 border border-gray-700 rounded p-3 font-mono text-sm" value={input} onChange={e => setInput(e.target.value)} placeholder="name,age
-Alice,30
-Bob,25" />
+          <label className="text-sm text-gray-400 block mb-1">CSV Input</label>
+          <textarea value={input} onChange={e=>setInput(e.target.value)} className="w-full h-64 bg-gray-900 rounded p-3 font-mono text-sm resize-none" placeholder="name,age,city
+Alice,30,NYC" />
         </div>
         <div>
-          <label className="block text-sm text-gray-400 mb-1">JSON Output</label>
-          <textarea className="w-full h-64 bg-gray-900 border border-gray-700 rounded p-3 font-mono text-sm" value={output} readOnly />
+          <label className="text-sm text-gray-400 block mb-1">JSON Output</label>
+          <textarea readOnly value={output} className="w-full h-64 bg-gray-900 rounded p-3 font-mono text-sm resize-none text-green-400" />
         </div>
       </div>
-      {error && <p className="text-red-400 mt-2 text-sm">{error}</p>}
-      <div className="flex gap-2 mt-3">
-        <button onClick={convert} className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded font-semibold">Convert</button>
-        {output && <button onClick={() => navigator.clipboard.writeText(output)} className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded text-sm">Copy JSON</button>}
+      {error && <div className="text-red-400 text-sm mt-2">{error}</div>}
+      <div className="flex gap-3 mt-4">
+        <button onClick={convert} className="bg-blue-600 hover:bg-blue-700 rounded px-6 py-2 font-semibold">Convert</button>
+        <button onClick={()=>{setInput(sample);setOutput("");}} className="bg-gray-700 hover:bg-gray-600 rounded px-4 py-2">Load Sample</button>
+        <button onClick={()=>navigator.clipboard.writeText(output)} className="bg-gray-700 hover:bg-gray-600 rounded px-4 py-2">Copy JSON</button>
       </div>
     </main>
   );
