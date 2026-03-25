@@ -1,57 +1,54 @@
 "use client";
 import { useState } from "react";
-
-export default function XMLFormatter() {
-  const [input, setInput] = useState("");
-  const [output, setOutput] = useState("");
-  const [error, setError] = useState("");
-
-  const format = () => {
+export default function XmlFormatter() {
+  const [input, setInput] = useState('');
+  const [output, setOutput] = useState('');
+  const [indent, setIndent] = useState(2);
+  function format() {
     try {
-      setError("");
       const parser = new DOMParser();
-      const doc = parser.parseFromString(input, "application/xml");
-      const err = doc.querySelector("parsererror");
-      if (err) { setError("Invalid XML: " + err.textContent); setOutput(""); return; }
-      const xs = new XMLSerializer();
-      let raw = xs.serializeToString(doc);
-      // Pretty print
-      let indent = 0;
-      let result = "";
-      raw.replace(/></g, ">
-<").split("
-").forEach(line => {
-        if (line.match(/^<\//)){ indent--; }
-        result += "  ".repeat(Math.max(0,indent)) + line + "
-";
-        if (line.match(/^<[^/!?]/) && !line.match(/\/>/)) { indent++; }
-      });
-      setOutput(result.trim());
-    } catch(e) { setError(String(e)); }
-  };
-
+      const doc = parser.parseFromString(input, 'text/xml');
+      const err = doc.querySelector('parsererror');
+      if (err) { setOutput('Parse error: ' + err.textContent); return; }
+      function serialize(node, level) {
+        const pad = ' '.repeat(level * indent);
+        if (node.nodeType === 3) { const t = node.textContent.trim(); return t ? pad + t : ''; }
+        if (node.nodeType !== 1) return '';
+        const tag = node.tagName;
+        const attrs = Array.from(node.attributes).map(a => a.name + '="' + a.value + '"').join(' ');
+        const open = '<' + tag + (attrs ? ' ' + attrs : '') + '>';
+        const children = Array.from(node.childNodes).map(c => serialize(c, level+1)).filter(Boolean);
+        if (children.length === 0) return pad + '<' + tag + (attrs ? ' ' + attrs : '') + '/>';
+        if (children.length === 1 && !children[0].includes('
+')) return pad + open + children[0].trim() + '</' + tag + '>';
+        return pad + open + '
+' + children.join('
+') + '
+' + pad + '</' + tag + '>';
+      }
+      setOutput('<?xml version="1.0" encoding="UTF-8"?>
+' + serialize(doc.documentElement, 0));
+    } catch(e) { setOutput('Error: ' + e.message); }
+  }
   return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">XML Formatter</h1>
-        <p className="text-gray-400 mb-6">Prettify and validate XML documents.</p>
-        {error && <div className="bg-red-900/50 border border-red-700 rounded p-3 mb-4 text-red-300 text-sm">{error}</div>}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">Input XML</label>
-            <textarea value={input} onChange={e=>setInput(e.target.value)} placeholder="Paste XML here..." className="w-full h-64 bg-gray-900 border border-gray-700 rounded p-3 font-mono text-sm focus:outline-none focus:border-blue-500" />
-          </div>
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">Formatted XML</label>
-            <textarea value={output} readOnly className="w-full h-64 bg-gray-900 border border-gray-700 rounded p-3 font-mono text-sm" />
-          </div>
+    <div style={{maxWidth:900,margin:'0 auto',padding:'2rem',fontFamily:'monospace',background:'#0f172a',minHeight:'100vh',color:'#e2e8f0'}}>
+      <h1 style={{fontSize:'1.8rem',fontWeight:700,marginBottom:'0.5rem'}}>XML Formatter</h1>
+      <p style={{color:'#94a3b8',marginBottom:'1.5rem'}}>Prettify and format XML documents.</p>
+      <div style={{display:'flex',alignItems:'center',gap:'1rem',marginBottom:'1rem'}}>
+        <label style={{color:'#94a3b8'}}>Indent spaces:</label>
+        <input type="number" value={indent} onChange={e=>setIndent(Number(e.target.value))} min={1} max={8} style={{width:60,background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',borderRadius:4,padding:'0.25rem 0.5rem'}} />
+        <button onClick={format} style={{background:'#3b82f6',color:'#fff',border:'none',borderRadius:6,padding:'0.5rem 1.5rem',cursor:'pointer'}}>Format</button>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem'}}>
+        <div>
+          <label style={{display:'block',marginBottom:'0.5rem',color:'#94a3b8'}}>Input XML:</label>
+          <textarea value={input} onChange={e=>setInput(e.target.value)} rows={18} placeholder="<root><child>value</child></root>" style={{width:'100%',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',borderRadius:6,padding:'0.75rem',fontSize:'0.85rem',boxSizing:'border-box'}} />
         </div>
-        <div className="flex gap-3 mt-4">
-          <button onClick={format} className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded font-medium">Format</button>
-          <button onClick={()=>{navigator.clipboard.writeText(output)}} className="bg-gray-700 hover:bg-gray-600 px-6 py-2 rounded">Copy</button>
-          <button onClick={()=>{setInput("");setOutput("");setError("")}} className="bg-gray-700 hover:bg-gray-600 px-6 py-2 rounded">Clear</button>
+        <div>
+          <label style={{display:'block',marginBottom:'0.5rem',color:'#94a3b8'}}>Formatted XML:</label>
+          <textarea value={output} readOnly rows={18} style={{width:'100%',background:'#1e293b',color:'#a3e635',border:'1px solid #334155',borderRadius:6,padding:'0.75rem',fontSize:'0.85rem',boxSizing:'border-box'}} />
         </div>
       </div>
-    </main>
+    </div>
   );
 }
