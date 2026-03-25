@@ -1,13 +1,1 @@
-"use client";
-import { useState } from "react";
-export default function Page() {
-  const [v, setV] = useState("");
-  return (
-    <main style={{padding:"2rem",fontFamily:"sans-serif",background:"#0f172a",minHeight:"100vh",color:"#f1f5f9"}}>
-      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Electric Capacitance Converter</h1>
-      <p style={{color:"#94a3b8",marginBottom:"1.5rem"}}>Convert between electric capacitance units like farad, millifarad, microfarad, nanofarad, and picofarad.</p>
-      <input value={v} onChange={e=>setV(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",width:"200px",marginRight:"1rem"}} />
-      <p style={{marginTop:"1rem",color:"#94a3b8"}}>Full converter coming soon.</p>
-    </main>
-  );
-}
+"use client";import{useState}from"react";const units=[{k:"F",l:"Farad (F)",f:1},{k:"mF",l:"Millifarad (mF)",f:0.001},{k:"uF",l:"Microfarad (µF)",f:1e-06},{k:"nF",l:"Nanofarad (nF)",f:1e-09},{k:"pF",l:"Picofarad (pF)",f:1e-12},{k:"kF",l:"Kilofarad (kF)",f:1000}];export default function Page(){const[val,setVal]=useState("");const[from,setFrom]=useState(units[0].k);const[to,setTo]=useState(units[1].k);const base=units.find(u=>u.k===from);const toU=units.find(u=>u.k===to);const result=val===""?"":((parseFloat(val)*base.f)/toU.f).toPrecision(6);return(<div style={{padding:"2rem",fontFamily:"sans-serif",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}><h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Electric Capacitance Converter</h1><p style={{color:"#94a3b8",marginBottom:"1.5rem"}}>Convert between capacitance units: farad, microfarad, nanofarad, picofarad, and more.</p><div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1rem"}}><input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:"1rem",width:"160px"}}/><select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0"}}>{units.map(u=>(<option key={u.k} value={u.k}>{u.l}</option>))}</select><span style={{alignSelf:"center",fontSize:"1.2rem"}}>→</span><select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0"}}>{units.map(u=>(<option key={u.k} value={u.k}>{u.l}</option>))}</select></div>{val!==""&&<div style={{background:"#1e293b",padding:"1rem",borderRadius:"8px",fontSize:"1.1rem"}}><strong>{val} {units.find(u=>u.k===from)?.l}</strong> = <strong style={{color:"#38bdf8"}}>{result} {units.find(u=>u.k===to)?.l}</strong></div>}</div>);}
