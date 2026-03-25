@@ -1,13 +1,1 @@
-"use client";
-import { useState } from "react";
-export default function Page() {
-  const [v, setV] = useState("");
-  return (
-    <main style={{padding:"2rem",fontFamily:"sans-serif",background:"#0f172a",minHeight:"100vh",color:"#f1f5f9"}}>
-      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Magnetic Flux Converter</h1>
-      <p style={{color:"#94a3b8",marginBottom:"1.5rem"}}>Convert between magnetic flux units like weber, maxwell, and tesla square meter.</p>
-      <input value={v} onChange={e=>setV(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",width:"200px",marginRight:"1rem"}} />
-      <p style={{marginTop:"1rem",color:"#94a3b8"}}>Full converter coming soon.</p>
-    </main>
-  );
-}
+"use client";import{useState}from"react";const units=[{name:"Weber (Wb)",factor:1},{name:"Milliweber (mWb)",factor:0.001},{name:"Microweber (μWb)",factor:1e-06},{name:"Maxwell (Mx)",factor:1e-08},{name:"Kiloweber (kWb)",factor:1000},{name:"Volt-second (V·s)",factor:1}];export default function Page(){const[val,setVal]=useState("");const[from,setFrom]=useState(0);const n=parseFloat(val);const base=isNaN(n)?null:n*units[from].factor;return(<main style={{padding:"2rem",fontFamily:"sans-serif",maxWidth:600,margin:"0 auto"}}><h1>Magnetic Flux Converter</h1><p>Convert between webers, milliwebers, microwebers, maxwells, kilowebers, volt-seconds.</p><div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1rem"}}><input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",fontSize:"1rem",flex:1}}/><select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{padding:"0.5rem"}}>{units.map((u,i)=><option key={i} value={i}>{u.name}</option>)}</select></div><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><th style={{textAlign:"left",padding:"0.5rem",borderBottom:"2px solid #333"}}>Unit</th><th style={{textAlign:"right",padding:"0.5rem",borderBottom:"2px solid #333"}}>Value</th></tr></thead><tbody>{units.map((u,i)=><tr key={i} style={{background:i===from?"#f0f0f0":"transparent"}}><td style={{padding:"0.5rem",borderBottom:"1px solid #eee"}}>{u.name}</td><td style={{padding:"0.5rem",borderBottom:"1px solid #eee",textAlign:"right"}}>{base===null?"—":(base/u.factor).toPrecision(6)}</td></tr>)}</tbody></table></main>);}
