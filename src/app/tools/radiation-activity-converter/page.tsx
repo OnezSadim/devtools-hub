@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
 
-const units = ["gray","centigray","rad","milligray","microgray"];
+const units = ["becquerel","curie","millicurie","microcurie","kilobecquerel","megabecquerel"];
 
-const conversions = {"gray":1,"centigray":0.01,"rad":0.01,"milligray":0.001,"microgray":0.000001};
+const conversions = {"becquerel":1,"curie":3.7e10,"millicurie":3.7e7,"microcurie":37000,"kilobecquerel":1000,"megabecquerel":1000000};
 
 export default function Page() {
   const [val, setVal] = useState("");
@@ -17,7 +17,7 @@ export default function Page() {
   }
   return (
     <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",padding:"2rem",fontFamily:"monospace"}}>
-      <h1 style={{fontSize:"1.8rem",marginBottom:"1rem"}}>Radiation Absorbed Dose Converter</h1>
+      <h1 style={{fontSize:"1.8rem",marginBottom:"1rem"}}>Radiation Activity Converter</h1>
       <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1rem"}}>
         <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",width:"150px"}} />
         <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9"}}>
