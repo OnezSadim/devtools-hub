@@ -1,32 +1,53 @@
-"use client";
-import { useState } from "react";
+'''use client'''
 
-const units = ['darcy', 'millidarcy', 'm2', 'cm2', 'ft2'];
-const factors = {'darcy': 9.869233e-13, 'millidarcy': 9.869233e-16, 'm2': 1, 'cm2': 0.0001, 'ft2': 0.0929};
+import { useState } from 'react';
 
 export default function Page() {
-  const [val, setVal] = useState("");
-  const [from, setFrom] = useState(units[0]);
-  const [to, setTo] = useState(units[1]);
-  function convert() {
-    const n = parseFloat(val);
-    if (isNaN(n)) return "";
-    return ((n * factors[from]) / factors[to]).toPrecision(6);
-  }
+  const [value, setValue] = useState('');
+  const [from, setFrom] = useState('base');
+  const [to, setTo] = useState('base');
+  const [result, setResult] = useState('');
+
+  const units: Record<string, number> = {
+    base: 1,
+    kilo: 1e3,
+    mega: 1e6,
+    milli: 1e-3,
+    micro: 1e-6,
+    nano: 1e-9,
+  };
+
+  const convert = () => {
+    const v = parseFloat(value);
+    if (isNaN(v)) { setResult('Invalid input'); return; }
+    const base_val = v * units[from];
+    setResult((base_val / units[to]).toExponential(6));
+  };
+
   return (
-    <main style={{padding:"2rem",fontFamily:"monospace",background:"#0f0f0f",minHeight:"100vh",color:"#e0e0e0"}}>
-      <h1 style={{color:"#7c3aed"}}>Permeability Converter</h1>
-      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginTop:"1rem"}}>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",background:"#1a1a1a",color:"#e0e0e0",border:"1px solid #333",borderRadius:"4px"}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1a1a1a",color:"#e0e0e0",border:"1px solid #333",borderRadius:"4px"}}>
-          {units.map((u:string)=><option key={u}>{u}</option>)}
-        </select>
-        <span style={{alignSelf:"center"}}>to</span>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1a1a1a",color:"#e0e0e0",border:"1px solid #333",borderRadius:"4px"}}>
-          {units.map((u:string)=><option key={u}>{u}</option>)}
-        </select>
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <h1 className="text-3xl font-bold mb-2">Permeability Converter</h1>
+      <p className="text-gray-400 mb-6">Convert between magnetic permeability units including henries per meter and relative permeability</p>
+      <div className="bg-gray-900 rounded-xl p-6 max-w-lg space-y-4">
+        <input type="number" value={value} onChange={e => setValue(e.target.value)}
+          placeholder="Enter value" className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white" />
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">From</label>
+            <select value={from} onChange={e => setFrom(e.target.value)} className="w-full bg-gray-800 rounded-lg px-3 py-2 text-white">
+              {Object.keys(units).map(u => <option key={u} value={u}>{u}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">To</label>
+            <select value={to} onChange={e => setTo(e.target.value)} className="w-full bg-gray-800 rounded-lg px-3 py-2 text-white">
+              {Object.keys(units).map(u => <option key={u} value={u}>{u}</option>)}
+            </select>
+          </div>
+        </div>
+        <button onClick={convert} className="w-full bg-blue-600 hover:bg-blue-700 rounded-lg px-4 py-2 font-semibold">Convert</button>
+        {result && <div className="bg-gray-800 rounded-lg p-4 text-center text-2xl font-mono">{result}</div>}
       </div>
-      {val && <p style={{marginTop:"1.5rem",fontSize:"1.5rem"}}>{val} {from} = <strong style={{color:"#7c3aed"}}>{convert()}</strong> {to}</p>}
     </main>
   );
 }

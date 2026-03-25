@@ -1,35 +1,53 @@
-"use client";
-import { useState } from "react";
+'''use client'''
 
-const UNITS: [string, string, number][] = [['Vm', 'Volt-meter (V·m)', 1.0], ['Nm2/C', 'Newton-meter²/Coulomb', 1.0], ['kVm', 'Kilovolt-meter', 1000.0]];
+import { useState } from 'react';
 
 export default function Page() {
-  const [val, setVal] = useState("");
-  const [from, setFrom] = useState(UNITS[0][0]);
-  const [to, setTo] = useState(UNITS[1][0]);
-  const convert = () => {
-    const n = parseFloat(val);
-    if (isNaN(n)) return "";
-    const f = UNITS.find(u => u[0] === from);
-    const t = UNITS.find(u => u[0] === to);
-    if (!f || !t) return "";
-    return ((n * f[2]) / t[2]).toPrecision(6);
+  const [value, setValue] = useState('');
+  const [from, setFrom] = useState('base');
+  const [to, setTo] = useState('base');
+  const [result, setResult] = useState('');
+
+  const units: Record<string, number> = {
+    base: 1,
+    kilo: 1e3,
+    mega: 1e6,
+    milli: 1e-3,
+    micro: 1e-6,
+    nano: 1e-9,
   };
+
+  const convert = () => {
+    const v = parseFloat(value);
+    if (isNaN(v)) { setResult('Invalid input'); return; }
+    const base_val = v * units[from];
+    setResult((base_val / units[to]).toExponential(6));
+  };
+
   return (
-    <div style={{maxWidth:600,margin:"40px auto",padding:"0 16px",fontFamily:"sans-serif",color:"#e2e8f0",background:"#0f172a",minHeight:"100vh"}}>
-      <h1 style={{fontSize:28,fontWeight:700,marginBottom:8}}>Electric Flux Converter</h1>
-      <p style={{color:"#94a3b8",marginBottom:24}}>Convert between electric flux units: volt-meter, newton-meter squared per coulomb, and more.</p>
-      <div style={{display:"flex",gap:12,flexWrap:"wrap",marginBottom:16}}>
-        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{flex:1,minWidth:120,padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:16}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,minWidth:140,padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:15}}>
-          {UNITS.map(u=><option key={u[0]} value={u[0]}>{u[1]}</option>)}
-        </select>
-        <span style={{padding:"10px 4px",color:"#94a3b8",fontSize:18}}>to</span>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,minWidth:140,padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:15}}>
-          {UNITS.map(u=><option key={u[0]} value={u[0]}>{u[1]}</option>)}
-        </select>
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <h1 className="text-3xl font-bold mb-2">Electric Flux Converter</h1>
+      <p className="text-gray-400 mb-6">Convert between electric flux units including volt-meters and newton-meters squared per coulomb</p>
+      <div className="bg-gray-900 rounded-xl p-6 max-w-lg space-y-4">
+        <input type="number" value={value} onChange={e => setValue(e.target.value)}
+          placeholder="Enter value" className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white" />
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">From</label>
+            <select value={from} onChange={e => setFrom(e.target.value)} className="w-full bg-gray-800 rounded-lg px-3 py-2 text-white">
+              {Object.keys(units).map(u => <option key={u} value={u}>{u}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">To</label>
+            <select value={to} onChange={e => setTo(e.target.value)} className="w-full bg-gray-800 rounded-lg px-3 py-2 text-white">
+              {Object.keys(units).map(u => <option key={u} value={u}>{u}</option>)}
+            </select>
+          </div>
+        </div>
+        <button onClick={convert} className="w-full bg-blue-600 hover:bg-blue-700 rounded-lg px-4 py-2 font-semibold">Convert</button>
+        {result && <div className="bg-gray-800 rounded-lg p-4 text-center text-2xl font-mono">{result}</div>}
       </div>
-      {val && <div style={{padding:"16px 20px",background:"#1e293b",borderRadius:10,fontSize:20,fontWeight:600}}>{val} {UNITS.find(u=>u[0]===from)?.[1]} = {convert()} {UNITS.find(u=>u[0]===to)?.[1]}</div>}
-    </div>
+    </main>
   );
 }
