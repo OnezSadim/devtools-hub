@@ -1,86 +1,34 @@
 "use client";
 import { useState } from "react";
 
+const units = ['kg/s', 'kg/min', 'kg/h', 'g/s', 'g/min', 'lb/s', 'lb/min', 'lb/h', 't/h'];
+const factors = {'kg/s': 1.0, 'kg/min': 0.016666666666666666, 'kg/h': 0.0002777777777777778, 'g/s': 0.001, 'g/min': 1.6666666666666667e-05, 'lb/s': 0.453592, 'lb/min': 0.0075598666666666665, 'lb/h': 0.00012599777777777776, 't/h': 0.2777777777777778};
+
 export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState("kg/s");
-  const [to, setTo] = useState("kg/min");
-
-  const factors: Record<string, number> = {
-    "kg/s": 1.0,
-    "kg/min": 0.0166667,
-    "kg/h": 0.000277778,
-    "g/s": 0.001,
-    "g/min": 1.66667e-05,
-    "mg/s": 1e-06,
-    "lb/s": 0.453592,
-    "lb/min": 0.00755987,
-    "lb/h": 0.000125998,
-    "oz/s": 0.0283495,
-    "ton/h (metric)": 0.277778,
-  };
-
-  const result = val !== "" && !isNaN(Number(val))
-    ? (Number(val) * factors[from]) / factors[to]
-    : null;
-
+  const [from, setFrom] = useState(units[0]);
+  const [to, setTo] = useState(units[1]);
+  function convert() {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    return ((n * factors[from]) / factors[to]).toPrecision(6);
+  }
   return (
-    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
-      <div className="max-w-xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Mass Flow Rate Converter</h1>
-        <p className="text-gray-400 mb-6">Convert mass flow rates between kg/s, g/s, lb/s, lb/min, and more.</p>
-        <div className="space-y-4">
-          <input
-            type="number"
-            value={val}
-            onChange={e => setVal(e.target.value)}
-            placeholder="Enter value"
-            className="w-full p-3 bg-gray-800 rounded border border-gray-700 text-white"
-          />
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">From</label>
-              <select value={from} onChange={e => setFrom(e.target.value)}
-                className="w-full p-3 bg-gray-800 rounded border border-gray-700 text-white">
-          <option value="kg/s">kg/s</option>
-          <option value="kg/min">kg/min</option>
-          <option value="kg/h">kg/h</option>
-          <option value="g/s">g/s</option>
-          <option value="g/min">g/min</option>
-          <option value="mg/s">mg/s</option>
-          <option value="lb/s">lb/s</option>
-          <option value="lb/min">lb/min</option>
-          <option value="lb/h">lb/h</option>
-          <option value="oz/s">oz/s</option>
-          <option value="ton/h (metric)">ton/h (metric)</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">To</label>
-              <select value={to} onChange={e => setTo(e.target.value)}
-                className="w-full p-3 bg-gray-800 rounded border border-gray-700 text-white">
-          <option value="kg/s">kg/s</option>
-          <option value="kg/min">kg/min</option>
-          <option value="kg/h">kg/h</option>
-          <option value="g/s">g/s</option>
-          <option value="g/min">g/min</option>
-          <option value="mg/s">mg/s</option>
-          <option value="lb/s">lb/s</option>
-          <option value="lb/min">lb/min</option>
-          <option value="lb/h">lb/h</option>
-          <option value="oz/s">oz/s</option>
-          <option value="ton/h (metric)">ton/h (metric)</option>
-              </select>
-            </div>
-          </div>
-          {result !== null && (
-            <div className="p-4 bg-gray-800 rounded border border-gray-700">
-              <span className="text-2xl font-mono text-green-400">
-                {val} {from} = {result.toPrecision(6)} {to}
-              </span>
-            </div>
-          )}
-        </div>
+    <main style={{padding:"2rem",maxWidth:"480px",margin:"0 auto",fontFamily:"sans-serif"}}>
+      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Mass Flow Rate Converter</h1>
+      <input type="number" value={val} onChange={e=>setVal(e.target.value)}
+        style={{width:"100%",padding:"0.5rem",marginBottom:"0.5rem",fontSize:"1rem"}} placeholder="Enter value" />
+      <div style={{display:"flex",gap:"0.5rem",marginBottom:"0.5rem"}}>
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:"0.5rem"}}>
+          {units.map(u=><option key={u} value={u}>{u}</option>)}
+        </select>
+        <span style={{alignSelf:"center"}}>&#8594;</span>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:"0.5rem"}}>
+          {units.map(u=><option key={u} value={u}>{u}</option>)}
+        </select>
+      </div>
+      <div style={{padding:"1rem",background:"#f5f5f5",borderRadius:"4px",fontSize:"1.25rem"}}>
+        {val ? convert() + " " + to : "Result will appear here"}
       </div>
     </main>
   );
