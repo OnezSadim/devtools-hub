@@ -1,56 +1,34 @@
 "use client";
 import { useState } from "react";
-
-const units: {value:string,label:string,factor:number}[] = [
-        { value: 'cdm2', label: 'Candela/m² (cd/m²)', factor: 1.0 },
-        { value: 'nit', label: 'Nit', factor: 1.0 },
-        { value: 'kcdm2', label: 'Kilocandela/m²', factor: 1000.0 },
-        { value: 'fL', label: 'Foot-lambert (fL)', factor: 3.42626 },
-        { value: 'La', label: 'Lambert (La)', factor: 3183.0986 },
-        { value: 'sb', label: 'Stilb (sb)', factor: 10000.0 },
-        { value: 'asb', label: 'Apostilb (asb)', factor: 0.31831 },
+const UNITS = [
+  { label: "Candela/m2 (cd/m2)", factor: 1 },
+  { label: "Nit", factor: 1 },
+  { label: "Stilb (sb)", factor: 10000 },
+  { label: "Lambert (L)", factor: 3183.099 },
+  { label: "Foot-lambert (fL)", factor: 3.42626 },
+  { label: "Millinit (mnt)", factor: 0.001 },
 ];
-
-export default function LuminanceConverterPage() {
+export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(units[0].value);
-  const [to, setTo] = useState(units[1].value);
-  const [result, setResult] = useState<string | null>(null);
-
-  function convert() {
-    const n = parseFloat(val);
-    if (isNaN(n)) { setResult("Invalid input"); return; }
-    const fromU = units.find(u => u.value === from)!;
-    const toU = units.find(u => u.value === to)!;
-    const base = n * fromU.factor;
-    const out = base / toU.factor;
-    setResult(out.toPrecision(8).replace(/\.?0+$/, ""));
-  }
-
+  const [from, setFrom] = useState(0);
+  const [to, setTo] = useState(1);
+  const convert = () => { const n = parseFloat(val); if (isNaN(n)) return ""; return ((n * UNITS[from].factor) / UNITS[to].factor).toPrecision(6); };
   return (
-    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",flexDirection:"column",alignItems:"center",padding:"40px 16px"}}>
-      <h1 style={{fontSize:"2rem",fontWeight:700,marginBottom:8}}>Luminance Converter</h1>
-      <p style={{color:"#94a3b8",marginBottom:32}}>Convert between candela per square meter, nit, foot-lambert and more.</p>
-      <div style={{background:"#1e293b",borderRadius:12,padding:32,width:"100%",maxWidth:480}}>
-        <input type="number" value={val} onChange={e=>setVal(e.target.value)}
-          placeholder="Enter value" style={{width:"100%",padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",fontSize:"1rem",marginBottom:16,boxSizing:"border-box"}} />
-        <div style={{display:"flex",gap:12,marginBottom:16}}>
-          <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:"10px",borderRadius:8,border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>
-            {units.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
+    <main style={{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}>
+      <h1 style={{fontSize:"1.5rem",marginBottom:"0.5rem"}}>Luminance Converter</h1>
+      <p style={{color:"#94a3b8",marginBottom:"1.5rem"}}>Convert between candela/m2, nit, stilb, lambert and other luminance units.</p>
+      <div style={{display:"flex",flexDirection:"column",gap:"1rem"}}>
+        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.75rem",borderRadius:"8px",border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:"1rem"}} />
+        <div style={{display:"flex",gap:"1rem"}}>
+          <select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{flex:1,padding:"0.75rem",borderRadius:"8px",border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0"}}>
+            {UNITS.map((u,i)=><option key={i} value={i}>{u.label}</option>)}
           </select>
-          <span style={{alignSelf:"center",color:"#94a3b8"}}>→</span>
-          <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:"10px",borderRadius:8,border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>
-            {units.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
+          <span style={{alignSelf:"center",fontSize:"1.5rem"}}>&#8594;</span>
+          <select value={to} onChange={e=>setTo(Number(e.target.value))} style={{flex:1,padding:"0.75rem",borderRadius:"8px",border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0"}}>
+            {UNITS.map((u,i)=><option key={i} value={i}>{u.label}</option>)}
           </select>
         </div>
-        <button onClick={convert} style={{width:"100%",padding:"12px",borderRadius:8,background:"#6366f1",color:"#fff",fontWeight:600,fontSize:"1rem",border:"none",cursor:"pointer"}}>
-          Convert
-        </button>
-        {result !== null && (
-          <div style={{marginTop:20,padding:16,background:"#0f172a",borderRadius:8,textAlign:"center",fontSize:"1.25rem",fontWeight:600,color:"#a5b4fc"}}>
-            {result} {units.find(u=>u.value===to)?.label}
-          </div>
-        )}
+        {val && <div style={{padding:"1rem",background:"#1e293b",borderRadius:"8px",fontSize:"1.25rem",textAlign:"center"}}>{convert()} {UNITS[to].label}</div>}
       </div>
     </main>
   );
