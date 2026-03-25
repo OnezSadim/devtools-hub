@@ -1,21 +1,19 @@
 "use client";
 import { useState } from "react";
-const factors: Record<string,number> = {Pa:1,hPa:100,kPa:1000,MPa:1000000,bar:100000,atm:101325,psi:6894.76,mmHg:133.322};
 export default function PressureConverter() {
-  const [val,setVal]=useState("");
-  const [from,setFrom]=useState("Pa");
-  const n=parseFloat(val);
-  const units=Object.keys(factors);
-  const inPa=isNaN(n)?null:n*factors[from];
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState("pascal");
+  const toPa: Record<string, number> = { pascal: 1, kilopascal: 1000, megapascal: 1e6, bar: 100000, millibar: 100, atmosphere: 101325, psi: 6894.757, torr: 133.322, mmhg: 133.322 };
+  const units = Object.keys(toPa);
+  const pa = parseFloat(val) * (toPa[from] || 1);
   return (
-    <main className="min-h-screen bg-gray-950 text-white p-8 max-w-xl mx-auto">
-      <h1 className="text-3xl font-bold mb-2">Pressure Converter</h1>
-      <p className="text-gray-400 mb-6">Convert between Pa, hPa, kPa, MPa, bar, atm, psi, mmHg</p>
-      <div className="flex gap-2 mb-4">
-        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" className="flex-1 bg-gray-800 rounded p-3 text-white" />
-        <select value={from} onChange={e=>setFrom(e.target.value)} className="bg-gray-800 rounded p-3 text-white">{units.map(u=><option key={u}>{u}</option>)}</select>
-      </div>
-      {inPa!==null && <div className="space-y-2">{units.filter(u=>u!==from).map(u=><div key={u} className="bg-gray-800 rounded p-3"><span className="text-gray-400">{u}: </span><span className="text-green-400 font-mono">{(inPa/factors[u]).toFixed(6)}</span></div>)}</div>}
+    <main style={{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"monospace"}}>
+      <h1>Pressure Converter</h1>
+      <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"0.5rem",marginBottom:"1rem",background:"#1a1a1a",color:"#fff",border:"1px solid #333"}} />
+      <select value={from} onChange={e=>setFrom(e.target.value)} style={{width:"100%",padding:"0.5rem",marginBottom:"1rem",background:"#1a1a1a",color:"#fff",border:"1px solid #333"}}>
+        {units.map(u=><option key={u} value={u}>{u}</option>)}
+      </select>
+      {val && <div style={{background:"#1a1a1a",padding:"1rem",borderRadius:"4px"}}>{units.map(u=><div key={u} style={{padding:"0.25rem 0",borderBottom:"1px solid #222"}}><strong>{u}:</strong> {(pa/toPa[u]).toFixed(6)}</div>)}</div>}
     </main>
   );
 }
