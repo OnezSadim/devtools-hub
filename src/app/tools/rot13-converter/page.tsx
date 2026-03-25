@@ -5,15 +5,13 @@ export default function ToolPage() {
   const [input, setInput] = useState('')
   const [output, setOutput] = useState('')
   const [mode, setMode] = useState('encode')
-  const [shift, setShift] = useState(13)
 
   function process() {
     try {
 
-      const s = mode === 'encode' ? shift : (26 - shift) % 26
       const result = input.replace(/[a-zA-Z]/g, c => {
         const base = c <= 'Z' ? 65 : 97
-        return String.fromCharCode(((c.charCodeAt(0) - base + s) % 26) + base)
+        return String.fromCharCode(((c.charCodeAt(0) - base + 13) % 26) + base)
       })
       setOutput(result)
 
@@ -25,18 +23,8 @@ export default function ToolPage() {
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100 p-8">
       <div className="max-w-3xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Caesar Cipher</h1>
-        <p className="text-gray-400 mb-6">Encrypt and decrypt text using the Caesar cipher shift</p>
-
-        <div className="flex gap-4 mb-4 items-center">
-          {['encode','decode'].map(m => (
-            <button key={m} onClick={() => setMode(m)}
-              className={`px-4 py-2 rounded font-medium ${mode===m?'bg-blue-600':'bg-gray-800 hover:bg-gray-700'}`}>
-              {m.charAt(0).toUpperCase()+m.slice(1)}
-            </button>
-          ))}
-          <label className="ml-4 text-gray-400">Shift: <input type="number" min={1} max={25} value={shift} onChange={e=>setShift(Number(e.target.value))} className="w-16 ml-2 bg-gray-800 rounded px-2 py-1 text-white" /></label>
-        </div>
+        <h1 className="text-3xl font-bold mb-2">ROT13 Converter</h1>
+        <p className="text-gray-400 mb-6">Apply ROT13 substitution cipher to text</p>
 
         <textarea className="w-full h-40 bg-gray-900 border border-gray-700 rounded p-3 font-mono text-sm mb-3 focus:outline-none focus:border-blue-500"
           placeholder="Enter text..."
