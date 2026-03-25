@@ -1,15 +1,15 @@
 "use client";
 import { useState } from "react";
 
-export default function HeatTransferCoefficientConverter() {
+export default function ThermalDiffusivityConverter() {
   const [value, setValue] = useState("");
-  const [from, setFrom] = useState("W/m²K");
-  const [to, setTo] = useState("BTU/h·ft²·°F");
+  const [from, setFrom] = useState("m²/s");
+  const [to, setTo] = useState("ft²/s");
   const [result, setResult] = useState("");
 
   const conversions: Record<string, number> = {
-    "W/m²K": 1,
-    "BTU/h·ft²·°F": 1,
+    "m²/s": 1,
+    "ft²/s": 1,
   };
 
   const convert = () => {
@@ -22,8 +22,8 @@ export default function HeatTransferCoefficientConverter() {
   return (
     <main className="min-h-screen bg-gray-950 text-white p-8">
       <div className="max-w-xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Heat Transfer Coefficient Converter</h1>
-        <p className="text-gray-400 mb-6">Convert heat transfer coefficient units used in thermal engineering.</p>
+        <h1 className="text-3xl font-bold mb-2">Thermal Diffusivity Converter</h1>
+        <p className="text-gray-400 mb-6">Convert thermal diffusivity units used in heat conduction analysis.</p>
         <div className="space-y-4">
           <input type="number" value={value} onChange={e => setValue(e.target.value)}
             placeholder="Enter value" className="w-full bg-gray-800 rounded px-4 py-2" />

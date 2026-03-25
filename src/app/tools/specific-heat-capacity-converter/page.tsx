@@ -1,1 +1,52 @@
-"use client";import{useState}from"react";export default function Page(){const[v,setV]=useState("");const[r,setR]=useState("");return(<main style={{padding:"2rem",fontFamily:"sans-serif",background:"#0f172a",minHeight:"100vh",color:"#f1f5f9"}}><h1 style={{fontSize:"1.8rem",marginBottom:".5rem"}}>Specific Heat Capacity Converter</h1><p style={{color:"#94a3b8",marginBottom:"1.5rem"}}>Convert between J/(kg·K), cal/(g·°C), BTU/(lb·°F), and other specific heat capacity units.</p><div style={{background:"#1e293b",padding:"1.5rem",borderRadius:"8px"}}><input value={v} onChange={e=>setV(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:".75rem",background:"#0f172a",border:"1px solid #334155",borderRadius:"6px",color:"#f1f5f9",fontSize:"1rem",marginBottom:"1rem"}}/><div style={{color:"#94a3b8",fontSize:".9rem"}}>Result: {r||"—"}</div></div></main>);}
+"use client";
+import { useState } from "react";
+
+export default function SpecificHeatCapacityConverter() {
+  const [value, setValue] = useState("");
+  const [from, setFrom] = useState("J/kgK");
+  const [to, setTo] = useState("BTU/lb·°F");
+  const [result, setResult] = useState("");
+
+  const conversions: Record<string, number> = {
+    "J/kgK": 1,
+    "BTU/lb·°F": 1,
+  };
+
+  const convert = () => {
+    const num = parseFloat(value);
+    if (isNaN(num)) { setResult("Invalid input"); return; }
+    const base = num / (conversions[from] || 1);
+    setResult((base * (conversions[to] || 1)).toFixed(6));
+  };
+
+  return (
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Specific Heat Capacity Converter</h1>
+        <p className="text-gray-400 mb-6">Convert specific heat capacity units used in thermodynamics.</p>
+        <div className="space-y-4">
+          <input type="number" value={value} onChange={e => setValue(e.target.value)}
+            placeholder="Enter value" className="w-full bg-gray-800 rounded px-4 py-2" />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm text-gray-400">From</label>
+              <select value={from} onChange={e => setFrom(e.target.value)}
+                className="w-full bg-gray-800 rounded px-4 py-2 mt-1">
+                {Object.keys(conversions).map(u => <option key={u}>{u}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-sm text-gray-400">To</label>
+              <select value={to} onChange={e => setTo(e.target.value)}
+                className="w-full bg-gray-800 rounded px-4 py-2 mt-1">
+                {Object.keys(conversions).map(u => <option key={u}>{u}</option>)}
+              </select>
+            </div>
+          </div>
+          <button onClick={convert} className="w-full bg-blue-600 hover:bg-blue-700 rounded px-4 py-2 font-semibold">Convert</button>
+          {result && <div className="bg-gray-800 rounded px-4 py-3 text-lg font-mono">{result} {to}</div>}
+        </div>
+      </div>
+    </main>
+  );
+}
