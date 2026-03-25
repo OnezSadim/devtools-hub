@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
 
-const UNITS = ["Newton-meter (N·m)", "Newton-centimeter", "Dyne-meter", "Kilogram-force meter", "Kilogram-force cm", "Pound-force foot", "Pound-force inch", "Ounce-force foot", "Ounce-force inch"];
-const TO_BASE = [1, 0.01, 1e-05, 9.80665, 0.0980665, 1.3558179483314, 0.11298482902762, 0.084898619542782, 0.0070748849619235];
+const UNITS = ["kg·m²/s", "g·cm²/s", "kg·cm²/s", "lb·ft²/s", "lb·in²/s"];
+const TO_BASE = [1, 1e-07, 0.0001, 0.042140110093805, 0.00029263888954031];
 
 export default function Page() {
   const [val, setVal] = useState("");
@@ -12,7 +12,7 @@ export default function Page() {
 
   return (
     <main style={{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"sans-serif",color:"#e2e8f0",background:"#0f172a",minHeight:"100vh"}}>
-      <h1 style={{fontSize:"1.5rem",fontWeight:700,marginBottom:"1rem"}}>Torque Converter</h1>
+      <h1 style={{fontSize:"1.5rem",fontWeight:700,marginBottom:"1rem"}}>Angular Momentum Converter</h1>
       <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"0.5rem",marginBottom:"1rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px"}} />
       <select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{width:"100%",padding:"0.5rem",marginBottom:"1.5rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px"}}>
         {UNITS.map((u,i)=><option key={i} value={i}>{u}</option>)}

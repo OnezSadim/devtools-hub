@@ -1,42 +1,27 @@
 "use client";
 import { useState } from "react";
 
-const units: Record<string, number> = {
-  "Kilogram sq meter (kg*m2)": 1,
-  "Kilogram sq cm (kg*cm2)": 0.0001,
-  "Kilogram sq mm (kg*mm2)": 1e-06,
-  "Gram sq cm (g*cm2)": 1e-07,
-  "Gram sq mm (g*mm2)": 1e-09,
-  "Pound sq foot (lb*ft2)": 0.0421401,
-  "Pound sq inch (lb*in2)": 0.00029264,
-  "Ounce sq inch (oz*in2)": 1.829e-05,
-  "Slug sq foot (slug*ft2)": 1.35582,
-};
+const UNITS = ["kg·m²", "g·cm²", "kg·cm²", "lb·ft²", "lb·in²", "oz·in²"];
+const TO_BASE = [1, 1e-07, 0.0001, 0.042140110093805, 0.00029263888954031, 1.8289930596019e-05];
 
 export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState("Kilogram sq meter (kg*m2)");
-  const [to, setTo] = useState("Kilogram sq cm (kg*cm2)");
-  const result = val !== "" && !isNaN(Number(val))
-    ? (Number(val) * units[from] / units[to]).toPrecision(6)
-    : "";
+  const [from, setFrom] = useState(0);
+  const num = parseFloat(val);
+  const base = isNaN(num) ? null : num * TO_BASE[from];
+
   return (
-    <main style={{padding:"2rem",maxWidth:"480px",margin:"0 auto",fontFamily:"sans-serif"}}>
-      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Moment of Inertia Converter</h1>
-      <input type="number" value={val} onChange={e=>setVal(e.target.value)}
-        placeholder="Enter value"
-        style={{width:"100%",padding:"0.5rem",marginBottom:"0.75rem",fontSize:"1rem",boxSizing:"border-box"}} />
-      <div style={{display:"flex",gap:"0.5rem",marginBottom:"0.75rem"}}>
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:"0.5rem"}}>
-          {Object.keys(units).map(u=><option key={u} value={u}>{u}</option>)}
-        </select>
-        <span style={{alignSelf:"center"}}>to</span>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:"0.5rem"}}>
-          {Object.keys(units).map(u=><option key={u} value={u}>{u}</option>)}
-        </select>
-      </div>
-      {result !== "" && (
-        <p style={{fontSize:"1.25rem",fontWeight:"bold"}}>{val} {from} = {result} {to}</p>
+    <main style={{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"sans-serif",color:"#e2e8f0",background:"#0f172a",minHeight:"100vh"}}>
+      <h1 style={{fontSize:"1.5rem",fontWeight:700,marginBottom:"1rem"}}>Moment of Inertia Converter</h1>
+      <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"0.5rem",marginBottom:"1rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px"}} />
+      <select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{width:"100%",padding:"0.5rem",marginBottom:"1.5rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px"}}>
+        {UNITS.map((u,i)=><option key={i} value={i}>{u}</option>)}
+      </select>
+      {base !== null && (
+        <table style={{width:"100%",borderCollapse:"collapse"}}>
+          <thead><tr><th style={{textAlign:"left",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Unit</th><th style={{textAlign:"right",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Value</th></tr></thead>
+          <tbody>{UNITS.map((u,i)=><tr key={i} style={{background:i===from?"#1e293b":"transparent"}}><td style={{padding:"0.5rem"}}>{u}</td><td style={{textAlign:"right",padding:"0.5rem"}}>{(base/TO_BASE[i]).toPrecision(6)}</td></tr>)}</tbody>
+        </table>
       )}
     </main>
   );

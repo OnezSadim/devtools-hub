@@ -1,28 +1,28 @@
 "use client";
 import { useState } from "react";
-const UNITS = [{"key": "rad_s2", "label": "rad/s2", "factor": 1}, {"key": "deg_s2", "label": "deg/s2", "factor": 0.0174533}, {"key": "rev_s2", "label": "rev/s2", "factor": 6.28318}, {"key": "rpm_s", "label": "RPM/s", "factor": 0.10472}, {"key": "grad_s2", "label": "grad/s2", "factor": 0.015708}];
+
+const UNITS = ["Radian/second²", "Degree/second²", "Revolution/second²", "Revolution/minute/second", "Radian/minute²", "Degree/minute²"];
+const TO_BASE = [1, 0.017453292519943, 6.2831853071796, 0.10471975511966, 0.00027777777777778, 4.8481368110954e-06];
+
 export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(UNITS[0].key);
-  const [to, setTo] = useState(UNITS[1].key);
-  const fromU = UNITS.find(u => u.key === from);
-  const toU = UNITS.find(u => u.key === to);
-  const result = fromU && toU && val !== "" ? ((parseFloat(val) * fromU.factor) / toU.factor).toPrecision(6) : "";
+  const [from, setFrom] = useState(0);
+  const num = parseFloat(val);
+  const base = isNaN(num) ? null : num * TO_BASE[from];
+
   return (
-    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",padding:"2rem",fontFamily:"monospace"}}>
-      <h1 style={{fontSize:"1.5rem",fontWeight:700,marginBottom:".5rem"}}>Angular Acceleration Converter</h1>
-      <p style={{color:"#94a3b8",marginBottom:"1.5rem"}}>Convert between angular acceleration units like rad/s2, deg/s2, rev/s2.</p>
-      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1rem"}}>
-        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:".5rem",background:"#1e293b",border:"1px solid #334155",color:"#f1f5f9",borderRadius:"6px",width:"140px"}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:".5rem",background:"#1e293b",border:"1px solid #334155",color:"#f1f5f9",borderRadius:"6px"}}>
-          {UNITS.map(u=><option key={u.key} value={u.key}>{u.label}</option>)}
-        </select>
-        <span style={{lineHeight:"2rem"}}>to</span>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:".5rem",background:"#1e293b",border:"1px solid #334155",color:"#f1f5f9",borderRadius:"6px"}}>
-          {UNITS.map(u=><option key={u.key} value={u.key}>{u.label}</option>)}
-        </select>
-      </div>
-      {result !== "" && <div style={{fontSize:"1.25rem",background:"#1e293b",padding:"1rem",borderRadius:"8px",border:"1px solid #22d3ee"}}>{val} {fromU?.label} = <strong>{result}</strong> {toU?.label}</div>}
+    <main style={{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"sans-serif",color:"#e2e8f0",background:"#0f172a",minHeight:"100vh"}}>
+      <h1 style={{fontSize:"1.5rem",fontWeight:700,marginBottom:"1rem"}}>Angular Acceleration Converter</h1>
+      <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"0.5rem",marginBottom:"1rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px"}} />
+      <select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{width:"100%",padding:"0.5rem",marginBottom:"1.5rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px"}}>
+        {UNITS.map((u,i)=><option key={i} value={i}>{u}</option>)}
+      </select>
+      {base !== null && (
+        <table style={{width:"100%",borderCollapse:"collapse"}}>
+          <thead><tr><th style={{textAlign:"left",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Unit</th><th style={{textAlign:"right",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Value</th></tr></thead>
+          <tbody>{UNITS.map((u,i)=><tr key={i} style={{background:i===from?"#1e293b":"transparent"}}><td style={{padding:"0.5rem"}}>{u}</td><td style={{textAlign:"right",padding:"0.5rem"}}>{(base/TO_BASE[i]).toPrecision(6)}</td></tr>)}</tbody>
+        </table>
+      )}
     </main>
   );
 }
