@@ -1,30 +1,31 @@
 "use client";
 import { useState } from "react";
 
-const UNITS: string[] = ["farad", "millifarad", "microfarad", "nanofarad", "picofarad", "kilofarad"];
-const TO_BASE: Record<string, number> = {"farad": 1, "millifarad": 0.001, "microfarad": 1e-06, "nanofarad": 1e-09, "picofarad": 1e-12, "kilofarad": 1000.0};
+const units: string[] = ["farad", "millifarad", "microfarad", "nanofarad", "picofarad", "abfarad", "statfarad"];
+const toBase: Record<string, number> = {"farad": 1, "millifarad": 0.001, "microfarad": 1e-06, "nanofarad": 1e-09, "picofarad": 1e-12, "abfarad": 1000000000.0, "statfarad": 1.11265e-12};
 
 export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(UNITS[0]);
-  const [to, setTo] = useState(UNITS[1]);
+  const [from, setFrom] = useState(units[0]);
+  const [to, setTo] = useState(units[1]);
   const convert = () => {
     const n = parseFloat(val);
     if (isNaN(n)) return "";
-    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
+    return ((n * toBase[from]) / toBase[to]).toPrecision(6);
   };
-  const sel = "bg-gray-800 text-white border border-gray-600 rounded px-3 py-2";
   return (
-    <main className="min-h-screen bg-gray-900 text-white p-8">
-      <h1 className="text-3xl font-bold mb-6">Electric Capacitance Converter</h1>
-      <div className="bg-gray-800 rounded-xl p-6 max-w-lg space-y-4">
-        <input className="w-full bg-gray-700 text-white border border-gray-600 rounded px-3 py-2" placeholder="Value" value={val} onChange={e => setVal(e.target.value)} />
-        <div className="flex gap-3">
-          <select className={sel} value={from} onChange={e => setFrom(e.target.value)}>{UNITS.map(u => <option key={u} value={u}>{u}</option>)}</select>
-          <span className="self-center text-gray-400">to</span>
-          <select className={sel} value={to} onChange={e => setTo(e.target.value)}>{UNITS.map(u => <option key={u} value={u}>{u}</option>)}</select>
-        </div>
-        <div className="text-2xl font-mono text-green-400">{convert() || "—"}</div>
+    <main style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}>
+      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Electric Capacitance Converter</h1>
+      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",alignItems:"center"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px",width:"140px"}} />
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>
+          {units.map(u=><option key={u}>{u}</option>)}
+        </select>
+        <span>=</span>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>
+          {units.map(u=><option key={u}>{u}</option>)}
+        </select>
+        <span style={{color:"#38bdf8",fontSize:"1.2rem"}}>{convert()}</span>
       </div>
     </main>
   );
