@@ -1,1 +1,70 @@
-"use client";import{useState}from"react";const units=[{"label":"Farad (F)","value":"F","factor":1},{"label":"Millifarad (mF)","value":"mF","factor":0.001},{"label":"Microfarad (μF)","value":"uF","factor":1e-06},{"label":"Nanofarad (nF)","value":"nF","factor":1e-09},{"label":"Picofarad (pF)","value":"pF","factor":1e-12},{"label":"Abfarad (abF)","value":"abF","factor":1000000000.0},{"label":"Statfarad (statF)","value":"statF","factor":1.11265e-12},{"label":"Kilofarad (kF)","value":"kF","factor":1000.0}];export default function Page(){const[val,setVal]=useState("");const[from,setFrom]=useState(units[0].value);const[to,setTo]=useState(units[1].value);const convert=()=>{const f=units.find(u=>u.value===from);const t=units.find(u=>u.value===to);if(!f||!t||val==="")return"";return((parseFloat(val)*f.factor)/t.factor).toPrecision(6);};return(<main style={{padding:"2rem",fontFamily:"monospace",background:"#0f0f0f",minHeight:"100vh",color:"#e0e0e0"}}><h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Electric Capacitance Converter</h1><p style={{color:"#aaa",marginBottom:"1.5rem"}}>Convert between electrical capacitance units: farads, millifarads, microfarads, nanofarads, picofarads.</p><div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1rem"}}><input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",background:"#1a1a1a",color:"#e0e0e0",border:"1px solid #333",borderRadius:"4px",flex:1}} /><select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1a1a1a",color:"#e0e0e0",border:"1px solid #333",borderRadius:"4px"}}>{units.map(u=>(<option key={u.value} value={u.value}>{u.label}</option>))}</select><select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1a1a1a",color:"#e0e0e0",border:"1px solid #333",borderRadius:"4px"}}>{units.map(u=>(<option key={u.value} value={u.value}>{u.label}</option>))}</select></div><div style={{padding:"1rem",background:"#1a1a1a",borderRadius:"4px",fontSize:"1.2rem"}}>{val&&<span>{val} {units.find(u=>u.value===from)?.label} = <strong style={{color:"#4ade80"}}>{convert()}</strong> {units.find(u=>u.value===to)?.label}</span>}</div></main>);}
+"use client";
+import { useState } from "react";
+
+const units: Record<string, number> = {
+    Farad (F): 1,
+    Millifarad (mF): 0.001,
+    Microfarad (µF): 1e-06,
+    Nanofarad (nF): 1e-09,
+    Picofarad (pF): 1e-12,
+    Kilofarad (kF): 1000.0,
+};
+
+export default function Page() {
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState("Farad (F)");
+  const [to, setTo] = useState("Millifarad (mF)");
+
+  const convert = () => {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "—";
+    return ((n * units[from]) / units[to]).toPrecision(6);
+  };
+
+  return (
+    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Electric Capacitance Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between farads, microfarads, nanofarads, picofarads and more.</p>
+        <div className="space-y-4">
+          <input
+            type="number"
+            value={val}
+            onChange={e => setVal(e.target.value)}
+            placeholder="Enter value"
+            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-lg focus:outline-none focus:border-blue-500"
+          />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">From</label>
+              <select value={from} onChange={e => setFrom(e.target.value)}
+                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 focus:outline-none">
+          <option value="Farad (F)">Farad (F)</option>
+          <option value="Millifarad (mF)">Millifarad (mF)</option>
+          <option value="Microfarad (µF)">Microfarad (µF)</option>
+          <option value="Nanofarad (nF)">Nanofarad (nF)</option>
+          <option value="Picofarad (pF)">Picofarad (pF)</option>
+          <option value="Kilofarad (kF)">Kilofarad (kF)</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">To</label>
+              <select value={to} onChange={e => setTo(e.target.value)}
+                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 focus:outline-none">
+          <option value="Farad (F)">Farad (F)</option>
+          <option value="Millifarad (mF)">Millifarad (mF)</option>
+          <option value="Microfarad (µF)">Microfarad (µF)</option>
+          <option value="Nanofarad (nF)">Nanofarad (nF)</option>
+          <option value="Picofarad (pF)">Picofarad (pF)</option>
+          <option value="Kilofarad (kF)">Kilofarad (kF)</option>
+              </select>
+            </div>
+          </div>
+          <div className="bg-gray-800 rounded-lg px-4 py-3 text-xl font-mono">
+            {val ? convert() : <span className="text-gray-500">Result</span>}
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}

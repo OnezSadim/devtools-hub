@@ -1,62 +1,62 @@
 "use client";
 import { useState } from "react";
 
-export default function LuminousFluxConverterPage() {
-  const [value, setValue] = useState("");
-  const [from, setFrom] = useState("lumen");
-  const [to, setTo] = useState("candela·sr");
+const units: Record<string, number> = {
+    Lumen (lm): 1,
+    Candela steradian (cd·sr): 1,
+    Kilolumen (klm): 1000,
+    Millilumen (mlm): 0.001,
+};
 
-  const toBase: Record<string, number> = {
-    "lumen": 1,
-    "candela·sr": 1,
-    "kilolumen": 1000,
-    "megalumen": 1000000,
-    "candlepower": 12.566,
+export default function Page() {
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState("Lumen (lm)");
+  const [to, setTo] = useState("Candela steradian (cd·sr)");
+
+  const convert = () => {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "—";
+    return ((n * units[from]) / units[to]).toPrecision(6);
   };
-
-  const result = value !== "" ? (parseFloat(value) * toBase[from] / toBase[to]).toLocaleString(undefined, {maximumSignificantDigits: 8}) : "";
 
   return (
     <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
       <div className="max-w-xl mx-auto">
         <h1 className="text-3xl font-bold mb-2">Luminous Flux Converter</h1>
-        <p className="text-gray-400 mb-8">Convert between luminous flux and light output units.</p>
-        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">Value</label>
-            <input type="number" value={value} onChange={e => setValue(e.target.value)}
-              className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white" placeholder="Enter value" />
-          </div>
+        <p className="text-gray-400 mb-8">Convert between lumens, candela steradians and other luminous flux units.</p>
+        <div className="space-y-4">
+          <input
+            type="number"
+            value={val}
+            onChange={e => setVal(e.target.value)}
+            placeholder="Enter value"
+            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-lg focus:outline-none focus:border-blue-500"
+          />
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm text-gray-400 mb-1">From</label>
               <select value={from} onChange={e => setFrom(e.target.value)}
-                className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white">
-          <option value="lumen">lumen</option>
-          <option value="candela·sr">candela·sr</option>
-          <option value="kilolumen">kilolumen</option>
-          <option value="megalumen">megalumen</option>
-          <option value="candlepower">candlepower</option>
+                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 focus:outline-none">
+          <option value="Lumen (lm)">Lumen (lm)</option>
+          <option value="Candela steradian (cd·sr)">Candela steradian (cd·sr)</option>
+          <option value="Kilolumen (klm)">Kilolumen (klm)</option>
+          <option value="Millilumen (mlm)">Millilumen (mlm)</option>
               </select>
             </div>
             <div>
               <label className="block text-sm text-gray-400 mb-1">To</label>
               <select value={to} onChange={e => setTo(e.target.value)}
-                className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white">
-          <option value="lumen">lumen</option>
-          <option value="candela·sr">candela·sr</option>
-          <option value="kilolumen">kilolumen</option>
-          <option value="megalumen">megalumen</option>
-          <option value="candlepower">candlepower</option>
+                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 focus:outline-none">
+          <option value="Lumen (lm)">Lumen (lm)</option>
+          <option value="Candela steradian (cd·sr)">Candela steradian (cd·sr)</option>
+          <option value="Kilolumen (klm)">Kilolumen (klm)</option>
+          <option value="Millilumen (mlm)">Millilumen (mlm)</option>
               </select>
             </div>
           </div>
-          {result !== "" && (
-            <div className="bg-gray-800 rounded-lg px-4 py-3">
-              <span className="text-2xl font-mono font-bold text-green-400">{result}</span>
-              <span className="text-gray-400 ml-2">{to}</span>
-            </div>
-          )}
+          <div className="bg-gray-800 rounded-lg px-4 py-3 text-xl font-mono">
+            {val ? convert() : <span className="text-gray-500">Result</span>}
+          </div>
         </div>
       </div>
     </main>

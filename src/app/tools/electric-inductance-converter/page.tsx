@@ -1,1 +1,67 @@
-"use client";import{useState}from"react";const units=[{k:"H",l:"Henry (H)",f:1},{k:"mH",l:"Millihenry (mH)",f:0.001},{k:"uH",l:"Microhenry (µH)",f:1e-06},{k:"nH",l:"Nanohenry (nH)",f:1e-09},{k:"pH",l:"Picohenry (pH)",f:1e-12},{k:"kH",l:"Kilohenry (kH)",f:1000}];export default function Page(){const[val,setVal]=useState("");const[from,setFrom]=useState(units[0].k);const[to,setTo]=useState(units[1].k);const base=units.find(u=>u.k===from);const toU=units.find(u=>u.k===to);const result=val===""?"":((parseFloat(val)*base.f)/toU.f).toPrecision(6);return(<div style={{padding:"2rem",fontFamily:"sans-serif",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}><h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Electric Inductance Converter</h1><p style={{color:"#94a3b8",marginBottom:"1.5rem"}}>Convert between inductance units: henry, millihenry, microhenry, nanohenry, and more.</p><div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1rem"}}><input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:"1rem",width:"160px"}}/><select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0"}}>{units.map(u=>(<option key={u.k} value={u.k}>{u.l}</option>))}</select><span style={{alignSelf:"center",fontSize:"1.2rem"}}>→</span><select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0"}}>{units.map(u=>(<option key={u.k} value={u.k}>{u.l}</option>))}</select></div>{val!==""&&<div style={{background:"#1e293b",padding:"1rem",borderRadius:"8px",fontSize:"1.1rem"}}><strong>{val} {units.find(u=>u.k===from)?.l}</strong> = <strong style={{color:"#38bdf8"}}>{result} {units.find(u=>u.k===to)?.l}</strong></div>}</div>);}
+"use client";
+import { useState } from "react";
+
+const units: Record<string, number> = {
+    Henry (H): 1,
+    Millihenry (mH): 0.001,
+    Microhenry (µH): 1e-06,
+    Nanohenry (nH): 1e-09,
+    Kilohenry (kH): 1000.0,
+};
+
+export default function Page() {
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState("Henry (H)");
+  const [to, setTo] = useState("Millihenry (mH)");
+
+  const convert = () => {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "—";
+    return ((n * units[from]) / units[to]).toPrecision(6);
+  };
+
+  return (
+    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Electric Inductance Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between henries, millihenries, microhenries and more.</p>
+        <div className="space-y-4">
+          <input
+            type="number"
+            value={val}
+            onChange={e => setVal(e.target.value)}
+            placeholder="Enter value"
+            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-lg focus:outline-none focus:border-blue-500"
+          />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">From</label>
+              <select value={from} onChange={e => setFrom(e.target.value)}
+                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 focus:outline-none">
+          <option value="Henry (H)">Henry (H)</option>
+          <option value="Millihenry (mH)">Millihenry (mH)</option>
+          <option value="Microhenry (µH)">Microhenry (µH)</option>
+          <option value="Nanohenry (nH)">Nanohenry (nH)</option>
+          <option value="Kilohenry (kH)">Kilohenry (kH)</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">To</label>
+              <select value={to} onChange={e => setTo(e.target.value)}
+                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 focus:outline-none">
+          <option value="Henry (H)">Henry (H)</option>
+          <option value="Millihenry (mH)">Millihenry (mH)</option>
+          <option value="Microhenry (µH)">Microhenry (µH)</option>
+          <option value="Nanohenry (nH)">Nanohenry (nH)</option>
+          <option value="Kilohenry (kH)">Kilohenry (kH)</option>
+              </select>
+            </div>
+          </div>
+          <div className="bg-gray-800 rounded-lg px-4 py-3 text-xl font-mono">
+            {val ? convert() : <span className="text-gray-500">Result</span>}
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}
