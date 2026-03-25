@@ -1,1 +1,33 @@
-'use client';import{useState}from 'react';export default function Page(){const[bill,setBill]=useState('');const[tip,setTip]=useState('18');const[people,setPeople]=useState('1');const t=parseFloat(bill)||0;const tipAmt=t*(parseFloat(tip)/100);const total=t+tipAmt;const perPerson=total/(parseInt(people)||1);return(<main style={{padding:'2rem',fontFamily:'monospace',background:'#0f172a',minHeight:'100vh',color:'#e2e8f0'}}><h1>Tip Calculator</h1><input value={bill} onChange={e=>setBill(e.target.value)} placeholder='Bill amount ($)' style={{width:'100%',padding:'0.5rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',borderRadius:'4px',marginBottom:'0.5rem'}}/><div style={{display:'flex',gap:'0.5rem',marginBottom:'0.5rem'}}>{['15','18','20','25'].map(p=>(<button key={p} onClick={()=>setTip(p)} style={{padding:'0.5rem 1rem',background:tip===p?'#3b82f6':'#1e293b',color:'#e2e8f0',border:'1px solid #334155',borderRadius:'4px',cursor:'pointer'}}>{p}%</button>))}</div><input value={people} onChange={e=>setPeople(e.target.value)} placeholder='Number of people' style={{width:'100%',padding:'0.5rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',borderRadius:'4px',marginBottom:'1rem'}}/><div style={{background:'#1e293b',padding:'1rem',borderRadius:'8px'}}><p>Tip: ${tipAmt.toFixed(2)}</p><p>Total: ${total.toFixed(2)}</p><p>Per Person: ${perPerson.toFixed(2)}</p></div></main>);}
+"use client";
+import { useState } from "react";
+export default function TipCalculator() {
+  const [bill, setBill] = useState("");
+  const [tip, setTip] = useState("18");
+  const [people, setPeople] = useState("1");
+  const [result, setResult] = useState<string | null>(null);
+  const calculate = () => {
+    const b = parseFloat(bill);
+    const t = parseFloat(tip) / 100;
+    const p = parseInt(people);
+    if (isNaN(b) || isNaN(t) || isNaN(p) || p < 1) { setResult("Please enter valid numbers."); return; }
+    const tipAmount = b * t;
+    const total = b + tipAmount;
+    const perPerson = total / p;
+    setResult(`Tip Amount: $${tipAmount.toFixed(2)}\nTotal Bill: $${total.toFixed(2)}\nPer Person: $${perPerson.toFixed(2)}`);
+  };
+  return (
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-lg mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Tip Calculator</h1>
+        <p className="text-gray-400 mb-6">Calculate tip and split the bill among your group.</p>
+        <div className="space-y-4">
+          <div><label className="block text-sm text-gray-400 mb-1">Bill Amount ($)</label><input type="number" value={bill} onChange={e=>setBill(e.target.value)} placeholder="e.g. 85.00" className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white"/></div>
+          <div><label className="block text-sm text-gray-400 mb-1">Tip Percentage (%)</label><select value={tip} onChange={e=>setTip(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white"><option value="10">10%</option><option value="15">15%</option><option value="18">18%</option><option value="20">20%</option><option value="25">25%</option><option value="30">30%</option></select></div>
+          <div><label className="block text-sm text-gray-400 mb-1">Number of People</label><input type="number" value={people} onChange={e=>setPeople(e.target.value)} min="1" placeholder="e.g. 4" className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white"/></div>
+          <button onClick={calculate} className="w-full bg-blue-600 hover:bg-blue-700 rounded px-4 py-2 font-semibold">Calculate</button>
+        </div>
+        {result && <div className="mt-6 bg-gray-800 rounded p-4 whitespace-pre-line text-green-400 font-mono">{result}</div>}
+      </div>
+    </main>
+  );
+}
