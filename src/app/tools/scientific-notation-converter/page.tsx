@@ -1,33 +1,50 @@
 "use client";
 import { useState } from "react";
-export default function ScientificNotationConverter() {
-  const [input, setInput] = useState("");
-  const [mode, setMode] = useState("to");
-  const [result, setResult] = useState("");
-  function convert() {
-    if(mode==="to") {
-      const n=parseFloat(input);
-      if(isNaN(n)){setResult("Invalid number");return;}
-      setResult(n.toExponential());
-    } else {
-      const match=input.trim().match(/^([+-]?[\d.]+)[eE]([+-]?\d+)$/);
-      if(!match){setResult("Invalid scientific notation (e.g. 1.23e4)");return;}
-      setResult(String(parseFloat(input)));
-    }
-  }
+
+export default function ScientificNotation() {
+  const [standard, setStandard] = useState("");
+  const [sci, setSci] = useState("");
+
+  const handleStandard = (v) => {
+    setStandard(v);
+    const n = parseFloat(v);
+    if (!isNaN(n)) setSci(n.toExponential());
+    else setSci("");
+  };
+
+  const handleSci = (v) => {
+    setSci(v);
+    const n = parseFloat(v);
+    if (!isNaN(n)) setStandard(n.toString());
+    else setStandard("");
+  };
+
+  const n = parseFloat(standard);
+
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100 p-8">
+    <main className="min-h-screen bg-gray-950 text-white p-8">
       <div className="max-w-xl mx-auto">
         <h1 className="text-3xl font-bold mb-2">Scientific Notation Converter</h1>
-        <p className="text-gray-400 mb-6">Convert between standard and scientific notation</p>
-        <div className="flex gap-4 mb-4">
-          <button onClick={()=>setMode("to")} className={`flex-1 py-2 rounded ${mode==="to"?"bg-blue-600":"bg-gray-700"}`}>Number → Scientific</button>
-          <button onClick={()=>setMode("from")} className={`flex-1 py-2 rounded ${mode==="from"?"bg-blue-600":"bg-gray-700"}`}>Scientific → Number</button>
+        <p className="text-gray-400 mb-6">Convert between standard and scientific notation.</p>
+        <div className="space-y-4">
+          <div className="bg-gray-800 rounded p-4">
+            <label className="text-gray-400 text-sm mb-1 block">Standard Notation</label>
+            <input className="w-full bg-gray-700 rounded p-2 text-white" value={standard} onChange={e=>handleStandard(e.target.value)} placeholder="e.g. 0.0000123" />
+          </div>
+          <div className="text-center text-gray-500 text-2xl">⇅</div>
+          <div className="bg-gray-800 rounded p-4">
+            <label className="text-gray-400 text-sm mb-1 block">Scientific Notation</label>
+            <input className="w-full bg-gray-700 rounded p-2 text-white" value={sci} onChange={e=>handleSci(e.target.value)} placeholder="e.g. 1.23e-5" />
+          </div>
         </div>
-        <input value={input} onChange={e=>setInput(e.target.value)} placeholder={mode==="to"?"e.g. 12345000":"e.g. 1.2345e7"} className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 mb-4 font-mono" />
-        <button onClick={convert} className="w-full bg-blue-600 hover:bg-blue-700 rounded py-2 font-semibold mb-4">Convert</button>
-        {result && <div className="bg-gray-800 rounded p-4 text-green-400 font-mono text-xl">{result}</div>}
+        {!isNaN(n) && n !== 0 && (
+          <div className="mt-6 bg-gray-800 rounded p-4 space-y-2">
+            <div className="flex justify-between"><span className="text-gray-400">Exponential</span><span className="font-mono">{n.toExponential()}</span></div>
+            <div className="flex justify-between"><span className="text-gray-400">Fixed (6 dec)</span><span className="font-mono">{n.toFixed(6)}</span></div>
+            <div className="flex justify-between"><span className="text-gray-400">Precision (4 sig)</span><span className="font-mono">{n.toPrecision(4)}</span></div>
+          </div>
+        )}
       </div>
-    </div>
+    </main>
   );
 }
