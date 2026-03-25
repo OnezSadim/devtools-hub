@@ -1,42 +1,33 @@
 "use client";
 import { useState } from "react";
+const UNITS = ["lm", "klm", "mlm"];
+const TO_BASE: Record<string, number> = {"lm": 1, "klm": 1000.0, "mlm": 0.001};
 export default function Page() {
-  const units: string[] = ["lumen", "candela-steradian"];
-  const toBase: Record<string, number> = {"lumen": 1, "candela-steradian": 1};
-  const [from, setFrom] = useState(units[0]);
-  const [to, setTo] = useState(units[1]);
   const [val, setVal] = useState("");
-  const result = val === "" ? "" : ((parseFloat(val) * toBase[from]) / toBase[to]).toPrecision(6);
+  const [from, setFrom] = useState(UNITS[0]);
+  const convert = (to: string) => {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
+  };
   return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
-      <h1 className="text-3xl font-bold mb-2">Luminous Flux Converter</h1>
-      <p className="text-gray-400 mb-6">Convert between luminous flux units instantly.</p>
-      <div className="bg-gray-900 rounded-xl p-6 max-w-lg space-y-4">
-        <div>
-          <label className="block text-sm text-gray-400 mb-1">Value</label>
-          <input type="number" value={val} onChange={e => setVal(e.target.value)} className="w-full bg-gray-800 rounded px-3 py-2 text-white" placeholder="Enter value" />
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">From</label>
-            <select value={from} onChange={e => setFrom(e.target.value)} className="w-full bg-gray-800 rounded px-3 py-2 text-white">
-              {units.map(u => <option key={u} value={u}>{u}</option>)}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">To</label>
-            <select value={to} onChange={e => setTo(e.target.value)} className="w-full bg-gray-800 rounded px-3 py-2 text-white">
-              {units.map(u => <option key={u} value={u}>{u}</option>)}
-            </select>
-          </div>
-        </div>
-        {result !== "" && (
-          <div className="bg-gray-800 rounded p-4 text-center">
-            <span className="text-2xl font-bold text-green-400">{result}</span>
-            <span className="text-gray-400 ml-2">{to}</span>
-          </div>
-        )}
+    <main style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}>
+      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Luminous Flux Converter</h1>
+      <div style={{display:"flex",gap:"1rem",marginBottom:"1.5rem",flexWrap:"wrap"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px",width:"160px"}} />
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>
+          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
+        </select>
       </div>
+      <table style={{width:"100%",borderCollapse:"collapse"}}>
+        <thead><tr><th style={{textAlign:"left",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Unit</th><th style={{textAlign:"left",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Result</th></tr></thead>
+        <tbody>{UNITS.map(u=>(
+          <tr key={u} style={{background:u===from?"#1e293b":"transparent"}}>
+            <td style={{padding:"0.4rem 0.5rem"}}>{u}</td>
+            <td style={{padding:"0.4rem 0.5rem",color:"#38bdf8"}}>{convert(u)||"—"}</td>
+          </tr>
+        ))}</tbody>
+      </table>
     </main>
   );
 }

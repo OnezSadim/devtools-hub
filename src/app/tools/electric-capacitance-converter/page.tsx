@@ -1,47 +1,33 @@
 "use client";
 import { useState } from "react";
-
-const units = ["Farad", "Millifarad", "Microfarad", "Nanofarad", "Picofarad", "Kilofarad", "Abfarad", "Statfarad"];
-const toBase: Record<string, number> = {"Farad": 1, "Millifarad": 0.001, "Microfarad": 1e-06, "Nanofarad": 1e-09, "Picofarad": 1e-12, "Kilofarad": 1000.0, "Abfarad": 1000000000.0, "Statfarad": 1.11265e-12};
-
-export default function ElectricCapacitanceConverter() {
+const UNITS = ["F", "mF", "uF", "nF", "pF"];
+const TO_BASE: Record<string, number> = {"F": 1, "mF": 0.001, "uF": 1e-06, "nF": 1e-09, "pF": 1e-12};
+export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(units[0]);
-  const [to, setTo] = useState(units[1]);
-  const result = val !== "" && !isNaN(Number(val))
-    ? (Number(val) * toBase[from] / toBase[to]).toPrecision(6)
-    : "";
+  const [from, setFrom] = useState(UNITS[0]);
+  const convert = (to: string) => {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
+  };
   return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
-      <div className="max-w-xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Electric Capacitance Converter</h1>
-        <p className="text-gray-400 mb-6">Convert between electric capacitance units instantly.</p>
-        <div className="space-y-4">
-          <input type="number" value={val} onChange={e => setVal(e.target.value)}
-            placeholder="Enter value" className="w-full p-3 rounded bg-gray-800 border border-gray-700 text-white" />
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-sm text-gray-400 mb-1 block">From</label>
-              <select value={from} onChange={e => setFrom(e.target.value)}
-                className="w-full p-3 rounded bg-gray-800 border border-gray-700 text-white">
-                {units.map(u => <option key={u} value={u}>{u}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="text-sm text-gray-400 mb-1 block">To</label>
-              <select value={to} onChange={e => setTo(e.target.value)}
-                className="w-full p-3 rounded bg-gray-800 border border-gray-700 text-white">
-                {units.map(u => <option key={u} value={u}>{u}</option>)}
-              </select>
-            </div>
-          </div>
-          {result !== "" && (
-            <div className="p-4 bg-blue-900/30 border border-blue-700 rounded text-xl font-mono">
-              {val} {from} = {result} {to}
-            </div>
-          )}
-        </div>
+    <main style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}>
+      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Electric Capacitance Converter</h1>
+      <div style={{display:"flex",gap:"1rem",marginBottom:"1.5rem",flexWrap:"wrap"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px",width:"160px"}} />
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>
+          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
+        </select>
       </div>
+      <table style={{width:"100%",borderCollapse:"collapse"}}>
+        <thead><tr><th style={{textAlign:"left",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Unit</th><th style={{textAlign:"left",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Result</th></tr></thead>
+        <tbody>{UNITS.map(u=>(
+          <tr key={u} style={{background:u===from?"#1e293b":"transparent"}}>
+            <td style={{padding:"0.4rem 0.5rem"}}>{u}</td>
+            <td style={{padding:"0.4rem 0.5rem",color:"#38bdf8"}}>{convert(u)||"—"}</td>
+          </tr>
+        ))}</tbody>
+      </table>
     </main>
   );
 }

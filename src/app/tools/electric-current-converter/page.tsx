@@ -1,43 +1,33 @@
 "use client";
 import { useState } from "react";
-
-const units = ["Ampere (A)", "Milliampere (mA)", "Microampere (uA)", "Kiloampere (kA)", "Biot (Bi)"];
-const factors: Record<string, number> = {"Ampere (A)": 1, "Milliampere (mA)": 0.001, "Microampere (uA)": 1e-06, "Kiloampere (kA)": 1000, "Biot (Bi)": 10};
-
-export default function ElectricCurrentConverterPage() {
-  const [fromUnit, setFromUnit] = useState(units[0]);
-  const [toUnit, setToUnit] = useState(units[1]);
-  const [value, setValue] = useState("");
-  const result = value === "" ? "" : String((parseFloat(value) * factors[fromUnit]) / factors[toUnit]);
+const UNITS = ["A", "mA", "uA", "kA", "MA"];
+const TO_BASE: Record<string, number> = {"A": 1, "mA": 0.001, "uA": 1e-06, "kA": 1000.0, "MA": 1000000.0};
+export default function Page() {
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState(UNITS[0]);
+  const convert = (to: string) => {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
+  };
   return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
-      <h1 className="text-3xl font-bold mb-6">Electric Current Converter</h1>
-      <div className="max-w-xl bg-gray-900 rounded-xl p-6 space-y-4">
-        <div>
-          <label className="block text-sm text-gray-400 mb-1">Value</label>
-          <input type="number" value={value} onChange={e => setValue(e.target.value)} className="w-full bg-gray-800 rounded px-3 py-2 text-white" placeholder="Enter value" />
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">From</label>
-            <select value={fromUnit} onChange={e => setFromUnit(e.target.value)} className="w-full bg-gray-800 rounded px-3 py-2 text-white">
-              {units.map(u => <option key={u} value={u}>{u}</option>)}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">To</label>
-            <select value={toUnit} onChange={e => setToUnit(e.target.value)} className="w-full bg-gray-800 rounded px-3 py-2 text-white">
-              {units.map(u => <option key={u} value={u}>{u}</option>)}
-            </select>
-          </div>
-        </div>
-        {result !== "" && (
-          <div className="bg-gray-800 rounded p-4 text-center">
-            <p className="text-2xl font-mono text-green-400">{result}</p>
-            <p className="text-sm text-gray-400 mt-1">{toUnit}</p>
-          </div>
-        )}
+    <main style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}>
+      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Electric Current Converter</h1>
+      <div style={{display:"flex",gap:"1rem",marginBottom:"1.5rem",flexWrap:"wrap"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px",width:"160px"}} />
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>
+          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
+        </select>
       </div>
+      <table style={{width:"100%",borderCollapse:"collapse"}}>
+        <thead><tr><th style={{textAlign:"left",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Unit</th><th style={{textAlign:"left",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Result</th></tr></thead>
+        <tbody>{UNITS.map(u=>(
+          <tr key={u} style={{background:u===from?"#1e293b":"transparent"}}>
+            <td style={{padding:"0.4rem 0.5rem"}}>{u}</td>
+            <td style={{padding:"0.4rem 0.5rem",color:"#38bdf8"}}>{convert(u)||"—"}</td>
+          </tr>
+        ))}</tbody>
+      </table>
     </main>
   );
 }
