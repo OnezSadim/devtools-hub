@@ -1,2 +1,13 @@
 "use client";
-import { useState } from 'react'; const units = [{name:'Candela',factor:1},{name:'Millicandela',factor:0.001},{name:'Kilocandela',factor:1000},{name:'Microcandela',factor:0.000001}]; export default function Page() { const [val,setVal]=useState(''); const [from,setFrom]=useState(0); const convert=(to)=>{if(!val)return '';const r=(parseFloat(val)*units[from].factor)/units[to].factor;return isNaN(r)?'':r.toPrecision(6);}; return (<main style={{padding:'2rem',fontFamily:'monospace',background:'#0f172a',minHeight:'100vh',color:'#e2e8f0'}}><h1 style={{color:'#38bdf8'}}>Luminous Intensity Converter</h1><p>Convert candela and other luminous intensity units.</p><div style={{display:'flex',gap:'1rem',marginBottom:'1rem',flexWrap:'wrap'}}><input value={val} onChange={e=>setVal(e.target.value)} placeholder='Enter value' style={{padding:'0.5rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',borderRadius:'4px',flex:1}}/><select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{padding:'0.5rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',borderRadius:'4px'}}>{units.map((u,i)=><option key={i} value={i}>{u.name}</option>)}</select></div><table style={{width:'100%',borderCollapse:'collapse'}}><tbody>{units.map((u,i)=><tr key={i} style={{borderBottom:'1px solid #1e293b'}}><td style={{padding:'0.5rem',color:'#94a3b8'}}>{u.name}</td><td style={{padding:'0.5rem',color:'#38bdf8'}}>{convert(i)||'-'}</td></tr>)}</tbody></table></main>); }
+import {{ useState }} from "react";
+export default function Page() {{
+  const units = [{"n":"Candela","s":"cd","f":1},{"n":"Millicandela","s":"mcd","f":0.001},{"n":"Kilocandela","s":"kcd","f":1000},{"n":"Hefner candle","s":"HK","f":0.903},{"n":"Carcel unit","s":"carcel","f":9.74}];
+  const [vals, setVals] = useState(Object.fromEntries(units.map(u => [u.s, ''])));
+  function handleChange(sym, raw) {{
+    const n = parseFloat(raw);
+    if (raw === '' || isNaN(n)) {{ setVals(Object.fromEntries(units.map(u => [u.s, '']))); return; }}
+    const base = n / units.find(u => u.s === sym).f;
+    setVals(Object.fromEntries(units.map(u => [u.s, sym === u.s ? raw : (base * u.f).toPrecision(6)])));
+  }}
+  return (<div style={{{{padding:'2rem',maxWidth:'600px',margin:'0 auto',fontFamily:'sans-serif'}}}}><h1 style={{{{fontSize:'1.5rem',marginBottom:'1rem'}}}}>Luminous Intensity Converter</h1><p style={{{{color:'#666',marginBottom:'2rem'}}}}>Convert between candela, millicandela, kilocandela units</p><div style={{{{display:'grid',gap:'1rem'}}}}>{units.map(u => (<div key={{u.s}}><label style={{{{display:'block',marginBottom:'0.25rem',fontWeight:'bold'}}}}>{u.n} ({u.s})</label><input type="number" value={{vals[u.s]}} onChange={{e => handleChange(u.s, e.target.value)}} style={{{{width:'100%',padding:'0.5rem',border:'1px solid #ccc',borderRadius:'4px',fontSize:'1rem'}}}} placeholder="Enter value" /></div>))}</div></div>);
+}}
