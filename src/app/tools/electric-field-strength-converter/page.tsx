@@ -1,71 +1,65 @@
 "use client";
 import { useState } from "react";
-
-const factors: Record<string, number> = {
-        "V_m": 1,
-        "kV_m": 1000,
-        "MV_m": 1000000.0,
-        "V_cm": 100,
-        "V_mm": 1000,
-        "V_in": 39.3701,
-        "V_ft": 3.28084
-};
-
-export default function ElectricFieldStrengthConverterPage() {
-  const [value, setValue] = useState("");
-  const [from, setFrom] = useState("V_m");
-  const [to, setTo] = useState("kV_m");
-
-  const convert = () => {
-    const num = parseFloat(value);
-    if (isNaN(num)) return "—";
-    return ((num * factors[from]) / factors[to]).toPrecision(6);
-  };
-
+export default function Page() {
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState("Volt/meter (V/m)");
+  const [to, setTo] = useState("Kilovolt/meter (kV/m)");
+  function convert() {
+    const v = parseFloat(val);
+    if (isNaN(v)) return "—";
+    let toBase = 0;
+    switch (from) {
+      case "Volt/meter (V/m)": toBase = v * 1.0; break;
+      case "Kilovolt/meter (kV/m)": toBase = v * 1000.0; break;
+      case "Millivolt/meter (mV/m)": toBase = v * 0.001; break;
+      case "Microvolt/meter (μV/m)": toBase = v * 1e-06; break;
+      case "Volt/centimeter (V/cm)": toBase = v * 100.0; break;
+      case "Volt/inch (V/in)": toBase = v * 39.3701; break;
+      case "Newton/coulomb (N/C)": toBase = v * 1.0; break;
+      default: toBase = v;
+    }
+    let result = 0;
+    switch (to) {
+      case "Volt/meter (V/m)": result = base / 1.0; break;
+      case "Kilovolt/meter (kV/m)": result = base / 1000.0; break;
+      case "Millivolt/meter (mV/m)": result = base / 0.001; break;
+      case "Microvolt/meter (μV/m)": result = base / 1e-06; break;
+      case "Volt/centimeter (V/cm)": result = base / 100.0; break;
+      case "Volt/inch (V/in)": result = base / 39.3701; break;
+      case "Newton/coulomb (N/C)": result = base / 1.0; break;
+      default: result = toBase;
+    }
+    return result.toPrecision(6);
+  }
   return (
-    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
-      <div className="max-w-xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Electric Field Strength Converter</h1>
-        <p className="text-gray-400 mb-8">Convert between electric field strength units: V/m, kV/m, MV/m, V/cm, V/mm.</p>
-        <div className="space-y-4">
-          <input
-            type="number"
-            value={value}
-            onChange={e => setValue(e.target.value)}
-            placeholder="Enter value"
-            className="w-full bg-gray-800 rounded-lg px-4 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">From</label>
-              <select value={from} onChange={e => setFrom(e.target.value)}
-                className="w-full bg-gray-800 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          <option value="V_m">Volt per Meter (V/m)</option>
-          <option value="kV_m">Kilovolt per Meter (kV/m)</option>
-          <option value="MV_m">Megavolt per Meter (MV/m)</option>
-          <option value="V_cm">Volt per Centimeter (V/cm)</option>
-          <option value="V_mm">Volt per Millimeter (V/mm)</option>
-          <option value="V_in">Volt per Inch (V/in)</option>
-          <option value="V_ft">Volt per Foot (V/ft)</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">To</label>
-              <select value={to} onChange={e => setTo(e.target.value)}
-                className="w-full bg-gray-800 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          <option value="V_m">Volt per Meter (V/m)</option>
-          <option value="kV_m">Kilovolt per Meter (kV/m)</option>
-          <option value="MV_m">Megavolt per Meter (MV/m)</option>
-          <option value="V_cm">Volt per Centimeter (V/cm)</option>
-          <option value="V_mm">Volt per Millimeter (V/mm)</option>
-          <option value="V_in">Volt per Inch (V/in)</option>
-          <option value="V_ft">Volt per Foot (V/ft)</option>
-              </select>
-            </div>
-          </div>
-          <div className="bg-gray-800 rounded-lg px-4 py-3 text-2xl font-mono">
-            {value ? convert() : <span className="text-gray-500">Result</span>}
-          </div>
+    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",alignItems:"center",justifyContent:"center"}}>
+      <div style={{background:"#1e293b",borderRadius:12,padding:32,width:"100%",maxWidth:480}}>
+        <h1 style={{fontSize:24,fontWeight:700,marginBottom:8}}>Electric Field Strength Converter</h1>
+        <p style={{color:"#94a3b8",marginBottom:24}}>Convert between volts per meter, kilovolts per meter, millivolts per meter and more.</p>
+        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",fontSize:16,marginBottom:16,boxSizing:"border-box"}} />
+        <div style={{display:"flex",gap:12,marginBottom:24}}>
+          <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",fontSize:15}}>
+          <option value="Volt/meter (V/m)">Volt/meter (V/m)</option>
+          <option value="Kilovolt/meter (kV/m)">Kilovolt/meter (kV/m)</option>
+          <option value="Millivolt/meter (mV/m)">Millivolt/meter (mV/m)</option>
+          <option value="Microvolt/meter (μV/m)">Microvolt/meter (μV/m)</option>
+          <option value="Volt/centimeter (V/cm)">Volt/centimeter (V/cm)</option>
+          <option value="Volt/inch (V/in)">Volt/inch (V/in)</option>
+          <option value="Newton/coulomb (N/C)">Newton/coulomb (N/C)</option>
+          </select>
+          <span style={{alignSelf:"center",color:"#64748b",fontSize:20}}>→</span>
+          <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",fontSize:15}}>
+          <option value="Volt/meter (V/m)">Volt/meter (V/m)</option>
+          <option value="Kilovolt/meter (kV/m)">Kilovolt/meter (kV/m)</option>
+          <option value="Millivolt/meter (mV/m)">Millivolt/meter (mV/m)</option>
+          <option value="Microvolt/meter (μV/m)">Microvolt/meter (μV/m)</option>
+          <option value="Volt/centimeter (V/cm)">Volt/centimeter (V/cm)</option>
+          <option value="Volt/inch (V/in)">Volt/inch (V/in)</option>
+          <option value="Newton/coulomb (N/C)">Newton/coulomb (N/C)</option>
+          </select>
+        </div>
+        <div style={{background:"#0f172a",borderRadius:8,padding:"18px 20px",textAlign:"center",fontSize:22,fontWeight:700,color:"#38bdf8"}}>
+          {val ? convert() : "—"}
         </div>
       </div>
     </main>

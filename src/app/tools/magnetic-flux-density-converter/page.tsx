@@ -1,1 +1,67 @@
-"use client";import{useState}from"react";const units=[["T","1"],["mT","0.001"],["uT","0.000001"],["G","0.0001"],["kG","0.1"]];export default function Page(){const[v,setV]=useState("");const[f,setF]=useState(units[0][0]);const[t,setT]=useState(units[1][0]);const toBase=(val,u)=>{const r=units.find(x=>x[0]===u);return r?parseFloat(val)*parseFloat(r[1]):0};const fromBase=(val,u)=>{const r=units.find(x=>x[0]===u);return r?val/parseFloat(r[1]):0};const result=v&&!isNaN(v)?fromBase(toBase(v,f),t).toPrecision(6):"";return(<main style={{padding:"2rem",fontFamily:"sans-serif",maxWidth:"600px",margin:"0 auto"}}><h1>Magnetic Flux Density Converter</h1><p>Convert between magnetic flux density (B-field) units.</p><div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginTop:"1rem"}}><input type="number" value={v} onChange={e=>setV(e.target.value)} placeholder="Value" style={{flex:1,padding:"0.5rem",minWidth:"120px"}}/><select value={f} onChange={e=>setF(e.target.value)} style={{flex:1,padding:"0.5rem"}}>{units.map(u=><option key={u[0]} value={u[0]}>{u[0]}</option>)}</select><span style={{alignSelf:"center"}}>→</span><select value={t} onChange={e=>setT(e.target.value)} style={{flex:1,padding:"0.5rem"}}>{units.map(u=><option key={u[0]} value={u[0]}>{u[0]}</option>)}</select></div>{result&&<p style={{marginTop:"1rem",fontSize:"1.2rem"}}><strong>{v} {f} = {result} {t}</strong></p>}</main>)}
+"use client";
+import { useState } from "react";
+export default function Page() {
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState("Tesla (T)");
+  const [to, setTo] = useState("Millitesla (mT)");
+  function convert() {
+    const v = parseFloat(val);
+    if (isNaN(v)) return "—";
+    let toBase = 0;
+    switch (from) {
+      case "Tesla (T)": toBase = v * 1.0; break;
+      case "Millitesla (mT)": toBase = v * 0.001; break;
+      case "Microtesla (μT)": toBase = v * 1e-06; break;
+      case "Nanotesla (nT)": toBase = v * 1e-09; break;
+      case "Gauss (G)": toBase = v * 0.0001; break;
+      case "Kilogauss (kG)": toBase = v * 0.1; break;
+      case "Weber/sq meter (Wb/m²)": toBase = v * 1.0; break;
+      default: toBase = v;
+    }
+    let result = 0;
+    switch (to) {
+      case "Tesla (T)": result = base / 1.0; break;
+      case "Millitesla (mT)": result = base / 0.001; break;
+      case "Microtesla (μT)": result = base / 1e-06; break;
+      case "Nanotesla (nT)": result = base / 1e-09; break;
+      case "Gauss (G)": result = base / 0.0001; break;
+      case "Kilogauss (kG)": result = base / 0.1; break;
+      case "Weber/sq meter (Wb/m²)": result = base / 1.0; break;
+      default: result = toBase;
+    }
+    return result.toPrecision(6);
+  }
+  return (
+    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",alignItems:"center",justifyContent:"center"}}>
+      <div style={{background:"#1e293b",borderRadius:12,padding:32,width:"100%",maxWidth:480}}>
+        <h1 style={{fontSize:24,fontWeight:700,marginBottom:8}}>Magnetic Flux Density Converter</h1>
+        <p style={{color:"#94a3b8",marginBottom:24}}>Convert between teslas, milliteslas, microteslas, gauss and more.</p>
+        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",fontSize:16,marginBottom:16,boxSizing:"border-box"}} />
+        <div style={{display:"flex",gap:12,marginBottom:24}}>
+          <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",fontSize:15}}>
+          <option value="Tesla (T)">Tesla (T)</option>
+          <option value="Millitesla (mT)">Millitesla (mT)</option>
+          <option value="Microtesla (μT)">Microtesla (μT)</option>
+          <option value="Nanotesla (nT)">Nanotesla (nT)</option>
+          <option value="Gauss (G)">Gauss (G)</option>
+          <option value="Kilogauss (kG)">Kilogauss (kG)</option>
+          <option value="Weber/sq meter (Wb/m²)">Weber/sq meter (Wb/m²)</option>
+          </select>
+          <span style={{alignSelf:"center",color:"#64748b",fontSize:20}}>→</span>
+          <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:"10px 14px",borderRadius:8,border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",fontSize:15}}>
+          <option value="Tesla (T)">Tesla (T)</option>
+          <option value="Millitesla (mT)">Millitesla (mT)</option>
+          <option value="Microtesla (μT)">Microtesla (μT)</option>
+          <option value="Nanotesla (nT)">Nanotesla (nT)</option>
+          <option value="Gauss (G)">Gauss (G)</option>
+          <option value="Kilogauss (kG)">Kilogauss (kG)</option>
+          <option value="Weber/sq meter (Wb/m²)">Weber/sq meter (Wb/m²)</option>
+          </select>
+        </div>
+        <div style={{background:"#0f172a",borderRadius:8,padding:"18px 20px",textAlign:"center",fontSize:22,fontWeight:700,color:"#38bdf8"}}>
+          {val ? convert() : "—"}
+        </div>
+      </div>
+    </main>
+  );
+}
