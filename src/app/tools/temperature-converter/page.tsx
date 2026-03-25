@@ -2,28 +2,17 @@
 import { useState } from "react";
 export default function TemperatureConverter() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState("celsius");
-  const units = ["celsius","fahrenheit","kelvin","rankine"];
-  const toCelsius: Record<string,(v:number)=>number> = { celsius:v=>v, fahrenheit:v=>(v-32)*5/9, kelvin:v=>v-273.15, rankine:v=>(v-491.67)*5/9 };
-  const fromCelsius: Record<string,(v:number)=>number> = { celsius:v=>v, fahrenheit:v=>v*9/5+32, kelvin:v=>v+273.15, rankine:v=>(v+273.15)*9/5 };
   const n = parseFloat(val);
-  const c = isNaN(n) ? null : toCelsius[from](n);
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-2">Temperature Converter</h1>
-      <p className="text-gray-400 mb-4">Convert between Celsius, Fahrenheit, Kelvin, and Rankine.</p>
-      <div className="flex gap-2 mb-4">
-        <input className="flex-1 p-2 bg-gray-800 rounded text-white" value={val} onChange={e => setVal(e.target.value)} placeholder="Enter value..." />
-        <select className="p-2 bg-gray-800 rounded text-white" value={from} onChange={e => setFrom(e.target.value)}>{units.map(u => <option key={u} value={u}>{u}</option>)}</select>
-      </div>
-      {c !== null && (
-        <div className="grid grid-cols-2 gap-3">
-          {units.map(u => (
-            <div key={u} className="bg-gray-800 p-4 rounded">
-              <div className="text-gray-400 text-sm capitalize">{u}</div>
-              <div className="text-white text-xl font-mono">{fromCelsius[u](c).toFixed(4)}</div>
-            </div>
-          ))}
+    <div className="p-8 max-w-xl mx-auto">
+      <h1 className="text-2xl font-bold mb-6 text-white">Temperature Converter</h1>
+      <input className="w-full p-3 rounded bg-gray-800 text-white border border-gray-700 mb-4" placeholder="Enter temperature" value={val} onChange={e=>setVal(e.target.value)} />
+      {!isNaN(n) && (
+        <div className="space-y-2">
+          <div className="p-3 bg-gray-800 rounded text-white">Celsius: {val} C</div>
+          <div className="p-3 bg-gray-800 rounded text-white">Fahrenheit: {(n*9/5+32).toFixed(2)} F</div>
+          <div className="p-3 bg-gray-800 rounded text-white">Kelvin: {(n+273.15).toFixed(2)} K</div>
+          <div className="p-3 bg-gray-800 rounded text-white">Rankine: {((n+273.15)*9/5).toFixed(2)} R</div>
         </div>
       )}
     </div>

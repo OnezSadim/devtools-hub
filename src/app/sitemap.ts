@@ -1,6 +1,6 @@
 import { MetadataRoute } from "next";
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = "https://devtools-hub-green.vercel.app";
+  const baseUrl = "https://devtools-hub-green.vercel.app";
   const tools = [
     'age-calculator',
     'anagram-checker',
@@ -128,6 +128,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'number-base-converter',
     'number-formatter',
     'number-to-words',
+    'number-words-converter',
     'open-graph-preview',
     'package-json-generator',
     'palindrome-checker',
@@ -136,6 +137,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'phone-number-formatter',
     'pixel-converter',
     'pixel-to-rem',
+    'pixel-to-rem-converter',
     'pixel-unit-converter',
     'pixels-to-rem',
     'port-scanner-info',
@@ -200,9 +202,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'yaml-to-json',
     'yaml-validator',
   ];
-  const now = new Date();
-  return [
-    { url: base, lastModified: now, changeFrequency: "daily", priority: 1 },
-    ...tools.map(t => ({ url: `${base}/tools/${t}`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.8 })),
-  ];
+  const toolUrls = tools.map(slug => ({ url: baseUrl + "/tools/" + slug, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.7 }));
+  return [{ url: baseUrl, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 1 }, ...toolUrls];
 }

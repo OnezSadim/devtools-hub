@@ -1,29 +1,29 @@
 "use client";
 import { useState } from "react";
 export default function RomanNumeralConverter() {
-  const [input, setInput] = useState("");
-  const toRoman = (n: number) => {
+  const [num, setNum] = useState("");
+  const [roman, setRoman] = useState("");
+  const toRoman = (n) => {
     const vals=[1000,900,500,400,100,90,50,40,10,9,5,4,1];
     const syms=["M","CM","D","CD","C","XC","L","XL","X","IX","V","IV","I"];
     let r=""; vals.forEach((v,i)=>{while(n>=v){r+=syms[i];n-=v;}});
     return r;
   };
-  const fromRoman = (s: string) => {
-    const m:Record<string,number>={I:1,V:5,X:10,L:50,C:100,D:500,M:1000};
-    let r=0; s=s.toUpperCase();
-    for(let i=0;i<s.length;i++){const c=m[s[i]],n=m[s[i+1]];if(n>c)r-=c;else r+=c;}
-    return r;
+  const fromRoman = (s) => {
+    const m={I:1,V:5,X:10,L:50,C:100,D:500,M:1000};
+    return s.toUpperCase().split("").reduce((a,c,i,arr)=>m[c]<m[arr[i+1]]?a-m[c]:a+m[c],0);
   };
-  const isNum = /^\d+$/.test(input.trim());
-  const result = input ? (isNum ? toRoman(parseInt(input)) : fromRoman(input).toString()) : "";
   return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Roman Numeral Converter</h1>
-        <p className="text-gray-400 mb-6">Convert between Arabic and Roman numerals.</p>
-        <input className="w-full bg-gray-800 rounded p-3 font-mono mb-4" value={input} onChange={e=>setInput(e.target.value)} placeholder="Enter number or Roman numeral (e.g. 42 or XLII)..." />
-        {result && <div className="bg-gray-800 p-4 rounded text-2xl font-bold text-center text-green-400 font-mono">{result}</div>}
+    <div className="p-8 max-w-xl mx-auto">
+      <h1 className="text-2xl font-bold mb-6 text-white">Roman Numeral Converter</h1>
+      <div className="mb-4">
+        <input className="w-full p-3 rounded bg-gray-800 text-white border border-gray-700 mb-2" placeholder="Number (1-3999)" value={num} onChange={e=>setNum(e.target.value)} />
+        <div className="p-3 bg-gray-800 rounded text-white">Roman: {num && !isNaN(num) ? toRoman(parseInt(num)) : ""}</div>
       </div>
-    </main>
+      <div>
+        <input className="w-full p-3 rounded bg-gray-800 text-white border border-gray-700 mb-2" placeholder="Roman numeral (e.g. XIV)" value={roman} onChange={e=>setRoman(e.target.value)} />
+        <div className="p-3 bg-gray-800 rounded text-white">Number: {roman ? fromRoman(roman) : ""}</div>
+      </div>
+    </div>
   );
 }
