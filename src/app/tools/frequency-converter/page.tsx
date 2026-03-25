@@ -1,33 +1,31 @@
 "use client";
 import { useState } from "react";
-
-const UNITS = ["Hz", "kHz", "MHz", "GHz", "THz", "rpm", "rad/s", "mHz"];
-const TO_BASE = {"Hz": 1, "kHz": 1000, "MHz": 1000000.0, "GHz": 1000000000.0, "THz": 1000000000000.0, "rpm": 0.016667, "rad/s": 0.15915, "mHz": 0.001};
-
+const UNITS = ["Hz", "kHz", "MHz", "GHz", "THz", "rpm", "rad/s"];
+const TO_BASE: Record<string, number> = {"Hz": 1.0, "kHz": 1000.0, "MHz": 1000000.0, "GHz": 1000000000.0, "THz": 1000000000000.0, "rpm": 0.016666666666666666, "rad/s": 0.1591549430918955};
 export default function Page() {
   const [val, setVal] = useState("");
   const [from, setFrom] = useState(UNITS[0]);
-  const [to, setTo] = useState(UNITS[1]);
-  const convert = () => {
+  const convert = (to: string) => {
     const n = parseFloat(val);
-    if (isNaN(n)) return "";
+    if (isNaN(n)) return "-";
     return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
   };
   return (
-    <main style={{padding:"2rem",fontFamily:"monospace",background:"#0f0f0f",minHeight:"100vh",color:"#e5e5e5"}}>
-      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Frequency Converter</h1>
-      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1rem"}}>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",background:"#1a1a1a",border:"1px solid #333",color:"#e5e5e5",borderRadius:"4px",flex:"1"}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1a1a1a",border:"1px solid #333",color:"#e5e5e5",borderRadius:"4px"}}>
-          {UNITS.map(u=><option key={u}>{u}</option>)}
-        </select>
-        <span style={{padding:"0.5rem"}}>to</span>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1a1a1a",border:"1px solid #333",color:"#e5e5e5",borderRadius:"4px"}}>
-          {UNITS.map(u=><option key={u}>{u}</option>)}
+    <main style={{maxWidth:600,margin:"40px auto",padding:"0 16px",fontFamily:"sans-serif",color:"#e2e8f0",background:"#0f172a",minHeight:"100vh"}}>
+      <h1 style={{fontSize:28,fontWeight:700,marginBottom:8}}>Frequency Converter</h1>
+      <div style={{display:"flex",gap:8,marginBottom:24,flexWrap:"wrap"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{flex:1,minWidth:120,padding:"8px 12px",borderRadius:6,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:16}} />
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"8px 12px",borderRadius:6,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:16}}>
+          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
         </select>
       </div>
-      <div style={{fontSize:"1.25rem",padding:"1rem",background:"#1a1a1a",borderRadius:"4px",border:"1px solid #333"}}>
-        {val ? convert() + " " + to : "Result will appear here"}
+      <div style={{display:"flex",flexDirection:"column",gap:8}}>
+        {UNITS.map(u=>(
+          <div key={u} style={{display:"flex",justifyContent:"space-between",padding:"10px 14px",background:"#1e293b",borderRadius:6,border:u===from?"1px solid #6366f1":"1px solid #334155"}}>
+            <span style={{color:"#94a3b8"}}>{u}</span>
+            <span style={{fontWeight:600}}>{convert(u)}</span>
+          </div>
+        ))}
       </div>
     </main>
   );

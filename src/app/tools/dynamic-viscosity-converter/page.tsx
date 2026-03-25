@@ -1,31 +1,31 @@
 "use client";
 import { useState } from "react";
-
-const UNITS: string[] = ["Pa·s", "mPa·s", "cP", "P", "lb/(ft·s)", "lb/(ft·h)", "kgf·s/m²"];
-const TO_BASE: Record<string, number> = {"Pa·s": 1, "mPa·s": 0.001, "cP": 0.001, "P": 0.1, "lb/(ft·s)": 1.48816, "lb/(ft·h)": 0.000413378, "kgf·s/m²": 9.80665};
-
+const UNITS = ["Pa·s", "mPa·s", "cP", "P", "kgf·s/m²", "lbf·s/ft²", "lb/(ft·s)"];
+const TO_BASE: Record<string, number> = {"Pa·s": 1.0, "mPa·s": 0.001, "cP": 0.001, "P": 0.1, "kgf·s/m²": 9.80665, "lbf·s/ft²": 47.8802589, "lb/(ft·s)": 1.4881639};
 export default function Page() {
   const [val, setVal] = useState("");
   const [from, setFrom] = useState(UNITS[0]);
-  const [to, setTo] = useState(UNITS[1]);
-  const convert = () => {
+  const convert = (to: string) => {
     const n = parseFloat(val);
-    if (isNaN(n)) return "";
+    if (isNaN(n)) return "-";
     return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
   };
-  const sel = "bg-gray-800 text-white rounded px-3 py-2 border border-gray-600";
   return (
-    <main className="min-h-screen bg-gray-900 text-white p-8">
-      <h1 className="text-3xl font-bold mb-2">Dynamic Viscosity Converter</h1>
-      <p className="text-gray-400 mb-6">Convert between dynamic viscosity units instantly.</p>
-      <div className="bg-gray-800 rounded-xl p-6 max-w-lg space-y-4">
-        <input className="w-full bg-gray-700 rounded px-3 py-2 border border-gray-600" placeholder="Enter value" value={val} onChange={e => setVal(e.target.value)} />
-        <div className="flex gap-3">
-          <select className={sel} value={from} onChange={e => setFrom(e.target.value)}>{UNITS.map(u => <option key={u}>{u}</option>)}</select>
-          <span className="self-center text-gray-400">→</span>
-          <select className={sel} value={to} onChange={e => setTo(e.target.value)}>{UNITS.map(u => <option key={u}>{u}</option>)}</select>
-        </div>
-        {val && <div className="text-2xl font-mono text-green-400">{convert()} {to}</div>}
+    <main style={{maxWidth:600,margin:"40px auto",padding:"0 16px",fontFamily:"sans-serif",color:"#e2e8f0",background:"#0f172a",minHeight:"100vh"}}>
+      <h1 style={{fontSize:28,fontWeight:700,marginBottom:8}}>Dynamic Viscosity Converter</h1>
+      <div style={{display:"flex",gap:8,marginBottom:24,flexWrap:"wrap"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{flex:1,minWidth:120,padding:"8px 12px",borderRadius:6,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:16}} />
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"8px 12px",borderRadius:6,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:16}}>
+          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
+        </select>
+      </div>
+      <div style={{display:"flex",flexDirection:"column",gap:8}}>
+        {UNITS.map(u=>(
+          <div key={u} style={{display:"flex",justifyContent:"space-between",padding:"10px 14px",background:"#1e293b",borderRadius:6,border:u===from?"1px solid #6366f1":"1px solid #334155"}}>
+            <span style={{color:"#94a3b8"}}>{u}</span>
+            <span style={{fontWeight:600}}>{convert(u)}</span>
+          </div>
+        ))}
       </div>
     </main>
   );
