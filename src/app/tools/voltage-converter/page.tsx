@@ -1,42 +1,76 @@
 "use client";
 import { useState } from "react";
 
-const units = [
-  { label: "Volt (V)", factor: 1 },
-  { label: "Millivolt (mV)", factor: 0.001 },
-  { label: "Kilovolt (kV)", factor: 1000 },
-  { label: "Megavolt (MV)", factor: 1e6 },
-  { label: "Microvolt (µV)", factor: 1e-6 },
-  { label: "Nanovolt (nV)", factor: 1e-9 },
-  { label: "Picovolt (pV)", factor: 1e-12 },
-  { label: "Statvolt (statV)", factor: 299.792458 },
-  { label: "Abvolt (abV)", factor: 1e-8 },
-];
+const units: Record<string, number> = {
+  "Volt": 1,
+  "Millivolt": 0.001,
+  "Microvolt": 1e-06,
+  "Kilovolt": 1000.0,
+  "Megavolt": 1000000.0,
+  "Gigavolt": 1000000000.0,
+  "Statvolt": 299.792458,
+  "Abvolt": 1e-08,
+};
 
-export default function VoltageConverter() {
-  const [val, setVal] = useState("");
-  const [from, setFrom] = useState(0);
-  const num = parseFloat(val);
-  const base = isNaN(num) ? null : num * units[from].factor;
+function convert(value: number, from: string, to: string): number {
+  const base = value * units[from];
+  return base / units[to];
+}
+
+export default function Page() {
+  const [val, setVal] = useState("1");
+  const [from, setFrom] = useState("Volt");
+  const [to, setTo] = useState("Millivolt");
+
+  const numVal = parseFloat(val);
+  const result = !isNaN(numVal) ? convert(numVal, from, to) : 0;
+
   return (
-    <main style={{minHeight:"100vh",background:"#0f172a",color:"#e2e8f0",padding:"2rem",fontFamily:"monospace"}}>
-      <h1 style={{fontSize:"2rem",marginBottom:"0.5rem"}}>Voltage Converter</h1>
-      <p style={{color:"#94a3b8",marginBottom:"2rem"}}>Convert between voltage units</p>
-      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1.5rem"}}>
-        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.75rem",background:"#1e293b",border:"1px solid #334155",borderRadius:"8px",color:"#e2e8f0",fontSize:"1rem",width:"200px"}} />
-        <select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{padding:"0.75rem",background:"#1e293b",border:"1px solid #334155",borderRadius:"8px",color:"#e2e8f0"}}>
-          {units.map((u,i)=><option key={i} value={i}>{u.label}</option>)}
-        </select>
-      </div>
-      <div style={{display:"grid",gap:"0.75rem"}}>
-        {units.map((u,i)=>(
-          <div key={i} style={{padding:"1rem",background:"#1e293b",borderRadius:"8px",border:"1px solid #334155"}}>
-            <span style={{color:"#94a3b8",fontSize:"0.85rem"}}>{u.label}</span>
-            <div style={{fontSize:"1.25rem",fontWeight:"bold",color:"#38bdf8"}}>
-              {base !== null ? (base / u.factor).toExponential(4) : "—"}
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Voltage Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between units of electric potential including volts, millivolts, kilovolts, and megavolts.</p>
+        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Value</label>
+            <input type="number" value={val} onChange={e => setVal(e.target.value)}
+              className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white" />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">From</label>
+              <select value={from} onChange={e => setFrom(e.target.value)}
+                className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white">
+      <option value="Volt">Volt</option>
+      <option value="Millivolt">Millivolt</option>
+      <option value="Microvolt">Microvolt</option>
+      <option value="Kilovolt">Kilovolt</option>
+      <option value="Megavolt">Megavolt</option>
+      <option value="Gigavolt">Gigavolt</option>
+      <option value="Statvolt">Statvolt</option>
+      <option value="Abvolt">Abvolt</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">To</label>
+              <select value={to} onChange={e => setTo(e.target.value)}
+                className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white">
+      <option value="Volt">Volt</option>
+      <option value="Millivolt">Millivolt</option>
+      <option value="Microvolt">Microvolt</option>
+      <option value="Kilovolt">Kilovolt</option>
+      <option value="Megavolt">Megavolt</option>
+      <option value="Gigavolt">Gigavolt</option>
+      <option value="Statvolt">Statvolt</option>
+      <option value="Abvolt">Abvolt</option>
+              </select>
             </div>
           </div>
-        ))}
+          <div className="bg-gray-800 rounded-lg p-4 text-center">
+            <div className="text-3xl font-bold text-blue-400">{result.toPrecision(6)}</div>
+            <div className="text-gray-400 mt-1">{to}</div>
+          </div>
+        </div>
       </div>
     </main>
   );

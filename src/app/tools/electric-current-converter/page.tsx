@@ -1,53 +1,77 @@
 "use client";
 import { useState } from "react";
 
-const units: { name: string; factor: number }[] = [
-  { name: 'Ampere (A)', factor: 1.0 },
-  { name: 'Milliampere (mA)', factor: 0.001 },
-  { name: 'Microampere (μA)', factor: 1e-06 },
-  { name: 'Nanoampere (nA)', factor: 1e-09 },
-  { name: 'Kiloampere (kA)', factor: 1000.0 },
-  { name: 'Megaampere (MA)', factor: 1000000.0 },
-  { name: 'Biot (Bi)', factor: 10.0 },
-  { name: 'Statampere (statA)', factor: 3.33564e-10 },
-  { name: 'Abampere (abA)', factor: 10.0 },
-];
+const units: Record<string, number> = {
+  "Ampere": 1,
+  "Milliampere": 0.001,
+  "Microampere": 1e-06,
+  "Kiloampere": 1000.0,
+  "Megaampere": 1000000.0,
+  "Biot": 10,
+  "Abampere": 10,
+  "Statampere": 3.335641e-10,
+};
+
+function convert(value: number, from: string, to: string): number {
+  const base = value * units[from];
+  return base / units[to];
+}
 
 export default function Page() {
-  const [value, setValue] = useState("");
-  const [from, setFrom] = useState(0);
-  const [to, setTo] = useState(1);
-  const result = value !== "" ? (parseFloat(value) * units[from].factor / units[to].factor).toPrecision(6) : "";
+  const [val, setVal] = useState("1");
+  const [from, setFrom] = useState("Ampere");
+  const [to, setTo] = useState("Milliampere");
+
+  const numVal = parseFloat(val);
+  const result = !isNaN(numVal) ? convert(numVal, from, to) : 0;
+
   return (
-    <main style={{ padding: "2rem", fontFamily: "sans-serif", maxWidth: 600, margin: "0 auto" }}>
-      <h1 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>Electric Current Converter</h1>
-      <p style={{ color: "#666", marginBottom: "1.5rem" }}>Convert between units of electric current: amperes, milliamperes, microamperes, kiloamperes, etc.</p>
-      <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-        <div style={{ flex: 1 }}>
-          <label>Value</label><br/>
-          <input type="number" value={value} onChange={e => setValue(e.target.value)}
-            style={{ width: "100%", padding: "0.5rem", marginTop: "0.25rem" }} />
-        </div>
-        <div style={{ flex: 1 }}>
-          <label>From</label><br/>
-          <select value={from} onChange={e => setFrom(Number(e.target.value))}
-            style={{ width: "100%", padding: "0.5rem", marginTop: "0.25rem" }}>
-            {units.map((u, i) => <option key={i} value={i}>{u.name}</option>)}
-          </select>
-        </div>
-        <div style={{ flex: 1 }}>
-          <label>To</label><br/>
-          <select value={to} onChange={e => setTo(Number(e.target.value))}
-            style={{ width: "100%", padding: "0.5rem", marginTop: "0.25rem" }}>
-            {units.map((u, i) => <option key={i} value={i}>{u.name}</option>)}
-          </select>
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Electric Current Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between units of electric current including amperes, milliamperes, and kiloamperes.</p>
+        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Value</label>
+            <input type="number" value={val} onChange={e => setVal(e.target.value)}
+              className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white" />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">From</label>
+              <select value={from} onChange={e => setFrom(e.target.value)}
+                className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white">
+      <option value="Ampere">Ampere</option>
+      <option value="Milliampere">Milliampere</option>
+      <option value="Microampere">Microampere</option>
+      <option value="Kiloampere">Kiloampere</option>
+      <option value="Megaampere">Megaampere</option>
+      <option value="Biot">Biot</option>
+      <option value="Abampere">Abampere</option>
+      <option value="Statampere">Statampere</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">To</label>
+              <select value={to} onChange={e => setTo(e.target.value)}
+                className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white">
+      <option value="Ampere">Ampere</option>
+      <option value="Milliampere">Milliampere</option>
+      <option value="Microampere">Microampere</option>
+      <option value="Kiloampere">Kiloampere</option>
+      <option value="Megaampere">Megaampere</option>
+      <option value="Biot">Biot</option>
+      <option value="Abampere">Abampere</option>
+      <option value="Statampere">Statampere</option>
+              </select>
+            </div>
+          </div>
+          <div className="bg-gray-800 rounded-lg p-4 text-center">
+            <div className="text-3xl font-bold text-blue-400">{result.toPrecision(6)}</div>
+            <div className="text-gray-400 mt-1">{to}</div>
+          </div>
         </div>
       </div>
-      {result !== "" && (
-        <div style={{ marginTop: "1.5rem", padding: "1rem", background: "#f0f0f0", borderRadius: 8 }}>
-          <strong>Result: {result} {units[to].name}</strong>
-        </div>
-      )}
     </main>
   );
 }
