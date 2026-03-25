@@ -2,19 +2,9 @@
 import { useState } from "react";
 export default function LuminanceConverter() {
   const [val, setVal] = useState("");
-  const n = parseFloat(val) || 0;
-  return (
-    <div style={{padding:"2rem",maxWidth:"600px",margin:"0 auto"}}>
-      <h1>Luminance Converter</h1>
-      <p>Convert luminance units. Enter value in candela per square meter (cd/m²).</p>
-      <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter cd/m²" style={{width:"100%",padding:"0.5rem",marginBottom:"1rem",fontSize:"1rem"}} />
-      <table style={{width:"100%",borderCollapse:"collapse"}}>
-        <tbody>
-          {[["cd/m² (nit)",1],["cd/cm² (stilb)",0.0001],["cd/ft²",0.092903],["foot-lambert",0.2919],["lambert",0.00031831],["apostilb",3.14159]].map(([u,f])=>(
-            <tr key={u as string}><td style={{padding:"0.5rem 0"}}>{u}</td><td style={{textAlign:"right"}}>{(n*(f as number)).toPrecision(6)}</td></tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
+  const [from, setFrom] = useState("candela-per-sqm");
+  const units: Record<string, number> = { "candela-per-sqm": 1, "candela-per-sqft": 10.7639, "foot-lambert": 3.42626, "lambert": 3183.1, "nit": 1 };
+  const convert = (v: string, f: string) => { const n = parseFloat(v); if (isNaN(n)) return {}; return Object.fromEntries(Object.entries(units).map(([k, r]) => [k, ((n * units[f]) / r).toFixed(6)])); };
+  const results = convert(val, from);
+  return (<div style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}><h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Luminance Converter</h1><div style={{marginBottom:"1rem"}}><input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",marginRight:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}/><select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>{Object.keys(units).map(u=><option key={u} value={u}>{u}</option>)}</select></div><div>{Object.entries(results).map(([k,v])=><div key={k} style={{padding:"0.5rem",marginBottom:"0.5rem",background:"#1e293b",borderRadius:"4px"}}><strong>{k}:</strong> {v}</div>)}</div></div>);
 }
