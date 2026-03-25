@@ -1,19 +1,9 @@
 "use client";
 import { useState } from "react";
+const units: Record<string, number> = { J: 1, kJ: 1e3, MJ: 1e6, cal: 4.184, kcal: 4184, kWh: 3600000, BTU: 1055.06, eV: 1.60218e-19 };
 export default function EnergyConverter() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState("joule");
-  const toJ: Record<string, number> = { joule: 1, kilojoule: 1000, megajoule: 1e6, calorie: 4.184, kilocalorie: 4184, watt_hour: 3600, kilowatt_hour: 3600000, electron_volt: 1.602e-19, btu: 1055.06, foot_pound: 1.35582 };
-  const units = Object.keys(toJ);
-  const joules = parseFloat(val) * (toJ[from] || 1);
-  return (
-    <main style={{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"monospace"}}>
-      <h1>Energy Converter</h1>
-      <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"0.5rem",marginBottom:"1rem",background:"#1a1a1a",color:"#fff",border:"1px solid #333"}} />
-      <select value={from} onChange={e=>setFrom(e.target.value)} style={{width:"100%",padding:"0.5rem",marginBottom:"1rem",background:"#1a1a1a",color:"#fff",border:"1px solid #333"}}>
-        {units.map(u=><option key={u} value={u}>{u}</option>)}
-      </select>
-      {val && <div style={{background:"#1a1a1a",padding:"1rem",borderRadius:"4px"}}>{units.map(u=><div key={u} style={{padding:"0.25rem 0",borderBottom:"1px solid #222"}}><strong>{u}:</strong> {(joules/toJ[u]).toExponential(4)}</div>)}</div>}
-    </main>
-  );
+  const [from, setFrom] = useState("J");
+  const base = parseFloat(val) * (units[from] || 1);
+  return (<div style={{padding:"2rem",fontFamily:"monospace",background:"#111",minHeight:"100vh",color:"#eee"}}><h1>Energy Converter</h1><input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",marginRight:"0.5rem",background:"#222",color:"#eee",border:"1px solid #444"}} /><select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#222",color:"#eee",border:"1px solid #444"}}>{Object.keys(units).map(u=><option key={u}>{u}</option>)}</select><table style={{marginTop:"1rem",borderCollapse:"collapse",width:"100%"}}><tbody>{Object.entries(units).map(([u,f])=><tr key={u}><td style={{padding:"0.4rem 1rem",borderBottom:"1px solid #333"}}>{u}</td><td style={{padding:"0.4rem 1rem",borderBottom:"1px solid #333"}}>{val?(base/f).toPrecision(6):"—"}</td></tr>)}</tbody></table></div>);
 }
