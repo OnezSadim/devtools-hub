@@ -1,1 +1,36 @@
-"use client";import{useState}from"react";const units=[["Pa·s","Pa·s",1],["mPa·s","mPa·s",0.001],["cP","cP",0.001],["poise","poise",0.1],["lb/(ft·s)","lb/(ft·s)",1.48816]];export default function Page(){const[v,setV]=useState("");const[f,setF]=useState(units[0][0]);const[t,setT]=useState(units[1][0]);const convert=()=>{const n=parseFloat(v);if(isNaN(n))return"";const fu=units.find(u=>u[0]===f);const tu=units.find(u=>u[0]===t);if(!fu||!tu)return"";return((n*fu[2])/tu[2]).toPrecision(6);};return(<div style={{padding:"2rem",fontFamily:"monospace",background:"#0f0f0f",minHeight:"100vh",color:"#e0e0e0"}}><h1 style={{color:"#7c3aed"}}>Dynamic Viscosity Converter</h1><p>Convert between dynamic viscosity units.</p><div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginTop:"1rem"}}><input value={v}onChange={e=>setV(e.target.value)}placeholder="Value"style={{padding:"0.5rem",background:"#1a1a1a",border:"1px solid #333",color:"#e0e0e0",borderRadius:"4px"}}/><select value={f}onChange={e=>setF(e.target.value)}style={{padding:"0.5rem",background:"#1a1a1a",border:"1px solid #333",color:"#e0e0e0",borderRadius:"4px"}}>{units.map(u=>(<option key={u[0]}value={u[0]}>{u[0]}</option>))}</select><span style={{alignSelf:"center"}}>to</span><select value={t}onChange={e=>setT(e.target.value)}style={{padding:"0.5rem",background:"#1a1a1a",border:"1px solid #333",color:"#e0e0e0",borderRadius:"4px"}}>{units.map(u=>(<option key={u[0]}value={u[0]}>{u[0]}</option>))}</select></div>{v&&<p style={{marginTop:"1rem",fontSize:"1.2rem"}}>{v} {f} = <strong style={{color:"#7c3aed"}}>{convert()}</strong> {t}</p>}</div>);}
+"use client";
+import { useState } from "react";
+
+const units = ["Pa·s", "mPa·s", "cP", "P", "lb/(ft·s)"];
+
+export default function Page() {
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState(units[0]);
+  const [to, setTo] = useState(units[1] || units[0]);
+
+  return (
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <h1 className="text-3xl font-bold mb-2">Dynamic Viscosity Converter</h1>
+      <p className="text-gray-400 mb-6">Convert dynamic viscosity between Pa·s, cP, poise and more.</p>
+      <div className="bg-gray-900 rounded-xl p-6 max-w-lg space-y-4">
+        <input
+          type="number"
+          value={val}
+          onChange={e => setVal(e.target.value)}
+          placeholder="Enter value"
+          className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white"
+        />
+        <div className="flex gap-3">
+          <select value={from} onChange={e => setFrom(e.target.value)} className="flex-1 bg-gray-800 rounded-lg px-3 py-2">
+            {units.map(u => <option key={u}>{u}</option>)}
+          </select>
+          <span className="self-center text-gray-400">→</span>
+          <select value={to} onChange={e => setTo(e.target.value)} className="flex-1 bg-gray-800 rounded-lg px-3 py-2">
+            {units.map(u => <option key={u}>{u}</option>)}
+          </select>
+        </div>
+        <p className="text-gray-400 text-sm">Use this tool to convert between dynamic viscosity converter units online.</p>
+      </div>
+    </main>
+  );
+}

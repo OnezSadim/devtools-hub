@@ -1,1 +1,36 @@
-'use client';import{useState}from 'react';export default function Page(){const[v,setV]=useState('');const[d,setD]=useState('');const[mu,setMu]=useState('');const[rho,setRho]=useState('');const[re,setRe]=useState('');const calc=()=>{const V=parseFloat(v),D=parseFloat(d),MU=parseFloat(mu),RHO=parseFloat(rho);if(!isNaN(V)&&!isNaN(D)&&!isNaN(MU)&&!isNaN(RHO)&&MU>0){const Re=RHO*V*D/MU;setRe(Re.toFixed(1)+' ('+(Re<2300?'Laminar':Re<4000?'Transitional':'Turbulent')+')');}};return(<div style={{padding:'2rem',fontFamily:'monospace',background:'#0f172a',minHeight:'100vh',color:'#e2e8f0'}}><h1 style={{color:'#38bdf8'}}>Reynolds Number Calculator</h1><p>Re = ρVD / μ</p><div style={{display:'flex',flexDirection:'column',gap:'1rem',maxWidth:'400px'}}><input placeholder='Density ρ (kg/m³)' value={rho} onChange={e=>setRho(e.target.value)} style={{padding:'0.5rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',borderRadius:'4px'}}/><input placeholder='Velocity V (m/s)' value={v} onChange={e=>setV(e.target.value)} style={{padding:'0.5rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',borderRadius:'4px'}}/><input placeholder='Diameter D (m)' value={d} onChange={e=>setD(e.target.value)} style={{padding:'0.5rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',borderRadius:'4px'}}/><input placeholder='Viscosity μ (Pa·s)' value={mu} onChange={e=>setMu(e.target.value)} style={{padding:'0.5rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',borderRadius:'4px'}}/><button onClick={calc} style={{padding:'0.5rem 1rem',background:'#0ea5e9',color:'#fff',border:'none',borderRadius:'4px',cursor:'pointer'}}>Calculate</button>{re&&<div style={{padding:'1rem',background:'#1e293b',borderRadius:'4px'}}>Re = {re}</div>}</div></div>);}
+"use client";
+import { useState } from "react";
+
+const units = ["dimensionless", "laminar (<2300)", "turbulent (>4000)"];
+
+export default function Page() {
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState(units[0]);
+  const [to, setTo] = useState(units[1] || units[0]);
+
+  return (
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <h1 className="text-3xl font-bold mb-2">Reynolds Number Calculator</h1>
+      <p className="text-gray-400 mb-6">Calculate and convert Reynolds number for fluid flow analysis.</p>
+      <div className="bg-gray-900 rounded-xl p-6 max-w-lg space-y-4">
+        <input
+          type="number"
+          value={val}
+          onChange={e => setVal(e.target.value)}
+          placeholder="Enter value"
+          className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white"
+        />
+        <div className="flex gap-3">
+          <select value={from} onChange={e => setFrom(e.target.value)} className="flex-1 bg-gray-800 rounded-lg px-3 py-2">
+            {units.map(u => <option key={u}>{u}</option>)}
+          </select>
+          <span className="self-center text-gray-400">→</span>
+          <select value={to} onChange={e => setTo(e.target.value)} className="flex-1 bg-gray-800 rounded-lg px-3 py-2">
+            {units.map(u => <option key={u}>{u}</option>)}
+          </select>
+        </div>
+        <p className="text-gray-400 text-sm">Use this tool to convert between reynolds number calculator units online.</p>
+      </div>
+    </main>
+  );
+}

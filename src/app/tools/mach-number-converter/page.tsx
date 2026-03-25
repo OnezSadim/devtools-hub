@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-const units = ["m²/s", "cm²/s", "mm²/s", "cSt", "St"];
+const units = ["Mach", "m/s", "km/h", "mph", "knots"];
 
 export default function Page() {
   const [val, setVal] = useState("");
@@ -10,8 +10,8 @@ export default function Page() {
 
   return (
     <main className="min-h-screen bg-gray-950 text-white p-8">
-      <h1 className="text-3xl font-bold mb-2">Kinematic Viscosity Converter</h1>
-      <p className="text-gray-400 mb-6">Convert kinematic viscosity between m²/s, cSt, stokes and more.</p>
+      <h1 className="text-3xl font-bold mb-2">Mach Number Converter</h1>
+      <p className="text-gray-400 mb-6">Convert Mach number to speed and vice versa.</p>
       <div className="bg-gray-900 rounded-xl p-6 max-w-lg space-y-4">
         <input
           type="number"
@@ -29,7 +29,7 @@ export default function Page() {
             {units.map(u => <option key={u}>{u}</option>)}
           </select>
         </div>
-        <p className="text-gray-400 text-sm">Use this tool to convert between kinematic viscosity converter units online.</p>
+        <p className="text-gray-400 text-sm">Use this tool to convert between mach number converter units online.</p>
       </div>
     </main>
   );
