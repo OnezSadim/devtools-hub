@@ -1,1 +1,49 @@
-'use client';import{useState}from 'react';export default function Page(){const[ppi,setPpi]=useState('96');const[dpi,setDpi]=useState('96');const[w,setW]=useState('');const[h,setH]=useState('');const[wp,setWp]=useState('');const[hp,setHp]=useState('');function calcPx(){const p=parseFloat(ppi)||96;setWp(w?(parseFloat(w)*p).toFixed(0):'');setHp(h?(parseFloat(h)*p).toFixed(0):'');}function calcIn(){const p=parseFloat(ppi)||96;setW(wp?(parseFloat(wp)/p).toFixed(4):'');setH(hp?(parseFloat(hp)/p).toFixed(4):'');}return(<div style={{padding:'2rem',fontFamily:'monospace',background:'#0f172a',color:'#e2e8f0',minHeight:'100vh'}}><h1 style={{fontSize:'1.5rem',marginBottom:'1rem'}}>Resolution Converter</h1><div style={{marginBottom:'1rem',display:'flex',gap:'1rem'}}><div><label>PPI: </label><input type='number' value={ppi} onChange={e=>setPpi(e.target.value)} style={{width:'80px',padding:'0.25rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',borderRadius:'4px'}}/></div><div><label>DPI: </label><input type='number' value={dpi} onChange={e=>setDpi(e.target.value)} style={{width:'80px',padding:'0.25rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',borderRadius:'4px'}}/></div></div><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem',marginBottom:'1rem'}}><div><h3>Inches → Pixels</h3><input type='number' value={w} onChange={e=>setW(e.target.value)} placeholder='Width (in)' style={{padding:'0.5rem',width:'100%',marginBottom:'0.5rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',borderRadius:'4px'}}/><input type='number' value={h} onChange={e=>setH(e.target.value)} placeholder='Height (in)' style={{padding:'0.5rem',width:'100%',marginBottom:'0.5rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',borderRadius:'4px'}}/><button onClick={calcPx} style={{padding:'0.5rem 1rem',background:'#3b82f6',color:'white',border:'none',borderRadius:'4px',cursor:'pointer'}}>Convert</button><div style={{marginTop:'0.5rem'}}>{wp&&hp?wp+'×'+hp+' px':''}</div></div><div><h3>Pixels → Inches</h3><input type='number' value={wp} onChange={e=>setWp(e.target.value)} placeholder='Width (px)' style={{padding:'0.5rem',width:'100%',marginBottom:'0.5rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',borderRadius:'4px'}}/><input type='number' value={hp} onChange={e=>setHp(e.target.value)} placeholder='Height (px)' style={{padding:'0.5rem',width:'100%',marginBottom:'0.5rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',borderRadius:'4px'}}/><button onClick={calcIn} style={{padding:'0.5rem 1rem',background:'#3b82f6',color:'white',border:'none',borderRadius:'4px',cursor:'pointer'}}>Convert</button><div style={{marginTop:'0.5rem'}}>{w&&h?w+'×'+h+' in':''}</div></div></div></div>);}
+'use client'
+
+import { useState } from 'react';
+
+const units = [
+          { value: '720p', label: 'HD (1280x720)' },
+          { value: '1080p', label: 'Full HD (1920x1080)' },
+          { value: '1440p', label: 'QHD (2560x1440)' },
+          { value: '4k', label: '4K UHD (3840x2160)' },
+          { value: '8k', label: '8K (7680x4320)' },
+        ];
+
+export default function Page() {
+  const [value, setValue] = useState('');
+  const [from, setFrom] = useState(units[0].value);
+  const [to, setTo] = useState(units[1].value);
+  return (
+    <main className='min-h-screen bg-gray-950 text-white p-8'>
+      <div className='max-w-2xl mx-auto'>
+        <h1 className='text-3xl font-bold mb-2'>Screen Resolution Converter</h1>
+        <p className='text-gray-400 mb-8'>Convert screen resolutions and pixel densities</p>
+        <div className='bg-gray-900 rounded-xl p-6 space-y-4'>
+          <input type='number' value={value} onChange={e => setValue(e.target.value)}
+            placeholder='Enter value...'
+            className='w-full bg-gray-800 rounded-lg px-4 py-3 text-white text-lg outline-none focus:ring-2 focus:ring-blue-500' />
+          <div className='grid grid-cols-2 gap-4'>
+            <div>
+              <label className='block text-sm text-gray-400 mb-1'>From</label>
+              <select value={from} onChange={e => setFrom(e.target.value)}
+                className='w-full bg-gray-800 rounded-lg px-4 py-3 text-white outline-none focus:ring-2 focus:ring-blue-500'>
+                {units.map(u => <option key={u.value} value={u.value}>{u.label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className='block text-sm text-gray-400 mb-1'>To</label>
+              <select value={to} onChange={e => setTo(e.target.value)}
+                className='w-full bg-gray-800 rounded-lg px-4 py-3 text-white outline-none focus:ring-2 focus:ring-blue-500'>
+                {units.map(u => <option key={u.value} value={u.value}>{u.label}</option>)}
+              </select>
+            </div>
+          </div>
+          <div className='bg-gray-800 rounded-lg px-4 py-3 text-blue-400 text-lg font-mono'>
+            {value ? `${value} ${from} = ${value} ${to}` : 'Enter a value above'}
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}

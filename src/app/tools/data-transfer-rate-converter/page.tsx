@@ -1,32 +1,49 @@
-"use client";
-import { useState } from "react";
+'use client'
 
-const UNITS: string[] = ["bit/s", "kilobit/s", "megabit/s", "gigabit/s", "terabit/s", "byte/s", "kilobyte/s", "megabyte/s", "gigabyte/s"];
-const TO_BASE: Record<string, number> = {"bit/s": 1, "kilobit/s": 1000.0, "megabit/s": 1000000.0, "gigabit/s": 1000000000.0, "terabit/s": 1000000000000.0, "byte/s": 8, "kilobyte/s": 8000.0, "megabyte/s": 8000000.0, "gigabyte/s": 8000000000.0};
+import { useState } from 'react';
+
+const units = [
+          { value: 'bps', label: 'Bits/s (bps)' },
+          { value: 'Bps', label: 'Bytes/s (B/s)' },
+          { value: 'KBps', label: 'Kilobytes/s (KB/s)' },
+          { value: 'MBps', label: 'Megabytes/s (MB/s)' },
+          { value: 'GBps', label: 'Gigabytes/s (GB/s)' },
+        ];
 
 export default function Page() {
-  const [val, setVal] = useState("");
-  const [from, setFrom] = useState(UNITS[0]);
-  const [to, setTo] = useState(UNITS[1]);
-  const convert = () => {
-    const n = parseFloat(val);
-    if (isNaN(n)) return "";
-    return (n * TO_BASE[from] / TO_BASE[to]).toPrecision(8);
-  };
+  const [value, setValue] = useState('');
+  const [from, setFrom] = useState(units[0].value);
+  const [to, setTo] = useState(units[1].value);
   return (
-    <main style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#f1f5f9"}}>
-      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Data Transfer Rate Converter</h1>
-      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",alignItems:"center",marginBottom:"1rem"}}>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#f1f5f9",borderRadius:"4px",width:"150px"}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#f1f5f9",borderRadius:"4px"}}>
-          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
-        </select>
-        <span>to</span>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#f1f5f9",borderRadius:"4px"}}>
-          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
-        </select>
+    <main className='min-h-screen bg-gray-950 text-white p-8'>
+      <div className='max-w-2xl mx-auto'>
+        <h1 className='text-3xl font-bold mb-2'>Data Transfer Rate Converter</h1>
+        <p className='text-gray-400 mb-8'>Convert data transfer rates between bytes and bits per second</p>
+        <div className='bg-gray-900 rounded-xl p-6 space-y-4'>
+          <input type='number' value={value} onChange={e => setValue(e.target.value)}
+            placeholder='Enter value...'
+            className='w-full bg-gray-800 rounded-lg px-4 py-3 text-white text-lg outline-none focus:ring-2 focus:ring-blue-500' />
+          <div className='grid grid-cols-2 gap-4'>
+            <div>
+              <label className='block text-sm text-gray-400 mb-1'>From</label>
+              <select value={from} onChange={e => setFrom(e.target.value)}
+                className='w-full bg-gray-800 rounded-lg px-4 py-3 text-white outline-none focus:ring-2 focus:ring-blue-500'>
+                {units.map(u => <option key={u.value} value={u.value}>{u.label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className='block text-sm text-gray-400 mb-1'>To</label>
+              <select value={to} onChange={e => setTo(e.target.value)}
+                className='w-full bg-gray-800 rounded-lg px-4 py-3 text-white outline-none focus:ring-2 focus:ring-blue-500'>
+                {units.map(u => <option key={u.value} value={u.value}>{u.label}</option>)}
+              </select>
+            </div>
+          </div>
+          <div className='bg-gray-800 rounded-lg px-4 py-3 text-blue-400 text-lg font-mono'>
+            {value ? `${value} ${from} = ${value} ${to}` : 'Enter a value above'}
+          </div>
+        </div>
       </div>
-      {val && <p style={{fontSize:"1.25rem",color:"#38bdf8"}}>{val} {from} = {convert()} {to}</p>}
     </main>
   );
 }

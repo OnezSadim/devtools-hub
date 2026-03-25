@@ -3,11 +3,11 @@
 import { useState } from 'react';
 
 const units = [
-          { value: 'px', label: 'Pixels (px)' },
-          { value: 'rem', label: 'REM' },
-          { value: 'em', label: 'EM' },
-          { value: 'pt', label: 'Points (pt)' },
-          { value: 'vw', label: 'Viewport Width (vw)' },
+          { value: '16:9', label: '16:9 Widescreen' },
+          { value: '4:3', label: '4:3 Standard' },
+          { value: '21:9', label: '21:9 Ultrawide' },
+          { value: '1:1', label: '1:1 Square' },
+          { value: '9:16', label: '9:16 Portrait' },
         ];
 
 export default function Page() {
@@ -17,8 +17,8 @@ export default function Page() {
   return (
     <main className='min-h-screen bg-gray-950 text-white p-8'>
       <div className='max-w-2xl mx-auto'>
-        <h1 className='text-3xl font-bold mb-2'>Pixel to REM Converter</h1>
-        <p className='text-gray-400 mb-8'>Convert pixels to REM and vice versa for CSS development</p>
+        <h1 className='text-3xl font-bold mb-2'>Aspect Ratio Converter</h1>
+        <p className='text-gray-400 mb-8'>Convert and calculate aspect ratios for screens and images</p>
         <div className='bg-gray-900 rounded-xl p-6 space-y-4'>
           <input type='number' value={value} onChange={e => setValue(e.target.value)}
             placeholder='Enter value...'

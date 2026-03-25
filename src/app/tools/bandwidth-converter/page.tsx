@@ -3,11 +3,11 @@
 import { useState } from 'react';
 
 const units = [
-          { value: 'px', label: 'Pixels (px)' },
-          { value: 'rem', label: 'REM' },
-          { value: 'em', label: 'EM' },
-          { value: 'pt', label: 'Points (pt)' },
-          { value: 'vw', label: 'Viewport Width (vw)' },
+          { value: 'bps', label: 'Bits per second (bps)' },
+          { value: 'kbps', label: 'Kilobits/s (Kbps)' },
+          { value: 'mbps', label: 'Megabits/s (Mbps)' },
+          { value: 'gbps', label: 'Gigabits/s (Gbps)' },
+          { value: 'tbps', label: 'Terabits/s (Tbps)' },
         ];
 
 export default function Page() {
@@ -17,8 +17,8 @@ export default function Page() {
   return (
     <main className='min-h-screen bg-gray-950 text-white p-8'>
       <div className='max-w-2xl mx-auto'>
-        <h1 className='text-3xl font-bold mb-2'>Pixel to REM Converter</h1>
-        <p className='text-gray-400 mb-8'>Convert pixels to REM and vice versa for CSS development</p>
+        <h1 className='text-3xl font-bold mb-2'>Bandwidth Converter</h1>
+        <p className='text-gray-400 mb-8'>Convert network bandwidth units between bps, Kbps, Mbps, Gbps</p>
         <div className='bg-gray-900 rounded-xl p-6 space-y-4'>
           <input type='number' value={value} onChange={e => setValue(e.target.value)}
             placeholder='Enter value...'
