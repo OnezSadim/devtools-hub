@@ -1,6 +1,10 @@
-export default function sitemap() {
+import { MetadataRoute } from 'next';
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  const base = 'https://devtools-hub-green.vercel.app';
   const tools = [
     'age-calculator',
+    'age-difference-calculator',
     'anagram-checker',
     'anagram-finder',
     'anagram-solver',
@@ -31,6 +35,7 @@ export default function sitemap() {
     'caesar-cipher',
     'calorie-burn-calculator',
     'calorie-calculator',
+    'capital-gains-calculator',
     'character-counter',
     'character-frequency',
     'character-frequency-analyzer',
@@ -68,6 +73,7 @@ export default function sitemap() {
     'curl-to-code',
     'curl-to-fetch',
     'currency-converter',
+    'currency-exchange-calculator',
     'currency-formatter',
     'data-size-converter',
     'data-storage-converter',
@@ -75,8 +81,11 @@ export default function sitemap() {
     'data-transfer-speed-calculator',
     'date-calculator',
     'days-between-dates',
+    'days-until-calculator',
     'diff-checker',
     'discount-calculator',
+    'dividend-calculator',
+    'dividend-yield-calculator',
     'dns-lookup',
     'docker-compose-generator',
     'dockerfile-generator',
@@ -113,6 +122,7 @@ export default function sitemap() {
     'grid-generator',
     'grid-layout-generator',
     'hash-generator',
+    'hex-to-decimal-converter',
     'hex-to-rgb',
     'hex-to-rgb-converter',
     'htaccess-generator',
@@ -136,6 +146,7 @@ export default function sitemap() {
     'image-base64-converter',
     'image-color-picker',
     'image-to-base64',
+    'income-tax-calculator',
     'inflation-calculator',
     'investment-calculator',
     'investment-return-calculator',
@@ -172,6 +183,7 @@ export default function sitemap() {
     'list-deduplicator',
     'list-randomizer',
     'loan-amortization',
+    'loan-amortization-calculator',
     'loan-calculator',
     'loan-emi-calculator',
     'lorem-ipsum',
@@ -189,10 +201,12 @@ export default function sitemap() {
     'morse-code-translator',
     'morse-to-text',
     'mortgage-calculator',
+    'mortgage-payment-calculator',
     'nato-alphabet',
     'nato-alphabet-converter',
     'nato-phonetic-alphabet',
     'net-worth-calculator',
+    'net-worth-tracker',
     'nginx-config-generator',
     'number-base-converter',
     'number-formatter',
@@ -231,6 +245,7 @@ export default function sitemap() {
     'regex-tester',
     'remove-duplicate-lines',
     'retirement-calculator',
+    'retirement-savings-calculator',
     'robots-txt-generator',
     'robots-txt-tester',
     'roi-calculator',
@@ -239,6 +254,7 @@ export default function sitemap() {
     'rsa-key-generator',
     'sales-tax-calculator',
     'savings-goal-calculator',
+    'scientific-calculator',
     'scientific-notation-converter',
     'screen-resolution',
     'screen-resolution-info',
@@ -298,6 +314,7 @@ export default function sitemap() {
     'timestamp-converter',
     'timezone-converter',
     'tip-calculator',
+    'tip-splitter',
     'toml-parser',
     'toml-to-json',
     'toml-validator',
@@ -327,16 +344,10 @@ export default function sitemap() {
     'yaml-to-json',
     'yaml-validator',
     'z-index-manager',
+    'zodiac-sign-calculator',
   ];
-  const base = "https://devtools-hub-green.vercel.app";
-  const toolUrls = tools.map((slug) => ({
-    url: base + "/tools/" + slug + "",
-    lastModified: new Date(),
-    changeFrequency: "monthly",
-    priority: 0.7,
-  }));
   return [
-    { url: base, lastModified: new Date(), changeFrequency: "weekly", priority: 1 },
-    ...toolUrls,
+    { url: base, lastModified: new Date(), changeFrequency: 'weekly', priority: 1 },
+    ...tools.map(t => ({ url: `${base}/tools/${t}`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.8 }))
   ];
 }
