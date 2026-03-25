@@ -1,50 +1,49 @@
-"use client"
-import { useState } from "react"
+"use client";
+import { useState } from "react";
 
 export default function BinaryToDecimal() {
-  const [bin, setBin] = useState("1010")
-  const [dec, setDec] = useState("10")
-  const [hex, setHex] = useState("a")
-  const [oct, setOct] = useState("12")
-  const fromBin = (v: string) => {
-    const n = parseInt(v, 2)
-    if(isNaN(n)) return
-    setDec(String(n)); setHex(n.toString(16)); setOct(n.toString(8))
+  const [binary, setBinary] = useState("");
+  const [decimal, setDecimal] = useState("");
+  const [hex, setHex] = useState("");
+  const [octal, setOctal] = useState("");
+  const [error, setError] = useState("");
+
+  function convert(val) {
+    setBinary(val);
+    if (!val) { setDecimal(""); setHex(""); setOctal(""); setError(""); return; }
+    if (!/^[01]+$/.test(val)) { setError("Invalid binary"); return; }
+    setError("");
+    const dec = parseInt(val, 2);
+    setDecimal(dec.toString());
+    setHex(dec.toString(16).toUpperCase());
+    setOctal(dec.toString(8));
   }
-  const fromDec = (v: string) => {
-    const n = parseInt(v, 10)
-    if(isNaN(n)) return
-    setBin(n.toString(2)); setHex(n.toString(16)); setOct(n.toString(8))
+
+  function fromDecimal(val) {
+    setDecimal(val);
+    const n = parseInt(val);
+    if (!isNaN(n) && n >= 0) {
+      setBinary(n.toString(2));
+      setHex(n.toString(16).toUpperCase());
+      setOctal(n.toString(8));
+    }
   }
-  const fromHex = (v: string) => {
-    const n = parseInt(v, 16)
-    if(isNaN(n)) return
-    setBin(n.toString(2)); setDec(String(n)); setOct(n.toString(8))
-  }
-  const fromOct = (v: string) => {
-    const n = parseInt(v, 8)
-    if(isNaN(n)) return
-    setBin(n.toString(2)); setDec(String(n)); setHex(n.toString(16))
-  }
+
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100 p-6">
-      <h1 className="text-2xl font-bold mb-6">Number Base Converter</h1>
-      <div className="space-y-4">
-        {[
-          {label:"Binary (Base 2)",val:bin,set:(v:string)=>{setBin(v);fromBin(v)},pattern:"[01]*"},
-          {label:"Decimal (Base 10)",val:dec,set:(v:string)=>{setDec(v);fromDec(v)},pattern:"[0-9]*"},
-          {label:"Hexadecimal (Base 16)",val:hex,set:(v:string)=>{setHex(v);fromHex(v)},pattern:"[0-9a-fA-F]*"},
-          {label:"Octal (Base 8)",val:oct,set:(v:string)=>{setOct(v);fromOct(v)},pattern:"[0-7]*"}
-        ].map(({label,val,set,pattern})=>(
-          <div key={label}>
-            <label className="block text-sm text-gray-400 mb-1">{label}</label>
-            <input value={val} onChange={e=>set(e.target.value)} pattern={pattern} className="w-full bg-gray-800 rounded px-4 py-3 font-mono text-lg" />
-          </div>
-        ))}
-      </div>
-      <div className="mt-6 bg-gray-800 rounded-lg p-4">
-        <p className="text-sm text-gray-400">Enter any value to convert between binary, decimal, hexadecimal, and octal instantly.</p>
+    <div className="min-h-screen bg-gray-950 text-white p-6">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Binary to Decimal Converter</h1>
+        <p className="text-gray-400 mb-6">Convert between binary, decimal, hex, and octal</p>
+        <div className="space-y-4">
+          {[["Binary", binary, convert, "01001000"], ["Decimal", decimal, fromDecimal, "72"], ["Hexadecimal", hex, (v) => { const n = parseInt(v, 16); if (!isNaN(n)) { setBinary(n.toString(2)); setDecimal(n.toString()); setHex(v.toUpperCase()); setOctal(n.toString(8)); } }, "48"], ["Octal", octal, (v) => { const n = parseInt(v, 8); if (!isNaN(n)) { setBinary(n.toString(2)); setDecimal(n.toString()); setHex(n.toString(16).toUpperCase()); setOctal(v); } }, "110"]].map(([label, value, handler, ph]) => (
+            <div key={label}>
+              <label className="block text-sm font-medium text-gray-300 mb-1">{label}</label>
+              <input className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 font-mono text-green-400 focus:outline-none focus:border-blue-500" value={value} onChange={e => handler(e.target.value)} placeholder={ph} />
+            </div>
+          ))}
+          {error && <p className="text-red-400 text-sm">{error}</p>}
+        </div>
       </div>
     </div>
-  )
+  );
 }

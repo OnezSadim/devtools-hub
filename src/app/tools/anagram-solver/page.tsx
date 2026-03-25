@@ -1,0 +1,32 @@
+"use client";
+import { useState } from "react";
+
+function getAnagrams(word) {
+  const sorted = word.toLowerCase().split('').sort().join('');
+  const commonWords = ['able','acid','aged','also','area','army','away','baby','back','ball','band','bank','base','bath','bear','beat','been','bell','best','bird','blow','blue','boat','body','bold','bolt','bone','book','born','both','boys','bred','bull','busy','cafe','cage','cake','call','calm','came','card','care','case','cash','cast','cave','cell','chat','chip','cite','city','clad','clam','clan','clap','claw','clay','clip','club','clue','coat','code','coil','cold','come','cool','cope','copy','cord','core','corn','cost','coup','crew','crop','crow','cube','cure','curl','cute','damp','dark','data','date','dawn','days','dead','deal','dean','dear','debt','deep','deny','desk','diet','dirt','dish','disk','dock','does','dome','done','door','dose','dots','down','draw','drew','drop','drum','dual','dull','dumb','dump','dust','duty','dyed','each','earl','earn','ease','east','easy','edge','else','emit','ends','epic','even','ever','evil','exam','exit','eyes','face','fact','fail','fair','fall','fame','farm','fast','fate','fear','feet','felt','file','fill','film','find','fine','fire','firm','fish','fist','fits','flat','flew','flip','flow','foam','fold','folk','fond','font','foot','ford','fore','form','fort','foul','four','free','from','fuel','full','fund','fury','fuse','fuzz','gain','gale','game','gang','gate','gave','gaze','gear','gent','gift','girl','give','glad','glow','glue','goal','goes','gold','golf','gone','good','grab','gray','grew','grid','grin','grip','grow','gulf','gust','half','halt','hand','hang','harm','hate','have','haze','head','heal','heap','heat','heel','held','hell','help','herd','here','hero','hide','high','hill','hint','hire','hits','hold','hole','home','hood','hook','hope','horn','host','hour','hump','hunt','hurl','hurt','hymn','icon','idea','idol','ills','inch','into','iris','iron','isle','item','jabs','jams','jars','jaws','joys','jump','jury','just','keen','keep','kept','kill','kind','king','knee','knew','knit','knob','knot','know','lace','laid','lake','lamp','land','lane','lash','last','late','laud','lava','lawn','lead','leak','lean','leap','lend','lens','lets','levy','lids','life','lift','like','lime','line','link','lion','list','load','loan','lock','logo','long','look','loop','lore','lore','loss','lost','loud','love','luck','lure','lurk','lust','made','mail','main','make','male','mall','mane','many','mare','mark','mass','mast','mate','math','maze','meal','mean','meat','melt','menu','mere','mice','mild','mile','milk','mill','mime','mind','mine','mint','miss','mist','mode','mold','mole','mood','moon','mope','more','most','move','much','mule','mull','muse','mute','myth','nail','name','nape','navy','need','nest','news','nice','nick','nine','noel','none','noon','norm','nose','note','noun','nude','null','numb','obey','odds','oils','omit','once','only','open','oral','orbs','ours','oval','over','owns','pace','pack','pact','page','paid','pain','pale','palm','pang','pave','peak','peal','peel','peer','pelt','pens','perk','pert','pest','pets','pick','pier','pile','pill','pine','pink','pint','pipe','pits','plan','play','plod','plot','plow','ploy','plum','plus','poem','poet','poke','pole','poll','pool','poor','port','post','pour','prey','prim','prod','prop','pull','pump','punt','pure','push','puts','quiz','race','rack','raft','rage','raid','rail','rain','rake','ramp','rang','rank','rare','rash','rate','read','real','reap','rely','rent','rest','rice','rich','ride','rift','ring','riot','rise','risk','road','roam','roar','robe','rock','rode','role','roll','roof','root','rope','rose','rout','rove','ruin','rule','ruse','rush','rust','sale','salt','same','sand','sane','sang','sank','save','scam','scan','scar','seal','seam','sear','seat','sect','seed','seem','seep','self','sell','send','sent','serf','shed','shin','ship','shop','shot','show','shut','silk','sill','silo','silt','sing','sink','site','size','skid','skip','slab','slap','slim','slip','slot','slow','slug','snap','snob','snow','soak','soap','sock','soft','soil','sold','sole','some','song','sons','soon','soot','sort','soul','soup','sour','span','spar','spin','spit','spot','spur','stab','stag','star','stem','step','stew','stir','stub','such','sued','suit','sulk','sump','sung','sunk','sure','sway','swim','tail','tale','talk','tall','tame','tang','tank','tape','task','taut','team','tear','tell','tend','tens','term','test','text','than','that','them','then','they','thin','this','thou','thus','tick','tied','tile','tilt','time','tint','tire','toad','toil','told','toll','tomb','tone','took','tool','tops','torn','toss','tour','town','trap','tray','tree','trim','trio','trip','true','tube','tuck','tuft','tuna','tune','turf','turn','tusk','tutu','twin','type','ugly','undo','unit','upon','urge','used','user','vain','vale','vane','vary','vast','veil','verb','very','vest','veto','vibe','vile','vine','visa','void','volt','vote','wade','wage','wake','walk','wane','ward','warm','warn','warp','wart','wary','wash','wave','weed','well','went','were','west','whom','wide','wield','will','wind','wine','wing','wink','wire','wise','wish','with','woke','womb','wood','word','wore','work','worm','worn','wove','wrap','writ','yard','yarn','year','yell','your','zone'];
+  return commonWords.filter(w => w.split('').sort().join('') === sorted && w !== word.toLowerCase()).slice(0, 20);
+}
+
+export default function AnagramSolver() {
+  const [word, setWord] = useState('');
+  const results = word.length > 1 ? getAnagrams(word) : [];
+
+  return (
+    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Anagram Solver</h1>
+        <p className="text-gray-400 mb-6">Find English words that are anagrams of your input.</p>
+        <input type="text" value={word} onChange={e=>setWord(e.target.value)} placeholder="Enter a word..." className="w-full p-3 bg-gray-800 rounded text-xl mb-6" />
+        {word.length > 1 && (
+          <div>
+            {results.length > 0 ? (
+              <div className="flex flex-wrap gap-3">
+                {results.map(w => <span key={w} className="px-4 py-2 bg-gray-800 rounded text-green-400 font-mono">{w}</span>)}
+              </div>
+            ) : <p className="text-gray-500">No common anagrams found for "{word}".</p>}
+          </div>
+        )}
+      </div>
+    </main>
+  );
+}

@@ -1,25 +1,30 @@
-"use client"
-import { useState } from "react"
+"use client";
+import { useState } from "react";
+
 export default function LineCounter() {
-  const [text, setText] = useState("")
-  const lines = text ? text.split("\n").length : 0
-  const words = text.trim() ? text.trim().split(/\s+/).length : 0
-  const chars = text.length
-  const charsNoSpace = text.replace(/\s/g,"").length
-  const bytes = new TextEncoder().encode(text).length
-  const stats = [{l:"Lines",v:lines},{l:"Words",v:words},{l:"Characters",v:chars},{l:"Chars (no spaces)",v:charsNoSpace},{l:"Bytes (UTF-8)",v:bytes}]
+  const [text, setText] = useState('');
+
+  const lines = text ? text.split('\n') : [];
+  const nonEmpty = lines.filter(l => l.trim() !== '');
+  const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+  const chars = text.length;
+  const charsNoSpace = text.replace(/\s/g,'').length;
+
   return (
-    <div className="min-h-screen bg-gray-950 text-white p-8">
-      <div className="max-w-2xl mx-auto">
+    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
+      <div className="max-w-3xl mx-auto">
         <h1 className="text-3xl font-bold mb-2">Line Counter</h1>
-        <p className="text-gray-400 mb-8">Count lines, words, characters and bytes</p>
-        <textarea className="w-full bg-gray-800 rounded p-4 h-64 font-mono text-sm mb-6" placeholder="Paste your text here..." value={text} onChange={e=>setText(e.target.value)}/>
-        <div className="grid grid-cols-3 gap-4">
-          {stats.map(({l,v})=>(
-            <div key={l} className="bg-gray-800 rounded p-4 text-center"><p className="text-xs text-gray-400 mb-1">{l}</p><p className="text-2xl font-mono font-bold text-green-400">{v.toLocaleString()}</p></div>
+        <p className="text-gray-400 mb-6">Count lines, words, and characters in your text.</p>
+        <textarea value={text} onChange={e=>setText(e.target.value)} rows={12} placeholder="Paste your text here..." className="w-full p-3 bg-gray-800 rounded font-mono mb-6" />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[['Total Lines', lines.length],['Non-Empty Lines', nonEmpty.length],['Words', words],['Characters', chars],['Chars (no spaces)', charsNoSpace]].map(([label, val]) => (
+            <div key={label} className="bg-gray-800 p-4 rounded text-center">
+              <div className="text-3xl font-bold text-blue-400">{val}</div>
+              <div className="text-sm text-gray-400 mt-1">{label}</div>
+            </div>
           ))}
         </div>
       </div>
-    </div>
-  )
+    </main>
+  );
 }
