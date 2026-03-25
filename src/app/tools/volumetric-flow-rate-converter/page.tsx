@@ -1,1 +1,102 @@
-"use client";import{useState}from"react";export default function Page(){const[val,setVal]=useState("");const[from,setFrom]=useState(""+"cubic_meter_per_second"+"");const[to,setTo]=useState(""+"liter_per_minute"+"");function convert(){if(!val||isNaN(Number(val)))return"Invalid";let v=parseFloat(val),base=0;switch(from){case "cubic_meter_per_second": base = v / 1; break;case "liter_per_minute": base = v / 0.0000166667; break;case "gallon_per_minute_us": base = v / 0.0000630902; break;case "cubic_foot_per_minute": base = v / 0.000471947; break;case "liter_per_second": base = v / 0.001; break;case "barrel_per_day": base = v / 0.00000183981; break;}let result=0;switch(to){case "cubic_meter_per_second": result = base * 1; break;case "liter_per_minute": result = base * 0.0000166667; break;case "gallon_per_minute_us": result = base * 0.0000630902; break;case "cubic_foot_per_minute": result = base * 0.000471947; break;case "liter_per_second": result = base * 0.001; break;case "barrel_per_day": result = base * 0.00000183981; break;}return result.toPrecision(6);}return(<div style={{padding:"2rem",fontFamily:"sans-serif",maxWidth:600,margin:"0 auto"}}><h1>Volumetric Flow Rate Converter</h1><p>Convert between cubic meters per second, liters per minute, gallons per minute, and more</p><input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",marginRight:"0.5rem",width:120}}/><select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",marginRight:"0.5rem"}}><option value="cubic_meter_per_second">cubic meter per second</option><option value="liter_per_minute">liter per minute</option><option value="gallon_per_minute_us">gallon per minute us</option><option value="cubic_foot_per_minute">cubic foot per minute</option><option value="liter_per_second">liter per second</option><option value="barrel_per_day">barrel per day</option></select><span>→</span><select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",marginLeft:"0.5rem"}}><option value="cubic_meter_per_second">cubic meter per second</option><option value="liter_per_minute">liter per minute</option><option value="gallon_per_minute_us">gallon per minute us</option><option value="cubic_foot_per_minute">cubic foot per minute</option><option value="liter_per_second">liter per second</option><option value="barrel_per_day">barrel per day</option></select><div style={{marginTop:"1rem",fontSize:"1.5rem"}}>{val&&<span>{val} {from.replace(/_/g," ")} = <strong>{convert()}</strong> {to.replace(/_/g," ")}</span>}</div></div>);}
+"use client";
+import { useState } from "react";
+
+const conversionFactors: Record<string, number> = {
+  'm³/s': 1.0,
+  'm³/min': 0.016666666667,
+  'm³/h': 0.000277777778,
+  'L/s': 0.001,
+  'L/min': 1.6666666667e-05,
+  'L/h': 2.7777777778e-07,
+  'mL/s': 1e-06,
+  'ft³/s': 0.0283168466,
+  'ft³/min': 0.000471947443,
+  'gal/min (US)': 6.30901964e-05,
+  'gal/h (US)': 1.05150328e-06,
+  'barrel/day': 1.84013e-06,
+};
+
+export default function VolumetricFlowRateConverterPage() {
+  const [inputValue, setInputValue] = useState("");
+  const [fromUnit, setFromUnit] = useState("m³/s");
+  const [toUnit, setToUnit] = useState("m³/min");
+
+  const convert = () => {
+    const val = parseFloat(inputValue);
+    if (isNaN(val)) return "";
+    const base = val * conversionFactors[fromUnit];
+    const result = base / conversionFactors[toUnit];
+    return result.toPrecision(8).replace(/\.?0+$/, "");
+  };
+
+  return (
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Volumetric Flow Rate Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between volumetric flow rate units: cubic meter per second, liter per second, gallon per minute, and more.</p>
+        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Value</label>
+            <input
+              type="number"
+              value={inputValue}
+              onChange={e => setInputValue(e.target.value)}
+              placeholder="Enter value"
+              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">From</label>
+              <select
+                value={fromUnit}
+                onChange={e => setFromUnit(e.target.value)}
+                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500"
+              >
+          <option value="m³/s">m³/s</option>
+          <option value="m³/min">m³/min</option>
+          <option value="m³/h">m³/h</option>
+          <option value="L/s">L/s</option>
+          <option value="L/min">L/min</option>
+          <option value="L/h">L/h</option>
+          <option value="mL/s">mL/s</option>
+          <option value="ft³/s">ft³/s</option>
+          <option value="ft³/min">ft³/min</option>
+          <option value="gal/min (US)">gal/min (US)</option>
+          <option value="gal/h (US)">gal/h (US)</option>
+          <option value="barrel/day">barrel/day</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">To</label>
+              <select
+                value={toUnit}
+                onChange={e => setToUnit(e.target.value)}
+                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500"
+              >
+          <option value="m³/s">m³/s</option>
+          <option value="m³/min">m³/min</option>
+          <option value="m³/h">m³/h</option>
+          <option value="L/s">L/s</option>
+          <option value="L/min">L/min</option>
+          <option value="L/h">L/h</option>
+          <option value="mL/s">mL/s</option>
+          <option value="ft³/s">ft³/s</option>
+          <option value="ft³/min">ft³/min</option>
+          <option value="gal/min (US)">gal/min (US)</option>
+          <option value="gal/h (US)">gal/h (US)</option>
+          <option value="barrel/day">barrel/day</option>
+              </select>
+            </div>
+          </div>
+          {inputValue && (
+            <div className="bg-blue-900/30 border border-blue-700 rounded-lg px-4 py-3">
+              <span className="text-2xl font-mono font-bold text-blue-300">{convert()}</span>
+              <span className="text-gray-400 ml-2">{toUnit}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </main>
+  );
+}
