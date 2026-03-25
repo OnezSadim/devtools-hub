@@ -1,28 +1,21 @@
 "use client";
 import { useState } from "react";
+const factors: Record<string,number> = {"mm²":0.000001,"cm²":0.0001,"m²":1,"km²":1000000,"hectare":10000,"acre":4046.86,"ft²":0.092903,"yd²":0.836127};
 export default function AreaConverter() {
-  const [value, setValue] = useState("");
-  const [from, setFrom] = useState("sqm");
-  const toSqm: Record<string,number> = {sqm:1,sqkm:1e6,sqft:0.092903,sqyd:0.836127,sqmi:2589988.11,acre:4046.856,hectare:10000,sqcm:0.0001,sqin:0.00064516};
-  const units = Object.keys(toSqm);
-  const labels: Record<string,string> = {sqm:"m²",sqkm:"km²",sqft:"ft²",sqyd:"yd²",sqmi:"mi²",acre:"acre",hectare:"ha",sqcm:"cm²",sqin:"in²"};
-  const sqm = (parseFloat(value)||0) * toSqm[from];
+  const [val,setVal]=useState("");
+  const [from,setFrom]=useState("m²");
+  const n=parseFloat(val);
+  const units=Object.keys(factors);
+  const inM2=isNaN(n)?null:n*factors[from];
   return (
-    <div className="max-w-xl mx-auto">
+    <main className="min-h-screen bg-gray-950 text-white p-8 max-w-xl mx-auto">
       <h1 className="text-3xl font-bold mb-2">Area Converter</h1>
-      <p className="text-gray-400 mb-6">Convert between square meters, feet, acres, hectares, and more.</p>
-      <select value={from} onChange={e => setFrom(e.target.value)} className="w-full p-3 bg-gray-800 border border-gray-600 rounded mb-3 text-white">
-        {units.map(u => <option key={u} value={u}>{labels[u]}</option>)}
-      </select>
-      <input value={value} onChange={e => setValue(e.target.value)} type="number" placeholder="Enter area..." className="w-full p-3 bg-gray-800 border border-gray-600 rounded mb-4 text-white" />
-      {value && <div className="grid grid-cols-2 gap-3">
-        {units.filter(u => u !== from).map(u => (
-          <div key={u} className="p-4 bg-gray-800 rounded text-center">
-            <p className="text-gray-400 text-sm">{labels[u]}</p>
-            <p className="text-green-400 text-xl font-bold">{(sqm/toSqm[u]).toFixed(6)}</p>
-          </div>
-        ))}
-      </div>}
-    </div>
+      <p className="text-gray-400 mb-6">Convert between mm², cm², m², km², hectares, acres, ft², yd²</p>
+      <div className="flex gap-2 mb-4">
+        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" className="flex-1 bg-gray-800 rounded p-3 text-white" />
+        <select value={from} onChange={e=>setFrom(e.target.value)} className="bg-gray-800 rounded p-3 text-white">{units.map(u=><option key={u}>{u}</option>)}</select>
+      </div>
+      {inM2!==null && <div className="space-y-2">{units.filter(u=>u!==from).map(u=><div key={u} className="bg-gray-800 rounded p-3"><span className="text-gray-400">{u}: </span><span className="text-green-400 font-mono">{(inM2/factors[u]).toFixed(6)}</span></div>)}</div>}
+    </main>
   );
 }

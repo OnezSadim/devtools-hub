@@ -1,28 +1,21 @@
 "use client";
 import { useState } from "react";
+const factors: Record<string,number> = {ml:0.001,l:1,"m³":1000,"cm³":0.001,"fl oz":0.0295735,cup:0.236588,pint:0.473176,quart:0.946353,gallon:3.78541};
 export default function VolumeConverter() {
-  const [value, setValue] = useState("");
-  const [from, setFrom] = useState("liter");
-  const toLiter: Record<string,number> = {liter:1,ml:0.001,cubicm:1000,cubicft:28.3168,cubicinch:0.016387,gallon:3.78541,quart:0.946353,pint:0.473176,cup:0.236588,floz:0.0295735,tbsp:0.0147868,tsp:0.00492892};
-  const units = Object.keys(toLiter);
-  const labels: Record<string,string> = {liter:"Liter",ml:"mL",cubicm:"m³",cubicft:"ft³",cubicinch:"in³",gallon:"Gallon",quart:"Quart",pint:"Pint",cup:"Cup",floz:"fl oz",tbsp:"Tbsp",tsp:"Tsp"};
-  const liters = (parseFloat(value)||0) * toLiter[from];
+  const [val,setVal]=useState("");
+  const [from,setFrom]=useState("l");
+  const n=parseFloat(val);
+  const units=Object.keys(factors);
+  const inL=isNaN(n)?null:n*factors[from];
   return (
-    <div className="max-w-xl mx-auto">
+    <main className="min-h-screen bg-gray-950 text-white p-8 max-w-xl mx-auto">
       <h1 className="text-3xl font-bold mb-2">Volume Converter</h1>
-      <p className="text-gray-400 mb-6">Convert between liters, gallons, cups, and more.</p>
-      <select value={from} onChange={e => setFrom(e.target.value)} className="w-full p-3 bg-gray-800 border border-gray-600 rounded mb-3 text-white">
-        {units.map(u => <option key={u} value={u}>{labels[u]}</option>)}
-      </select>
-      <input value={value} onChange={e => setValue(e.target.value)} type="number" placeholder="Enter volume..." className="w-full p-3 bg-gray-800 border border-gray-600 rounded mb-4 text-white" />
-      {value && <div className="grid grid-cols-2 gap-3">
-        {units.filter(u => u !== from).map(u => (
-          <div key={u} className="p-4 bg-gray-800 rounded text-center">
-            <p className="text-gray-400 text-sm">{labels[u]}</p>
-            <p className="text-green-400 text-xl font-bold">{(liters/toLiter[u]).toFixed(6)}</p>
-          </div>
-        ))}
-      </div>}
-    </div>
+      <p className="text-gray-400 mb-6">Convert between ml, liters, m³, fl oz, cups, pints, quarts, gallons</p>
+      <div className="flex gap-2 mb-4">
+        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" className="flex-1 bg-gray-800 rounded p-3 text-white" />
+        <select value={from} onChange={e=>setFrom(e.target.value)} className="bg-gray-800 rounded p-3 text-white">{units.map(u=><option key={u}>{u}</option>)}</select>
+      </div>
+      {inL!==null && <div className="space-y-2">{units.filter(u=>u!==from).map(u=><div key={u} className="bg-gray-800 rounded p-3"><span className="text-gray-400">{u}: </span><span className="text-green-400 font-mono">{(inL/factors[u]).toFixed(6)}</span></div>)}</div>}
+    </main>
   );
 }
