@@ -1,13 +1,13 @@
 "use client";
 import { useState } from "react";
 const UNITS = [
-  { value: "C_m2", label: "Coulomb/m² (C/m²)", factor: 1 },
-  { value: "mC_m2", label: "Millicoulomb/m² (mC/m²)", factor: 0.001 },
-  { value: "uC_m2", label: "Microcoulomb/m² (μC/m²)", factor: 1e-06 },
-  { value: "nC_m2", label: "Nanocoulomb/m² (nC/m²)", factor: 1e-09 },
-  { value: "pC_m2", label: "Picocoulomb/m² (pC/m²)", factor: 1e-12 },
-  { value: "C_cm2", label: "Coulomb/cm² (C/cm²)", factor: 10000.0 },
-  { value: "C_mm2", label: "Coulomb/mm² (C/mm²)", factor: 1000000.0 },
+  { value: "F_m", label: "Farad/meter (F/m)", factor: 1 },
+  { value: "mF_m", label: "Millifarad/meter (mF/m)", factor: 0.001 },
+  { value: "uF_m", label: "Microfarad/meter (μF/m)", factor: 1e-06 },
+  { value: "nF_m", label: "Nanofarad/meter (nF/m)", factor: 1e-09 },
+  { value: "pF_m", label: "Picofarad/meter (pF/m)", factor: 1e-12 },
+  { value: "F_cm", label: "Farad/centimeter (F/cm)", factor: 100 },
+  { value: "F_mm", label: "Farad/millimeter (F/mm)", factor: 1000 },
 ];
 export default function Page() {
   const [val, setVal] = useState("");
@@ -22,8 +22,8 @@ export default function Page() {
   }
   return (
     <main className="min-h-screen bg-gray-950 text-white p-8">
-      <h1 className="text-3xl font-bold mb-2">Surface Charge Density Converter</h1>
-      <p className="text-gray-400 mb-6">Convert between surface charge density units: C/m2, mC/m2, uC/m2, nC/m2, pC/m2, C/cm2, C/mm2.</p>
+      <h1 className="text-3xl font-bold mb-2">Permittivity Converter</h1>
+      <p className="text-gray-400 mb-6">Convert between permittivity units: F/m, pF/m, nF/m, uF/m, F/cm, F/mm.</p>
       <div className="bg-gray-900 rounded-xl p-6 max-w-lg">
         <input className="w-full bg-gray-800 rounded p-2 mb-3 text-white" placeholder="Enter value" value={val} onChange={e => setVal(e.target.value)} />
         <div className="flex gap-2 mb-3">

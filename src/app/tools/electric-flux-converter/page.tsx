@@ -1,13 +1,12 @@
 "use client";
 import { useState } from "react";
 const UNITS = [
-  { value: "C_m2", label: "Coulomb/m² (C/m²)", factor: 1 },
-  { value: "mC_m2", label: "Millicoulomb/m² (mC/m²)", factor: 0.001 },
-  { value: "uC_m2", label: "Microcoulomb/m² (μC/m²)", factor: 1e-06 },
-  { value: "nC_m2", label: "Nanocoulomb/m² (nC/m²)", factor: 1e-09 },
-  { value: "pC_m2", label: "Picocoulomb/m² (pC/m²)", factor: 1e-12 },
-  { value: "C_cm2", label: "Coulomb/cm² (C/cm²)", factor: 10000.0 },
-  { value: "C_mm2", label: "Coulomb/mm² (C/mm²)", factor: 1000000.0 },
+  { value: "Vm", label: "Volt-meter (V·m)", factor: 1 },
+  { value: "kVm", label: "Kilovolt-meter (kV·m)", factor: 1000.0 },
+  { value: "MVm", label: "Megavolt-meter (MV·m)", factor: 1000000.0 },
+  { value: "Nm2_C", label: "N·m²/C", factor: 1 },
+  { value: "mVm", label: "Millivolt-meter (mV·m)", factor: 0.001 },
+  { value: "uVm", label: "Microvolt-meter (μV·m)", factor: 1e-06 },
 ];
 export default function Page() {
   const [val, setVal] = useState("");
@@ -22,8 +21,8 @@ export default function Page() {
   }
   return (
     <main className="min-h-screen bg-gray-950 text-white p-8">
-      <h1 className="text-3xl font-bold mb-2">Surface Charge Density Converter</h1>
-      <p className="text-gray-400 mb-6">Convert between surface charge density units: C/m2, mC/m2, uC/m2, nC/m2, pC/m2, C/cm2, C/mm2.</p>
+      <h1 className="text-3xl font-bold mb-2">Electric Flux Converter</h1>
+      <p className="text-gray-400 mb-6">Convert between electric flux units: V·m, kV·m, MV·m, N·m2/C.</p>
       <div className="bg-gray-900 rounded-xl p-6 max-w-lg">
         <input className="w-full bg-gray-800 rounded p-2 mb-3 text-white" placeholder="Enter value" value={val} onChange={e => setVal(e.target.value)} />
         <div className="flex gap-2 mb-3">

@@ -1,13 +1,12 @@
 "use client";
 import { useState } from "react";
 const UNITS = [
-  { value: "C_m2", label: "Coulomb/m² (C/m²)", factor: 1 },
-  { value: "mC_m2", label: "Millicoulomb/m² (mC/m²)", factor: 0.001 },
-  { value: "uC_m2", label: "Microcoulomb/m² (μC/m²)", factor: 1e-06 },
-  { value: "nC_m2", label: "Nanocoulomb/m² (nC/m²)", factor: 1e-09 },
-  { value: "pC_m2", label: "Picocoulomb/m² (pC/m²)", factor: 1e-12 },
-  { value: "C_cm2", label: "Coulomb/cm² (C/cm²)", factor: 10000.0 },
-  { value: "C_mm2", label: "Coulomb/mm² (C/mm²)", factor: 1000000.0 },
+  { value: "C_m3", label: "Coulomb/m³ (C/m³)", factor: 1 },
+  { value: "mC_m3", label: "Millicoulomb/m³ (mC/m³)", factor: 0.001 },
+  { value: "uC_m3", label: "Microcoulomb/m³ (μC/m³)", factor: 1e-06 },
+  { value: "nC_m3", label: "Nanocoulomb/m³ (nC/m³)", factor: 1e-09 },
+  { value: "C_cm3", label: "Coulomb/cm³ (C/cm³)", factor: 1000000.0 },
+  { value: "C_mm3", label: "Coulomb/mm³ (C/mm³)", factor: 1000000000.0 },
 ];
 export default function Page() {
   const [val, setVal] = useState("");
@@ -22,8 +21,8 @@ export default function Page() {
   }
   return (
     <main className="min-h-screen bg-gray-950 text-white p-8">
-      <h1 className="text-3xl font-bold mb-2">Surface Charge Density Converter</h1>
-      <p className="text-gray-400 mb-6">Convert between surface charge density units: C/m2, mC/m2, uC/m2, nC/m2, pC/m2, C/cm2, C/mm2.</p>
+      <h1 className="text-3xl font-bold mb-2">Volume Charge Density Converter</h1>
+      <p className="text-gray-400 mb-6">Convert between volume charge density units: C/m3, mC/m3, uC/m3, nC/m3, C/cm3, C/mm3.</p>
       <div className="bg-gray-900 rounded-xl p-6 max-w-lg">
         <input className="w-full bg-gray-800 rounded p-2 mb-3 text-white" placeholder="Enter value" value={val} onChange={e => setVal(e.target.value)} />
         <div className="flex gap-2 mb-3">
