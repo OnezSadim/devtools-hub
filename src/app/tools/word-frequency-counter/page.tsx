@@ -1,44 +1,48 @@
 "use client";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 export default function WordFrequencyCounter() {
-  const [text, setText] = useState("The quick brown fox jumps over the lazy dog. The dog barked.");
-  const [sortBy, setSortBy] = useState<"freq"|"alpha">("freq");
-  const analyze = () => {
-    const words = text.toLowerCase().replace(/[^a-z0-9\s]/g,"").split(/\s+/).filter(Boolean);
-    const freq: Record<string,number> = {};
-    words.forEach(w => freq[w]=(freq[w]||0)+1);
-    let entries = Object.entries(freq);
-    if (sortBy==="freq") entries.sort((a,b)=>b[1]-a[1]);
-    else entries.sort((a,b)=>a[0].localeCompare(b[0]));
-    return {entries, total: words.length, unique: Object.keys(freq).length};
-  };
-  const {entries, total, unique} = analyze();
-  const max = entries[0]?.[1]||1;
+  const [text, setText] = useState("");
+  const stats = useMemo(() => {
+    if (!text.trim()) return null;
+    const words = text.toLowerCase().match(/\b[a-z]+\b/g) || [];
+    const freq: Record<string, number> = {};
+    words.forEach(w => { freq[w] = (freq[w] || 0) + 1; });
+    const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]);
+    return { words: words.length, unique: sorted.length, chars: text.length, sentences: text.split(/[.!?]+/).filter(Boolean).length, sorted };
+  }, [text]);
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100 p-8">
-      <div className="max-w-3xl mx-auto">
+    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
+      <div className="max-w-2xl mx-auto">
         <h1 className="text-3xl font-bold mb-2">Word Frequency Counter</h1>
-        <p className="text-gray-400 mb-8">Analyze word frequency in your text</p>
-        <textarea value={text} onChange={e=>setText(e.target.value)} rows={5} className="w-full bg-gray-900 rounded-xl p-4 mb-4 text-sm" placeholder="Paste your text here..." />
-        <div className="flex gap-4 mb-6 items-center">
-          <div className="flex gap-2 bg-gray-900 rounded-lg p-1">
-            <button onClick={()=>setSortBy("freq")} className={`px-3 py-1 rounded text-sm ${sortBy==="freq"?"bg-blue-600":""}`}>By Frequency</button>
-            <button onClick={()=>setSortBy("alpha")} className={`px-3 py-1 rounded text-sm ${sortBy==="alpha"?"bg-blue-600":""}`}>Alphabetical</button>
-          </div>
-          <div className="text-sm text-gray-400">{total} words · {unique} unique</div>
-        </div>
-        <div className="bg-gray-900 rounded-xl p-4 max-h-96 overflow-y-auto space-y-2">
-          {entries.map(([word,count])=>(
-            <div key={word} className="flex items-center gap-3">
-              <span className="text-sm font-mono w-32 text-gray-300">{word}</span>
-              <div className="flex-1 bg-gray-800 rounded-full h-4 overflow-hidden">
-                <div className="bg-blue-600 h-full rounded-full" style={{width: (count/max*100)+"%"}} />
-              </div>
-              <span className="text-sm text-blue-400 w-8 text-right">{count}</span>
+        <p className="text-gray-400 mb-6">Analyze word frequency and text statistics.</p>
+        <textarea className="w-full bg-gray-900 border border-gray-700 rounded p-3 text-sm h-40 mb-4" placeholder="Paste your text here..." value={text} onChange={e => setText(e.target.value)} />
+        {stats && (
+          <>
+            <div className="grid grid-cols-4 gap-3 mb-6">
+              {[{label:"Words",v:stats.words},{label:"Unique",v:stats.unique},{label:"Chars",v:stats.chars},{label:"Sentences",v:stats.sentences}].map(({label,v}) => (
+                <div key={label} className="bg-gray-900 border border-gray-700 rounded p-3 text-center">
+                  <div className="text-2xl font-bold text-blue-400">{v}</div>
+                  <div className="text-xs text-gray-500">{label}</div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+            <div className="bg-gray-900 border border-gray-700 rounded p-3">
+              <h2 className="text-sm font-semibold mb-3">Top Words</h2>
+              <div className="space-y-2">
+                {stats.sorted.slice(0, 20).map(([word, count]) => (
+                  <div key={word} className="flex items-center gap-2">
+                    <span className="font-mono text-sm w-40">{word}</span>
+                    <div className="flex-1 bg-gray-800 rounded h-2">
+                      <div className="bg-blue-500 h-2 rounded" style={{width: `${(count/stats.sorted[0][1])*100}%`}} />
+                    </div>
+                    <span className="text-xs text-gray-400 w-8 text-right">{count}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
       </div>
-    </div>
+    </main>
   );
 }

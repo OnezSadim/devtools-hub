@@ -1,39 +1,41 @@
 "use client";
 import { useState } from "react";
-function csvToJson(csv) {
-  try {
-    const lines = csv.trim().split("\n");
-    if (lines.length < 2) return "[]";
-    const headers = lines[0].split(",").map(h=>h.trim());
-    const rows = lines.slice(1).map(line => {
-      const vals = line.split(",").map(v=>v.trim());
-      const obj = {};
-      headers.forEach((h,i)=>{ obj[h] = isNaN(vals[i]) ? vals[i] : Number(vals[i]); });
-      return obj;
-    });
-    return JSON.stringify(rows, null, 2);
-  } catch(e) { return "Error: " + e.message; }
-}
 export default function CsvToJson() {
-  const [input, setInput] = useState("name,age,city\nAlice,30,Amsterdam\nBob,25,Berlin\nClara,35,Paris");
-  const [output, setOutput] = useState("");
+  const [csv, setCsv] = useState("");
+  const [json, setJson] = useState("");
+  const [error, setError] = useState("");
+  function convert() {
+    try {
+      setError("");
+      const lines = csv.trim().split("
+").map(l => l.trim()).filter(Boolean);
+      if (lines.length < 2) throw new Error("Need at least a header row and one data row");
+      const headers = lines[0].split(",").map(h => h.trim().replace(/^"|"$/g, ""));
+      const rows = lines.slice(1).map(line => {
+        const vals = line.match(/('[^']*'|[^,]+)/g)?.map(v => v.trim().replace(/^"|"$/g, "")) ?? [];
+        return Object.fromEntries(headers.map((h, i) => [h, isNaN(Number(vals[i])) ? (vals[i] ?? "") : Number(vals[i])]));
+      });
+      setJson(JSON.stringify(rows, null, 2));
+    } catch(e) { setError(String(e)); }
+  }
   return (
-    <div className="max-w-3xl mx-auto p-6 space-y-4">
-      <h1 className="text-3xl font-bold text-white">CSV to JSON Converter</h1>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <p className="text-gray-400 mb-2 text-sm">CSV Input</p>
-          <textarea value={input} onChange={e=>setInput(e.target.value)} className="w-full h-64 bg-gray-800 text-white rounded-xl p-4 font-mono text-sm" />
-        </div>
-        <div>
-          <div className="flex justify-between items-center mb-2">
-            <p className="text-gray-400 text-sm">JSON Output</p>
-            {output && <button onClick={()=>navigator.clipboard.writeText(output)} className="text-indigo-400 text-sm">Copy</button>}
+    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
+      <div className="max-w-3xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">CSV to JSON Converter</h1>
+        <p className="text-gray-400 mb-6">Convert CSV data to JSON format instantly.</p>
+        <textarea className="w-full bg-gray-900 border border-gray-700 rounded p-3 text-sm font-mono h-40 mb-3" placeholder="name,age,city&#10;Alice,30,NYC&#10;Bob,25,LA" value={csv} onChange={e => setCsv(e.target.value)} />
+        {error && <div className="text-red-400 text-sm mb-3">{error}</div>}
+        <button onClick={convert} className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-sm mb-4">Convert to JSON</button>
+        {json && (
+          <div className="bg-gray-900 border border-gray-700 rounded p-3">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-xs text-gray-500">JSON Output</span>
+              <button onClick={() => navigator.clipboard.writeText(json)} className="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded">Copy</button>
+            </div>
+            <pre className="text-sm font-mono overflow-auto max-h-64">{json}</pre>
           </div>
-          <pre className="w-full h-64 bg-gray-900 text-green-400 rounded-xl p-4 font-mono text-sm overflow-auto">{output || "Click Convert"}</pre>
-        </div>
+        )}
       </div>
-      <button onClick={()=>setOutput(csvToJson(input))} className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold">Convert</button>
-    </div>
+    </main>
   );
 }

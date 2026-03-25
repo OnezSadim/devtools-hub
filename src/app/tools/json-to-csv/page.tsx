@@ -1,21 +1,39 @@
 "use client";
 import { useState } from "react";
-export default function Page() {
+export default function JsonToCsv() {
   const [json, setJson] = useState("");
+  const [error, setError] = useState("");
   const [csv, setCsv] = useState("");
-  const convert = () => {
+  function convert() {
     try {
-      const arr = JSON.parse(json);
-      if (!Array.isArray(arr)) { setCsv("Input must be a JSON array"); return; }
-      const headers = Object.keys(arr[0]);
-      const rows = arr.map(r => headers.map(h => String(r[h]??"")));
-      setCsv([headers, ...rows].map(r=>r.join(",")).join("\n"));
-    } catch { setCsv("Invalid JSON"); }
-  };
-  return (<div style={{padding:"2rem",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0",fontFamily:"monospace"}}>
-    <h1 style={{fontSize:"1.8rem",marginBottom:"1rem"}}>JSON to CSV</h1>
-    <textarea value={json} onChange={e=>setJson(e.target.value)} placeholder='[{"name":"Alice","age":30}]' style={{width:"100%",height:"150px",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"8px",padding:"0.75rem"}} />
-    <button onClick={convert} style={{margin:"0.75rem 0",padding:"0.5rem 1.5rem",background:"#3b82f6",color:"white",border:"none",borderRadius:"6px",cursor:"pointer"}}>Convert</button>
-    {csv && <pre style={{padding:"1rem",background:"#1e293b",borderRadius:"8px",overflow:"auto",maxHeight:"300px"}}>{csv}</pre>}
-  </div>);
+      setError("");
+      const data = JSON.parse(json);
+      const arr = Array.isArray(data) ? data : [data];
+      const keys = Array.from(new Set(arr.flatMap(obj => Object.keys(obj))));
+      const escape = (v: unknown) => { const s = String(v ?? ""); return s.includes(",") || s.includes("'\n") ? `"${s.replace(/"/g, ''''''')}"` : s; };
+      const rows = [keys.join(","), ...arr.map(row => keys.map(k => escape(row[k])).join(","))];
+      setCsv(rows.join("
+"));
+    } catch (e) { setError(String(e)); }
+  }
+  return (
+    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
+      <div className="max-w-3xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">JSON to CSV Converter</h1>
+        <p className="text-gray-400 mb-6">Convert JSON arrays or objects to CSV format.</p>
+        <textarea className="w-full bg-gray-900 border border-gray-700 rounded p-3 text-sm font-mono h-40 mb-3" placeholder={'[''{"name":"Alice","age":30},{"name":"Bob","age":25}]'} value={json} onChange={e => setJson(e.target.value)} />
+        {error && <div className="text-red-400 text-sm mb-3">{error}</div>}
+        <button onClick={convert} className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-sm mb-4">Convert to CSV</button>
+        {csv && (
+          <div className="bg-gray-900 border border-gray-700 rounded p-3">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-xs text-gray-500">CSV Output</span>
+              <button onClick={() => navigator.clipboard.writeText(csv)} className="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded">Copy</button>
+            </div>
+            <pre className="text-sm font-mono whitespace-pre-wrap">{csv}</pre>
+          </div>
+        )}
+      </div>
+    </main>
+  );
 }
