@@ -1,0 +1,1 @@
+import type { Metadata } from "next";export const metadata: Metadata = { title: "Enthalpy Converter | DevTools Hub", description: "Convert between enthalpy units: J/kg, kJ/kg, BTU/lb, cal/g, kcal/kg, and more." };export default function Layout({ children }: { children: React.ReactNode }) { return <>{children}</>; }

@@ -1,0 +1,1 @@
+import type { Metadata } from "next";export const metadata: Metadata = { title: "Thermal Expansion Converter | DevTools Hub", description: "Convert between thermal expansion coefficient units: 1/K, 1/°C, 1/°F, 1/°R." };export default function Layout({ children }: { children: React.ReactNode }) { return <>{children}</>; }

@@ -1,0 +1,1 @@
+import type { Metadata } from "next";export const metadata: Metadata = { title: "Heat Transfer Coefficient Converter | DevTools Hub", description: "Convert between heat transfer coefficient units: W/m2K, BTU/hr ft2 F, kcal/hr m2 C, and more." };export default function Layout({ children }: { children: React.ReactNode }) { return <>{children}</>; }

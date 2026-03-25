@@ -1,0 +1,1 @@
+import type { Metadata } from "next";export const metadata: Metadata = { title: "Thermal Resistance Converter | DevTools Hub", description: "Convert between thermal resistance units: K/W, °C/W, °F·hr/BTU, and more." };export default function Layout({ children }: { children: React.ReactNode }) { return <>{children}</>; }

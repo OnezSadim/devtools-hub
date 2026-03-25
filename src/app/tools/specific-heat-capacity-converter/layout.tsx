@@ -1,0 +1,1 @@
+import type { Metadata } from "next";export const metadata: Metadata = { title: "Specific Heat Capacity Converter | DevTools Hub", description: "Convert between specific heat capacity units: J/(kg·K), kJ/(kg·K), BTU/(lb·°F), cal/(g·°C), and more." };export default function Layout({ children }: { children: React.ReactNode }) { return <>{children}</>; }
