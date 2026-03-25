@@ -1,10 +1,10 @@
 "use client";
 import { useState } from "react";
 
-const UNITS: string[] = ["katal", "millikatal", "microkatal", "nanokatal", "enzyme-unit"];
-const TO_BASE: Record<string, number> = {"katal": 1, "millikatal": 0.001, "microkatal": 1e-06, "nanokatal": 1e-09, "enzyme-unit": 1.6667e-08};
+const UNITS = ["katal", "microkatal", "nanokatal", "enzyme-unit", "millimole-per-minute"];
+const TO_BASE: Record<string, number> = {"katal": 1.0, "microkatal": 1e-06, "nanokatal": 1e-09, "enzyme-unit": 1.66667e-08, "millimole-per-minute": 1.66667e-08};
 
-export default function CatalyticActivityConverterPage() {
+export default function Page() {
   const [val, setVal] = useState("");
   const [from, setFrom] = useState(UNITS[0]);
   const [to, setTo] = useState(UNITS[1]);
@@ -14,19 +14,15 @@ export default function CatalyticActivityConverterPage() {
     return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
   };
   return (
-    <main style={{minHeight:"100vh",background:"#0f172a",color:"#e2e8f0",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",fontFamily:"monospace",padding:"2rem"}}>
-      <h1 style={{fontSize:"2rem",marginBottom:"1.5rem"}}>Catalytic Activity Converter</h1>
-      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",justifyContent:"center",marginBottom:"1rem"}}>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:"1rem",width:"160px"}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0"}}>
-          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
-        </select>
-        <span style={{alignSelf:"center"}}>to</span>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0"}}>
-          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
-        </select>
+    <main style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}>
+      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Catalytic Activity Converter</h1>
+      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1rem"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}} />
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>{UNITS.map(u=>`<option key={u}>{u}</option>`)}</select>
+        <span style={{lineHeight:"2rem"}}>to</span>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>{UNITS.map(u=>`<option key={u}>{u}</option>`)}</select>
       </div>
-      <div style={{fontSize:"1.5rem",padding:"1rem",background:"#1e293b",borderRadius:"8px",minWidth:"260px",textAlign:"center"}}>{convert() || "—"} {to}</div>
+      {val && <div style={{fontSize:"1.25rem",color:"#38bdf8"}}>{val} {from} = {convert()} {to}</div>}
     </main>
   );
 }
