@@ -1,28 +1,32 @@
-"use client";
-import { useState } from "react";
+'use client'
+import { useState } from 'react';
+
+const UNITS = ["Pascal-second (Pa·s)", "Millipascal-second (mPa·s)", "Poise (P)", "Centipoise (cP)", "Pound/(foot·second)", "Pound/(foot·hour)", "Stokes (St)", "Centistokes (cSt)"];
+const FACTORS = [1, 0.001, 0.1, 0.001, 1.48816, 0.000413378, 0.0001, 1e-06];
 
 export default function Page() {
-  const [val, setVal] = useState("");
-  const [from, setFrom] = useState("Pa·s");
-  const [to, setTo] = useState("mPa·s");
-  const units = ["Pa·s", "mPa·s", "cP", "P", "lb/(ft·s)"];
-  const factors: Record<string, number> = {"Pa·s": 1, "mPa·s": 0.001, "cP": 0.001, "P": 0.1, "lb/(ft·s)": 1.48816};
-  const convert = () => {
-    const n = parseFloat(val);
-    if (isNaN(n)) return "";
-    return ((n * factors[from]) / factors[to]).toPrecision(6);
-  };
+  const [val, setVal] = useState('1');
+  const [from, setFrom] = useState(0);
+  const num = parseFloat(val);
   return (
-    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",flexDirection:"column",alignItems:"center",padding:"2rem"}}>
-      <h1 style={{fontSize:"2rem",fontWeight:700,marginBottom:"0.5rem"}}>Viscosity Converter</h1>
-      <p style={{color:"#94a3b8",marginBottom:"2rem"}}>Convert between dynamic viscosity units: Pascal-second, centipoise, poise, and more.</p>
-      <div style={{background:"#1e293b",borderRadius:"1rem",padding:"2rem",width:"100%",maxWidth:"500px"}}>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",fontSize:"1.1rem",marginBottom:"1rem"}} />
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"1rem",marginBottom:"1rem"}}>
-          <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>{units.map(u=><option key={u} value={u}>{u}</option>)}</select>
-          <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>{units.map(u=><option key={u} value={u}>{u}</option>)}</select>
-        </div>
-        {val && <div style={{background:"#0f172a",borderRadius:"0.5rem",padding:"1rem",textAlign:"center",fontSize:"1.5rem",fontWeight:700,color:"#38bdf8"}}>{convert()}</div>}
+    <main style={{maxWidth:600,margin:'0 auto',padding:'2rem'}}>
+      <h1 style={{fontSize:'1.8rem',fontWeight:700,marginBottom:'0.5rem'}}>Viscosity Converter</h1>
+      <p style={{color:'#aaa',marginBottom:'1.5rem'}}>Convert between dynamic and kinematic viscosity units: Pascal-seconds, centipoise, stokes, centistokes, and more.</p>
+      <div style={{display:'flex',gap:'1rem',marginBottom:'1.5rem',flexWrap:'wrap'}}>
+        <input type="number" value={val} onChange={e=>setVal(e.target.value)} style={{flex:1,minWidth:120,padding:'0.5rem',background:'#1a1a1a',border:'1px solid #333',borderRadius:6,color:'#fff',fontSize:'1rem'}} />
+        <select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{flex:1,minWidth:150,padding:'0.5rem',background:'#1a1a1a',border:'1px solid #333',borderRadius:6,color:'#fff'}}>
+          {UNITS.map((u,i)=><option key={i} value={i}>{u}</option>)}
+        </select>
+      </div>
+      <div style={{display:'grid',gap:'0.5rem'}}>
+        {UNITS.map((u,i)=>(
+          <div key={i} style={{display:'flex',justifyContent:'space-between',padding:'0.75rem 1rem',background:i===from?'#1e3a5f':'#111',borderRadius:8,border:'1px solid #222'}}>
+            <span style={{color:'#ccc'}}>{u}</span>
+            <span style={{fontWeight:600,color:'#4af'}}>
+              {isNaN(num) ? '' : (num * FACTORS[from] / FACTORS[i]).toPrecision(6)}
+            </span>
+          </div>
+        ))}
       </div>
     </main>
   );

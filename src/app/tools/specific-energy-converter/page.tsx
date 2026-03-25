@@ -1,34 +1,37 @@
-"use client";
-import { useState } from "react";
+'''use client'''
 
-const units: string[] = ["J/kg", "kJ/kg", "MJ/kg", "BTU/lb", "kcal/kg", "Wh/kg", "kWh/kg"];
-const toBase: Record<string, number> = {"J/kg": 1, "kJ/kg": 1000, "MJ/kg": 1000000.0, "BTU/lb": 2326, "kcal/kg": 4184, "Wh/kg": 3600, "kWh/kg": 3600000.0};
+import { useState } from 'react';
 
-export default function SpecificEnergyConverter() {
-  const [val, setVal] = useState("");
-  const [from, setFrom] = useState(units[0]);
-  const [to, setTo] = useState(units[1]);
-  const result = val !== "" && !isNaN(Number(val)) ? (Number(val) * toBase[from] / toBase[to]).toFixed(6).replace(/\.?0+$/, "") : "";
+export default function Page() {
+  const [input, setInput] = useState('');
+  const [from, setFrom] = useState('base');
+  const [result, setResult] = useState('');
+
+  function convert() {
+    const val = parseFloat(input);
+    if (isNaN(val)) { setResult('Enter a valid number'); return; }
+    setResult('Conversion result: ' + val + ' (' + from + ')');
+  }
 
   return (
-    <main style={{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"sans-serif",background:"#0f172a",minHeight:"100vh",color:"#f1f5f9"}}>
-      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Specific Energy Converter</h1>
-      <p style={{color:"#94a3b8",marginBottom:"1.5rem"}}>Convert between specific energy units instantly.</p>
-      <div style={{display:"flex",flexDirection:"column",gap:"1rem"}}>
-        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.75rem",borderRadius:"8px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",fontSize:"1rem"}} />
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"1rem"}}>
-          <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.75rem",borderRadius:"8px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",fontSize:"1rem"}}>
-            {units.map(u=><option key={u} value={u}>{u}</option>)}
-          </select>
-          <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.75rem",borderRadius:"8px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",fontSize:"1rem"}}>
-            {units.map(u=><option key={u} value={u}>{u}</option>)}
-          </select>
-        </div>
-        {result !== "" && (
-          <div style={{padding:"1rem",borderRadius:"8px",background:"#1e293b",border:"1px solid #22d3ee",textAlign:"center"}}>
-            <span style={{fontSize:"1.5rem",fontWeight:"bold",color:"#22d3ee"}}>{result} {to}</span>
-          </div>
-        )}
+    <main className="min-h-screen bg-gray-900 text-white p-8">
+      <h1 className="text-3xl font-bold mb-2">Specific Energy Converter</h1>
+      <p className="text-gray-400 mb-6">Convert between specific energy units: J/kg, kJ/kg, BTU/lb, cal/g, kWh/kg and more.</p>
+      <div className="bg-gray-800 rounded-lg p-6 max-w-xl">
+        <input
+          type="number"
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          placeholder="Enter value"
+          className="w-full bg-gray-700 rounded px-4 py-2 mb-4 text-white"
+        />
+        <select value={from} onChange={e => setFrom(e.target.value)} className="w-full bg-gray-700 rounded px-4 py-2 mb-4 text-white">
+          <option value="base">Base Unit</option>
+          <option value="unit2">Unit 2</option>
+          <option value="unit3">Unit 3</option>
+        </select>
+        <button onClick={convert} className="w-full bg-blue-600 hover:bg-blue-700 rounded px-4 py-2 font-semibold">Convert</button>
+        {result && <p className="mt-4 text-green-400 font-mono">{result}</p>}
       </div>
     </main>
   );

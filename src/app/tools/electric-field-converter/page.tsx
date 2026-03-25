@@ -1,33 +1,71 @@
-"use client";
-import { useState } from "react";
+'use client'
 
-const units = [{ value: '1', label: 'V/m' }, { value: '1000', label: 'kV/m' }, { value: '1000000', label: 'MV/m' }, { value: '0.01', label: 'V/cm' }, { value: '0.001', label: 'V/mm' }];
+import { useState } from 'react'
 
-export default function ElectricFieldConverterPage() {
-  const [value, setValue] = useState("");
-  const [from, setFrom] = useState(units[0].value);
-  const [to, setTo] = useState(units[1].value);
-  const [result, setResult] = useState("");
+const units = [
+      { name: 'Volt per meter', symbol: 'V/m', toBase: 1 },
+      { name: 'Kilovolt per meter', symbol: 'kV/m', toBase: 1000 },
+      { name: 'Megavolt per meter', symbol: 'MV/m', toBase: 1000000.0 },
+      { name: 'Millivolt per meter', symbol: 'mV/m', toBase: 0.001 },
+      { name: 'Microvolt per meter', symbol: 'μV/m', toBase: 1e-06 },
+      { name: 'Volt per centimeter', symbol: 'V/cm', toBase: 100 },
+      { name: 'Volt per inch', symbol: 'V/in', toBase: 39.3701 }
+    ]
+
+export default function Page() {
+  const [value, setValue] = useState('')
+  const [from, setFrom] = useState(units[0].symbol)
+  const [to, setTo] = useState(units[1].symbol)
 
   const convert = () => {
-    const num = parseFloat(value);
-    if (isNaN(num)) { setResult("Invalid input"); return; }
-    const base = num * parseFloat(from);
-    setResult((base / parseFloat(to)).toExponential(6));
-  };
+    const num = parseFloat(value)
+    if (isNaN(num)) return ''
+    const fromUnit = units.find(u => u.symbol === from)
+    const toUnit = units.find(u => u.symbol === to)
+    if (!fromUnit || !toUnit) return ''
+    const base = num * fromUnit.toBase
+    const result = base / toUnit.toBase
+    return result.toPrecision(6)
+  }
 
   return (
-    <main style={{ maxWidth: 480, margin: "40px auto", padding: "0 16px", fontFamily: "monospace" }}>
-      <h1 style={{ fontSize: 24, marginBottom: 8 }}>Electric Field Converter</h1>
-      <p style={{ color: "#aaa", marginBottom: 24 }}>Convert between electric field strength units: V/m, kV/m, MV/m.</p>
-      <input type="number" value={value} onChange={e => setValue(e.target.value)} placeholder="Enter value" style={{ width: "100%", padding: 8, marginBottom: 12, background: "#1a1a1a", border: "1px solid #333", color: "#fff", borderRadius: 4 }} />
-      <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
-        <select value={from} onChange={e => setFrom(e.target.value)} style={{ flex: 1, padding: 8, background: "#1a1a1a", border: "1px solid #333", color: "#fff", borderRadius: 4 }}>{units.map(u => <option key={u.value} value={u.value}>{u.label}</option>)}</select>
-        <span style={{ alignSelf: "center", color: "#aaa" }}>to</span>
-        <select value={to} onChange={e => setTo(e.target.value)} style={{ flex: 1, padding: 8, background: "#1a1a1a", border: "1px solid #333", color: "#fff", borderRadius: 4 }}>{units.map(u => <option key={u.value} value={u.value}>{u.label}</option>)}</select>
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Electric Field Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between electric field strength units: Volts per meter, Kilovolts per meter, Megavolts per meter, Millivolts per meter, Microvolts per meter, Volts per centimeter, Volts per inch.</p>
+        <div className="space-y-4 bg-gray-900 p-6 rounded-xl">
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Value</label>
+            <input
+              type="number"
+              value={value}
+              onChange={e => setValue(e.target.value)}
+              className="w-full bg-gray-800 rounded px-4 py-2 text-white"
+              placeholder="Enter value"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">From</label>
+              <select value={from} onChange={e => setFrom(e.target.value)} className="w-full bg-gray-800 rounded px-4 py-2 text-white">
+                {units.map(u => <option key={u.symbol} value={u.symbol}>{u.name} ({u.symbol})</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">To</label>
+              <select value={to} onChange={e => setTo(e.target.value)} className="w-full bg-gray-800 rounded px-4 py-2 text-white">
+                {units.map(u => <option key={u.symbol} value={u.symbol}>{u.name} ({u.symbol})</option>)}
+              </select>
+            </div>
+          </div>
+          {value && (
+            <div className="bg-gray-800 rounded p-4 text-center">
+              <span className="text-2xl font-bold text-blue-400">{convert()}</span>
+              <span className="text-gray-400 ml-2">{to}</span>
+            </div>
+          )}
+        </div>
       </div>
-      <button onClick={convert} style={{ width: "100%", padding: 10, background: "#3b82f6", color: "#fff", border: "none", borderRadius: 4, cursor: "pointer", marginBottom: 16 }}>Convert</button>
-      {result && <div style={{ padding: 16, background: "#1a1a1a", borderRadius: 4, color: "#4ade80", fontSize: 20 }}>{result}</div>}
     </main>
-  );
+  )
 }

@@ -1,32 +1,56 @@
-"use client";
-import { useState } from "react";
+'use client';
+import { useState } from 'react';
 
-const UNITS: string[] = ["gray", "milligray", "microgray", "rad", "millirad", "erg-per-gram"];
-const TO_BASE: Record<string, number> = {"gray": 1, "milligray": 0.001, "microgray": 1e-06, "rad": 0.01, "millirad": 1e-05, "erg-per-gram": 0.0001};
+const UNITS = [{name:"Gray (Gy)",key:"gy",factor:1},{name:"Milligray (mGy)",key:"mgy",factor:0.001},{name:"Centigray (cGy)",key:"cgy",factor:0.01},{name:"Microgray (μGy)",key:"ugy",factor:1e-06},{name:"Rad (rad)",key:"rad",factor:0.01},{name:"Millirad (mrad)",key:"mrad",factor:1e-05},];
 
-export default function AbsorbedDoseConverterPage() {
-  const [val, setVal] = useState("");
-  const [from, setFrom] = useState(UNITS[0]);
-  const [to, setTo] = useState(UNITS[1]);
+export default function Page() {
+  const [from, setFrom] = useState(UNITS[0].key);
+  const [to, setTo] = useState(UNITS[1].key);
+  const [val, setVal] = useState('');
+
   const convert = () => {
     const n = parseFloat(val);
-    if (isNaN(n)) return "";
-    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
+    if (isNaN(n)) return '';
+    const f = UNITS.find(u => u.key === from);
+    const t = UNITS.find(u => u.key === to);
+    if (!f || !t || f.factor === null || t.factor === null) return 'N/A';
+    return ((n * f.factor) / t.factor).toPrecision(8);
   };
+
   return (
-    <main style={{minHeight:"100vh",background:"#0f172a",color:"#e2e8f0",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",fontFamily:"monospace",padding:"2rem"}}>
-      <h1 style={{fontSize:"2rem",marginBottom:"1.5rem"}}>Absorbed Dose Converter</h1>
-      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",justifyContent:"center",marginBottom:"1rem"}}>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:"1rem",width:"160px"}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0"}}>
-          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
-        </select>
-        <span style={{alignSelf:"center"}}>to</span>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0"}}>
-          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
-        </select>
+    <div className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Absorbed Dose Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between absorbed dose units: gray, rad, milligray, centigray, microgray.</p>
+        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Value</label>
+            <input type="number" value={val} onChange={e=>setVal(e.target.value)}
+              className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white"
+              placeholder="Enter value" />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">From</label>
+              <select value={from} onChange={e=>setFrom(e.target.value)}
+                className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white">
+                {UNITS.map(u=><option key={u.key} value={u.key}>{u.name}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">To</label>
+              <select value={to} onChange={e=>setTo(e.target.value)}
+                className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white">
+                {UNITS.map(u=><option key={u.key} value={u.key}>{u.name}</option>)}
+              </select>
+            </div>
+          </div>
+          <div className="bg-gray-800 rounded-lg p-4">
+            <div className="text-sm text-gray-400 mb-1">Result</div>
+            <div className="text-2xl font-mono text-green-400">{convert() || chr(39) + chr(39)}</div>
+          </div>
+        </div>
       </div>
-      <div style={{fontSize:"1.5rem",padding:"1rem",background:"#1e293b",borderRadius:"8px",minWidth:"260px",textAlign:"center"}}>{convert() || "—"} {to}</div>
-    </main>
+    </div>
   );
 }

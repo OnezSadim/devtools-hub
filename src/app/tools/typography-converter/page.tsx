@@ -1,32 +1,56 @@
-"use client";
-import { useState } from "react";
+'use client';
+import { useState } from 'react';
 
-const UNITS: string[] = ["point", "pica", "inch", "cm", "mm", "px (96dpi)", "em (16px)"];
-const TO_BASE: Record<string, number> = {"point": 0.352778, "pica": 4.23333, "inch": 25.4, "cm": 10.0, "mm": 1.0, "px (96dpi)": 0.264583, "em (16px)": 4.23333};
+const UNITS = [{name:"Point (pt)",key:"pt",factor:1},{name:"Pica (pc)",key:"pc",factor:12},{name:"Inch (in)",key:"in",factor:72},{name:"Millimeter (mm)",key:"mm",factor:2.83465},{name:"Centimeter (cm)",key:"cm",factor:28.3465},{name:"Pixel (px) @96dpi",key:"px",factor:0.75},];
 
 export default function Page() {
-  const [val, setVal] = useState("");
-  const [from, setFrom] = useState(UNITS[0]);
-  const [to, setTo] = useState(UNITS[1]);
+  const [from, setFrom] = useState(UNITS[0].key);
+  const [to, setTo] = useState(UNITS[1].key);
+  const [val, setVal] = useState('');
+
   const convert = () => {
     const n = parseFloat(val);
-    if (isNaN(n)) return "";
-    return (n * TO_BASE[from] / TO_BASE[to]).toPrecision(8);
+    if (isNaN(n)) return '';
+    const f = UNITS.find(u => u.key === from);
+    const t = UNITS.find(u => u.key === to);
+    if (!f || !t || f.factor === null || t.factor === null) return 'N/A';
+    return ((n * f.factor) / t.factor).toPrecision(8);
   };
+
   return (
-    <main style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#f1f5f9"}}>
-      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Typography Unit Converter</h1>
-      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",alignItems:"center",marginBottom:"1rem"}}>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#f1f5f9",borderRadius:"4px",width:"150px"}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#f1f5f9",borderRadius:"4px"}}>
-          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
-        </select>
-        <span>to</span>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#f1f5f9",borderRadius:"4px"}}>
-          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
-        </select>
+    <div className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Typography Unit Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between typography units: points, picas, em, pixels, inches, millimeters.</p>
+        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Value</label>
+            <input type="number" value={val} onChange={e=>setVal(e.target.value)}
+              className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white"
+              placeholder="Enter value" />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">From</label>
+              <select value={from} onChange={e=>setFrom(e.target.value)}
+                className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white">
+                {UNITS.map(u=><option key={u.key} value={u.key}>{u.name}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">To</label>
+              <select value={to} onChange={e=>setTo(e.target.value)}
+                className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white">
+                {UNITS.map(u=><option key={u.key} value={u.key}>{u.name}</option>)}
+              </select>
+            </div>
+          </div>
+          <div className="bg-gray-800 rounded-lg p-4">
+            <div className="text-sm text-gray-400 mb-1">Result</div>
+            <div className="text-2xl font-mono text-green-400">{convert() || chr(39) + chr(39)}</div>
+          </div>
+        </div>
       </div>
-      {val && <p style={{fontSize:"1.25rem",color:"#38bdf8"}}>{val} {from} = {convert()} {to}</p>}
-    </main>
+    </div>
   );
 }

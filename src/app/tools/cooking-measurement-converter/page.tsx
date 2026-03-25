@@ -1,35 +1,32 @@
-"use client";
-import { useState } from "react";
+'use client'
+import { useState } from 'react';
 
-const units = ["teaspoon", "tablespoon", "fluid oz", "cup", "pint", "quart", "gallon", "mL", "L"];
-const toBase: Record<string, number> = {"teaspoon": 4.92892, "tablespoon": 14.7868, "fluid oz": 29.5735, "cup": 236.588, "pint": 473.176, "quart": 946.353, "gallon": 3785.41, "mL": 1, "L": 1000};
+const UNITS = ["Milliliter (ml)", "Liter (L)", "Teaspoon (tsp)", "Tablespoon (tbsp)", "Fluid ounce (fl oz)", "Cup (US)", "Pint (US)", "Quart (US)", "Gallon (US)", "Cup (UK)", "Pint (UK)"];
+const FACTORS = [1, 1000, 4.92892, 14.7868, 29.5735, 236.588, 473.176, 946.353, 3785.41, 284.131, 568.261];
 
 export default function Page() {
-  const [val, setVal] = useState("");
-  const [from, setFrom] = useState(units[0]);
-  const [to, setTo] = useState(units[1]);
-  const convert = () => {
-    const n = parseFloat(val);
-    if (isNaN(n)) return "";
-    return ((n * toBase[from]) / toBase[to]).toPrecision(6);
-  };
+  const [val, setVal] = useState('1');
+  const [from, setFrom] = useState(0);
+  const num = parseFloat(val);
   return (
-    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",alignItems:"center",justifyContent:"center",padding:"2rem"}}>
-      <div style={{background:"#1e293b",borderRadius:"1rem",padding:"2rem",width:"100%",maxWidth:"480px"}}>
-        <h1 style={{fontSize:"1.5rem",fontWeight:700,marginBottom:"0.5rem"}}>Cooking Measurement Converter</h1>
-        <p style={{color:"#94a3b8",marginBottom:"1.5rem",fontSize:"0.9rem"}}>Convert between common cooking measurements: teaspoons, tablespoons, cups, and more.</p>
-        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",marginBottom:"1rem",boxSizing:"border-box"}} />
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"1rem",marginBottom:"1rem"}}>
-          <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>
-            {units.map(u=><option key={u} value={u}>{u}</option>)}
-          </select>
-          <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>
-            {units.map(u=><option key={u} value={u}>{u}</option>)}
-          </select>
-        </div>
-        <div style={{background:"#0f172a",borderRadius:"0.5rem",padding:"1rem",textAlign:"center",fontSize:"1.25rem",fontWeight:600,color:"#38bdf8",minHeight:"3rem"}}>
-          {val ? convert() + " " + to : "Result appears here"}
-        </div>
+    <main style={{maxWidth:600,margin:'0 auto',padding:'2rem'}}>
+      <h1 style={{fontSize:'1.8rem',fontWeight:700,marginBottom:'0.5rem'}}>Cooking Measurement Converter</h1>
+      <p style={{color:'#aaa',marginBottom:'1.5rem'}}>Convert between cooking measurements: cups, tablespoons, teaspoons, milliliters, fluid ounces, and more.</p>
+      <div style={{display:'flex',gap:'1rem',marginBottom:'1.5rem',flexWrap:'wrap'}}>
+        <input type="number" value={val} onChange={e=>setVal(e.target.value)} style={{flex:1,minWidth:120,padding:'0.5rem',background:'#1a1a1a',border:'1px solid #333',borderRadius:6,color:'#fff',fontSize:'1rem'}} />
+        <select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{flex:1,minWidth:150,padding:'0.5rem',background:'#1a1a1a',border:'1px solid #333',borderRadius:6,color:'#fff'}}>
+          {UNITS.map((u,i)=><option key={i} value={i}>{u}</option>)}
+        </select>
+      </div>
+      <div style={{display:'grid',gap:'0.5rem'}}>
+        {UNITS.map((u,i)=>(
+          <div key={i} style={{display:'flex',justifyContent:'space-between',padding:'0.75rem 1rem',background:i===from?'#1e3a5f':'#111',borderRadius:8,border:'1px solid #222'}}>
+            <span style={{color:'#ccc'}}>{u}</span>
+            <span style={{fontWeight:600,color:'#4af'}}>
+              {isNaN(num) ? '' : (num * FACTORS[from] / FACTORS[i]).toPrecision(6)}
+            </span>
+          </div>
+        ))}
       </div>
     </main>
   );

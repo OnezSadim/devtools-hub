@@ -1,29 +1,33 @@
-"use client";
-import { useState } from "react";
-const UNITS = ["W/(m*K)", "BTU/(h*ft*F)", "cal/(s*cm*C)", "kcal/(h*m*C)"];
-const TO_BASE: Record<string, number> = {"W/(m*K)": 1.0, "BTU/(h*ft*F)": 1.73073, "cal/(s*cm*C)": 418.4, "kcal/(h*m*C)": 1.163};
+'use client'
+import { useState } from 'react';
+
+const UNITS = ["W/(m·K)", "kW/(m·K)", "cal/(s·cm·°C)", "kcal/(h·m·°C)", "BTU/(h·ft·°F)", "BTU·in/(h·ft²·°F)"];
+const FACTORS = [1, 1000, 418.68, 1.163, 1.73073, 0.144228];
+
 export default function Page() {
-  const [val, setVal] = useState("");
-  const [from, setFrom] = useState(UNITS[0]);
-  const [to, setTo] = useState(UNITS[1]);
-  function convert() {
-    const n = parseFloat(val);
-    if (isNaN(n)) return "";
-    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
-  }
+  const [val, setVal] = useState('1');
+  const [from, setFrom] = useState(0);
+  const num = parseFloat(val);
   return (
-    <main style={{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"sans-serif"}}>
-      <h1 style={{fontSize:"1.8rem",marginBottom:"1rem"}}>Thermal Conductivity Converter</h1>
-      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1rem"}}>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",fontSize:"1rem",flex:1}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",fontSize:"1rem"}}>
-          {UNITS.map(u=><option key={u}>{u}</option>)}
-        </select>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",fontSize:"1rem"}}>
-          {UNITS.map(u=><option key={u}>{u}</option>)}
+    <main style={{maxWidth:600,margin:'0 auto',padding:'2rem'}}>
+      <h1 style={{fontSize:'1.8rem',fontWeight:700,marginBottom:'0.5rem'}}>Thermal Conductivity Converter</h1>
+      <p style={{color:'#aaa',marginBottom:'1.5rem'}}>Convert between thermal conductivity units: W/(m·K), BTU/(h·ft·°F), cal/(s·cm·°C), and more.</p>
+      <div style={{display:'flex',gap:'1rem',marginBottom:'1.5rem',flexWrap:'wrap'}}>
+        <input type="number" value={val} onChange={e=>setVal(e.target.value)} style={{flex:1,minWidth:120,padding:'0.5rem',background:'#1a1a1a',border:'1px solid #333',borderRadius:6,color:'#fff',fontSize:'1rem'}} />
+        <select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{flex:1,minWidth:150,padding:'0.5rem',background:'#1a1a1a',border:'1px solid #333',borderRadius:6,color:'#fff'}}>
+          {UNITS.map((u,i)=><option key={i} value={i}>{u}</option>)}
         </select>
       </div>
-      <div style={{fontSize:"1.4rem",fontWeight:"bold"}}>Result: {convert()}</div>
+      <div style={{display:'grid',gap:'0.5rem'}}>
+        {UNITS.map((u,i)=>(
+          <div key={i} style={{display:'flex',justifyContent:'space-between',padding:'0.75rem 1rem',background:i===from?'#1e3a5f':'#111',borderRadius:8,border:'1px solid #222'}}>
+            <span style={{color:'#ccc'}}>{u}</span>
+            <span style={{fontWeight:600,color:'#4af'}}>
+              {isNaN(num) ? '' : (num * FACTORS[from] / FACTORS[i]).toPrecision(6)}
+            </span>
+          </div>
+        ))}
+      </div>
     </main>
   );
 }
