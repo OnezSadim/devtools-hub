@@ -1,38 +1,34 @@
 "use client";
 import { useState } from "react";
 
-const UNITS: string[] = ["coulomb", "millicoulomb", "microcoulomb", "nanocoulomb", "picocoulomb", "ampere-hour", "milliampere-hour", "faraday", "statcoulomb", "abcoulomb"];
-const TO_BASE: Record<string, number> = {"coulomb": 1, "millicoulomb": 0.001, "microcoulomb": 1e-06, "nanocoulomb": 1e-09, "picocoulomb": 1e-12, "ampere-hour": 3600, "milliampere-hour": 3.6, "faraday": 96485.3321, "statcoulomb": 3.33564e-10, "abcoulomb": 10};
+const units = ["C", "mC", "uC", "nC", "pC", "kC", "Ah", "mAh"];
+const toBase = [1, 1000, 1000000.0, 1000000000.0, 1000000000000.0, 0.001, 0.0002777777777777778, 0.2777777777777778];
 
 export default function ElectricChargeConverter() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(UNITS[0]);
-  const [to, setTo] = useState(UNITS[1]);
-  const convert = () => {
+  const [from, setFrom] = useState(0);
+  function convert(toIdx: number) {
     const n = parseFloat(val);
     if (isNaN(n)) return "";
-    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(8);
-  };
+    return ((n * toBase[from]) / toBase[toIdx]).toPrecision(6);
+  }
   return (
-    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",alignItems:"center",justifyContent:"center",padding:"2rem"}}>
-      <div style={{background:"#1e293b",borderRadius:"1rem",padding:"2rem",width:"100%",maxWidth:"480px"}}>
-        <h1 style={{fontSize:"1.5rem",fontWeight:700,marginBottom:"1.5rem",textAlign:"center"}}>Electric Charge Converter</h1>
-        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:".75rem",borderRadius:".5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",marginBottom:"1rem",boxSizing:"border-box"}} />
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"1rem",marginBottom:"1rem"}}>
-          <div>
-            <label style={{fontSize:".875rem",color:"#94a3b8",display:"block",marginBottom:".25rem"}}>From</label>
-            <select value={from} onChange={e=>setFrom(e.target.value)} style={{width:"100%",padding:".75rem",borderRadius:".5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>
-              {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
-            </select>
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <h1 className="text-3xl font-bold mb-2">Electric Charge Converter</h1>
+      <p className="text-gray-400 mb-6">Convert between electric charge units instantly.</p>
+      <div className="flex gap-4 mb-6 flex-wrap">
+        <input type="number" value={val} onChange={e => setVal(e.target.value)} placeholder="Enter value" className="bg-gray-800 border border-gray-700 rounded px-4 py-2 w-48" />
+        <select value={from} onChange={e => setFrom(Number(e.target.value))} className="bg-gray-800 border border-gray-700 rounded px-4 py-2">
+          {units.map((u, i) => <option key={u} value={i}>{u}</option>)}
+        </select>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {units.map((u, i) => (
+          <div key={u} className="bg-gray-800 rounded-lg p-4">
+            <div className="text-gray-400 text-sm mb-1">{u}</div>
+            <div className="text-xl font-mono">{val ? convert(i) : "—"}</div>
           </div>
-          <div>
-            <label style={{fontSize:".875rem",color:"#94a3b8",display:"block",marginBottom:".25rem"}}>To</label>
-            <select value={to} onChange={e=>setTo(e.target.value)} style={{width:"100%",padding:".75rem",borderRadius:".5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>
-              {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
-            </select>
-          </div>
-        </div>
-        {val && <div style={{background:"#0f172a",borderRadius:".5rem",padding:"1rem",textAlign:"center",fontSize:"1.25rem",fontWeight:600,color:"#38bdf8"}}>{convert()} {to}</div>}
+        ))}
       </div>
     </main>
   );

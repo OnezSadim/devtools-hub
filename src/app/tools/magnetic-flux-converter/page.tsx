@@ -1,42 +1,34 @@
 "use client";
 import { useState } from "react";
 
-const units = ["Weber (Wb)", "Milliweber (mWb)", "Microweber (uWb)", "Maxwell (Mx)", "Tesla sq meter (T m2)"];
-const factors: Record<string, number> = {"Weber (Wb)": 1, "Milliweber (mWb)": 0.001, "Microweber (uWb)": 1e-06, "Maxwell (Mx)": 1e-08, "Tesla sq meter (T m2)": 1.0};
+const units = ["Wb", "mWb", "uWb", "Mx", "T*m2"];
+const toBase = [1, 1000, 1000000.0, 100000000.0, 1];
 
-export default function MagneticFluxConverterPage() {
-  const [fromUnit, setFromUnit] = useState(units[0]);
-  const [toUnit, setToUnit] = useState(units[1]);
-  const [value, setValue] = useState("");
-  const result = value === "" ? "" : String((parseFloat(value) * factors[fromUnit]) / factors[toUnit]);
+export default function MagneticFluxConverter() {
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState(0);
+  function convert(toIdx: number) {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    return ((n * toBase[from]) / toBase[toIdx]).toPrecision(6);
+  }
   return (
     <main className="min-h-screen bg-gray-950 text-white p-8">
-      <h1 className="text-3xl font-bold mb-6">Magnetic Flux Converter</h1>
-      <div className="max-w-xl bg-gray-900 rounded-xl p-6 space-y-4">
-        <div>
-          <label className="block text-sm text-gray-400 mb-1">Value</label>
-          <input type="number" value={value} onChange={e => setValue(e.target.value)} className="w-full bg-gray-800 rounded px-3 py-2 text-white" placeholder="Enter value" />
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">From</label>
-            <select value={fromUnit} onChange={e => setFromUnit(e.target.value)} className="w-full bg-gray-800 rounded px-3 py-2 text-white">
-              {units.map(u => <option key={u} value={u}>{u}</option>)}
-            </select>
+      <h1 className="text-3xl font-bold mb-2">Magnetic Flux Converter</h1>
+      <p className="text-gray-400 mb-6">Convert between magnetic flux units instantly.</p>
+      <div className="flex gap-4 mb-6 flex-wrap">
+        <input type="number" value={val} onChange={e => setVal(e.target.value)} placeholder="Enter value" className="bg-gray-800 border border-gray-700 rounded px-4 py-2 w-48" />
+        <select value={from} onChange={e => setFrom(Number(e.target.value))} className="bg-gray-800 border border-gray-700 rounded px-4 py-2">
+          {units.map((u, i) => <option key={u} value={i}>{u}</option>)}
+        </select>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {units.map((u, i) => (
+          <div key={u} className="bg-gray-800 rounded-lg p-4">
+            <div className="text-gray-400 text-sm mb-1">{u}</div>
+            <div className="text-xl font-mono">{val ? convert(i) : "—"}</div>
           </div>
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">To</label>
-            <select value={toUnit} onChange={e => setToUnit(e.target.value)} className="w-full bg-gray-800 rounded px-3 py-2 text-white">
-              {units.map(u => <option key={u} value={u}>{u}</option>)}
-            </select>
-          </div>
-        </div>
-        {result !== "" && (
-          <div className="bg-gray-800 rounded p-4 text-center">
-            <p className="text-2xl font-mono text-green-400">{result}</p>
-            <p className="text-sm text-gray-400 mt-1">{toUnit}</p>
-          </div>
-        )}
+        ))}
       </div>
     </main>
   );
