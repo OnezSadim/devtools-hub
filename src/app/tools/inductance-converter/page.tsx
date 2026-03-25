@@ -1,43 +1,47 @@
 "use client";
 import { useState } from "react";
 
-const UNITS = [
-      { value: '1', label: 'Henry (H)' },
-      { value: '1e-3', label: 'Millihenry (mH)' },
-      { value: '1e-6', label: 'Microhenry (µH)' },
-      { value: '1e-9', label: 'Nanohenry (nH)' },
-      { value: '1e-12', label: 'Picohenry (pH)' },
-      { value: '1e3', label: 'Kilohenry (kH)' },
+const units = [
+  { label: "Henry (H)", value: "H" },
+  { label: "Millihenry (mH)", value: "mH" },
+  { label: "Microhenry (uH)", value: "uH" },
+  { label: "Nanohenry (nH)", value: "nH" },
+  { label: "Picohenry (pH)", value: "pH" },
+  { label: "Kilohenry (kH)", value: "kH" },
 ];
+
+const toBase: Record<string, number> = {
+  "H": 1,
+  "mH": 0.001,
+  "uH": 1e-06,
+  "nH": 1e-09,
+  "pH": 1e-12,
+  "kH": 1000.0,
+};
 
 export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(UNITS[0].value);
-  const [to, setTo] = useState(UNITS[1].value);
+  const [from, setFrom] = useState(units[0].value);
+  const [to, setTo] = useState(units[1].value);
   const convert = () => {
     const n = parseFloat(val);
     if (isNaN(n)) return "";
-    const base = n * parseFloat(from);
-    return (base / parseFloat(to)).toPrecision(6);
+    return ((n * toBase[from]) / toBase[to]).toPrecision(6);
   };
   return (
-    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",padding:"2rem",fontFamily:"monospace"}}>
-      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Inductance Converter</h1>
-      <p style={{color:"#94a3b8",marginBottom:"2rem"}}>Convert between inductance units: henry, millihenry, microhenry, nanohenry.</p>
-      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",alignItems:"flex-end"}}>
-        <div><label style={{display:"block",marginBottom:"0.25rem",color:"#94a3b8"}}>Value</label>
-        <input value={val} onChange={e=>setVal(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px",width:"160px"}} /></div>
-        <div><label style={{display:"block",marginBottom:"0.25rem",color:"#94a3b8"}}>From</label>
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px"}}>
-          {UNITS.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
-        </select></div>
-        <div><label style={{display:"block",marginBottom:"0.25rem",color:"#94a3b8"}}>To</label>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px"}}>
-          {UNITS.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
-        </select></div>
-      </div>
-      <div style={{marginTop:"2rem",padding:"1rem",background:"#1e293b",borderRadius:"8px",fontSize:"1.4rem"}}>
-        Result: <strong>{convert()}</strong>
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <h1 className="text-3xl font-bold mb-6">Inductance Converter</h1>
+      <div className="bg-gray-900 rounded-xl p-6 max-w-lg space-y-4">
+        <input className="w-full bg-gray-800 rounded p-3 text-white" placeholder="Enter value" value={val} onChange={e => setVal(e.target.value)} />
+        <div className="flex gap-4">
+          <select className="flex-1 bg-gray-800 rounded p-3" value={from} onChange={e => setFrom(e.target.value)}>
+            {units.map(u => <option key={u.value} value={u.value}>{u.label}</option>)}
+          </select>
+          <select className="flex-1 bg-gray-800 rounded p-3" value={to} onChange={e => setTo(e.target.value)}>
+            {units.map(u => <option key={u.value} value={u.value}>{u.label}</option>)}
+          </select>
+        </div>
+        <div className="bg-gray-800 rounded p-4 text-2xl font-mono">{convert() || "0"}</div>
       </div>
     </main>
   );
