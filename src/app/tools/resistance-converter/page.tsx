@@ -1,1 +1,68 @@
-'use client';import{useState}from'react';const units=[{value:"ohm",label:"Ohm",factor:1},{value:"kohm",label:"Kilohm",factor:1000.0},{value:"Mohm",label:"Megaohm",factor:1000000.0},{value:"Gohm",label:"Gigaohm",factor:1000000000.0},{value:"mohm",label:"Milliohm",factor:0.001},{value:"uohm",label:"Microohm",factor:1e-06}];export default function Page(){const[val,setVal]=useState('1');const[from,setFrom]=useState(units[0].value);const[to,setTo]=useState(units[1].value);const convert=()=>{const f=units.find(u=>u.value===from);const t=units.find(u=>u.value===to);if(!f||!t||isNaN(Number(val)))return'Invalid';return((Number(val)*f.factor)/t.factor).toPrecision(6);};return(<main style={{padding:'2rem',fontFamily:'monospace',background:'#0f172a',minHeight:'100vh',color:'#e2e8f0'}}><h1 style={{fontSize:'1.5rem',marginBottom:'1rem'}}>{title}</h1><p style={{marginBottom:'1.5rem',color:'#94a3b8'}}>{desc}</p><div style={{display:'flex',gap:'1rem',flexWrap:'wrap',marginBottom:'1rem'}}><input value={val} onChange={e=>setVal(e.target.value)} style={{padding:'0.5rem',background:'#1e293b',border:'1px solid #334155',color:'#e2e8f0',borderRadius:'4px',width:'150px'}} /><select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:'0.5rem',background:'#1e293b',border:'1px solid #334155',color:'#e2e8f0',borderRadius:'4px'}}>{units.map(u=>(<option key={u.value} value={u.value}>{u.label}</option>))}</select><span style={{alignSelf:'center'}}>→</span><select value={to} onChange={e=>setTo(e.target.value)} style={{padding:'0.5rem',background:'#1e293b',border:'1px solid #334155',color:'#e2e8f0',borderRadius:'4px'}}>{units.map(u=>(<option key={u.value} value={u.value}>{u.label}</option>))}</select></div><div style={{padding:'1rem',background:'#1e293b',borderRadius:'8px',fontSize:'1.25rem'}}>{convert()} {units.find(u=>u.value===to)?.label}</div></main>);}
+"use client";
+import { useState } from "react";
+
+const units: Record<string, number> = {
+  "Ohm": 1,
+  "mOhm": 0.001,
+  "kOhm": 1000.0,
+  "MOhm": 1000000.0,
+  "GOhm": 1000000000.0,
+};
+
+export default function ResistanceConverter() {
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState("Ohm");
+  const [to, setTo] = useState("mOhm");
+
+  const convert = () => {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    return ((n * units[from]) / units[to]).toPrecision(6);
+  };
+
+  return (
+    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Resistance Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between ohm, kilohm, megohm, milliohm.</p>
+        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Value</label>
+            <input type="number" value={val} onChange={e => setVal(e.target.value)}
+              className="w-full bg-gray-800 rounded px-3 py-2 text-white" placeholder="Enter value" />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">From</label>
+              <select value={from} onChange={e => setFrom(e.target.value)}
+                className="w-full bg-gray-800 rounded px-3 py-2 text-white">
+          <option value="Ohm">Ohm</option>
+          <option value="mOhm">Milliohm</option>
+          <option value="kOhm">Kilohm</option>
+          <option value="MOhm">Megohm</option>
+          <option value="GOhm">Gigaohm</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">To</label>
+              <select value={to} onChange={e => setTo(e.target.value)}
+                className="w-full bg-gray-800 rounded px-3 py-2 text-white">
+          <option value="Ohm">Ohm</option>
+          <option value="mOhm">Milliohm</option>
+          <option value="kOhm">Kilohm</option>
+          <option value="MOhm">Megohm</option>
+          <option value="GOhm">Gigaohm</option>
+              </select>
+            </div>
+          </div>
+          {val && (
+            <div className="bg-gray-800 rounded p-4 text-center">
+              <span className="text-2xl font-mono text-green-400">{convert()}</span>
+              <span className="text-gray-400 ml-2">{to}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </main>
+  );
+}

@@ -1,27 +1,66 @@
 "use client";
 import { useState } from "react";
 
-const units: [string, string, number][] = [["pas", "Pascal-second (Pa·s)", 1], ["mpas", "Millipascal-second (mPa·s)", 0.001], ["cp", "Centipoise (cP)", 0.001], ["p", "Poise (P)", 0.1], ["p_dyn", "dyn·s/cm²", 0.1]];
+const units: Record<string, number> = {
+  "Pa.s": 1,
+  "mPa.s": 0.001,
+  "P": 0.1,
+  "cP": 0.001,
+  "lb/ft.s": 1.48816,
+};
 
-export default function ViscosityConverterPage() {
-  const [from, setFrom] = useState(units[0][0]);
-  const [to, setTo] = useState("mpas");
+export default function ViscosityConverter() {
   const [val, setVal] = useState("");
-  const toBase = (v: number, u: string) => { const f = units.find(x => x[0]===u); return f ? v * f[2] : v; };
-  const fromBase = (v: number, u: string) => { const f = units.find(x => x[0]===u); return f ? v / f[2] : v; };
-  const result = val !== "" && !isNaN(Number(val)) ? fromBase(toBase(Number(val), from), to).toPrecision(6) : "";
+  const [from, setFrom] = useState("Pa.s");
+  const [to, setTo] = useState("mPa.s");
+
+  const convert = () => {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    return ((n * units[from]) / units[to]).toPrecision(6);
+  };
+
   return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
+    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
       <div className="max-w-xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Viscosity Converter</h1>
-        <p className="text-gray-400 mb-8">Convert between Pa·s, mPa·s, cP, P, St, cSt and more.</p>
-        <div className="space-y-4">
-          <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" className="w-full bg-gray-800 border border-gray-700 rounded px-4 py-3 text-white" />
-          <div className="grid grid-cols-2 gap-4">
-            <div><label className="text-gray-400 text-sm">From</label><select value={from} onChange={e=>setFrom(e.target.value)} className="w-full mt-1 bg-gray-800 border border-gray-700 rounded px-3 py-2">{units.map(u=><option key={u[0]} value={u[0]}>{u[1]}</option>)}</select></div>
-            <div><label className="text-gray-400 text-sm">To</label><select value={to} onChange={e=>setTo(e.target.value)} className="w-full mt-1 bg-gray-800 border border-gray-700 rounded px-3 py-2">{units.map(u=><option key={u[0]} value={u[0]}>{u[1]}</option>)}</select></div>
+        <h1 className="text-3xl font-bold mb-2">Dynamic Viscosity Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between pascal-second, poise, centipoise and other viscosity units.</p>
+        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Value</label>
+            <input type="number" value={val} onChange={e => setVal(e.target.value)}
+              className="w-full bg-gray-800 rounded px-3 py-2 text-white" placeholder="Enter value" />
           </div>
-          {result && <div className="bg-gray-800 rounded p-4 text-center"><span className="text-2xl font-mono text-green-400">{result}</span><span className="text-gray-400 ml-2">{to}</span></div>}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">From</label>
+              <select value={from} onChange={e => setFrom(e.target.value)}
+                className="w-full bg-gray-800 rounded px-3 py-2 text-white">
+          <option value="Pa.s">Pascal-second</option>
+          <option value="mPa.s">Millipascal-second</option>
+          <option value="P">Poise</option>
+          <option value="cP">Centipoise</option>
+          <option value="lb/ft.s">Pound per foot-second</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">To</label>
+              <select value={to} onChange={e => setTo(e.target.value)}
+                className="w-full bg-gray-800 rounded px-3 py-2 text-white">
+          <option value="Pa.s">Pascal-second</option>
+          <option value="mPa.s">Millipascal-second</option>
+          <option value="P">Poise</option>
+          <option value="cP">Centipoise</option>
+          <option value="lb/ft.s">Pound per foot-second</option>
+              </select>
+            </div>
+          </div>
+          {val && (
+            <div className="bg-gray-800 rounded p-4 text-center">
+              <span className="text-2xl font-mono text-green-400">{convert()}</span>
+              <span className="text-gray-400 ml-2">{to}</span>
+            </div>
+          )}
         </div>
       </div>
     </main>

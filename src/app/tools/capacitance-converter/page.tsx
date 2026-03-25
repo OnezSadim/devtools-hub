@@ -1,1 +1,68 @@
-'use client';import{useState}from'react';const units=[{value:"F",label:"Farad",factor:1},{value:"mF",label:"Millifarad",factor:0.001},{value:"uF",label:"Microfarad",factor:1e-06},{value:"nF",label:"Nanofarad",factor:1e-09},{value:"pF",label:"Picofarad",factor:1e-12},{value:"kF",label:"Kilofarad",factor:1000.0}];export default function Page(){const[val,setVal]=useState('1');const[from,setFrom]=useState(units[0].value);const[to,setTo]=useState(units[1].value);const convert=()=>{const f=units.find(u=>u.value===from);const t=units.find(u=>u.value===to);if(!f||!t||isNaN(Number(val)))return'Invalid';return((Number(val)*f.factor)/t.factor).toPrecision(6);};return(<main style={{padding:'2rem',fontFamily:'monospace',background:'#0f172a',minHeight:'100vh',color:'#e2e8f0'}}><h1 style={{fontSize:'1.5rem',marginBottom:'1rem'}}>{title}</h1><p style={{marginBottom:'1.5rem',color:'#94a3b8'}}>{desc}</p><div style={{display:'flex',gap:'1rem',flexWrap:'wrap',marginBottom:'1rem'}}><input value={val} onChange={e=>setVal(e.target.value)} style={{padding:'0.5rem',background:'#1e293b',border:'1px solid #334155',color:'#e2e8f0',borderRadius:'4px',width:'150px'}} /><select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:'0.5rem',background:'#1e293b',border:'1px solid #334155',color:'#e2e8f0',borderRadius:'4px'}}>{units.map(u=>(<option key={u.value} value={u.value}>{u.label}</option>))}</select><span style={{alignSelf:'center'}}>→</span><select value={to} onChange={e=>setTo(e.target.value)} style={{padding:'0.5rem',background:'#1e293b',border:'1px solid #334155',color:'#e2e8f0',borderRadius:'4px'}}>{units.map(u=>(<option key={u.value} value={u.value}>{u.label}</option>))}</select></div><div style={{padding:'1rem',background:'#1e293b',borderRadius:'8px',fontSize:'1.25rem'}}>{convert()} {units.find(u=>u.value===to)?.label}</div></main>);}
+"use client";
+import { useState } from "react";
+
+const units: Record<string, number> = {
+  "F": 1,
+  "mF": 0.001,
+  "uF": 1e-06,
+  "nF": 1e-09,
+  "pF": 1e-12,
+};
+
+export default function CapacitanceConverter() {
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState("F");
+  const [to, setTo] = useState("mF");
+
+  const convert = () => {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    return ((n * units[from]) / units[to]).toPrecision(6);
+  };
+
+  return (
+    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Capacitance Converter</h1>
+        <p className="text-gray-400 mb-8">Convert between farad, microfarad, nanofarad, picofarad and more.</p>
+        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Value</label>
+            <input type="number" value={val} onChange={e => setVal(e.target.value)}
+              className="w-full bg-gray-800 rounded px-3 py-2 text-white" placeholder="Enter value" />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">From</label>
+              <select value={from} onChange={e => setFrom(e.target.value)}
+                className="w-full bg-gray-800 rounded px-3 py-2 text-white">
+          <option value="F">Farad</option>
+          <option value="mF">Millifarad</option>
+          <option value="uF">Microfarad</option>
+          <option value="nF">Nanofarad</option>
+          <option value="pF">Picofarad</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">To</label>
+              <select value={to} onChange={e => setTo(e.target.value)}
+                className="w-full bg-gray-800 rounded px-3 py-2 text-white">
+          <option value="F">Farad</option>
+          <option value="mF">Millifarad</option>
+          <option value="uF">Microfarad</option>
+          <option value="nF">Nanofarad</option>
+          <option value="pF">Picofarad</option>
+              </select>
+            </div>
+          </div>
+          {val && (
+            <div className="bg-gray-800 rounded p-4 text-center">
+              <span className="text-2xl font-mono text-green-400">{convert()}</span>
+              <span className="text-gray-400 ml-2">{to}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </main>
+  );
+}
