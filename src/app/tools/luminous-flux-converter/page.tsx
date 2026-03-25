@@ -1,3 +1,49 @@
-'use client';
-import{useState}from 'react';
-export default function Page(){const[v,setV]=useState('');const[f,setF]=useState('Lumen');const[t,setT]=useState('Candela-steradian');const u=[['Lumen', 1], ['Candela-steradian', 1], ['Kilolumen', 1000], ['Millilumen', 0.001]];const cv=(val,from,to)=>{const base=parseFloat(val)*u.find(x=>x[0]===from)[1];return(base/u.find(x=>x[0]===to)[1]).toFixed(6);};return(<div style={{padding:'2rem',fontFamily:'sans-serif',background:'#0f172a',minHeight:'100vh',color:'#f1f5f9'}}><h1 style={{fontSize:'1.5rem',marginBottom:'1rem'}}>{"Luminous Flux Converter"}</h1><p style={{color:'#94a3b8',marginBottom:'1.5rem'}}>{"Convert between luminous flux units: lumens, candela-steradian, and more."}</p><div style={{display:'flex',gap:'1rem',flexWrap:'wrap',alignItems:'flex-end'}}><div><label style={{display:'block',marginBottom:'4px',color:'#94a3b8'}}>Value</label><input value={v} onChange={e=>setV(e.target.value)} style={{padding:'8px',background:'#1e293b',border:'1px solid #334155',borderRadius:'6px',color:'#f1f5f9',width:'160px'}} /></div><div><label style={{display:'block',marginBottom:'4px',color:'#94a3b8'}}>From</label><select value={f} onChange={e=>setF(e.target.value)} style={{padding:'8px',background:'#1e293b',border:'1px solid #334155',borderRadius:'6px',color:'#f1f5f9'}}>{u.map(x=>(<option key={x[0]} value={x[0]}>{x[0]}</option>))}</select></div><div><label style={{display:'block',marginBottom:'4px',color:'#94a3b8'}}>To</label><select value={t} onChange={e=>setT(e.target.value)} style={{padding:'8px',background:'#1e293b',border:'1px solid #334155',borderRadius:'6px',color:'#f1f5f9'}}>{u.map(x=>(<option key={x[0]} value={x[0]}>{x[0]}</option>))}</select></div></div>{v&&(<div style={{marginTop:'1.5rem',padding:'1rem',background:'#1e293b',borderRadius:'8px',fontSize:'1.2rem'}}>{v} {f} = <strong>{cv(v,f,t)}</strong> {t}</div>)}</div>);}
+
+"use client";
+import { useState } from "react";
+export default function LuminousFluxConverter() {
+  const [lumens, setLumens] = useState("");
+  const [area, setArea] = useState("1");
+  const [result, setResult] = useState("");
+  const calculate = () => {
+    const lm = parseFloat(lumens), a = parseFloat(area);
+    if (isNaN(lm)||lm<=0) { setResult("Enter valid lumens"); return; }
+    const lux = isNaN(a)||a<=0 ? null : lm/a;
+    const watts_vis = lm / 683;
+    const candela_sphere = lm / (4*Math.PI);
+    let out = "Luminous flux: " + lm.toFixed(2) + " lm
+";
+    out += "Radiant power (vis): " + watts_vis.toFixed(4) + " W
+";
+    out += "Avg intensity (sphere): " + candela_sphere.toFixed(4) + " cd
+";
+    if (lux!==null) out += "Illuminance ("+a+" m²): " + lux.toFixed(4) + " lux";
+    setResult(out);
+  };
+  return (
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Luminous Flux Converter</h1>
+        <p className="text-gray-400 mb-6">Convert lumens to lux, candelas, watts and more</p>
+        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Luminous Flux (lumens)</label>
+            <input type="number" value={lumens} onChange={e=>setLumens(e.target.value)} placeholder="e.g. 800" className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white" />
+          </div>
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Surface Area (m², for lux calculation)</label>
+            <input type="number" value={area} onChange={e=>setArea(e.target.value)} placeholder="e.g. 1" className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white" />
+          </div>
+          <button onClick={calculate} className="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-lg font-medium">Convert</button>
+          {result && <pre className="bg-gray-800 rounded-lg p-4 text-green-400 font-mono text-sm whitespace-pre-wrap">{result}</pre>}
+        </div>
+        <div className="mt-6 bg-gray-900 rounded-xl p-4 text-sm text-gray-400">
+          <p className="font-medium text-gray-300 mb-2">Typical Lumen Values</p>
+          {[["Candle","12"],["40W bulb","450"],["60W bulb","800"],["100W bulb","1600"],["LED streetlight","10,000"]].map(([s,l])=>(
+            <div key={s} className="flex justify-between py-1 border-b border-gray-800"><span>{s}</span><span className="text-white">{l} lm</span></div>
+          ))}
+        </div>
+      </div>
+    </main>
+  );
+}
