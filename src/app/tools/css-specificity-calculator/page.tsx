@@ -1,15 +1,35 @@
-"use client";
-import { useState } from "react";
-function calcSpec(sel: string): [number,number,number] {
-  let a=0,b=0,c=0;
-  let s = sel.replace(/::?[a-zA-Z-]+(?:\([^)]*\))?/g, m=>{ if (m.startsWith("::")) { c++; return ""; } if (m.startsWith(":")) { b++; return ""; } return m; });
-  const ids = s.match(/#[a-zA-Z][\w-]*/g)||[]; a+=ids.length; s=s.replace(/#[a-zA-Z][\w-]*/g,"");
-  const cls = s.match(/\.[\w-]+|\[[^\]]+\]/g)||[]; b+=cls.length; s=s.replace(/\.[\w-]+|\[[^\]]+\]/g,"");
-  const tag = s.match(/[a-zA-Z][\w-]*/g)||[]; c+=tag.length;
-  return [a,b,c];
+"use client"
+import { useState } from "react"
+
+function calcSpecificity(selector: string) {
+  let a = 0, b = 0, c = 0
+  let s = selector.replace(/:not\([^)]*\)/g, m => m)
+  const ids = s.match(/#[a-zA-Z][\w-]*/g) || []
+  a = ids.length
+  s = s.replace(/#[a-zA-Z][\w-]*/g, "")
+  const classes = s.match(/\.[a-zA-Z][\w-]*|\[[^\]]+\]|:[a-zA-Z][\w-]*/g) || []
+  b = classes.length
+  const elements = s.match(/[a-zA-Z][\w-]*/g) || []
+  c = elements.filter(e => !["not","is","where","has"].includes(e)).length
+  return {a, b, c, score: a*100 + b*10 + c}
 }
-export default function SpecCalc() {
-  const [sel, setSel] = useState("div.container > p.text:hover");
-  const [a,b,c] = calcSpec(sel);
-  return (<div className="min-h-screen bg-gray-950 text-gray-100 p-8"><div className="max-w-xl mx-auto"><h1 className="text-3xl font-bold mb-2">CSS Specificity Calculator</h1><p className="text-gray-400 mb-6">Calculate the specificity of a CSS selector</p><input value={sel} onChange={e=>setSel(e.target.value)} placeholder="Enter CSS selector..." className="w-full bg-gray-900 border border-gray-700 rounded p-3 font-mono mb-6" /><div className="grid grid-cols-3 gap-4 mb-6">{[["IDs (a)",a,"text-red-400"],["Classes/Attrs (b)",b,"text-yellow-400"],["Elements (c)",c,"text-blue-400"]].map(([lbl,val,cls])=>(<div key={lbl} className="bg-gray-900 border border-gray-700 rounded p-4 text-center"><div className={`text-4xl font-bold ${cls}`}>{val}</div><div className="text-sm text-gray-400 mt-1">{lbl}</div></div>))}</div><div className="bg-gray-900 border border-gray-700 rounded p-4 text-center"><span className="text-gray-400">Specificity value: </span><span className="font-mono text-2xl text-green-400">{a},{b},{c}</span></div></div></div>);
+
+export default function CssSpecificityCalculator() {
+  const [input, setInput] = useState(".nav > ul li.active a:hover")
+  const {a, b, c, score} = calcSpecificity(input)
+  return (
+    <div className="min-h-screen bg-gray-950 text-gray-100 p-6">
+      <h1 className="text-2xl font-bold mb-6">CSS Specificity Calculator</h1>
+      <input value={input} onChange={e=>setInput(e.target.value)} placeholder="Enter CSS selector..." className="w-full bg-gray-800 rounded px-4 py-3 font-mono mb-6" />
+      <div className="grid grid-cols-4 gap-4 mb-6">
+        {[["IDs",a,"bg-red-900 text-red-300"],["Classes",b,"bg-yellow-900 text-yellow-300"],["Elements",c,"bg-green-900 text-green-300"],["Score",score,"bg-blue-900 text-blue-300"]].map(([label,val,cls])=>(
+          <div key={label as string} className={`${cls as string} rounded-lg p-4 text-center`}><p className="text-3xl font-bold">{val as number}</p><p className="text-sm mt-1">{label as string}</p></div>
+        ))}
+      </div>
+      <div className="bg-gray-800 rounded-lg p-4">
+        <p className="text-sm text-gray-400 mb-2">Notation: ({a}, {b}, {c})</p>
+        <p className="text-xs text-gray-500">IDs beat classes, classes beat elements. Inline styles = (1,0,0,0), !important overrides all.</p>
+      </div>
+    </div>
+  )
 }

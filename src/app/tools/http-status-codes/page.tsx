@@ -1,49 +1,56 @@
-"use client";
-import { useState } from "react";
-const codes: Record<string, {desc: string, meaning: string}> = {
-  "100":{desc:"Continue",meaning:"Server received request headers, client should proceed."},
-  "101":{desc:"Switching Protocols",meaning:"Server is switching protocols as requested."},
-  "200":{desc:"OK",meaning:"Request succeeded."},
-  "201":{desc:"Created",meaning:"Request succeeded and a new resource was created."},
-  "204":{desc:"No Content",meaning:"Request succeeded but no content to return."},
-  "301":{desc:"Moved Permanently",meaning:"Resource permanently moved to a new URL."},
-  "302":{desc:"Found",meaning:"Resource temporarily moved to another URL."},
-  "304":{desc:"Not Modified",meaning:"Resource not modified since last request; use cache."},
-  "400":{desc:"Bad Request",meaning:"Server cannot process due to client error."},
-  "401":{desc:"Unauthorized",meaning:"Authentication is required and has failed."},
-  "403":{desc:"Forbidden",meaning:"Server understood request but refuses to authorize."},
-  "404":{desc:"Not Found",meaning:"Requested resource could not be found."},
-  "405":{desc:"Method Not Allowed",meaning:"Request method is not supported."},
-  "408":{desc:"Request Timeout",meaning:"Server timed out waiting for the request."},
-  "409":{desc:"Conflict",meaning:"Request conflicts with current state of the resource."},
-  "410":{desc:"Gone",meaning:"Resource is permanently gone."},
-  "422":{desc:"Unprocessable Entity",meaning:"Request well-formed but semantic errors."},
-  "429":{desc:"Too Many Requests",meaning:"User has sent too many requests (rate limiting)."},
-  "500":{desc:"Internal Server Error",meaning:"Server encountered an unexpected error."},
-  "501":{desc:"Not Implemented",meaning:"Server does not support the request method."},
-  "502":{desc:"Bad Gateway",meaning:"Server received invalid response from upstream."},
-  "503":{desc:"Service Unavailable",meaning:"Server temporarily unavailable."},
-  "504":{desc:"Gateway Timeout",meaning:"Upstream server failed to respond in time."},
-};
+"use client"
+import { useState } from "react"
+
+const codes: Record<number, {text:string,desc:string}> = {
+  100:{text:"Continue",desc:"Server received request headers, client should proceed"},
+  101:{text:"Switching Protocols",desc:"Server is switching protocols as requested"},
+  200:{text:"OK",desc:"Request succeeded"},
+  201:{text:"Created",desc:"Request succeeded and a new resource was created"},
+  204:{text:"No Content",desc:"Request succeeded but no content to return"},
+  301:{text:"Moved Permanently",desc:"Resource has been permanently moved to new URL"},
+  302:{text:"Found",desc:"Resource temporarily located at different URL"},
+  304:{text:"Not Modified",desc:"Cached version is still valid"},
+  400:{text:"Bad Request",desc:"Server cannot process due to client error"},
+  401:{text:"Unauthorized",desc:"Authentication required"},
+  403:{text:"Forbidden",desc:"Server refuses to fulfill request"},
+  404:{text:"Not Found",desc:"Resource not found on server"},
+  405:{text:"Method Not Allowed",desc:"HTTP method not supported for this resource"},
+  408:{text:"Request Timeout",desc:"Server timed out waiting for the request"},
+  409:{text:"Conflict",desc:"Request conflicts with current state of server"},
+  410:{text:"Gone",desc:"Resource permanently deleted and will not return"},
+  422:{text:"Unprocessable Entity",desc:"Request well-formed but semantically incorrect"},
+  429:{text:"Too Many Requests",desc:"Rate limit exceeded"},
+  500:{text:"Internal Server Error",desc:"Generic server-side error"},
+  502:{text:"Bad Gateway",desc:"Invalid response from upstream server"},
+  503:{text:"Service Unavailable",desc:"Server temporarily unable to handle request"},
+  504:{text:"Gateway Timeout",desc:"Upstream server timed out"}
+}
+
+function color(code: number) {
+  if(code<200) return "bg-gray-700"
+  if(code<300) return "bg-green-900 text-green-300"
+  if(code<400) return "bg-blue-900 text-blue-300"
+  if(code<500) return "bg-yellow-900 text-yellow-300"
+  return "bg-red-900 text-red-300"
+}
+
 export default function HttpStatusCodes() {
-  const [q, setQ] = useState("");
-  const filtered = Object.entries(codes).filter(([code,v]) => code.includes(q) || v.desc.toLowerCase().includes(q.toLowerCase()));
-  const color = (c: string) => c.startsWith("2") ? "bg-green-900" : c.startsWith("3") ? "bg-blue-900" : c.startsWith("4") ? "bg-yellow-900" : c.startsWith("5") ? "bg-red-900" : "bg-gray-800";
+  const [search, setSearch] = useState("")
+  const filtered = Object.entries(codes).filter(([code,{text}]) =>
+    code.includes(search) || text.toLowerCase().includes(search.toLowerCase())
+  )
   return (
-    <div className="min-h-screen bg-gray-950 text-white p-8">
-      <h1 className="text-3xl font-bold mb-6">HTTP Status Codes</h1>
-      <input type="text" placeholder="Search code or description..." value={q} onChange={e=>setQ(e.target.value)} className="w-full max-w-md bg-gray-800 rounded px-4 py-2 mb-6" />
+    <div className="min-h-screen bg-gray-950 text-gray-100 p-6">
+      <h1 className="text-2xl font-bold mb-6">HTTP Status Codes Reference</h1>
+      <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search by code or name..." className="w-full bg-gray-800 rounded px-4 py-3 mb-6" />
       <div className="space-y-2">
-        {filtered.map(([code,v]) => (
-          <div key={code} className={`${color(code)} rounded-lg p-4 flex items-start gap-4`}>
-            <span className="text-2xl font-mono font-bold w-16">{code}</span>
-            <div>
-              <div className="font-semibold">{v.desc}</div>
-              <div className="text-sm text-gray-300 mt-1">{v.meaning}</div>
-            </div>
+        {filtered.map(([code,{text,desc}])=>(
+          <div key={code} className={`${color(parseInt(code))} rounded-lg p-4 flex items-center gap-4`}>
+            <span className="text-2xl font-bold w-16">{code}</span>
+            <div><p className="font-semibold">{text}</p><p className="text-sm opacity-75">{desc}</p></div>
           </div>
         ))}
       </div>
     </div>
-  );
+  )
 }
