@@ -1,35 +1,32 @@
 "use client";
 import { useState } from "react";
 
-const units = ['J/(kg*K)', 'kJ/(kg*K)', 'cal/(g*C)', 'kcal/(kg*C)', 'BTU/(lb*F)', 'J/(g*K)'];
-const factors = {'J/(kg*K)': 1.0, 'kJ/(kg*K)': 1000.0, 'cal/(g*C)': 4184.0, 'kcal/(kg*C)': 4184.0, 'BTU/(lb*F)': 4186.8, 'J/(g*K)': 1000.0};
+const UNITS: string[] = ["J/(kg·K)", "kJ/(kg·K)", "BTU/(lb·°F)", "cal/(g·°C)", "kcal/(kg·°C)"];
+const TO_BASE: Record<string, number> = {"J/(kg·K)": 1, "kJ/(kg·K)": 1000, "BTU/(lb·°F)": 4186.8, "cal/(g·°C)": 4184, "kcal/(kg·°C)": 4186.8};
 
 export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(units[0]);
-  const [to, setTo] = useState(units[1]);
-  function convert() {
+  const [from, setFrom] = useState(UNITS[0]);
+  const [to, setTo] = useState(UNITS[1]);
+  const convert = () => {
     const n = parseFloat(val);
     if (isNaN(n)) return "";
-    return ((n * factors[from]) / factors[to]).toPrecision(6);
-  }
+    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
+  };
   return (
-    <main style={{padding:"2rem",maxWidth:"480px",margin:"0 auto",fontFamily:"sans-serif"}}>
-      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Specific Heat Capacity Converter</h1>
-      <input type="number" value={val} onChange={e=>setVal(e.target.value)}
-        style={{width:"100%",padding:"0.5rem",marginBottom:"0.5rem",fontSize:"1rem"}} placeholder="Enter value" />
-      <div style={{display:"flex",gap:"0.5rem",marginBottom:"0.5rem"}}>
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:"0.5rem"}}>
-          {units.map(u=><option key={u} value={u}>{u}</option>)}
+    <main style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}>
+      <h1 style={{marginBottom:"1.5rem"}}>Specific Heat Capacity Converter</h1>
+      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",alignItems:"flex-end"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}} />
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>
+          {UNITS.map(u=><option key={u}>{u}</option>)}
         </select>
-        <span style={{alignSelf:"center"}}>&#8594;</span>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:"0.5rem"}}>
-          {units.map(u=><option key={u} value={u}>{u}</option>)}
+        <span>to</span>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>
+          {UNITS.map(u=><option key={u}>{u}</option>)}
         </select>
       </div>
-      <div style={{padding:"1rem",background:"#f5f5f5",borderRadius:"4px",fontSize:"1.25rem"}}>
-        {val ? convert() + " " + to : "Result will appear here"}
-      </div>
+      {val && <p style={{marginTop:"1.5rem",fontSize:"1.5rem"}}>{val} {from} = <strong>{convert()}</strong> {to}</p>}
     </main>
   );
 }

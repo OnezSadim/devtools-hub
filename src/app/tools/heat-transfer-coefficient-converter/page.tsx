@@ -1,47 +1,32 @@
 "use client";
 import { useState } from "react";
 
-const units = [
-  { label: "W/(m²·K)", value: "wmk" },
-  { label: "BTU/(hr·ft²·°F)", value: "btu" },
-  { label: "cal/(s·cm²·°C)", value: "cal" },
-  { label: "kcal/(hr·m²·°C)", value: "kcal" },
-];
+const UNITS: string[] = ["W/(m²·K)", "BTU/(h·ft²·°F)", "kcal/(h·m²·°C)", "cal/(s·cm²·°C)"];
+const TO_BASE: Record<string, number> = {"W/(m²·K)": 1, "BTU/(h·ft²·°F)": 5.67826, "kcal/(h·m²·°C)": 1.163, "cal/(s·cm²·°C)": 41840};
 
-const toBase: Record<string, number> = {
-  "wmk": 1.0,
-  "btu": 5.67826,
-  "cal": 41868.0,
-  "kcal": 1.163,
-};
-
-export default function HeatTransferCoefficientConverterPage() {
+export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(units[0].value);
-  const [to, setTo] = useState(units[1].value);
-  function convert() {
+  const [from, setFrom] = useState(UNITS[0]);
+  const [to, setTo] = useState(UNITS[1]);
+  const convert = () => {
     const n = parseFloat(val);
     if (isNaN(n)) return "";
-    return ((n * toBase[from]) / toBase[to]).toPrecision(6);
-  }
-  const sel = "bg-gray-800 text-white rounded px-3 py-2 border border-gray-600";
+    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
+  };
   return (
-    <main className="min-h-screen bg-gray-900 text-white p-8">
-      <h1 className="text-3xl font-bold mb-2">Heat Transfer Coefficient Converter</h1>
-      <p className="text-gray-400 mb-6">Convert between heat transfer coefficient units instantly.</p>
-      <div className="bg-gray-800 rounded-xl p-6 max-w-lg space-y-4">
-        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" className="w-full bg-gray-700 text-white rounded px-3 py-2 border border-gray-600" />
-        <div className="flex gap-4">
-          <select value={from} onChange={e=>setFrom(e.target.value)} className={sel}>
-            {units.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
-          </select>
-          <span className="text-gray-400 self-center">to</span>
-          <select value={to} onChange={e=>setTo(e.target.value)} className={sel}>
-            {units.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
-          </select>
-        </div>
-        {val && <div className="text-2xl font-bold text-blue-400">{convert()} {units.find(u=>u.value===to)?.label}</div>}
+    <main style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}>
+      <h1 style={{marginBottom:"1.5rem"}}>Heat Transfer Coefficient Converter</h1>
+      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",alignItems:"flex-end"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}} />
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>
+          {UNITS.map(u=><option key={u}>{u}</option>)}
+        </select>
+        <span>to</span>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>
+          {UNITS.map(u=><option key={u}>{u}</option>)}
+        </select>
       </div>
+      {val && <p style={{marginTop:"1.5rem",fontSize:"1.5rem"}}>{val} {from} = <strong>{convert()}</strong> {to}</p>}
     </main>
   );
 }
