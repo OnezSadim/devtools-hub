@@ -1,86 +1,36 @@
-'use client';
-import { useState } from 'react';
+"use client";
+import { useState } from "react";
+
+const units = ["teaspoon", "tablespoon", "fluid oz", "cup", "pint", "quart", "gallon", "mL", "L"];
+const toBase: Record<string, number> = {"teaspoon": 4.92892, "tablespoon": 14.7868, "fluid oz": 29.5735, "cup": 236.588, "pint": 473.176, "quart": 946.353, "gallon": 3785.41, "mL": 1, "L": 1000};
 
 export default function Page() {
-  const [val, setVal] = useState('1');
-  const [from, setFrom] = useState('cup (US)');
-  const [to, setTo] = useState('tablespoon');
-
-  function convert(v: number, unit: string): number {
-    let base = 0;
-    switch(unit) {
-      case 'cup (US)': base = v / 1.0; break;
-      case 'tablespoon': base = v / 16.0; break;
-      case 'teaspoon': base = v / 48.0; break;
-      case 'fluid oz': base = v / 8.0; break;
-      case 'pint': base = v / 0.5; break;
-      case 'quart': base = v / 0.25; break;
-      case 'gallon': base = v / 0.0625; break;
-      case 'milliliter': base = v / 236.588; break;
-      case 'liter': base = v / 0.236588; break;
-    }
-    switch(to) {
-      case 'cup (US)': return base * 1.0;
-      case 'tablespoon': return base * 16.0;
-      case 'teaspoon': return base * 48.0;
-      case 'fluid oz': return base * 8.0;
-      case 'pint': return base * 0.5;
-      case 'quart': return base * 0.25;
-      case 'gallon': return base * 0.0625;
-      case 'milliliter': return base * 236.588;
-      case 'liter': return base * 0.236588;
-    }
-    return base;
-  }
-
-  const result = convert(parseFloat(val) || 0, from);
-
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState(units[0]);
+  const [to, setTo] = useState(units[1]);
+  const convert = () => {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    return ((n * toBase[from]) / toBase[to]).toPrecision(6);
+  };
   return (
-    <div className="min-h-screen bg-gray-950 text-white p-8">
-      <div className="max-w-xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Cooking Measurement Converter</h1>
-        <p className="text-gray-400 mb-8">Convert between cooking units.</p>
-        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">Value</label>
-            <input type="number" value={val} onChange={e=>setVal(e.target.value)} className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white" />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">From</label>
-              <select value={from} onChange={e=>setFrom(e.target.value)} className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white">
-          <option value="cup (US)">cup (US)</option>
-          <option value="tablespoon">tablespoon</option>
-          <option value="teaspoon">teaspoon</option>
-          <option value="fluid oz">fluid oz</option>
-          <option value="pint">pint</option>
-          <option value="quart">quart</option>
-          <option value="gallon">gallon</option>
-          <option value="milliliter">milliliter</option>
-          <option value="liter">liter</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">To</label>
-              <select value={to} onChange={e=>setTo(e.target.value)} className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white">
-          <option value="cup (US)">cup (US)</option>
-          <option value="tablespoon">tablespoon</option>
-          <option value="teaspoon">teaspoon</option>
-          <option value="fluid oz">fluid oz</option>
-          <option value="pint">pint</option>
-          <option value="quart">quart</option>
-          <option value="gallon">gallon</option>
-          <option value="milliliter">milliliter</option>
-          <option value="liter">liter</option>
-              </select>
-            </div>
-          </div>
-          <div className="bg-gray-800 rounded-lg p-4 text-center">
-            <p className="text-3xl font-mono font-bold text-blue-400">{isNaN(result) ? '—' : result.toPrecision(6)}</p>
-            <p className="text-gray-400 mt-1">{to}</p>
-          </div>
+    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",alignItems:"center",justifyContent:"center",padding:"2rem"}}>
+      <div style={{background:"#1e293b",borderRadius:"1rem",padding:"2rem",width:"100%",maxWidth:"480px"}}>
+        <h1 style={{fontSize:"1.5rem",fontWeight:700,marginBottom:"0.5rem"}}>Cooking Measurement Converter</h1>
+        <p style={{color:"#94a3b8",marginBottom:"1.5rem",fontSize:"0.9rem"}}>Convert between common cooking measurements: teaspoons, tablespoons, cups, and more.</p>
+        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",marginBottom:"1rem",boxSizing:"border-box"}} />
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"1rem",marginBottom:"1rem"}}>
+          <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>
+            {units.map(u=><option key={u} value={u}>{u}</option>)}
+          </select>
+          <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>
+            {units.map(u=><option key={u} value={u}>{u}</option>)}
+          </select>
+        </div>
+        <div style={{background:"#0f172a",borderRadius:"0.5rem",padding:"1rem",textAlign:"center",fontSize:"1.25rem",fontWeight:600,color:"#38bdf8",minHeight:"3rem"}}>
+          {val ? convert() + " " + to : "Result appears here"}
         </div>
       </div>
-    </div>
+    </main>
   );
 }

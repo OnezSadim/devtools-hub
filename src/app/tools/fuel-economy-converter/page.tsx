@@ -1,31 +1,35 @@
 "use client";
 import { useState } from "react";
-const UNITS: string[] = ["km/L", "L/100km", "mpg (US)", "mpg (UK)", "mi/L"];
-const TO_BASE: Record<string, number> = {"km/L": 1, "L/100km": 100, "mpg (US)": 0.425144, "mpg (UK)": 0.354006, "mi/L": 0.621371};
+
+const units = ["mpg (US)", "mpg (UK)", "km/L", "L/100km"];
+const toBase: Record<string, number> = {"mpg (US)": 1, "mpg (UK)": 1.20095, "km/L": 0.425144, "L/100km": 235.215};
+
 export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(UNITS[0]);
-  const [to, setTo] = useState(UNITS[1]);
-  function convert() {
+  const [from, setFrom] = useState(units[0]);
+  const [to, setTo] = useState(units[1]);
+  const convert = () => {
     const n = parseFloat(val);
     if (isNaN(n)) return "";
-    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
-  }
+    return ((n * toBase[from]) / toBase[to]).toPrecision(6);
+  };
   return (
-    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"2rem"}}>
-      <h1 style={{fontSize:"2rem",fontWeight:700,marginBottom:"1.5rem"}}>Fuel Economy Converter</h1>
+    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",alignItems:"center",justifyContent:"center",padding:"2rem"}}>
       <div style={{background:"#1e293b",borderRadius:"1rem",padding:"2rem",width:"100%",maxWidth:"480px"}}>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:".75rem",borderRadius:".5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",fontSize:"1rem",marginBottom:"1rem",boxSizing:"border-box"}} />
-        <div style={{display:"flex",gap:"1rem",marginBottom:"1rem"}}>
-          <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:".75rem",borderRadius:".5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>
-            {UNITS.map(u=><option key={u}>{u}</option>)}
+        <h1 style={{fontSize:"1.5rem",fontWeight:700,marginBottom:"0.5rem"}}>Fuel Economy Converter</h1>
+        <p style={{color:"#94a3b8",marginBottom:"1.5rem",fontSize:"0.9rem"}}>Convert between miles per gallon, kilometers per liter, and liters per 100km.</p>
+        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",marginBottom:"1rem",boxSizing:"border-box"}} />
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"1rem",marginBottom:"1rem"}}>
+          <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>
+            {units.map(u=><option key={u} value={u}>{u}</option>)}
           </select>
-          <span style={{alignSelf:"center",fontSize:"1.5rem"}}>&#8594;</span>
-          <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:".75rem",borderRadius:".5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>
-            {UNITS.map(u=><option key={u}>{u}</option>)}
+          <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>
+            {units.map(u=><option key={u} value={u}>{u}</option>)}
           </select>
         </div>
-        <div style={{background:"#0f172a",borderRadius:".5rem",padding:"1rem",textAlign:"center",fontSize:"1.25rem",fontWeight:600,color:"#38bdf8"}}>{convert() || "—"}</div>
+        <div style={{background:"#0f172a",borderRadius:"0.5rem",padding:"1rem",textAlign:"center",fontSize:"1.25rem",fontWeight:600,color:"#38bdf8",minHeight:"3rem"}}>
+          {val ? convert() + " " + to : "Result appears here"}
+        </div>
       </div>
     </main>
   );

@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
 
-const units = ["px", "pt", "em", "rem", "cm", "mm", "in", "pc"];
-const toBase: Record<string, number> = {"px": 1, "pt": 1.33333, "em": 16, "rem": 16, "cm": 37.7953, "mm": 3.77953, "in": 96, "pc": 16};
+const units = ["PPI", "PPCM", "dots/inch", "dots/cm"];
+const toBase: Record<string, number> = {"PPI": 1, "PPCM": 2.54, "dots/inch": 1, "dots/cm": 2.54};
 
 export default function Page() {
   const [val, setVal] = useState("");
@@ -16,8 +16,8 @@ export default function Page() {
   return (
     <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",display:"flex",alignItems:"center",justifyContent:"center",padding:"2rem"}}>
       <div style={{background:"#1e293b",borderRadius:"1rem",padding:"2rem",width:"100%",maxWidth:"480px"}}>
-        <h1 style={{fontSize:"1.5rem",fontWeight:700,marginBottom:"0.5rem"}}>Typography Unit Converter</h1>
-        <p style={{color:"#94a3b8",marginBottom:"1.5rem",fontSize:"0.9rem"}}>Convert between CSS and print typography units: px, pt, em, rem, cm, mm, in, pc.</p>
+        <h1 style={{fontSize:"1.5rem",fontWeight:700,marginBottom:"0.5rem"}}>Pixel Density Converter</h1>
+        <p style={{color:"#94a3b8",marginBottom:"1.5rem",fontSize:"0.9rem"}}>Convert between pixels per inch (PPI), pixels per centimeter, and dots per inch (DPI).</p>
         <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9",marginBottom:"1rem",boxSizing:"border-box"}} />
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"1rem",marginBottom:"1rem"}}>
           <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.75rem",borderRadius:"0.5rem",border:"1px solid #334155",background:"#0f172a",color:"#f1f5f9"}}>
