@@ -1,1 +1,54 @@
-"use client";import{useState}from"react";const units=[{"label":"Siemens (S)","value":"S","factor":1},{"label":"Millisiemens (mS)","value":"mS","factor":0.001},{"label":"Microsiemens (μS)","value":"uS","factor":1e-06},{"label":"Nanosiemens (nS)","value":"nS","factor":1e-09},{"label":"Kilosiemens (kS)","value":"kS","factor":1000.0},{"label":"Megasiemens (MS)","value":"MS","factor":1000000.0},{"label":"Mho","value":"mho","factor":1},{"label":"Abmho","value":"abmho","factor":1000000000.0},{"label":"Statmho","value":"statmho","factor":1.11265e-12}];export default function Page(){const[val,setVal]=useState("");const[from,setFrom]=useState(units[0].value);const[to,setTo]=useState(units[1].value);const convert=()=>{const f=units.find(u=>u.value===from);const t=units.find(u=>u.value===to);if(!f||!t||val==="")return"";return((parseFloat(val)*f.factor)/t.factor).toPrecision(6);};return(<main style={{padding:"2rem",fontFamily:"monospace",background:"#0f0f0f",minHeight:"100vh",color:"#e0e0e0"}}><h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Electric Conductance Converter</h1><p style={{color:"#aaa",marginBottom:"1.5rem"}}>Convert between electrical conductance units: siemens, millisiemens, microsiemens, kilosiemens, mhos.</p><div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1rem"}}><input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",background:"#1a1a1a",color:"#e0e0e0",border:"1px solid #333",borderRadius:"4px",flex:1}} /><select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1a1a1a",color:"#e0e0e0",border:"1px solid #333",borderRadius:"4px"}}>{units.map(u=>(<option key={u.value} value={u.value}>{u.label}</option>))}</select><select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1a1a1a",color:"#e0e0e0",border:"1px solid #333",borderRadius:"4px"}}>{units.map(u=>(<option key={u.value} value={u.value}>{u.label}</option>))}</select></div><div style={{padding:"1rem",background:"#1a1a1a",borderRadius:"4px",fontSize:"1.2rem"}}>{val&&<span>{val} {units.find(u=>u.value===from)?.label} = <strong style={{color:"#4ade80"}}>{convert()}</strong> {units.find(u=>u.value===to)?.label}</span>}</div></main>);}
+"use client";
+import { useState } from "react";
+
+const units: { name: string; factor: number }[] = [
+  { name: 'Siemens (S)', factor: 1.0 },
+  { name: 'Millisiemens (mS)', factor: 0.001 },
+  { name: 'Microsiemens (μS)', factor: 1e-06 },
+  { name: 'Kilosiemens (kS)', factor: 1000.0 },
+  { name: 'Megasiemens (MS)', factor: 1000000.0 },
+  { name: 'Mho (℧)', factor: 1.0 },
+  { name: 'Millimho (m℧)', factor: 0.001 },
+  { name: 'Micromho (μ℧)', factor: 1e-06 },
+  { name: 'Statsiemens (statS)', factor: 1.11265e-12 },
+  { name: 'Absiemens (abS)', factor: 1000000000.0 },
+];
+
+export default function Page() {
+  const [value, setValue] = useState("");
+  const [from, setFrom] = useState(0);
+  const [to, setTo] = useState(1);
+  const result = value !== "" ? (parseFloat(value) * units[from].factor / units[to].factor).toPrecision(6) : "";
+  return (
+    <main style={{ padding: "2rem", fontFamily: "sans-serif", maxWidth: 600, margin: "0 auto" }}>
+      <h1 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>Electric Conductance Converter</h1>
+      <p style={{ color: "#666", marginBottom: "1.5rem" }}>Convert between units of electric conductance: siemens, millisiemens, microsiemens, kilosiemens, mho, etc.</p>
+      <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+        <div style={{ flex: 1 }}>
+          <label>Value</label><br/>
+          <input type="number" value={value} onChange={e => setValue(e.target.value)}
+            style={{ width: "100%", padding: "0.5rem", marginTop: "0.25rem" }} />
+        </div>
+        <div style={{ flex: 1 }}>
+          <label>From</label><br/>
+          <select value={from} onChange={e => setFrom(Number(e.target.value))}
+            style={{ width: "100%", padding: "0.5rem", marginTop: "0.25rem" }}>
+            {units.map((u, i) => <option key={i} value={i}>{u.name}</option>)}
+          </select>
+        </div>
+        <div style={{ flex: 1 }}>
+          <label>To</label><br/>
+          <select value={to} onChange={e => setTo(Number(e.target.value))}
+            style={{ width: "100%", padding: "0.5rem", marginTop: "0.25rem" }}>
+            {units.map((u, i) => <option key={i} value={i}>{u.name}</option>)}
+          </select>
+        </div>
+      </div>
+      {result !== "" && (
+        <div style={{ marginTop: "1.5rem", padding: "1rem", background: "#f0f0f0", borderRadius: 8 }}>
+          <strong>Result: {result} {units[to].name}</strong>
+        </div>
+      )}
+    </main>
+  );
+}

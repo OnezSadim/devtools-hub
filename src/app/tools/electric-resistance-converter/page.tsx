@@ -1,85 +1,52 @@
 "use client";
 import { useState } from "react";
 
-export default function ElectricResistanceConverterPage() {
+const units: { name: string; factor: number }[] = [
+  { name: 'Ohm (Ω)', factor: 1.0 },
+  { name: 'Milliohm (mΩ)', factor: 0.001 },
+  { name: 'Microohm (μΩ)', factor: 1e-06 },
+  { name: 'Kiloohm (kΩ)', factor: 1000.0 },
+  { name: 'Megaohm (MΩ)', factor: 1000000.0 },
+  { name: 'Gigaohm (GΩ)', factor: 1000000000.0 },
+  { name: 'Statohm (statΩ)', factor: 898755000000.0 },
+  { name: 'Abohm (abΩ)', factor: 1e-09 },
+];
+
+export default function Page() {
   const [value, setValue] = useState("");
-  const [from, setFrom] = useState("Ohm (Ω)");
-  const [to, setTo] = useState("Milliohm (mΩ)");
-
-  function toBase(val: number, unit: string): number {
-    switch (unit) {
-      case 'Ohm (Ω)': return val * 1.0;
-      case 'Milliohm (mΩ)': return val * 0.001;
-      case 'Microohm (μΩ)': return val * 1e-06;
-      case 'Kilohm (kΩ)': return val * 1000.0;
-      case 'Megaohm (MΩ)': return val * 1000000.0;
-      case 'Gigaohm (GΩ)': return val * 1000000000.0;
-      default: return val;
-    }
-  }
-
-  function fromBase(base: number, unit: string): number {
-    switch (unit) {
-      case 'Ohm (Ω)': return base / 1.0;
-      case 'Milliohm (mΩ)': return base / 0.001;
-      case 'Microohm (μΩ)': return base / 1e-06;
-      case 'Kilohm (kΩ)': return base / 1000.0;
-      case 'Megaohm (MΩ)': return base / 1000000.0;
-      case 'Gigaohm (GΩ)': return base / 1000000000.0;
-      default: return base;
-    }
-  }
-
-  const result = value !== "" ? fromBase(toBase(parseFloat(value), from), to) : null;
-
+  const [from, setFrom] = useState(0);
+  const [to, setTo] = useState(1);
+  const result = value !== "" ? (parseFloat(value) * units[from].factor / units[to].factor).toPrecision(6) : "";
   return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
-      <div className="max-w-xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Electric Resistance Converter</h1>
-        <p className="text-gray-400 mb-8">Convert between electrical resistance units: Ohm, kilohm, megaohm, milliohm, and more.</p>
-        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">Value</label>
-            <input
-              type="number"
-              value={value}
-              onChange={e => setValue(e.target.value)}
-              className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white"
-              placeholder="Enter value"
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">From</label>
-              <select value={from} onChange={e => setFrom(e.target.value)} className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white">
-              <option value="Ohm (Ω)">Ohm (Ω)</option>
-              <option value="Milliohm (mΩ)">Milliohm (mΩ)</option>
-              <option value="Microohm (μΩ)">Microohm (μΩ)</option>
-              <option value="Kilohm (kΩ)">Kilohm (kΩ)</option>
-              <option value="Megaohm (MΩ)">Megaohm (MΩ)</option>
-              <option value="Gigaohm (GΩ)">Gigaohm (GΩ)</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">To</label>
-              <select value={to} onChange={e => setTo(e.target.value)} className="w-full bg-gray-800 rounded-lg px-4 py-2 text-white">
-              <option value="Ohm (Ω)">Ohm (Ω)</option>
-              <option value="Milliohm (mΩ)">Milliohm (mΩ)</option>
-              <option value="Microohm (μΩ)">Microohm (μΩ)</option>
-              <option value="Kilohm (kΩ)">Kilohm (kΩ)</option>
-              <option value="Megaohm (MΩ)">Megaohm (MΩ)</option>
-              <option value="Gigaohm (GΩ)">Gigaohm (GΩ)</option>
-              </select>
-            </div>
-          </div>
-          {result !== null && (
-            <div className="bg-gray-800 rounded-lg p-4">
-              <p className="text-sm text-gray-400">Result</p>
-              <p className="text-2xl font-bold text-green-400">{Number(result.toPrecision(10))} {to}</p>
-            </div>
-          )}
+    <main style={{ padding: "2rem", fontFamily: "sans-serif", maxWidth: 600, margin: "0 auto" }}>
+      <h1 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>Electric Resistance Converter</h1>
+      <p style={{ color: "#666", marginBottom: "1.5rem" }}>Convert between units of electric resistance: ohms, milliohms, kilohms, megaohms, etc.</p>
+      <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+        <div style={{ flex: 1 }}>
+          <label>Value</label><br/>
+          <input type="number" value={value} onChange={e => setValue(e.target.value)}
+            style={{ width: "100%", padding: "0.5rem", marginTop: "0.25rem" }} />
+        </div>
+        <div style={{ flex: 1 }}>
+          <label>From</label><br/>
+          <select value={from} onChange={e => setFrom(Number(e.target.value))}
+            style={{ width: "100%", padding: "0.5rem", marginTop: "0.25rem" }}>
+            {units.map((u, i) => <option key={i} value={i}>{u.name}</option>)}
+          </select>
+        </div>
+        <div style={{ flex: 1 }}>
+          <label>To</label><br/>
+          <select value={to} onChange={e => setTo(Number(e.target.value))}
+            style={{ width: "100%", padding: "0.5rem", marginTop: "0.25rem" }}>
+            {units.map((u, i) => <option key={i} value={i}>{u.name}</option>)}
+          </select>
         </div>
       </div>
+      {result !== "" && (
+        <div style={{ marginTop: "1.5rem", padding: "1rem", background: "#f0f0f0", borderRadius: 8 }}>
+          <strong>Result: {result} {units[to].name}</strong>
+        </div>
+      )}
     </main>
   );
 }
