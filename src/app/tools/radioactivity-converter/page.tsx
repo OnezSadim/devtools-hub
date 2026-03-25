@@ -1,34 +1,31 @@
 "use client";
 import { useState } from "react";
 
-const UNITS = ["Becquerel (Bq)", "Kilobecquerel (kBq)", "Megabecquerel (MBq)", "Gigabecquerel (GBq)", "Curie (Ci)", "Millicurie (mCi)", "Microcurie (uCi)", "Rutherford (Rd)"];
-const TO_BASE: Record<string, number> = {"Becquerel (Bq)": 1, "Kilobecquerel (kBq)": 1000.0, "Megabecquerel (MBq)": 1000000.0, "Gigabecquerel (GBq)": 1000000000.0, "Curie (Ci)": 37000000000.0, "Millicurie (mCi)": 37000000.0, "Microcurie (uCi)": 37000.0, "Rutherford (Rd)": 1000000.0};
+const UNITS = ["Becquerel", "Kilobecquerel", "Megabecquerel", "Gigabecquerel", "Curie", "Millicurie", "Microcurie", "Rutherford"];
+const TO_BASE: Record<string, number> = {"Becquerel": 1, "Kilobecquerel": 1000.0, "Megabecquerel": 1000000.0, "Gigabecquerel": 1000000000.0, "Curie": 37000000000.0, "Millicurie": 37000000.0, "Microcurie": 37000.0, "Rutherford": 1000000.0};
 
-export default function RadioactivityConverterPage() {
+export default function Page() {
   const [val, setVal] = useState("");
   const [from, setFrom] = useState(UNITS[0]);
-  const convert = (to: string) => {
+  const [to, setTo] = useState(UNITS[1]);
+  function convert() {
     const n = parseFloat(val);
     if (isNaN(n)) return "";
     return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
-  };
+  }
   return (
-    <main style={{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"sans-serif"}}>
-      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Radioactivity Converter</h1>
-      <p style={{color:"#888",marginBottom:"1.5rem"}}>Convert between radioactivity units instantly.</p>
-      <div style={{display:"flex",gap:"1rem",marginBottom:"1.5rem",flexWrap:"wrap"}}>
-        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{flex:1,minWidth:"150px",padding:"0.75rem",borderRadius:"8px",border:"1px solid #333",background:"#1a1a1a",color:"#fff",fontSize:"1rem"}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.75rem",borderRadius:"8px",border:"1px solid #333",background:"#1a1a1a",color:"#fff",fontSize:"1rem"}}>
-          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
+    <main style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#f1f5f9"}}>
+      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Radioactivity Converter</h1>
+      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",alignItems:"center"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",width:"150px"}} />
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9"}}>
+          {UNITS.map(u=><option key={u}>{u}</option>)}
         </select>
-      </div>
-      <div style={{display:"grid",gap:"0.75rem"}}>
-        {UNITS.map(u=>(
-          <div key={u} style={{background:"#1a1a1a",border:"1px solid #2a2a2a",borderRadius:"8px",padding:"1rem",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-            <span style={{color:"#aaa"}}>{u}</span>
-            <span style={{color:"#fff",fontWeight:600,fontSize:"1.1rem"}}>{convert(u) || "—"}</span>
-          </div>
-        ))}
+        <span>=</span>
+        <span style={{fontSize:"1.2rem",color:"#38bdf8",minWidth:"120px"}}>{convert()}</span>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9"}}>
+          {UNITS.map(u=><option key={u}>{u}</option>)}
+        </select>
       </div>
     </main>
   );
