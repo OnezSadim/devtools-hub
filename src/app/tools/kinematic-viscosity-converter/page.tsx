@@ -1,32 +1,33 @@
 "use client";
 import { useState } from "react";
 
-const units: string[] = ["m2/s", "cm2/s (St)", "mm2/s (cSt)", "ft2/s", "in2/s"];
-const toBase: Record<string, number> = {"m2/s": 1, "cm2/s (St)": 0.0001, "mm2/s (cSt)": 1e-06, "ft2/s": 0.09290304, "in2/s": 0.00064516};
+const UNITS: string[] = ["m2/s", "stokes", "centistokes", "mm2/s", "ft2/s"];
+const TO_BASE: Record<string, number> = {"m2/s": 1, "stokes": 0.0001, "centistokes": 1e-06, "mm2/s": 1e-06, "ft2/s": 0.0929};
 
 export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(units[0]);
-  const [to, setTo] = useState(units[1]);
+  const [from, setFrom] = useState(UNITS[0]);
+  const [to, setTo] = useState(UNITS[1]);
   const convert = () => {
     const n = parseFloat(val);
     if (isNaN(n)) return "";
-    return ((n * toBase[from]) / toBase[to]).toPrecision(6);
+    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
   };
+  const sel = "bg-gray-700 text-white rounded px-2 py-1 text-sm";
   return (
-    <main style={{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}>
-      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Kinematic Viscosity Converter</h1>
-      <div style={{display:"flex",gap:"0.5rem",flexWrap:"wrap",marginBottom:"1rem"}}>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px",flex:"1"}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px"}}>
-          {units.map(u=><option key={u}>{u}</option>)}
-        </select>
-        <span style={{alignSelf:"center"}}>to</span>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px"}}>
-          {units.map(u=><option key={u}>{u}</option>)}
-        </select>
+    <main className="min-h-screen bg-gray-900 text-white p-8">
+      <h1 className="text-2xl font-bold mb-2">Kinematic Viscosity Converter</h1>
+      <p className="text-gray-400 mb-6">Convert between kinematic viscosity units.</p>
+      <div className="bg-gray-800 rounded-xl p-6 max-w-lg space-y-4">
+        <div className="flex gap-2 items-center">
+          <input className="flex-1 bg-gray-700 rounded px-3 py-2 text-sm" value={val} onChange={e => setVal(e.target.value)} placeholder="Value" />
+          <select className={sel} value={from} onChange={e => setFrom(e.target.value)}>{UNITS.map(u => <option key={u}>{u}</option>)}</select>
+        </div>
+        <div className="flex gap-2 items-center">
+          <div className="flex-1 bg-gray-700 rounded px-3 py-2 text-sm min-h-[36px]">{convert()}</div>
+          <select className={sel} value={to} onChange={e => setTo(e.target.value)}>{UNITS.map(u => <option key={u}>{u}</option>)}</select>
+        </div>
       </div>
-      <div style={{padding:"1rem",background:"#1e293b",borderRadius:"4px",fontSize:"1.2rem"}}>{convert() || "Enter a value"}</div>
     </main>
   );
 }

@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
 
-const UNITS = ["lux", "foot-candle", "phot", "nox", "lumen/m2", "lumen/cm2", "lumen/ft2", "millilux"];
-const TO_BASE = {"lux": 1, "foot-candle": 10.7639, "phot": 10000, "nox": 0.001, "lumen/m2": 1, "lumen/cm2": 10000, "lumen/ft2": 10.7639, "millilux": 0.001};
+const UNITS: string[] = ["lux", "foot-candle", "phot", "nox", "lumen/m2", "lumen/cm2"];
+const TO_BASE: Record<string, number> = {"lux": 1, "foot-candle": 10.7639, "phot": 10000, "nox": 0.001, "lumen/m2": 1, "lumen/cm2": 10000};
 
 export default function Page() {
   const [val, setVal] = useState("");
@@ -13,21 +13,20 @@ export default function Page() {
     if (isNaN(n)) return "";
     return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
   };
+  const sel = "bg-gray-700 text-white rounded px-2 py-1 text-sm";
   return (
-    <main style={{padding:"2rem",fontFamily:"monospace",background:"#0f0f0f",minHeight:"100vh",color:"#e5e5e5"}}>
-      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Illuminance Converter</h1>
-      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1rem"}}>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",background:"#1a1a1a",border:"1px solid #333",color:"#e5e5e5",borderRadius:"4px",flex:"1"}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1a1a1a",border:"1px solid #333",color:"#e5e5e5",borderRadius:"4px"}}>
-          {UNITS.map(u=><option key={u}>{u}</option>)}
-        </select>
-        <span style={{padding:"0.5rem"}}>to</span>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1a1a1a",border:"1px solid #333",color:"#e5e5e5",borderRadius:"4px"}}>
-          {UNITS.map(u=><option key={u}>{u}</option>)}
-        </select>
-      </div>
-      <div style={{fontSize:"1.25rem",padding:"1rem",background:"#1a1a1a",borderRadius:"4px",border:"1px solid #333"}}>
-        {val ? convert() + " " + to : "Result will appear here"}
+    <main className="min-h-screen bg-gray-900 text-white p-8">
+      <h1 className="text-2xl font-bold mb-2">Illuminance Converter</h1>
+      <p className="text-gray-400 mb-6">Convert between illuminance units.</p>
+      <div className="bg-gray-800 rounded-xl p-6 max-w-lg space-y-4">
+        <div className="flex gap-2 items-center">
+          <input className="flex-1 bg-gray-700 rounded px-3 py-2 text-sm" value={val} onChange={e => setVal(e.target.value)} placeholder="Value" />
+          <select className={sel} value={from} onChange={e => setFrom(e.target.value)}>{UNITS.map(u => <option key={u}>{u}</option>)}</select>
+        </div>
+        <div className="flex gap-2 items-center">
+          <div className="flex-1 bg-gray-700 rounded px-3 py-2 text-sm min-h-[36px]">{convert()}</div>
+          <select className={sel} value={to} onChange={e => setTo(e.target.value)}>{UNITS.map(u => <option key={u}>{u}</option>)}</select>
+        </div>
       </div>
     </main>
   );

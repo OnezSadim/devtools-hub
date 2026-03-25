@@ -1,31 +1,32 @@
 "use client";
 import { useState } from "react";
+
+const UNITS: string[] = ["candela", "millicandela", "kilocandela", "hefnerkerze", "carcel"];
+const TO_BASE: Record<string, number> = {"candela": 1, "millicandela": 0.001, "kilocandela": 1000, "hefnerkerze": 0.9, "carcel": 9.6};
+
 export default function Page() {
-  const units = ["Candela (cd)", "Millicandela (mcd)", "Kilocandela (kcd)", "Hefnerkerze (HK)", "Carcel"];
-  const toBase = [1, 0.001, 1000, 0.903, 9.61];
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(0);
-  const [to, setTo] = useState(1);
+  const [from, setFrom] = useState(UNITS[0]);
+  const [to, setTo] = useState(UNITS[1]);
   const convert = () => {
     const n = parseFloat(val);
     if (isNaN(n)) return "";
-    return ((n * toBase[from]) / toBase[to]).toPrecision(6);
+    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
   };
+  const sel = "bg-gray-700 text-white rounded px-2 py-1 text-sm";
   return (
-    <main style={{maxWidth:600,margin:"40px auto",padding:"0 16px",fontFamily:"monospace",color:"#e2e8f0",background:"#0f172a",borderRadius:12,boxShadow:"0 4px 32px #0008"}}>
-      <h1 style={{fontSize:"1.5rem",padding:"24px 0 8px"}}>Luminous Intensity Converter</h1>
-      <div style={{display:"flex",gap:8,flexWrap:"wrap",marginBottom:12}}>
-        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{flex:1,minWidth:100,padding:8,borderRadius:6,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0"}} />
-        <select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{flex:1,minWidth:120,padding:8,borderRadius:6,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0"}}>
-          {units.map((u,i)=><option key={i} value={i}>{u}</option>)}
-        </select>
-        <span style={{alignSelf:"center"}}>to</span>
-        <select value={to} onChange={e=>setTo(Number(e.target.value))} style={{flex:1,minWidth:120,padding:8,borderRadius:6,border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0"}}>
-          {units.map((u,i)=><option key={i} value={i}>{u}</option>)}
-        </select>
-      </div>
-      <div style={{background:"#1e293b",borderRadius:8,padding:16,fontSize:"1.2rem"}}>
-        {val ? <>{val} {units[from]} = <strong>{convert()}</strong> {units[to]}</> : <span style={{color:"#64748b"}}>Enter a value above</span>}
+    <main className="min-h-screen bg-gray-900 text-white p-8">
+      <h1 className="text-2xl font-bold mb-2">Luminous Intensity Converter</h1>
+      <p className="text-gray-400 mb-6">Convert between luminous intensity units.</p>
+      <div className="bg-gray-800 rounded-xl p-6 max-w-lg space-y-4">
+        <div className="flex gap-2 items-center">
+          <input className="flex-1 bg-gray-700 rounded px-3 py-2 text-sm" value={val} onChange={e => setVal(e.target.value)} placeholder="Value" />
+          <select className={sel} value={from} onChange={e => setFrom(e.target.value)}>{UNITS.map(u => <option key={u}>{u}</option>)}</select>
+        </div>
+        <div className="flex gap-2 items-center">
+          <div className="flex-1 bg-gray-700 rounded px-3 py-2 text-sm min-h-[36px]">{convert()}</div>
+          <select className={sel} value={to} onChange={e => setTo(e.target.value)}>{UNITS.map(u => <option key={u}>{u}</option>)}</select>
+        </div>
       </div>
     </main>
   );
