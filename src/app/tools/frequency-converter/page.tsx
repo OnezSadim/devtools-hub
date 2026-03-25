@@ -1,21 +1,2 @@
-"use client";
-import{useState}from"react";
-export default function FrequencyConverter(){
-const units=["Hz","kHz","MHz","GHz","THz"];
-const toHz=[1,1e3,1e6,1e9,1e12];
-const[val,setVal]=useState("1");
-const[from,setFrom]=useState("MHz");
-const fi=units.indexOf(from),inHz=(parseFloat(val)||0)*toHz[fi];
-return(<div style={{padding:"2rem",background:"#0f172a",color:"#e2e8f0",minHeight:"100vh",fontFamily:"monospace"}}>
-<h1>Frequency Converter</h1>
-<div style={{margin:"1rem 0"}}>
-<input value={val} onChange={e=>setVal(e.target.value)} style={{padding:"8px",marginRight:"8px",background:"#1e293b",color:"#e2e8f0",border:"1px solid #475569",borderRadius:"4px",width:"150px"}}/>
-<select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"8px",background:"#1e293b",color:"#e2e8f0",border:"1px solid #475569",borderRadius:"4px"}}>
-{units.map(u=><option key={u}>{u}</option>)}
-</select>
-</div>
-<table style={{width:"100%",borderCollapse:"collapse"}}>
-<tbody>{units.map((u,i)=><tr key={u}><td style={{padding:"8px",border:"1px solid #334155"}}>{u}</td><td style={{padding:"8px",border:"1px solid #334155"}}>{(inHz/toHz[i]).toPrecision(6)}</td></tr>)}</tbody>
-</table>
-</div>);
-}
+"use client";import{useState}from"react";const units=["hertz","kilohertz","megahertz","gigahertz","terahertz","rpm","rps"];function toHz(v:number,u:string):number{switch(u){case"hertz":return v;case"kilohertz":return v*1e3;case"megahertz":return v*1e6;case"gigahertz":return v*1e9;case"terahertz":return v*1e12;case"rpm":return v/60;case"rps":return v;}return v;}function fromHz(v:number,u:string):number{switch(u){case"hertz":return v;case"kilohertz":return v/1e3;case"megahertz":return v/1e6;case"gigahertz":return v/1e9;case"terahertz":return v/1e12;case"rpm":return v*60;case"rps":return v;}return v;}export default function FrequencyConverter(){const[val,setVal]=useState("");const[from,setFrom]=useState("hertz");const[to,setTo]=useState("kilohertz");const result=val!==""?fromHz(toHz(parseFloat(val),from),to):"";
+return(<div style={{maxWidth:480,margin:"40px auto",padding:24,background:"#1e1e2e",borderRadius:12,color:"#cdd6f4",fontFamily:"sans-serif"}}><h1 style={{fontSize:24,marginBottom:16}}>Frequency Converter</h1><input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:8,marginBottom:12,background:"#313244",border:"none",borderRadius:6,color:"#cdd6f4",fontSize:16}}/><div style={{display:"flex",gap:8,marginBottom:12}}><select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:8,background:"#313244",border:"none",borderRadius:6,color:"#cdd6f4"}}>{units.map(u=><option key={u}>{u}</option>)}</select><span style={{padding:"8px 4px"}}>→</span><select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:8,background:"#313244",border:"none",borderRadius:6,color:"#cdd6f4"}}>{units.map(u=><option key={u}>{u}</option>)}</select></div>{result!==""&&<div style={{padding:12,background:"#313244",borderRadius:6,fontSize:18}}>{isNaN(result as number)?"Invalid":Number(result).toPrecision(8)} {to}</div>}</div>);}

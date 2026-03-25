@@ -1,21 +1,2 @@
-"use client";
-import{useState}from"react";
-export default function AngleConverter(){
-const units=["Degrees","Radians","Gradians","Arcminutes","Arcseconds","Turns"];
-const toDeg=[1,180/Math.PI,0.9,1/60,1/3600,360];
-const[val,setVal]=useState("90");
-const[from,setFrom]=useState("Degrees");
-const fi=units.indexOf(from),inDeg=(parseFloat(val)||0)*toDeg[fi];
-return(<div style={{padding:"2rem",background:"#0f172a",color:"#e2e8f0",minHeight:"100vh",fontFamily:"monospace"}}>
-<h1>Angle Converter</h1>
-<div style={{margin:"1rem 0"}}>
-<input value={val} onChange={e=>setVal(e.target.value)} style={{padding:"8px",marginRight:"8px",background:"#1e293b",color:"#e2e8f0",border:"1px solid #475569",borderRadius:"4px",width:"150px"}}/>
-<select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"8px",background:"#1e293b",color:"#e2e8f0",border:"1px solid #475569",borderRadius:"4px"}}>
-{units.map(u=><option key={u}>{u}</option>)}
-</select>
-</div>
-<table style={{width:"100%",borderCollapse:"collapse"}}>
-<tbody>{units.map((u,i)=><tr key={u}><td style={{padding:"8px",border:"1px solid #334155"}}>{u}</td><td style={{padding:"8px",border:"1px solid #334155"}}>{(inDeg/toDeg[i]).toPrecision(6)}</td></tr>)}</tbody>
-</table>
-</div>);
-}
+"use client";import{useState}from"react";const units=["degree","radian","gradian","arcminute","arcsecond","turn"];function toRad(v:number,u:string):number{switch(u){case"degree":return v*Math.PI/180;case"radian":return v;case"gradian":return v*Math.PI/200;case"arcminute":return v*Math.PI/10800;case"arcsecond":return v*Math.PI/648000;case"turn":return v*2*Math.PI;}return v;}function fromRad(v:number,u:string):number{switch(u){case"degree":return v*180/Math.PI;case"radian":return v;case"gradian":return v*200/Math.PI;case"arcminute":return v*10800/Math.PI;case"arcsecond":return v*648000/Math.PI;case"turn":return v/(2*Math.PI);}return v;}export default function AngleConverter(){const[val,setVal]=useState("");const[from,setFrom]=useState("degree");const[to,setTo]=useState("radian");const result=val!==""?fromRad(toRad(parseFloat(val),from),to):"";
+return(<div style={{maxWidth:480,margin:"40px auto",padding:24,background:"#1e1e2e",borderRadius:12,color:"#cdd6f4",fontFamily:"sans-serif"}}><h1 style={{fontSize:24,marginBottom:16}}>Angle Converter</h1><input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:8,marginBottom:12,background:"#313244",border:"none",borderRadius:6,color:"#cdd6f4",fontSize:16}}/><div style={{display:"flex",gap:8,marginBottom:12}}><select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:8,background:"#313244",border:"none",borderRadius:6,color:"#cdd6f4"}}>{units.map(u=><option key={u}>{u}</option>)}</select><span style={{padding:"8px 4px"}}>→</span><select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:8,background:"#313244",border:"none",borderRadius:6,color:"#cdd6f4"}}>{units.map(u=><option key={u}>{u}</option>)}</select></div>{result!==""&&<div style={{padding:12,background:"#313244",borderRadius:6,fontSize:18}}>{isNaN(result as number)?"Invalid":Number(result).toPrecision(8)} {to}</div>}</div>);}
