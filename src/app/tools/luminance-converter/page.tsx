@@ -1,1 +1,12 @@
-'use client';import{useState}from 'react';const U={'cd/m²':1,'fL':3.42626,'nit':1,'apostilb':0.31831,'lambert':3183.1};export default function LuminanceConverter(){const[v,setV]=useState('');const[f,setF]=useState('cd/m²');return(<div style={{padding:'2rem',fontFamily:'monospace',background:'#0f172a',minHeight:'100vh',color:'#e2e8f0'}}><h1 style={{color:'#38bdf8'}}>Luminance Converter</h1><input value={v} onChange={e=>setV(e.target.value)} placeholder='Value' style={{padding:'0.5rem',marginRight:'1rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155'}}/><select value={f} onChange={e=>setF(e.target.value)} style={{padding:'0.5rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155'}}>{Object.keys(U).map(u=>(<option key={u}>{u}</option>))}</select><div style={{marginTop:'1rem'}}>{Object.entries(U).map(([u,r])=>(<div key={u} style={{padding:'0.5rem',margin:'0.25rem 0',background:'#1e293b'}}>{u}: {v&&f?(parseFloat(v)*U[f]/r).toFixed(6):'-'}</div>))}</div></div>);}
+"use client";
+import {{ useState }} from "react";
+export default function Page() {{
+  const units: Record<string,number> = {{ "cd/m2":1,"nit":1,"fL":0.291864,"L":0.31831 }};
+  const keys = Object.keys(units);
+  const [from,setFrom] = useState(keys[0]);
+  const [to,setTo] = useState(keys[1]);
+  const [val,setVal] = useState("");
+  const result = val ? (parseFloat(val)/units[from]*units[to]).toFixed(6) : "";
+  const sel = "border p-1 rounded bg-gray-800 text-white";
+  return (<div className="min-h-screen bg-gray-900 text-white p-8"><h1 className="text-2xl font-bold mb-2">Luminance Converter</h1><p className="text-gray-400 mb-4">Convert between cd/m2, nit, fL, L</p><div className="flex gap-2 mb-4"><input className="border p-2 rounded bg-gray-800 text-white flex-1" type="number" placeholder="Value" value={{val}} onChange={{e=>setVal(e.target.value)}} /><select className={{sel}} value={{from}} onChange={{e=>setFrom(e.target.value)}}>{{keys.map(k=><option key={{k}}>{{k}}</option>)}}</select><span className="self-center">to</span><select className={{sel}} value={{to}} onChange={{e=>setTo(e.target.value)}}>{{keys.map(k=><option key={{k}}>{{k}}</option>)}}</select></div>{{result && <div className="bg-gray-800 p-4 rounded text-xl">{{val}} {{from}} = <strong>{{result}}</strong> {{to}}</div>}}</div>);
+}}
