@@ -1,57 +1,48 @@
 "use client";
 import { useState } from "react";
 
-const units = [
-    { name: "Ampere/meter (A/m)", toBase: 1 },
-    { name: "Oersted (Oe)", toBase: 79.5775 },
-    { name: "Ampere/centimeter (A/cm)", toBase: 100 },
-    { name: "Ampere/inch (A/in)", toBase: 39.3701 },
-    { name: "Kiloampere/meter (kA/m)", toBase: 1000 },
-  ];
+const UNITS = [
+  "A/m",
+  "kA/m",
+  "Oersted (Oe)",
+  "mA/m",
+  "A/cm",
+  "A/in",
+];
 
-export default function MagneticFieldStrengthConverter() {
-  const [value, setValue] = useState("1");
-  const [from, setFrom] = useState(units[0].name);
-  const [to, setTo] = useState(units[1].name);
+const FACTORS: Record<string, number> = {
+  "A/m": 1,
+  "kA/m": 1000,
+  "Oersted (Oe)": 79.5775,
+  "mA/m": 0.001,
+  "A/cm": 100,
+  "A/in": 39.3701,
+};
 
-  function convert() {
-    const v = parseFloat(value);
-    if (isNaN(v)) return "Invalid";
-    const fromUnit = units.find(u => u.name === from);
-    const toUnit = units.find(u => u.name === to);
-    if (!fromUnit || !toUnit) return "Error";
-    return (v * fromUnit.toBase / toUnit.toBase).toPrecision(6);
-  }
-
+export default function Page() {
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState(UNITS[0]);
+  const [to, setTo] = useState(UNITS[1]);
+  const convert = (v: string, f: string, t: string) => {
+    const n = parseFloat(v);
+    if (isNaN(n)) return "";
+    return ((n * FACTORS[f]) / FACTORS[t]).toPrecision(6);
+  };
   return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
-      <div className="max-w-xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Magnetic Field Strength Converter</h1>
-        <p className="text-gray-400 mb-8">Convert between magnetic field strength units: ampere per meter, oersted, and more.</p>
-        <div className="space-y-4">
-          <input type="number" value={value} onChange={e => setValue(e.target.value)}
-            className="w-full bg-gray-800 rounded p-3 text-white" placeholder="Value" />
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">From</label>
-              <select value={from} onChange={e => setFrom(e.target.value)}
-                className="w-full bg-gray-800 rounded p-3 text-white">
-                {units.map(u => <option key={u.name} value={u.name}>{u.name}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">To</label>
-              <select value={to} onChange={e => setTo(e.target.value)}
-                className="w-full bg-gray-800 rounded p-3 text-white">
-                {units.map(u => <option key={u.name} value={u.name}>{u.name}</option>)}
-              </select>
-            </div>
-          </div>
-          <div className="bg-gray-800 rounded p-4 text-center">
-            <span className="text-2xl font-mono text-green-400">{convert()}</span>
-            <span className="text-gray-400 ml-2">{to}</span>
-          </div>
+    <main style={{maxWidth:520,margin:"40px auto",padding:"0 16px",fontFamily:"sans-serif",color:"#e2e8f0"}}>
+      <h1 style={{fontSize:"1.5rem",marginBottom:8}}>Magnetic Field Strength Converter</h1>
+      <div style={{background:"#1e293b",borderRadius:8,padding:24}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:8,marginBottom:12,background:"#0f172a",border:"1px solid #334155",borderRadius:4,color:"#e2e8f0",boxSizing:"border-box"}} />
+        <div style={{display:"flex",gap:8,marginBottom:12}}>
+          <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:8,background:"#0f172a",border:"1px solid #334155",borderRadius:4,color:"#e2e8f0"}}>
+            {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
+          </select>
+          <span style={{padding:"8px 4px",color:"#94a3b8"}}>to</span>
+          <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:8,background:"#0f172a",border:"1px solid #334155",borderRadius:4,color:"#e2e8f0"}}>
+            {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
+          </select>
         </div>
+        {val && <div style={{background:"#0f172a",borderRadius:4,padding:12,fontSize:"1.2rem",textAlign:"center",color:"#38bdf8"}}>{convert(val,from,to)} {to}</div>}
       </div>
     </main>
   );
