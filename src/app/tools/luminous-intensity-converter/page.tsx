@@ -1,28 +1,29 @@
 "use client";
 import { useState } from "react";
 
-const UNITS = ["Candela (cd)", "Millicandela (mcd)", "Kilocandela (kcd)", "Microcandela (ucd)", "Candlepower (cp)"];
-const FACTORS = [1, 0.001, 1000, 1e-06, 0.981];
+const units = ["candela", "millicandela", "kilocandela", "hefnerkerze", "carcel", "bougie-decimale"];
+const toBase = {"candela": 1, "millicandela": 0.001, "kilocandela": 1000, "hefnerkerze": 0.9, "carcel": 9.74, "bougie-decimale": 1.0};
 
 export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(0);
-  const num = parseFloat(val);
+  const [from, setFrom] = useState(units[0]);
+  const [to, setTo] = useState(units[1]);
+  function convert() {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    return ((n * toBase[from]) / toBase[to]).toPrecision(6);
+  }
   return (
-    <main style={{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"sans-serif",background:"#0f172a",minHeight:"100vh",color:"#f1f5f9"}}>
-      <h1 style={{fontSize:"1.5rem",fontWeight:700,marginBottom:"1rem"}}>Luminous Intensity Converter</h1>
-      <div style={{marginBottom:"1rem"}}>
-        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",fontSize:"1rem",marginBottom:"0.5rem"}} />
-        <select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{width:"100%",padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",fontSize:"1rem"}}>
-          {UNITS.map((u,i)=>(<option key={i} value={i}>{u}</option>))}
-        </select>
-      </div>
-      <div style={{display:"flex",flexDirection:"column",gap:"0.5rem"}}>
-        {UNITS.map((u,i)=>{
-          const result = isNaN(num) ? "" : ((num * FACTORS[from]) / FACTORS[i]).toPrecision(6);
-          return (<div key={i} style={{background:"#1e293b",borderRadius:"8px",padding:"0.75rem 1rem",display:"flex",justifyContent:"space-between"}}><span style={{color:"#94a3b8"}}>{u}</span><span style={{fontWeight:600}}>{result}</span></div>);
-        })}
-      </div>
+    <main style={{padding:"2rem",maxWidth:"480px",margin:"0 auto",fontFamily:"sans-serif"}}>
+      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Luminous Intensity Converter</h1>
+      <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{width:"100%",padding:"0.5rem",marginBottom:"0.5rem",boxSizing:"border-box"}} />
+      <select value={from} onChange={e=>setFrom(e.target.value)} style={{width:"100%",padding:"0.5rem",marginBottom:"0.5rem"}}>
+        {units.map(u=><option key={u}>{u}</option>)}
+      </select>
+      <select value={to} onChange={e=>setTo(e.target.value)} style={{width:"100%",padding:"0.5rem",marginBottom:"1rem"}}>
+        {units.map(u=><option key={u}>{u}</option>)}
+      </select>
+      <div style={{fontSize:"1.25rem",fontWeight:"bold"}}>Result: {convert()}</div>
     </main>
   );
 }
