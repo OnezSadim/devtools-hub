@@ -1,32 +1,28 @@
 "use client";
 import { useState } from "react";
-export default function FuelConsumptionConverterPage() {
-  const units: string[] = ["km/L", "L/100km", "MPG (US)", "MPG (UK)", "Miles/L"];
-  const toBase: Record<string, number> = {"km/L": 1, "L/100km": 100, "MPG (US)": 2.35215, "MPG (UK)": 2.82481, "Miles/L": 1.60934};
+
+const UNITS: string[] = ["L/100km", "mpg (US)", "mpg (UK)", "km/L"];
+const FACTORS: Record<string, number> = {"L/100km": 1.0, "mpg (US)": 235.215, "mpg (UK)": 282.481, "km/L": 100.0};
+
+export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(units[0]);
-  const [to, setTo] = useState(units[1]);
-  const convert = () => {
-    const n = parseFloat(val);
-    if (isNaN(n)) return "";
-    return ((n * toBase[from]) / toBase[to]).toPrecision(6);
-  };
+  const [from, setFrom] = useState(UNITS[0]);
+  const [to, setTo] = useState(UNITS[1]);
+  const result = val !== "" && !isNaN(Number(val)) ? (Number(val) * FACTORS[from] / FACTORS[to]).toPrecision(6) : "";
   return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
-      <h1 className="text-3xl font-bold mb-2">Fuel Consumption Converter</h1>
-      <p className="text-gray-400 mb-6">Convert between fuel consumption units instantly.</p>
-      <div className="bg-gray-900 rounded-xl p-6 max-w-lg space-y-4">
-        <input className="w-full bg-gray-800 rounded px-4 py-2 text-white" placeholder="Enter value" value={val} onChange={e => setVal(e.target.value)} />
-        <div className="flex gap-4">
-          <select className="flex-1 bg-gray-800 rounded px-3 py-2" value={from} onChange={e => setFrom(e.target.value)}>
-            {units.map(u => <option key={u}>{u}</option>)}
-          </select>
-          <select className="flex-1 bg-gray-800 rounded px-3 py-2" value={to} onChange={e => setTo(e.target.value)}>
-            {units.map(u => <option key={u}>{u}</option>)}
-          </select>
-        </div>
-        {val && <div className="bg-gray-800 rounded p-4 text-xl font-mono">{convert()} {to}</div>}
+    <main style={{padding:"2rem",fontFamily:"sans-serif",background:"#0f172a",minHeight:"100vh",color:"#f1f5f9"}}>
+      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Fuel Consumption Converter</h1>
+      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",alignItems:"center"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9",width:"140px"}} />
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9"}}>
+          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
+        </select>
+        <span>to</span>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#f1f5f9"}}>
+          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
+        </select>
       </div>
+      {result && <p style={{marginTop:"1.5rem",fontSize:"1.25rem",color:"#38bdf8"}}>= {result} {to}</p>}
     </main>
   );
 }
