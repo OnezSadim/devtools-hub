@@ -1,1 +1,35 @@
-'use client';import{useState}from 'react';export default function IlluminanceConverter(){const[val,setVal]=useState('');const[from,setFrom]=useState('lux');const[to,setTo]=useState('fc');const factors:Record<string,number>={'lux':1,'fc':10.7639,'phot':10000,'nox':0.001};const convert=()=>{const n=parseFloat(val);if(isNaN(n))return'';return((n*factors[from])/factors[to]).toFixed(6);};return(<div style={{padding:'2rem',fontFamily:'monospace',background:'#0f172a',minHeight:'100vh',color:'#e2e8f0'}}><h1 style={{fontSize:'1.5rem',marginBottom:'1rem'}}>Illuminance Converter</h1><input type='number' value={val} onChange={e=>setVal(e.target.value)} placeholder='Value' style={{padding:'0.5rem',marginRight:'0.5rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',borderRadius:'4px'}}/><select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:'0.5rem',marginRight:'0.5rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',borderRadius:'4px'}}><option value='lux'>Lux</option><option value='fc'>Foot-candle</option><option value='phot'>Phot</option><option value='nox'>Nox</option></select><span style={{margin:'0 0.5rem'}}>→</span><select value={to} onChange={e=>setTo(e.target.value)} style={{padding:'0.5rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',borderRadius:'4px'}}><option value='lux'>Lux</option><option value='fc'>Foot-candle</option><option value='phot'>Phot</option><option value='nox'>Nox</option></select><p style={{marginTop:'1rem',fontSize:'1.25rem'}}>Result: {convert()}</p></div>);}
+"use client";
+import { useState } from "react";
+export default function Page() {
+  const [v, setV] = useState("");
+  const [from, setFrom] = useState("lx");
+  const [to, setTo] = useState("fc");
+  function convert(v: number, from: string, to: string): number {
+    let base = 0;
+    switch(from) {
+      case "lx": base = v / 1; break;
+      case "fc": base = v / 0.092903; break;
+      case "ph": base = v / 0.0001; break;
+      case "klx": base = v / 0.001; break;
+      case "mlx": base = v / 1000; break;
+    }
+    switch(to) {
+      case "lx": return base * 1;
+      case "fc": return base * 0.092903;
+      case "ph": return base * 0.0001;
+      case "klx": return base * 0.001;
+      case "mlx": return base * 1000;
+    }
+    return 0;
+  }
+  const result = v ? convert(parseFloat(v), from, to) : null;
+  return (<div style={{padding:"2rem",fontFamily:"sans-serif",maxWidth:"500px",margin:"0 auto"}}><h1>Illuminance Converter</h1><p>Convert between lux, foot-candle, phot</p><input type="number" value={v} onChange={e=>setV(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"0.5rem",marginBottom:"1rem"}}/><div style={{display:"flex",gap:"1rem",marginBottom:"1rem"}}><select value={from} onChange={e=>setFrom(e.target.value)}>          <option value="lx">lx</option>
+          <option value="fc">fc</option>
+          <option value="ph">ph</option>
+          <option value="klx">klx</option>
+          <option value="mlx">mlx</option></select><span>→</span><select value={to} onChange={e=>setTo(e.target.value)}>          <option value="lx">lx</option>
+          <option value="fc">fc</option>
+          <option value="ph">ph</option>
+          <option value="klx">klx</option>
+          <option value="mlx">mlx</option></select></div>{result!==null&&<div style={{fontSize:"1.5rem",fontWeight:"bold"}}>{result.toPrecision(6)} {to}</div>}</div>);
+}

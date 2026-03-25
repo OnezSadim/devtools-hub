@@ -1,1 +1,35 @@
-'use client';import{useState}from 'react';const U={Wb:1,Mx:1e-8,mWb:1e-3,uWb:1e-6};export default function T(){const[v,setV]=useState('');const[f,setF]=useState('Wb');const[t,setT]=useState('Mx');const convert=()=>v?(+v*U[f]/U[t]).toFixed(6):'';return(<div style={{padding:20,fontFamily:'monospace',background:'#1a1a1a',minHeight:'100vh',color:'#e0e0e0'}}><h1>Magnetic Flux Converter</h1><input value={v} onChange={e=>setV(e.target.value)} placeholder='Value' style={{background:'#2a2a2a',color:'#e0e0e0',border:'1px solid #444',padding:8,marginRight:8}}/><select value={f} onChange={e=>setF(e.target.value)} style={{background:'#2a2a2a',color:'#e0e0e0',border:'1px solid #444',padding:8,marginRight:8}}>{Object.keys(U).map(k=><option key={k}>{k}</option>)}</select><span style={{marginRight:8}}>to</span><select value={t} onChange={e=>setT(e.target.value)} style={{background:'#2a2a2a',color:'#e0e0e0',border:'1px solid #444',padding:8}}>{Object.keys(U).map(k=><option key={k}>{k}</option>)}</select><div style={{marginTop:16,fontSize:20}}>{convert()} {t}</div></div>);}
+"use client";
+import { useState } from "react";
+export default function Page() {
+  const [v, setV] = useState("");
+  const [from, setFrom] = useState("Wb");
+  const [to, setTo] = useState("Mx");
+  function convert(v: number, from: string, to: string): number {
+    let base = 0;
+    switch(from) {
+      case "Wb": base = v / 1; break;
+      case "Mx": base = v / 1e8; break;
+      case "T·m²": base = v / 1; break;
+      case "mWb": base = v / 1000; break;
+      case "µWb": base = v / 1e6; break;
+    }
+    switch(to) {
+      case "Wb": return base * 1;
+      case "Mx": return base * 1e8;
+      case "T·m²": return base * 1;
+      case "mWb": return base * 1000;
+      case "µWb": return base * 1e6;
+    }
+    return 0;
+  }
+  const result = v ? convert(parseFloat(v), from, to) : null;
+  return (<div style={{padding:"2rem",fontFamily:"sans-serif",maxWidth:"500px",margin:"0 auto"}}><h1>Magnetic Flux Converter</h1><p>Convert between weber, maxwell, tesla·m²</p><input type="number" value={v} onChange={e=>setV(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"0.5rem",marginBottom:"1rem"}}/><div style={{display:"flex",gap:"1rem",marginBottom:"1rem"}}><select value={from} onChange={e=>setFrom(e.target.value)}>          <option value="Wb">Wb</option>
+          <option value="Mx">Mx</option>
+          <option value="T·m²">T·m²</option>
+          <option value="mWb">mWb</option>
+          <option value="µWb">µWb</option></select><span>→</span><select value={to} onChange={e=>setTo(e.target.value)}>          <option value="Wb">Wb</option>
+          <option value="Mx">Mx</option>
+          <option value="T·m²">T·m²</option>
+          <option value="mWb">mWb</option>
+          <option value="µWb">µWb</option></select></div>{result!==null&&<div style={{fontSize:"1.5rem",fontWeight:"bold"}}>{result.toPrecision(6)} {to}</div>}</div>);
+}

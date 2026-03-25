@@ -1,3 +1,35 @@
-'use client';
-import { useState } from 'react';
-export default function MagneticFieldStrengthConverter() { const [val, setVal] = useState(''); const [from, setFrom] = useState('A/m'); const [to, setTo] = useState('kA/m'); const units = {'A/m':1,'kA/m':1e3,'MA/m':1e6,'Oe':79.5775,'mA/m':1e-3,'uA/m':1e-6}; const convert = () => { const v = parseFloat(val); if (isNaN(v)) return ''; return ((v * units[from]) / units[to]).toPrecision(6); }; return (<div style={{padding:'2rem',fontFamily:'monospace',background:'#0f172a',minHeight:'100vh',color:'#e2e8f0'}}><h1 style={{fontSize:'1.5rem',marginBottom:'1rem'}}>Magnetic Field Strength Converter</h1><input value={val} onChange={e=>setVal(e.target.value)} placeholder='Value' style={{padding:'0.5rem',marginRight:'0.5rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',borderRadius:'4px'}} /><select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:'0.5rem',marginRight:'0.5rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',borderRadius:'4px'}}>{Object.keys(units).map(u=>(<option key={u}>{u}</option>))}</select><span style={{marginRight:'0.5rem'}}>to</span><select value={to} onChange={e=>setTo(e.target.value)} style={{padding:'0.5rem',background:'#1e293b',color:'#e2e8f0',border:'1px solid #334155',borderRadius:'4px'}}>{Object.keys(units).map(u=>(<option key={u}>{u}</option>))}</select><div style={{marginTop:'1rem',fontSize:'1.25rem',color:'#38bdf8'}}>{convert()} {to}</div></div>); }
+"use client";
+import { useState } from "react";
+export default function Page() {
+  const [v, setV] = useState("");
+  const [from, setFrom] = useState("A/m");
+  const [to, setTo] = useState("Oe");
+  function convert(v: number, from: string, to: string): number {
+    let base = 0;
+    switch(from) {
+      case "A/m": base = v / 1; break;
+      case "Oe": base = v / 0.0125664; break;
+      case "kA/m": base = v / 0.001; break;
+      case "mA/m": base = v / 1000; break;
+      case "µA/m": base = v / 1e6; break;
+    }
+    switch(to) {
+      case "A/m": return base * 1;
+      case "Oe": return base * 0.0125664;
+      case "kA/m": return base * 0.001;
+      case "mA/m": return base * 1000;
+      case "µA/m": return base * 1e6;
+    }
+    return 0;
+  }
+  const result = v ? convert(parseFloat(v), from, to) : null;
+  return (<div style={{padding:"2rem",fontFamily:"sans-serif",maxWidth:"500px",margin:"0 auto"}}><h1>Magnetic Field Strength Converter</h1><p>Convert between ampere/meter, oersted</p><input type="number" value={v} onChange={e=>setV(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"0.5rem",marginBottom:"1rem"}}/><div style={{display:"flex",gap:"1rem",marginBottom:"1rem"}}><select value={from} onChange={e=>setFrom(e.target.value)}>          <option value="A/m">A/m</option>
+          <option value="Oe">Oe</option>
+          <option value="kA/m">kA/m</option>
+          <option value="mA/m">mA/m</option>
+          <option value="µA/m">µA/m</option></select><span>→</span><select value={to} onChange={e=>setTo(e.target.value)}>          <option value="A/m">A/m</option>
+          <option value="Oe">Oe</option>
+          <option value="kA/m">kA/m</option>
+          <option value="mA/m">mA/m</option>
+          <option value="µA/m">µA/m</option></select></div>{result!==null&&<div style={{fontSize:"1.5rem",fontWeight:"bold"}}>{result.toPrecision(6)} {to}</div>}</div>);
+}
