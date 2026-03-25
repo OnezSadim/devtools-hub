@@ -1,29 +1,30 @@
 "use client";
 import { useState } from "react";
-
-const units = ["bit/s", "kbit/s", "Mbit/s", "Gbit/s", "byte/s", "kbyte/s", "Mbyte/s", "Gbyte/s"];
-const toBase: Record<string, number> = {"bit/s": 1, "kbit/s": 1000, "Mbit/s": 1000000, "Gbit/s": 1000000000, "byte/s": 8, "kbyte/s": 8000, "Mbyte/s": 8000000, "Gbyte/s": 8000000000};
-
 export default function Page() {
+  const units = ["bps", "Kbps", "Mbps", "Gbps", "Tbps", "KBps", "MBps", "GBps"];
+  const toBase = {"bps": 1, "Kbps": 1000, "Mbps": 1000000.0, "Gbps": 1000000000.0, "Tbps": 1000000000000.0, "KBps": 8000, "MBps": 8000000.0, "GBps": 8000000000.0};
   const [val, setVal] = useState("");
   const [from, setFrom] = useState(units[0]);
   const [to, setTo] = useState(units[1]);
-  const result = val && !isNaN(Number(val)) ? (Number(val) * toBase[from] / toBase[to]).toPrecision(6) : "";
+  const convert = () => {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    return ((n * toBase[from]) / toBase[to]).toPrecision(6);
+  };
   return (
-    <main style={{maxWidth:480,margin:"40px auto",padding:"0 16px",fontFamily:"sans-serif",color:"#e2e8f0"}}>
-      <h1 style={{fontSize:"1.5rem",marginBottom:8}}>Data Transfer Rate Converter</h1>
-      <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value"
-        style={{width:"100%",padding:8,marginBottom:8,background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:4}} />
-      <div style={{display:"flex",gap:8,marginBottom:8}}>
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{flex:1,padding:8,background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:4}}>
-          {units.map((u: string)=>(<option key={u}>{u}</option>))}
+    <main style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}>
+      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Data Transfer Rate Converter</h1>
+      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1rem"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",borderRadius:"4px",border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",width:"160px"}} />
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",borderRadius:"4px",border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0"}}>
+          {units.map(u=><option key={u}>{u}</option>)}
         </select>
-        <span style={{padding:"8px 4px"}}>to</span>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{flex:1,padding:8,background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:4}}>
-          {units.map((u: string)=>(<option key={u}>{u}</option>))}
+        <span style={{lineHeight:"2.2rem"}}>to</span>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",borderRadius:"4px",border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0"}}>
+          {units.map(u=><option key={u}>{u}</option>)}
         </select>
       </div>
-      {result && <div style={{padding:12,background:"#0f172a",borderRadius:4,fontSize:"1.2rem"}}>{val} {from} = {result} {to}</div>}
+      <div style={{fontSize:"1.25rem",color:"#38bdf8"}}>{convert()}</div>
     </main>
   );
 }
