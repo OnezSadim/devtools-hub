@@ -1,34 +1,28 @@
 "use client";
 import { useState } from "react";
-
-const UNITS: string[] = ["ohm", "kiloohm", "megaohm", "milliohm", "microohm", "nanoohm", "abohm", "statohm"];
-const TO_BASE: Record<string, number> = {"ohm": 1, "kiloohm": 1000.0, "megaohm": 1000000.0, "milliohm": 0.001, "microohm": 1e-06, "nanoohm": 1e-09, "abohm": 1e-09, "statohm": 898755000000.0};
-
-export default function ElectricResistanceConverterPage() {
+export default function Page() {
+  const units = ["ohm", "milliohm", "microohm", "kilohm", "megaohm"];
+  const toBase = {"ohm": 1, "milliohm": 0.001, "microohm": 1e-06, "kilohm": 1000, "megaohm": 1000000};
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(UNITS[0]);
-  const [to, setTo] = useState(UNITS[1]);
-  const convert = () => {
+  const [from, setFrom] = useState(units[0]);
+  const convert = (u) => {
     const n = parseFloat(val);
-    if (isNaN(n)) return "";
-    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
+    if (isNaN(n)) return "-";
+    return ((n * toBase[from]) / toBase[u]).toPrecision(6);
   };
   return (
-    <main style={{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}>
-      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Electric Resistance Converter</h1>
-      <div style={{display:"flex",gap:"0.5rem",marginBottom:"1rem",flexWrap:"wrap"}}>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{flex:1,padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>
-          {UNITS.map(u=><option key={u}>{u}</option>)}
+    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",padding:"2rem",fontFamily:"monospace"}}>
+      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Electric Resistance Converter</h1>
+      <div style={{display:"flex",gap:"1rem",marginBottom:"1.5rem",flexWrap:"wrap"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px",fontSize:"1rem",width:"180px"}} />
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px",fontSize:"1rem"}}>
+          {units.map(u=><option key={u} value={u}>{u}</option>)}
         </select>
       </div>
-      <div style={{display:"flex",gap:"0.5rem",alignItems:"center",marginBottom:"1rem",flexWrap:"wrap"}}>
-        <span style={{color:"#94a3b8"}}>To:</span>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:"4px"}}>
-          {UNITS.map(u=><option key={u}>{u}</option>)}
-        </select>
-      </div>
-      {val && <div style={{padding:"1rem",background:"#1e293b",borderRadius:"8px",fontSize:"1.25rem"}}>{convert()} {to}</div>}
+      <table style={{width:"100%",borderCollapse:"collapse"}}>
+        <thead><tr><th style={{textAlign:"left",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Unit</th><th style={{textAlign:"left",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Value</th></tr></thead>
+        <tbody>{units.map(u=><tr key={u}><td style={{padding:"0.5rem",borderBottom:"1px solid #1e293b"}}>{u}</td><td style={{padding:"0.5rem",borderBottom:"1px solid #1e293b",color:"#38bdf8"}}>{convert(u)}</td></tr>)}</tbody>
+      </table>
     </main>
   );
 }

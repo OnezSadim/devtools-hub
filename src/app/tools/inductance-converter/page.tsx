@@ -1,30 +1,28 @@
 "use client";
 import { useState } from "react";
 export default function Page() {
-  const units = ["H", "mH", "uH", "nH", "pH"];
-  const toBase = {"H": 1, "mH": 0.001, "uH": 1e-06, "nH": 1e-09, "pH": 1e-12};
+  const units = ["henry", "millihenry", "microhenry", "nanohenry", "kilohenry"];
+  const toBase = {"henry": 1, "millihenry": 0.001, "microhenry": 1e-06, "nanohenry": 1e-09, "kilohenry": 1000};
   const [val, setVal] = useState("");
   const [from, setFrom] = useState(units[0]);
-  const [to, setTo] = useState(units[1]);
-  const convert = () => {
+  const convert = (u) => {
     const n = parseFloat(val);
-    if (isNaN(n)) return "";
-    return ((n * toBase[from]) / toBase[to]).toPrecision(6);
+    if (isNaN(n)) return "-";
+    return ((n * toBase[from]) / toBase[u]).toPrecision(6);
   };
   return (
-    <main style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}>
-      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Inductance Converter</h1>
-      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",marginBottom:"1rem"}}>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",borderRadius:"4px",border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",width:"160px"}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",borderRadius:"4px",border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0"}}>
-          {units.map(u=><option key={u}>{u}</option>)}
-        </select>
-        <span style={{lineHeight:"2.2rem"}}>to</span>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",borderRadius:"4px",border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0"}}>
-          {units.map(u=><option key={u}>{u}</option>)}
+    <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",padding:"2rem",fontFamily:"monospace"}}>
+      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Inductance Converter</h1>
+      <div style={{display:"flex",gap:"1rem",marginBottom:"1.5rem",flexWrap:"wrap"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px",fontSize:"1rem",width:"180px"}} />
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px",fontSize:"1rem"}}>
+          {units.map(u=><option key={u} value={u}>{u}</option>)}
         </select>
       </div>
-      <div style={{fontSize:"1.25rem",color:"#38bdf8"}}>{convert()}</div>
+      <table style={{width:"100%",borderCollapse:"collapse"}}>
+        <thead><tr><th style={{textAlign:"left",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Unit</th><th style={{textAlign:"left",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Value</th></tr></thead>
+        <tbody>{units.map(u=><tr key={u}><td style={{padding:"0.5rem",borderBottom:"1px solid #1e293b"}}>{u}</td><td style={{padding:"0.5rem",borderBottom:"1px solid #1e293b",color:"#38bdf8"}}>{convert(u)}</td></tr>)}</tbody>
+      </table>
     </main>
   );
 }

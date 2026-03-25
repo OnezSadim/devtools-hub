@@ -1,44 +1,28 @@
 "use client";
 import { useState } from "react";
-
-const UNITS = [
-      { value: '1', label: 'Farad (F)' },
-      { value: '1e-3', label: 'Millifarad (mF)' },
-      { value: '1e-6', label: 'Microfarad (µF)' },
-      { value: '1e-9', label: 'Nanofarad (nF)' },
-      { value: '1e-12', label: 'Picofarad (pF)' },
-      { value: '1e-15', label: 'Femtofarad (fF)' },
-];
-
 export default function Page() {
+  const units = ["farad", "millifarad", "microfarad", "nanofarad", "picofarad"];
+  const toBase = {"farad": 1, "millifarad": 0.001, "microfarad": 1e-06, "nanofarad": 1e-09, "picofarad": 1e-12};
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(UNITS[0].value);
-  const [to, setTo] = useState(UNITS[1].value);
-  const convert = () => {
+  const [from, setFrom] = useState(units[0]);
+  const convert = (u) => {
     const n = parseFloat(val);
-    if (isNaN(n)) return "";
-    const base = n * parseFloat(from);
-    return (base / parseFloat(to)).toPrecision(6);
+    if (isNaN(n)) return "-";
+    return ((n * toBase[from]) / toBase[u]).toPrecision(6);
   };
   return (
     <main style={{minHeight:"100vh",background:"#0f172a",color:"#f1f5f9",padding:"2rem",fontFamily:"monospace"}}>
       <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Capacitance Converter</h1>
-      <p style={{color:"#94a3b8",marginBottom:"2rem"}}>Convert between capacitance units: farad, microfarad, nanofarad, picofarad.</p>
-      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",alignItems:"flex-end"}}>
-        <div><label style={{display:"block",marginBottom:"0.25rem",color:"#94a3b8"}}>Value</label>
-        <input value={val} onChange={e=>setVal(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px",width:"160px"}} /></div>
-        <div><label style={{display:"block",marginBottom:"0.25rem",color:"#94a3b8"}}>From</label>
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px"}}>
-          {UNITS.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
-        </select></div>
-        <div><label style={{display:"block",marginBottom:"0.25rem",color:"#94a3b8"}}>To</label>
-        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px"}}>
-          {UNITS.map(u=><option key={u.value} value={u.value}>{u.label}</option>)}
-        </select></div>
+      <div style={{display:"flex",gap:"1rem",marginBottom:"1.5rem",flexWrap:"wrap"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px",fontSize:"1rem",width:"180px"}} />
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px",fontSize:"1rem"}}>
+          {units.map(u=><option key={u} value={u}>{u}</option>)}
+        </select>
       </div>
-      <div style={{marginTop:"2rem",padding:"1rem",background:"#1e293b",borderRadius:"8px",fontSize:"1.4rem"}}>
-        Result: <strong>{convert()}</strong>
-      </div>
+      <table style={{width:"100%",borderCollapse:"collapse"}}>
+        <thead><tr><th style={{textAlign:"left",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Unit</th><th style={{textAlign:"left",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Value</th></tr></thead>
+        <tbody>{units.map(u=><tr key={u}><td style={{padding:"0.5rem",borderBottom:"1px solid #1e293b"}}>{u}</td><td style={{padding:"0.5rem",borderBottom:"1px solid #1e293b",color:"#38bdf8"}}>{convert(u)}</td></tr>)}</tbody>
+      </table>
     </main>
   );
 }
