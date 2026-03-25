@@ -1,30 +1,59 @@
-"use client";
-import { useState } from "react";
-const UNITS = ["Pa*s", "P (Poise)", "cP (centipoise)", "lb/(ft*s)", "lb/(ft*h)"];
-const TO_BASE: Record<string, number> = {"Pa*s": 1.0, "P (Poise)": 0.1, "cP (centipoise)": 0.001, "lb/(ft*s)": 1.4882, "lb/(ft*h)": 0.0004134};
+'use client'
+import { useState } from 'react'
+
+const units = [
+    { name: 'Pascal-second', symbol: 'Pa·s', toBase: 1 },
+    { name: 'Poise', symbol: 'P', toBase: 10 },
+    { name: 'Centipoise', symbol: 'cP', toBase: 1000 },
+    { name: 'Millipascal-second', symbol: 'mPa·s', toBase: 1000 },
+    { name: 'Micropascal-second', symbol: 'μPa·s', toBase: 1000000 },
+    { name: 'Newton-second/m²', symbol: 'N·s/m²', toBase: 1 },
+    { name: 'Dyne-second/cm²', symbol: 'dyn·s/cm²', toBase: 10 },
+    { name: 'Pound-force-second/ft²', symbol: 'lbf·s/ft²', toBase: 0.0208854 },
+    { name: 'Pound-mass/foot-second', symbol: 'lb/(ft·s)', toBase: 0.671969 },
+    { name: 'Slug/foot-second', symbol: 'slug/(ft·s)', toBase: 0.0208854 },
+  ]
+
 export default function Page() {
-  const [val, setVal] = useState("");
-  const [from, setFrom] = useState(UNITS[0]);
-  const convert = (to: string) => {
-    const n = parseFloat(val);
-    if (isNaN(n)) return "";
-    return ((n * TO_BASE[from]) / TO_BASE[to]).toPrecision(6);
-  };
+  const [value, setValue] = useState('1')
+  const [from, setFrom] = useState(units[0].name)
+  const [to, setTo] = useState(units[1].name)
+
+  function convert() {
+    const n = parseFloat(value)
+    if (isNaN(n)) return 'Invalid input'
+    const fromUnit = units.find(u => u.name === from)
+    const toUnit = units.find(u => u.name === to)
+    if (!fromUnit || !toUnit) return 'Unknown unit'
+    const base = n / fromUnit.toBase
+    return (base * toUnit.toBase).toPrecision(8)
+  }
+
   return (
-    <main style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}>
-      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Dynamic Viscosity Converter</h1>
-      <div style={{display:"flex",gap:"1rem",marginBottom:"1rem",flexWrap:"wrap"}}>
-        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px"}} />
-        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px"}}>
-          {UNITS.map(u=><option key={u} value={u}>{u}</option>)}
-        </select>
+    <main style={{minHeight:'100vh',background:'#0f172a',color:'#f1f5f9',fontFamily:'sans-serif',padding:'2rem'}}>
+      <h1 style={{fontSize:'2rem',marginBottom:'0.5rem'}}>Dynamic Viscosity Converter</h1>
+      <p style={{color:'#94a3b8',marginBottom:'2rem'}}>Convert between dynamic viscosity units including Pascal-second, Poise, centipoise, and more.</p>
+      <div style={{display:'flex',gap:'1rem',flexWrap:'wrap',alignItems:'flex-end',marginBottom:'1.5rem'}}>
+        <div>
+          <label style={{display:'block',marginBottom:'0.25rem',color:'#94a3b8'}}>Value</label>
+          <input type="number" value={value} onChange={e=>setValue(e.target.value)} style={{padding:'0.5rem',borderRadius:'6px',border:'1px solid #334155',background:'#1e293b',color:'#f1f5f9',fontSize:'1rem',width:'180px'}} />
+        </div>
+        <div>
+          <label style={{display:'block',marginBottom:'0.25rem',color:'#94a3b8'}}>From</label>
+          <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:'0.5rem',borderRadius:'6px',border:'1px solid #334155',background:'#1e293b',color:'#f1f5f9',fontSize:'1rem'}}>
+            {units.map(u=><option key={u.name} value={u.name}>{u.name} ({u.symbol})</option>)}
+          </select>
+        </div>
+        <div>
+          <label style={{display:'block',marginBottom:'0.25rem',color:'#94a3b8'}}>To</label>
+          <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:'0.5rem',borderRadius:'6px',border:'1px solid #334155',background:'#1e293b',color:'#f1f5f9',fontSize:'1rem'}}>
+            {units.map(u=><option key={u.name} value={u.name}>{u.name} ({u.symbol})</option>)}
+          </select>
+        </div>
       </div>
-      <table style={{width:"100%",borderCollapse:"collapse"}}>
-        <thead><tr><th style={{textAlign:"left",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Unit</th><th style={{textAlign:"right",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Value</th></tr></thead>
-        <tbody>
-          {UNITS.map(u=><tr key={u} style={{background:u===from?"#1e293b":"transparent"}}><td style={{padding:"0.5rem"}}>{u}</td><td style={{textAlign:"right",padding:"0.5rem"}}>{convert(u)}</td></tr>)}
-        </tbody>
-      </table>
+      <div style={{background:'#1e293b',padding:'1.5rem',borderRadius:'8px',fontSize:'1.5rem',fontWeight:'bold'}}>
+        {value} {units.find(u=>u.name===from)?.symbol} = {convert()} {units.find(u=>u.name===to)?.symbol}
+      </div>
     </main>
-  );
+  )
 }

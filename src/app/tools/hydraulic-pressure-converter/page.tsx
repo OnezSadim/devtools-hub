@@ -2,18 +2,20 @@
 import { useState } from 'react'
 
 const units = [
-    { name: 'Cubic meter/second', symbol: 'm³/s', toBase: 1 },
-    { name: 'Cubic meter/hour', symbol: 'm³/h', toBase: 3600 },
-    { name: 'Cubic meter/minute', symbol: 'm³/min', toBase: 60 },
-    { name: 'Liter/second', symbol: 'L/s', toBase: 1000 },
-    { name: 'Liter/minute', symbol: 'L/min', toBase: 60000 },
-    { name: 'Liter/hour', symbol: 'L/h', toBase: 3600000 },
-    { name: 'Milliliter/second', symbol: 'mL/s', toBase: 1000000 },
-    { name: 'Gallon/minute (US)', symbol: 'GPM', toBase: 264.172 },
-    { name: 'Gallon/hour (US)', symbol: 'GPH', toBase: 15850.3 },
-    { name: 'Cubic foot/minute', symbol: 'CFM', toBase: 35.3147 },
-    { name: 'Cubic foot/second', symbol: 'CFS', toBase: 0.588578 },
-    { name: 'Barrel/day', symbol: 'bbl/day', toBase: 543440 },
+    { name: 'Pascal', symbol: 'Pa', toBase: 1 },
+    { name: 'Kilopascal', symbol: 'kPa', toBase: 0.001 },
+    { name: 'Megapascal', symbol: 'MPa', toBase: 1e-06 },
+    { name: 'Gigapascal', symbol: 'GPa', toBase: 1e-09 },
+    { name: 'Bar', symbol: 'bar', toBase: 1e-05 },
+    { name: 'Millibar', symbol: 'mbar', toBase: 0.01 },
+    { name: 'Atmosphere', symbol: 'atm', toBase: 9.86923e-06 },
+    { name: 'Torr', symbol: 'Torr', toBase: 0.00750062 },
+    { name: 'mmHg', symbol: 'mmHg', toBase: 0.00750062 },
+    { name: 'inHg', symbol: 'inHg', toBase: 0.000295301 },
+    { name: 'PSI', symbol: 'psi', toBase: 0.000145038 },
+    { name: 'KSI', symbol: 'ksi', toBase: 1.45038e-07 },
+    { name: 'mmH2O', symbol: 'mmH₂O', toBase: 0.101972 },
+    { name: 'inH2O', symbol: 'inH₂O', toBase: 0.00401474 },
   ]
 
 export default function Page() {
@@ -33,8 +35,8 @@ export default function Page() {
 
   return (
     <main style={{minHeight:'100vh',background:'#0f172a',color:'#f1f5f9',fontFamily:'sans-serif',padding:'2rem'}}>
-      <h1 style={{fontSize:'2rem',marginBottom:'0.5rem'}}>Volumetric Flow Rate Converter</h1>
-      <p style={{color:'#94a3b8',marginBottom:'2rem'}}>Convert between volumetric flow rate units including m³/s, L/s, GPM, CFM, and more.</p>
+      <h1 style={{fontSize:'2rem',marginBottom:'0.5rem'}}>Hydraulic Pressure Converter</h1>
+      <p style={{color:'#94a3b8',marginBottom:'2rem'}}>Convert between hydraulic pressure units including PSI, bar, Pa, MPa, and more.</p>
       <div style={{display:'flex',gap:'1rem',flexWrap:'wrap',alignItems:'flex-end',marginBottom:'1.5rem'}}>
         <div>
           <label style={{display:'block',marginBottom:'0.25rem',color:'#94a3b8'}}>Value</label>
