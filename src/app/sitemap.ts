@@ -1,4 +1,4 @@
-import { MetadataRoute } from "next";
+import { MetadataRoute } from 'next';
 
 const toolSlugs = [
   'age-calculator',
@@ -24,6 +24,7 @@ const toolSlugs = [
   'bmi-calculator',
   'border-radius-generator',
   'box-shadow-generator',
+  'budget-calculator',
   'caesar-cipher',
   'character-counter',
   'character-frequency',
@@ -37,6 +38,7 @@ const toolSlugs = [
   'color-name-finder',
   'color-palette-generator',
   'color-picker',
+  'compound-interest-calculator',
   'countdown-timer',
   'credit-card-validator',
   'cron-parser',
@@ -57,11 +59,13 @@ const toolSlugs = [
   'curl-command-builder',
   'curl-to-code',
   'curl-to-fetch',
+  'currency-converter',
   'currency-formatter',
   'data-size-converter',
   'data-storage-converter',
   'date-calculator',
   'diff-checker',
+  'discount-calculator',
   'dns-lookup',
   'docker-compose-generator',
   'dockerfile-generator',
@@ -110,6 +114,7 @@ const toolSlugs = [
   'image-base64-converter',
   'image-color-picker',
   'image-to-base64',
+  'investment-calculator',
   'ip-address-info',
   'ip-address-lookup',
   'ip-cidr-calculator',
@@ -141,6 +146,7 @@ const toolSlugs = [
   'linux-commands',
   'list-deduplicator',
   'list-randomizer',
+  'loan-calculator',
   'lorem-ipsum',
   'lorem-ipsum-advanced',
   'luhn-checker',
@@ -154,6 +160,7 @@ const toolSlugs = [
   'morse-code-converter',
   'morse-code-translator',
   'morse-to-text',
+  'mortgage-calculator',
   'nato-alphabet',
   'nato-alphabet-converter',
   'nato-phonetic-alphabet',
@@ -183,6 +190,7 @@ const toolSlugs = [
   'quadratic-solver',
   'ratio-calculator',
   'readability-score',
+  'reading-time-calculator',
   'regex-tester',
   'remove-duplicate-lines',
   'robots-txt-generator',
@@ -264,19 +272,19 @@ const toolSlugs = [
   'yaml-formatter',
   'yaml-to-json',
   'yaml-validator',
-  'z-index-manager',
+  'z-index-manager'
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = "https://devtools-hub-green.vercel.app";
-  const toolUrls = toolSlugs.map((slug) => ({
-    url: `${base}/tools/${slug}`,
+  const base = 'https://devtools-hub-green.vercel.app';
+  const toolUrls = toolSlugs.map(slug => ({
+    url: base + '/tools/' + slug,
     lastModified: new Date(),
-    changeFrequency: "monthly" as const,
+    changeFrequency: 'monthly' as const,
     priority: 0.7,
   }));
   return [
-    { url: base, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 1.0 },
+    { url: base, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 1.0 },
     ...toolUrls,
   ];
 }
