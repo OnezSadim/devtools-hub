@@ -1,33 +1,32 @@
 "use client";
 import { useState } from "react";
 
-const units = ["V/m", "V/cm", "V/mm", "kV/m", "MV/m"];
-const toBase = [1, 100, 1000, 1000.0, 1000000.0];
+const units: string[] = ["V/m", "kV/m", "MV/m", "V/cm", "V/mm", "V/in"];
+const toBase: Record<string, number> = {"V/m": 1, "kV/m": 1000, "MV/m": 1000000.0, "V/cm": 100, "V/mm": 1000, "V/in": 39.3701};
 
 export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(0);
-  const num = parseFloat(val);
+  const [from, setFrom] = useState(units[0]);
+  const [to, setTo] = useState(units[1]);
+  const convert = () => {
+    const n = parseFloat(val);
+    if (isNaN(n)) return "";
+    return ((n * toBase[from]) / toBase[to]).toPrecision(6);
+  };
   return (
-    <main style={{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"sans-serif",background:"#0f172a",minHeight:"100vh",color:"#f1f5f9"}}>
+    <main style={{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}>
       <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Electric Field Strength Converter</h1>
-      <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{width:"100%",padding:"0.5rem",marginBottom:"1rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px"}} />
-      <select value={from} onChange={e=>setFrom(Number(e.target.value))} style={{width:"100%",padding:"0.5rem",marginBottom:"1.5rem",background:"#1e293b",color:"#f1f5f9",border:"1px solid #334155",borderRadius:"4px"}}>
-        {units.map((u,i)=><option key={i} value={i}>{u}</option>)}
-      </select>
-      {!isNaN(num) && val !== "" && (
-        <table style={{width:"100%",borderCollapse:"collapse"}}>
-          <thead><tr><th style={{textAlign:"left",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Unit</th><th style={{textAlign:"right",padding:"0.5rem",borderBottom:"1px solid #334155"}}>Value</th></tr></thead>
-          <tbody>
-            {units.map((u,i)=>(
-              <tr key={i} style={{background:i===from?"#1e3a5f":"transparent"}}>
-                <td style={{padding:"0.5rem",borderBottom:"1px solid #1e293b"}}>{u}</td>
-                <td style={{padding:"0.5rem",textAlign:"right",borderBottom:"1px solid #1e293b"}}>{(num * toBase[from] / toBase[i]).toPrecision(6)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+      <div style={{display:"flex",gap:"0.5rem",flexWrap:"wrap",marginBottom:"1rem"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px",flex:"1"}} />
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px"}}>
+          {units.map(u=><option key={u}>{u}</option>)}
+        </select>
+        <span style={{alignSelf:"center"}}>to</span>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px"}}>
+          {units.map(u=><option key={u}>{u}</option>)}
+        </select>
+      </div>
+      <div style={{padding:"1rem",background:"#1e293b",borderRadius:"4px",fontSize:"1.2rem"}}>{convert() || "Enter a value"}</div>
     </main>
   );
 }

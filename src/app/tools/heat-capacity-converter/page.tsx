@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
 
-const units: string[] = ["m2/s", "cm2/s (St)", "mm2/s (cSt)", "ft2/s", "in2/s"];
-const toBase: Record<string, number> = {"m2/s": 1, "cm2/s (St)": 0.0001, "mm2/s (cSt)": 1e-06, "ft2/s": 0.09290304, "in2/s": 0.00064516};
+const units: string[] = ["J/(kg·K)", "kJ/(kg·K)", "cal/(g·°C)", "BTU/(lb·°F)", "kcal/(kg·°C)"];
+const toBase: Record<string, number> = {"J/(kg·K)": 1, "kJ/(kg·K)": 1000, "cal/(g·°C)": 4186.8, "BTU/(lb·°F)": 4186.8, "kcal/(kg·°C)": 4186.8};
 
 export default function Page() {
   const [val, setVal] = useState("");
@@ -15,7 +15,7 @@ export default function Page() {
   };
   return (
     <main style={{padding:"2rem",maxWidth:"600px",margin:"0 auto",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}>
-      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Kinematic Viscosity Converter</h1>
+      <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Specific Heat Capacity Converter</h1>
       <div style={{display:"flex",gap:"0.5rem",flexWrap:"wrap",marginBottom:"1rem"}}>
         <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{padding:"0.5rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px",flex:"1"}} />
         <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.5rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px"}}>
