@@ -1,1 +1,63 @@
-'use client';import{useState}from'react';const units=[{value:"Vm",label:"V/m",factor:1},{value:"kVm",label:"kV/m",factor:1000.0},{value:"MVm",label:"MV/m",factor:1000000.0},{value:"Vcm",label:"V/cm",factor:100},{value:"Vmm",label:"V/mm",factor:1000.0},{value:"mVm",label:"mV/m",factor:0.001}];export default function Page(){const[val,setVal]=useState('1');const[from,setFrom]=useState(units[0].value);const[to,setTo]=useState(units[1].value);const convert=()=>{const f=units.find(u=>u.value===from);const t=units.find(u=>u.value===to);if(!f||!t||isNaN(Number(val)))return'Invalid';return((Number(val)*f.factor)/t.factor).toPrecision(6);};return(<main style={{padding:'2rem',fontFamily:'monospace',background:'#0f172a',minHeight:'100vh',color:'#e2e8f0'}}><h1 style={{fontSize:'1.5rem',marginBottom:'1rem'}}>{title}</h1><p style={{marginBottom:'1.5rem',color:'#94a3b8'}}>{desc}</p><div style={{display:'flex',gap:'1rem',flexWrap:'wrap',marginBottom:'1rem'}}><input value={val} onChange={e=>setVal(e.target.value)} style={{padding:'0.5rem',background:'#1e293b',border:'1px solid #334155',color:'#e2e8f0',borderRadius:'4px',width:'150px'}} /><select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:'0.5rem',background:'#1e293b',border:'1px solid #334155',color:'#e2e8f0',borderRadius:'4px'}}>{units.map(u=>(<option key={u.value} value={u.value}>{u.label}</option>))}</select><span style={{alignSelf:'center'}}>→</span><select value={to} onChange={e=>setTo(e.target.value)} style={{padding:'0.5rem',background:'#1e293b',border:'1px solid #334155',color:'#e2e8f0',borderRadius:'4px'}}>{units.map(u=>(<option key={u.value} value={u.value}>{u.label}</option>))}</select></div><div style={{padding:'1rem',background:'#1e293b',borderRadius:'8px',fontSize:'1.25rem'}}>{convert()} {units.find(u=>u.value===to)?.label}</div></main>);}
+"use client";
+import { useState } from "react";
+
+const factors: Record<string, number> = {
+  "V/m": 1.0,
+  "kV/m": 1000.0,
+  "MV/m": 1000000.0,
+  "V/cm": 100.0,
+  "V/mm": 1000.0,
+  "V/in": 39.3701,
+  "V/ft": 3.28084,
+  "mV/m": 0.001,
+  "uV/m": 1e-06
+};
+
+export default function ElectricFieldConverterPage() {
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState("V/m");
+  const [to, setTo] = useState("kV/m");
+  const result = val !== "" ? (parseFloat(val) * factors[from] / factors[to]).toFixed(8).replace(/\.?0+$/, "") : "";
+  return (
+    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Electric Field Converter</h1>
+        <p className="text-gray-400 mb-6">Convert between electric field strength units: V/m, kV/m, MV/m, and more.</p>
+        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
+          <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" className="w-full bg-gray-800 rounded-lg px-4 py-3 text-lg outline-none focus:ring-2 focus:ring-blue-500" />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-xs text-gray-400 mb-1 block">From</label>
+              <select value={from} onChange={e=>setFrom(e.target.value)} className="w-full bg-gray-800 rounded-lg px-3 py-2">
+          <option value="V/m">V/m</option>
+          <option value="kV/m">kV/m</option>
+          <option value="MV/m">MV/m</option>
+          <option value="V/cm">V/cm</option>
+          <option value="V/mm">V/mm</option>
+          <option value="V/in">V/in</option>
+          <option value="V/ft">V/ft</option>
+          <option value="mV/m">mV/m</option>
+          <option value="uV/m">uV/m</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-xs text-gray-400 mb-1 block">To</label>
+              <select value={to} onChange={e=>setTo(e.target.value)} className="w-full bg-gray-800 rounded-lg px-3 py-2">
+          <option value="V/m">V/m</option>
+          <option value="kV/m">kV/m</option>
+          <option value="MV/m">MV/m</option>
+          <option value="V/cm">V/cm</option>
+          <option value="V/mm">V/mm</option>
+          <option value="V/in">V/in</option>
+          <option value="V/ft">V/ft</option>
+          <option value="mV/m">mV/m</option>
+          <option value="uV/m">uV/m</option>
+              </select>
+            </div>
+          </div>
+          {result !== "" && <div className="bg-blue-900/30 border border-blue-700 rounded-lg p-4 text-2xl font-mono text-center">{result} {to}</div>}
+        </div>
+      </div>
+    </main>
+  );
+}

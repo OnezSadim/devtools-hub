@@ -1,45 +1,62 @@
 "use client";
 import { useState } from "react";
 
-const units = [
-  { name: 'Kilogram per cubic metre', factor: 1 },
-  { name: 'Gram per cubic centimetre', factor: 1000 },
-  { name: 'Milligram per cubic metre', factor: 1e-06 },
-  { name: 'Kilogram per litre', factor: 1000 },
-  { name: 'Gram per litre', factor: 1 },
-  { name: 'Gram per millilitre', factor: 1000 },
-  { name: 'Pound per cubic foot', factor: 16.0185 },
-  { name: 'Pound per cubic inch', factor: 27679.9 },
-  { name: 'Pound per gallon (US)', factor: 119.826 },
-  { name: 'Ounce per cubic inch', factor: 1729.99 },
-];
+const factors: Record<string, number> = {
+  "kg/m3": 1.0,
+  "g/cm3": 1000.0,
+  "g/L": 1.0,
+  "mg/mL": 1.0,
+  "kg/L": 1000.0,
+  "lb/ft3": 16.0185,
+  "lb/in3": 27679.9,
+  "oz/in3": 1729.99,
+  "lb/gal": 119.826
+};
 
-export default function DensityConverter() {
-  const [value, setValue] = useState("");
-  const [from, setFrom] = useState(units[0].name);
-  const [to, setTo] = useState(units[1].name);
-  const convert = () => {
-    const v = parseFloat(value);
-    if (isNaN(v)) return "";
-    const f = units.find(u => u.name === from)?.factor ?? 1;
-    const t = units.find(u => u.name === to)?.factor ?? 1;
-    return (v * f / t).toPrecision(8);
-  };
+export default function DensityConverterPage() {
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState("kg/m3");
+  const [to, setTo] = useState("g/cm3");
+  const result = val !== "" ? (parseFloat(val) * factors[from] / factors[to]).toFixed(8).replace(/\.?0+$/, "") : "";
   return (
-    <main className="min-h-screen bg-gray-950 text-white p-8">
-      <h1 className="text-3xl font-bold mb-2">Density Converter</h1>
-      <p className="text-gray-400 mb-8">Convert between density units including kg/m³, g/cm³, lb/ft³, and more.</p>
-      <div className="bg-gray-900 rounded-xl p-6 max-w-xl">
-        <input className="w-full bg-gray-800 rounded p-3 mb-4 text-white" type="number" placeholder="Enter value" value={value} onChange={e => setValue(e.target.value)} />
-        <div className="flex gap-4 mb-4">
-          <select className="flex-1 bg-gray-800 rounded p-3 text-white" value={from} onChange={e => setFrom(e.target.value)}>
-            {units.map(u => <option key={u.name} value={u.name}>{u.name}</option>)}
-          </select>
-          <select className="flex-1 bg-gray-800 rounded p-3 text-white" value={to} onChange={e => setTo(e.target.value)}>
-            {units.map(u => <option key={u.name} value={u.name}>{u.name}</option>)}
-          </select>
+    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Density Converter</h1>
+        <p className="text-gray-400 mb-6">Convert between density units: kg/m³, g/cm³, lb/ft³, and more.</p>
+        <div className="bg-gray-900 rounded-xl p-6 space-y-4">
+          <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" className="w-full bg-gray-800 rounded-lg px-4 py-3 text-lg outline-none focus:ring-2 focus:ring-blue-500" />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-xs text-gray-400 mb-1 block">From</label>
+              <select value={from} onChange={e=>setFrom(e.target.value)} className="w-full bg-gray-800 rounded-lg px-3 py-2">
+          <option value="kg/m3">kg/m3</option>
+          <option value="g/cm3">g/cm3</option>
+          <option value="g/L">g/L</option>
+          <option value="mg/mL">mg/mL</option>
+          <option value="kg/L">kg/L</option>
+          <option value="lb/ft3">lb/ft3</option>
+          <option value="lb/in3">lb/in3</option>
+          <option value="oz/in3">oz/in3</option>
+          <option value="lb/gal">lb/gal</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-xs text-gray-400 mb-1 block">To</label>
+              <select value={to} onChange={e=>setTo(e.target.value)} className="w-full bg-gray-800 rounded-lg px-3 py-2">
+          <option value="kg/m3">kg/m3</option>
+          <option value="g/cm3">g/cm3</option>
+          <option value="g/L">g/L</option>
+          <option value="mg/mL">mg/mL</option>
+          <option value="kg/L">kg/L</option>
+          <option value="lb/ft3">lb/ft3</option>
+          <option value="lb/in3">lb/in3</option>
+          <option value="oz/in3">oz/in3</option>
+          <option value="lb/gal">lb/gal</option>
+              </select>
+            </div>
+          </div>
+          {result !== "" && <div className="bg-blue-900/30 border border-blue-700 rounded-lg p-4 text-2xl font-mono text-center">{result} {to}</div>}
         </div>
-        {value && <div className="bg-gray-800 rounded p-4 text-2xl font-mono text-green-400">{convert()} {to}</div>}
       </div>
     </main>
   );
