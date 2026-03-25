@@ -1,29 +1,57 @@
-'use client';
-import { useState } from 'react';
+"use client";
+import { useState } from "react";
+
 export default function SpecificHeatCalculator() {
-  const [Q, setQ] = useState('');
-  const [mass, setMass] = useState('');
-  const [delta, setDelta] = useState('');
-  const [result, setResult] = useState<string|null>(null);
+  const [solve, setSolve] = useState("Q");
+  const [Q, setQ] = useState("");
+  const [m, setM] = useState("");
+  const [c, setC] = useState("");
+  const [dT, setDT] = useState("");
+  const [result, setResult] = useState("");
+
+  const presets: Record<string,number> = { Water: 4186, Aluminum: 900, Iron: 450, Copper: 385, Gold: 129, Ice: 2090, Steam: 2010 };
+
   const calc = () => {
-    const q = parseFloat(Q), m = parseFloat(mass), dT = parseFloat(delta);
-    if (isNaN(q)||isNaN(m)||isNaN(dT)||m===0||dT===0) { setResult('Enter valid non-zero values'); return; }
-    const c = q / (m * dT);
-    setResult('c = ' + c.toFixed(4) + ' J/(kg·K)');
+    try {
+      const qv = parseFloat(Q), mv = parseFloat(m), cv = parseFloat(c), dtv = parseFloat(dT);
+      if (solve === "Q") setResult(`Q = ${(mv*cv*dtv).toFixed(4)} J`);
+      else if (solve === "m") setResult(`m = ${(qv/(cv*dtv)).toFixed(4)} kg`);
+      else if (solve === "c") setResult(`c = ${(qv/(mv*dtv)).toFixed(4)} J/(kg·K)`);
+      else setResult(`ΔT = ${(qv/(mv*cv)).toFixed(4)} K`);
+    } catch { setResult("Invalid input"); }
   };
+
   return (
-    <main style={{minHeight:'100vh',background:'#0f172a',color:'#f1f5f9',padding:'2rem'}}>
-      <h1 style={{fontSize:'2rem',fontWeight:700,marginBottom:'0.5rem'}}>Specific Heat Calculator</h1>
-      <p style={{color:'#94a3b8',marginBottom:'2rem'}}>Find specific heat: c = Q / (m·ΔT)</p>
-      <div style={{background:'#1e293b',borderRadius:'0.75rem',padding:'2rem',maxWidth:'480px'}}>
-        <label style={{display:'block',marginBottom:'0.5rem',color:'#94a3b8'}}>Heat Added Q (J)</label>
-        <input value={Q} onChange={e=>setQ(e.target.value)} placeholder="e.g. 4186" style={{width:'100%',background:'#0f172a',border:'1px solid #334155',borderRadius:'0.5rem',padding:'0.75rem',color:'#f1f5f9',marginBottom:'1rem'}} />
-        <label style={{display:'block',marginBottom:'0.5rem',color:'#94a3b8'}}>Mass (kg)</label>
-        <input value={mass} onChange={e=>setMass(e.target.value)} placeholder="e.g. 1" style={{width:'100%',background:'#0f172a',border:'1px solid #334155',borderRadius:'0.5rem',padding:'0.75rem',color:'#f1f5f9',marginBottom:'1rem'}} />
-        <label style={{display:'block',marginBottom:'0.5rem',color:'#94a3b8'}}>Temperature Change ΔT (K)</label>
-        <input value={delta} onChange={e=>setDelta(e.target.value)} placeholder="e.g. 1" style={{width:'100%',background:'#0f172a',border:'1px solid #334155',borderRadius:'0.5rem',padding:'0.75rem',color:'#f1f5f9',marginBottom:'1rem'}} />
-        <button onClick={calc} style={{width:'100%',background:'#3b82f6',color:'white',border:'none',borderRadius:'0.5rem',padding:'0.75rem',cursor:'pointer',fontWeight:600}}>Calculate</button>
-        {result && <div style={{marginTop:'1rem',padding:'1rem',background:'#0f172a',borderRadius:'0.5rem',color:'#34d399',fontWeight:600}}>{result}</div>}
+    <main className="min-h-screen bg-gray-950 text-gray-100 p-8">
+      <div className="max-w-lg mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Specific Heat Calculator</h1>
+        <p className="text-gray-400 mb-6">Q = mcΔT — solve for heat energy, mass, specific heat, or temperature change.</p>
+        <div className="mb-4">
+          <label className="text-gray-400 text-sm">Solve for:</label>
+          <div className="flex gap-2 mt-1">
+            {["Q","m","c","ΔT"].map((v,i) => (
+              <button key={v} onClick={() => { setSolve(["Q","m","c","dT"][i]); setResult(""); }}
+                className={"px-4 py-2 rounded font-mono " + (solve===["Q","m","c","dT"][i] ? "bg-red-600" : "bg-gray-800 hover:bg-gray-700")}>{v}</button>
+            ))}
+          </div>
+        </div>
+        <div className="mb-3">
+          <label className="text-gray-400 text-sm">Presets (c):</label>
+          <div className="flex flex-wrap gap-2 mt-1">
+            {Object.entries(presets).map(([name,val]) => (
+              <button key={name} onClick={() => setC(String(val))}
+                className="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded text-sm">{name} ({val})</button>
+            ))}
+          </div>
+        </div>
+        <div className="space-y-3">
+          {solve !== "Q" && <input className="w-full bg-gray-800 p-3 rounded" placeholder="Heat Q (J)" value={Q} onChange={e=>setQ(e.target.value)} />}
+          {solve !== "m" && <input className="w-full bg-gray-800 p-3 rounded" placeholder="Mass m (kg)" value={m} onChange={e=>setM(e.target.value)} />}
+          {solve !== "c" && <input className="w-full bg-gray-800 p-3 rounded" placeholder="Specific heat c (J/kg·K)" value={c} onChange={e=>setC(e.target.value)} />}
+          {solve !== "dT" && <input className="w-full bg-gray-800 p-3 rounded" placeholder="Temperature change ΔT (K)" value={dT} onChange={e=>setDT(e.target.value)} />}
+          <button onClick={calc} className="w-full bg-red-600 hover:bg-red-700 p-3 rounded font-semibold">Calculate</button>
+          {result && <div className="bg-gray-800 p-4 rounded text-green-400 font-mono">{result}</div>}
+        </div>
       </div>
     </main>
   );
