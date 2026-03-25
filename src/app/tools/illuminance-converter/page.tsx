@@ -1,1 +1,24 @@
-"use client";import{{useState}}from"react";const units={"lx":1,"fc":10.764,"ph":10000,"nox":0.001,"mlx":0.001};export default function Page(){{const[val,setVal]=useState("");const[from,setFrom]=useState("lx");const[to,setTo]=useState("fc");const convert=()=>{{if(!val||isNaN(Number(val)))return"Invalid";return((Number(val)*units[from])/units[to]).toPrecision(6)}};return(<div style={{{{padding:"2rem",fontFamily:"sans-serif",maxWidth:"600px",margin:"0 auto"}}}}><h1>Illuminance Converter</h1><p>Convert between lux, foot-candle, phot and other illuminance units.</p><input type="number" value={{val}} onChange={{e=>setVal(e.target.value)}} placeholder="Enter value" style={{{{width:"100%",padding:"0.5rem",marginBottom:"1rem"}}}}/><select value={{from}} onChange={{e=>setFrom(e.target.value)}} style={{{{marginRight:"1rem",padding:"0.5rem"}}}}><option value="lx">lux (lx)</option><option value="fc">foot-candle (fc)</option><option value="ph">phot (ph)</option><option value="nox">nox (nox)</option><option value="mlx">millilux (mlx)</option></select><span>→</span><select value={{to}} onChange={{e=>setTo(e.target.value)}} style={{{{marginLeft:"1rem",padding:"0.5rem"}}}}><option value="lx">lux (lx)</option><option value="fc">foot-candle (fc)</option><option value="ph">phot (ph)</option><option value="nox">nox (nox)</option><option value="mlx">millilux (mlx)</option></select><div style={{{{marginTop:"1rem",fontSize:"1.5rem",fontWeight:"bold"}}}}>{{val && !isNaN(Number(val))?`${{val}} ${{from}} = ${{convert()}} ${{to}}`:""}}</div></div>)}}
+"use client";
+import { useState } from "react";
+export default function Page() {
+  const units = {"1":"lux","10.7639":"foot-candle","10000":"phot","0.001":"millilux","1000":"kilolux"};
+  const [val,setVal]=useState("");
+  const [from,setFrom]=useState("1");
+  const [to,setTo]=useState("10.7639");
+  const convert=()=>{const n=parseFloat(val);if(isNaN(n))return "";return (n*parseFloat(from)/parseFloat(to)).toPrecision(6);};
+  return (
+    <div style={{padding:"2rem",fontFamily:"sans-serif",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}>
+      <h1 style={{fontSize:"1.8rem",marginBottom:"0.5rem"}}>Illuminance Converter</h1>
+      <p style={{color:"#94a3b8",marginBottom:"1.5rem"}}>Convert between lux, foot-candle, phot, and other illuminance units.</p>
+      <div style={{display:"flex",gap:"1rem",flexWrap:"wrap",alignItems:"flex-end"}}>
+        <input type="number" value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.6rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0",fontSize:"1rem",width:"160px"}}/>
+        <select value={from} onChange={e=>setFrom(e.target.value)} style={{padding:"0.6rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0"}}><option value="1">lux (lx)</option><option value="10.7639">foot-candle (fc)</option><option value="10000">phot (ph)</option><option value="0.001">millilux (mlx)</option><option value="1000">kilolux (klx)</option></select>
+        <span style={{fontSize:"1.2rem"}}>→</span>
+        <select value={to} onChange={e=>setTo(e.target.value)} style={{padding:"0.6rem",borderRadius:"6px",border:"1px solid #334155",background:"#1e293b",color:"#e2e8f0"}}><option value="1">lux (lx)</option><option value="10.7639">foot-candle (fc)</option><option value="10000">phot (ph)</option><option value="0.001">millilux (mlx)</option><option value="1000">kilolux (klx)</option></select>
+      </div>
+      {val&&<div style={{marginTop:"1.5rem",padding:"1rem",background:"#1e293b",borderRadius:"8px",fontSize:"1.2rem"}}>
+        {val} = <strong>{convert()}</strong>
+      </div>}
+    </div>
+  );
+}
