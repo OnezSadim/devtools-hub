@@ -1,29 +1,28 @@
 "use client";
 import { useState } from "react";
 
-const units = ["lumen-second", "lumen-hour", "talbot", "kilolumen-second"];
-const toBase = {"lumen-second": 1, "lumen-hour": 3600, "talbot": 1, "kilolumen-second": 1000};
+const UNITS = ["lumen second", "lumen minute", "lumen hour", "talbot", "millitalbot"];
+const TO_BASE = [1, 60, 3600, 1, 0.001];
 
 export default function Page() {
   const [val, setVal] = useState("");
-  const [from, setFrom] = useState(units[0]);
-  const [to, setTo] = useState(units[1]);
-  function convert() {
-    const n = parseFloat(val);
-    if (isNaN(n)) return "";
-    return ((n * toBase[from]) / toBase[to]).toPrecision(6);
-  }
+  const [from, setFrom] = useState(0);
+  const num = parseFloat(val);
   return (
-    <main style={{padding:"2rem",maxWidth:"480px",margin:"0 auto",fontFamily:"sans-serif"}}>
+    <main style={{padding:"2rem",fontFamily:"monospace",background:"#0f172a",minHeight:"100vh",color:"#e2e8f0"}}>
       <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Luminous Energy Converter</h1>
-      <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Value" style={{width:"100%",padding:"0.5rem",marginBottom:"0.5rem",boxSizing:"border-box"}} />
-      <select value={from} onChange={e=>setFrom(e.target.value)} style={{width:"100%",padding:"0.5rem",marginBottom:"0.5rem"}}>
-        {units.map(u=><option key={u}>{u}</option>)}
-      </select>
-      <select value={to} onChange={e=>setTo(e.target.value)} style={{width:"100%",padding:"0.5rem",marginBottom:"1rem"}}>
-        {units.map(u=><option key={u}>{u}</option>)}
-      </select>
-      <div style={{fontSize:"1.25rem",fontWeight:"bold"}}>Result: {convert()}</div>
+      <div style={{display:"flex",gap:"1rem",marginBottom:"1rem",flexWrap:"wrap"}}>
+        <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter value" style={{padding:"0.5rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px",flex:1}} />
+        <select value={from} onChange={e=>setFrom(+e.target.value)} style={{padding:"0.5rem",background:"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:"4px"}}>
+          {UNITS.map((u,i)=><option key={i} value={i}>{u}</option>)}
+        </select>
+      </div>
+      <div style={{display:"grid",gap:"0.5rem"}}>
+        {UNITS.map((u,i)=>{
+          const result = isNaN(num) ? "" : (num * TO_BASE[from] / TO_BASE[i]).toPrecision(6);
+          return <div key={i} style={{display:"flex",justifyContent:"space-between",padding:"0.5rem",background:"#1e293b",borderRadius:"4px"}}><span>{u}</span><span style={{color:"#38bdf8"}}>{result}</span></div>;
+        })}
+      </div>
     </main>
   );
 }
