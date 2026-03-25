@@ -1,33 +1,47 @@
 "use client";
 import { useState } from "react";
 
-const units = [{ value: '1', label: 'g/mol' }, { value: '0.001', label: 'kg/mol' }, { value: '0.00220462', label: 'lb/mol' }];
+const units = ["g/mol", "kg/mol", "mg/mol", "lb/mol", "oz/mol", "Da", "kg/kmol"];
+const toBase: Record<string, number> = {"g/mol": 1, "kg/mol": 1000, "mg/mol": 0.001, "lb/mol": 453.592, "oz/mol": 28.3495, "Da": 1.66054e-24, "kg/kmol": 1};
 
-export default function MolarMassConverterPage() {
-  const [value, setValue] = useState("");
-  const [from, setFrom] = useState(units[0].value);
-  const [to, setTo] = useState(units[1].value);
-  const [result, setResult] = useState("");
-
-  const convert = () => {
-    const num = parseFloat(value);
-    if (isNaN(num)) { setResult("Invalid input"); return; }
-    const base = num * parseFloat(from);
-    setResult((base / parseFloat(to)).toExponential(6));
-  };
-
+export default function MolarMassConverter() {
+  const [val, setVal] = useState("");
+  const [from, setFrom] = useState(units[0]);
+  const [to, setTo] = useState(units[1]);
+  const result = val !== "" && !isNaN(Number(val))
+    ? (Number(val) * toBase[from] / toBase[to]).toPrecision(6)
+    : "";
   return (
-    <main style={{ maxWidth: 480, margin: "40px auto", padding: "0 16px", fontFamily: "monospace" }}>
-      <h1 style={{ fontSize: 24, marginBottom: 8 }}>Molar Mass Converter</h1>
-      <p style={{ color: "#aaa", marginBottom: 24 }}>Convert between molar mass units: g/mol, kg/mol, lb/mol.</p>
-      <input type="number" value={value} onChange={e => setValue(e.target.value)} placeholder="Enter value" style={{ width: "100%", padding: 8, marginBottom: 12, background: "#1a1a1a", border: "1px solid #333", color: "#fff", borderRadius: 4 }} />
-      <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
-        <select value={from} onChange={e => setFrom(e.target.value)} style={{ flex: 1, padding: 8, background: "#1a1a1a", border: "1px solid #333", color: "#fff", borderRadius: 4 }}>{units.map(u => <option key={u.value} value={u.value}>{u.label}</option>)}</select>
-        <span style={{ alignSelf: "center", color: "#aaa" }}>to</span>
-        <select value={to} onChange={e => setTo(e.target.value)} style={{ flex: 1, padding: 8, background: "#1a1a1a", border: "1px solid #333", color: "#fff", borderRadius: 4 }}>{units.map(u => <option key={u.value} value={u.value}>{u.label}</option>)}</select>
+    <main className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2">Molar Mass Converter</h1>
+        <p className="text-gray-400 mb-6">Convert between molar mass units instantly.</p>
+        <div className="space-y-4">
+          <input type="number" value={val} onChange={e => setVal(e.target.value)}
+            placeholder="Enter value" className="w-full p-3 rounded bg-gray-800 border border-gray-700 text-white" />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm text-gray-400 mb-1 block">From</label>
+              <select value={from} onChange={e => setFrom(e.target.value)}
+                className="w-full p-3 rounded bg-gray-800 border border-gray-700 text-white">
+                {units.map(u => <option key={u} value={u}>{u}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-sm text-gray-400 mb-1 block">To</label>
+              <select value={to} onChange={e => setTo(e.target.value)}
+                className="w-full p-3 rounded bg-gray-800 border border-gray-700 text-white">
+                {units.map(u => <option key={u} value={u}>{u}</option>)}
+              </select>
+            </div>
+          </div>
+          {result !== "" && (
+            <div className="p-4 bg-blue-900/30 border border-blue-700 rounded text-xl font-mono">
+              {val} {from} = {result} {to}
+            </div>
+          )}
+        </div>
       </div>
-      <button onClick={convert} style={{ width: "100%", padding: 10, background: "#3b82f6", color: "#fff", border: "none", borderRadius: 4, cursor: "pointer", marginBottom: 16 }}>Convert</button>
-      {result && <div style={{ padding: 16, background: "#1a1a1a", borderRadius: 4, color: "#4ade80", fontSize: 20 }}>{result}</div>}
     </main>
   );
 }
