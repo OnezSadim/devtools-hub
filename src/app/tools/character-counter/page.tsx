@@ -3,23 +3,21 @@ import { useState } from "react";
 export default function CharacterCounter() {
   const [text, setText] = useState("");
   const chars = text.length;
-  const charsNoSpaces = text.replace(/ /g,"").length;
-  const words = text.trim() ? text.trim().split(/\s+/).length : 0;
-  const sentences = text.trim() ? text.split(/[.!?]+/).filter(s=>s.trim()).length : 0;
-  const paragraphs = text.trim() ? text.split(/\n\n+/).filter(p=>p.trim()).length : 0;
-  const readTime = Math.ceil(words / 200);
-  const stats = [{label:"Characters",val:chars},{label:"No Spaces",val:charsNoSpaces},{label:"Words",val:words},{label:"Sentences",val:sentences},{label:"Paragraphs",val:paragraphs},{label:"Read time (min)",val:readTime}];
-  return (
-    <div className="max-w-2xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-2">Character Counter</h1>
-      <p className="text-gray-400 mb-6">Count characters, words, sentences, and estimate read time.</p>
-      <textarea value={text} onChange={e=>setText(e.target.value)} placeholder="Type or paste your text here..." className="w-full h-40 bg-gray-800 border border-gray-700 rounded p-3 mb-6" />
-      <div className="grid grid-cols-3 gap-4">{stats.map(({label,val})=>(
-        <div key={label} className="bg-gray-800 rounded p-4 text-center">
-          <p className="text-2xl font-bold">{val}</p>
-          <p className="text-xs text-gray-400 mt-1">{label}</p>
+  const words = text.trim()===" "?0:text.trim().split(/\s+/).filter(Boolean).length;
+  const lines = text.split("\n").length;
+  const sentences = text.split(/[.!?]+/).filter(Boolean).length;
+  const paragraphs = text.split(/\n\n+/).filter(s=>s.trim()).length;
+  const noSpaces = text.replace(/\s/g,"").length;
+  return (<div style={{minHeight:"100vh",background:"#0f172a",color:"#e2e8f0",padding:"2rem",fontFamily:"monospace"}}>
+    <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Character Counter</h1>
+    <textarea value={text} onChange={e=>setText(e.target.value)} rows={8} placeholder="Type or paste text here..." style={{width:"100%",padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",borderRadius:"4px",color:"#e2e8f0",marginBottom:"1rem",boxSizing:"border-box",resize:"vertical"}} />
+    <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:"1rem"}}>
+      {[["Characters",chars],["Words",words],["Lines",lines],["Sentences",sentences],["Paragraphs",paragraphs],["No Spaces",noSpaces]].map(([l,v])=>(
+        <div key={String(l)} style={{background:"#1e293b",padding:"1rem",borderRadius:"4px",textAlign:"center"}}>
+          <div style={{fontSize:"2rem",color:"#6366f1"}}>{v}</div>
+          <div style={{color:"#94a3b8",fontSize:"0.85rem"}}>{l}</div>
         </div>
-      ))}</div>
+      ))}
     </div>
-  );
+  </div>);
 }

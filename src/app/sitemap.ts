@@ -1,4 +1,4 @@
-import { MetadataRoute } from 'next'
+import { MetadataRoute } from 'next';
 
 const tools = [
   'age-calculator',
@@ -37,6 +37,7 @@ const tools = [
   'countdown-timer',
   'credit-card-validator',
   'cron-parser',
+  'crontab-explainer',
   'css-animation-generator',
   'css-box-shadow',
   'css-clip-path-maker',
@@ -137,6 +138,7 @@ const tools = [
   'morse-code-converter',
   'morse-code-translator',
   'morse-to-text',
+  'nato-alphabet',
   'nato-phonetic-alphabet',
   'nginx-config-generator',
   'number-base-converter',
@@ -203,6 +205,7 @@ const tools = [
   'text-to-binary',
   'text-to-morse',
   'text-to-slug',
+  'text-to-speech',
   'text-to-speech-tester',
   'timestamp-converter',
   'timezone-converter',
@@ -229,18 +232,18 @@ const tools = [
   'yaml-formatter',
   'yaml-to-json',
   'yaml-validator',
-]
+];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = 'https://devtools-hub-green.vercel.app'
-  const toolUrls = tools.map(tool => ({
+  const base = 'https://devtools-hub-green.vercel.app';
+  const toolRoutes = tools.map(tool => ({
     url: `${base}/tools/${tool}`,
     lastModified: new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.8,
-  }))
+  }));
   return [
-    { url: base, lastModified: new Date(), changeFrequency: 'daily' as const, priority: 1 },
-    ...toolUrls,
-  ]
+    { url: base, lastModified: new Date(), changeFrequency: 'daily' as const, priority: 1.0 },
+    ...toolRoutes,
+  ];
 }

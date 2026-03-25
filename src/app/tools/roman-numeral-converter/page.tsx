@@ -2,44 +2,29 @@
 import { useState } from "react";
 export default function RomanNumeralConverter() {
   const [num, setNum] = useState("");
-  const [roman, setRoman] = useState("");
-  const [reverse, setReverse] = useState("");
+  const [result, setResult] = useState("");
   const toRoman = (n: number) => {
-    if (n < 1 || n > 3999) return "Out of range (1-3999)";
     const vals = [1000,900,500,400,100,90,50,40,10,9,5,4,1];
     const syms = ["M","CM","D","CD","C","XC","L","XL","X","IX","V","IV","I"];
-    let result = "";
-    for (let i = 0; i < vals.length; i++) {
-      while (n >= vals[i]) { result += syms[i]; n -= vals[i]; }
-    }
-    return result;
+    let r = "";
+    for (let i=0;i<vals.length;i++) { while(n>=vals[i]) { r+=syms[i]; n-=vals[i]; } }
+    return r;
   };
   const fromRoman = (s: string) => {
-    const map: Record<string,number> = {I:1,V:5,X:10,L:50,C:100,D:500,M:1000};
-    let result = 0;
-    for (let i = 0; i < s.length; i++) {
-      const cur = map[s[i]], next = map[s[i+1]];
-      if (next && cur < next) result -= cur; else result += cur;
-    }
-    return result || "Invalid";
+    const m: Record<string,number> = {I:1,V:5,X:10,L:50,C:100,D:500,M:1000};
+    let r=0;
+    for(let i=0;i<s.length;i++) { const c=m[s[i]],n2=m[s[i+1]]; r+=n2&&n2>c?-c:c; }
+    return r;
   };
-  return (
-    <div className="min-h-screen bg-gray-950 text-white p-8">
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Roman Numeral Converter</h1>
-        <p className="text-gray-400 mb-8">Convert between numbers and Roman numerals</p>
-        <div className="bg-gray-900 rounded-xl p-6 mb-4">
-          <h2 className="text-lg font-semibold mb-3">Number to Roman</h2>
-          <input type="number" value={num} onChange={e=>setNum(e.target.value)} placeholder="Enter number (1-3999)" className="w-full bg-gray-800 rounded px-3 py-2 mb-3 outline-none focus:ring-2 ring-blue-500" />
-          <button onClick={()=>setRoman(toRoman(parseInt(num)||0))} className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded font-medium">Convert</button>
-          {roman && <div className="mt-3 p-3 bg-gray-800 rounded text-xl font-mono">{roman}</div>}
-        </div>
-        <div className="bg-gray-900 rounded-xl p-6">
-          <h2 className="text-lg font-semibold mb-3">Roman to Number</h2>
-          <input value={reverse} onChange={e=>setReverse(e.target.value.toUpperCase())} placeholder="Enter Roman numeral (e.g. XIV)" className="w-full bg-gray-800 rounded px-3 py-2 mb-3 outline-none focus:ring-2 ring-blue-500" />
-          <div className="p-3 bg-gray-800 rounded text-xl font-mono">{reverse ? fromRoman(reverse) : "..."}</div>
-        </div>
-      </div>
-    </div>
-  );
+  const convert = () => {
+    const n = parseInt(num);
+    if (!isNaN(n) && n > 0 && n <= 3999) setResult(toRoman(n));
+    else { const r = fromRoman(num.toUpperCase()); setResult(isNaN(r)||r===0?"Invalid":String(r)); }
+  };
+  return (<div style={{minHeight:"100vh",background:"#0f172a",color:"#e2e8f0",padding:"2rem",fontFamily:"monospace"}}>
+    <h1 style={{fontSize:"1.5rem",marginBottom:"1rem"}}>Roman Numeral Converter</h1>
+    <input value={num} onChange={e=>setNum(e.target.value)} placeholder="Enter number or Roman numeral" style={{width:"100%",padding:"0.5rem",background:"#1e293b",border:"1px solid #334155",borderRadius:"4px",color:"#e2e8f0",marginBottom:"0.5rem",boxSizing:"border-box"}} />
+    <button onClick={convert} style={{padding:"0.5rem 1rem",background:"#6366f1",border:"none",borderRadius:"4px",color:"#fff",cursor:"pointer",marginBottom:"1rem"}}>Convert</button>
+    {result && <div style={{background:"#1e293b",padding:"1rem",borderRadius:"4px",fontSize:"1.5rem"}}>{result}</div>}
+  </div>);
 }
